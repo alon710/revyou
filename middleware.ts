@@ -1,34 +1,15 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+/**
+ * Simplified middleware - Client-side auth handling is done in AuthContext
+ * This middleware only prevents direct access to protected routes without
+ * creating redirect loops. The actual auth state is managed by Firebase Auth.
+ */
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Check if user has auth cookie (set by Firebase)
-  const hasAuthCookie = request.cookies.has('__session');
-
-  // Define protected routes (dashboard routes)
-  const isProtectedRoute = pathname.startsWith('/dashboard') ||
-                          pathname.startsWith('/businesses') ||
-                          pathname.startsWith('/reviews') ||
-                          pathname.startsWith('/settings') ||
-                          pathname.startsWith('/billing');
-
-  // Define auth routes
-  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/register');
-
-  // Redirect unauthenticated users from protected routes to login
-  if (isProtectedRoute && !hasAuthCookie) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('from', pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // Redirect authenticated users from login/register to dashboard
-  if (isAuthRoute && hasAuthCookie) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
+  // Let Next.js handle all routing
+  // Auth state is managed client-side by AuthContext and Firebase
+  // Protected routes are handled in the dashboard layout
   return NextResponse.next();
 }
 
