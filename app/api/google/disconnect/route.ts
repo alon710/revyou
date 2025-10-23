@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUser, updateUserGoogleRefreshToken } from "@/lib/firebase/users";
+import { getUser, removeUserGoogleRefreshToken } from "@/lib/firebase/admin-users";
 import { decryptToken, revokeToken } from "@/lib/google/oauth";
 
 /**
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Remove refresh token from user document
-    await updateUserGoogleRefreshToken(userId, "");
+    await removeUserGoogleRefreshToken(userId);
 
     return NextResponse.json({
       success: true,

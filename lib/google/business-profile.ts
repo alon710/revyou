@@ -6,6 +6,21 @@ import { getAuthenticatedClient } from "./oauth";
  * Handles all interactions with Google My Business API
  */
 
+/**
+ * Extract HTTP status code from error
+ */
+function getErrorStatus(error: unknown): number | undefined {
+  if (typeof error === "object" && error !== null) {
+    if ("status" in error && typeof error.status === "number") {
+      return error.status;
+    }
+    if ("code" in error && typeof error.code === "number") {
+      return error.code;
+    }
+  }
+  return undefined;
+}
+
 const mybusinessbusinessinformation = google.mybusinessbusinessinformation("v1");
 const mybusinessaccountmanagement = google.mybusinessaccountmanagement("v1");
 
@@ -70,6 +85,15 @@ export async function getAccounts(refreshToken: string): Promise<GoogleAccount[]
     return (response.data.accounts as GoogleAccount[]) || [];
   } catch (error) {
     console.error("Error fetching Google accounts:", error);
+
+    // Provide specific error messages based on error type
+    const status = getErrorStatus(error);
+    if (status === 429) {
+      throw new Error("Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב.");
+    } else if (status === 403) {
+      throw new Error("חסרות הרשאות לגשת ל-Google Business. נא לבדוק הגדרות API.");
+    }
+
     throw new Error("לא ניתן לטעון את חשבונות Google Business");
   }
 }
@@ -96,6 +120,15 @@ export async function getLocations(
     return (response.data.locations as GoogleLocation[]) || [];
   } catch (error) {
     console.error("Error fetching locations:", error);
+
+    // Provide specific error messages based on error type
+    const status = getErrorStatus(error);
+    if (status === 429) {
+      throw new Error("Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב.");
+    } else if (status === 403) {
+      throw new Error("חסרות הרשאות לגשת ל-Google Business. נא לבדוק הגדרות API.");
+    }
+
     throw new Error("לא ניתן לטעון את המיקומים");
   }
 }

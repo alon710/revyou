@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUser } from "@/lib/firebase/users";
+import { getUser } from "@/lib/firebase/admin-users";
 import { decryptToken } from "@/lib/google/oauth";
 import { getAllLocations, formatAddress, extractLocationId, extractAccountId } from "@/lib/google/business-profile";
 
@@ -58,10 +58,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ locations: formattedLocations });
   } catch (error) {
     console.error("Error fetching locations:", error);
+
+    // Extract error message and determine appropriate status code
     const errorMessage = error instanceof Error ? error.message : "לא ניתן לטעון את המיקומים";
+
+    // Check if it's a rate limit error
+    let statusCode = 500;
+    if (errorMessage.includes("מגביל את מספר הבקשות") || errorMessage.includes("rate limit")) {
+      statusCode = 429;
+    } else if (errorMessage.includes("חסרות הרשאות") || errorMessage.includes("permission")) {
+      statusCode = 403;
+    }
+
     return NextResponse.json(
       { error: errorMessage },
-      { status: 500 }
+      { status: statusCode }
     );
   }
 }

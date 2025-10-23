@@ -41,6 +41,10 @@ export default function ConnectBusinessPage() {
       const data = await response.json();
 
       if (!response.ok) {
+        // Handle rate limit errors specifically
+        if (response.status === 429) {
+          throw new Error(data.error || "Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב.");
+        }
         throw new Error(data.error || "Failed to load locations");
       }
 
@@ -221,12 +225,25 @@ export default function ConnectBusinessPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <BusinessSelector
-              locations={locations}
-              selectedLocationId={selectedLocation?.id || null}
-              onSelect={setSelectedLocation}
-              loading={loadingLocations}
-            />
+            {error && locations.length === 0 && (
+              <div className="text-center py-8">
+                <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                <p className="text-muted-foreground mb-4">{error}</p>
+                <Button onClick={loadLocations} disabled={loadingLocations}>
+                  {loadingLocations && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                  נסה שוב
+                </Button>
+              </div>
+            )}
+
+            {!error && (
+              <BusinessSelector
+                locations={locations}
+                selectedLocationId={selectedLocation?.id || null}
+                onSelect={setSelectedLocation}
+                loading={loadingLocations}
+              />
+            )}
 
             {selectedLocation && (
               <div className="mt-6 flex gap-3">

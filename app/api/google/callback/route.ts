@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { exchangeCodeForTokens, encryptToken } from "@/lib/google/oauth";
-import { updateUserGoogleRefreshToken } from "@/lib/firebase/users";
+import { updateUserGoogleRefreshToken } from "@/lib/firebase/admin-users";
 
 /**
  * GET /api/google/callback
