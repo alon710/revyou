@@ -88,7 +88,7 @@ async function seedDatabase() {
         displayName: "Test User",
         photoURL: "https://ui-avatars.com/api/?name=Test+User",
         createdAt: Timestamp.fromDate(new Date("2024-01-01")),
-        subscriptionTier: "pro",
+        subscriptionTier: "professional",
         stripeCustomerId: "cus_test123",
         selectedBusinessId: "business_test_001",
         notificationPreferences: {
@@ -385,7 +385,7 @@ async function seedDatabase() {
         id: "sub_test_001",
         userId: USER_ID,
         stripeSubscriptionId: "sub_test123",
-        stripePriceId: "price_pro_monthly",
+        stripePriceId: "price_professional_monthly",
         status: "active",
         currentPeriodEnd: Timestamp.fromDate(new Date("2024-12-31T23:59:59")),
         cancelAtPeriodEnd: false,

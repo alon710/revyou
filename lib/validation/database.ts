@@ -8,9 +8,9 @@ const timestampSchema = z.custom<Timestamp>((val) => val instanceof Timestamp, {
 export const subscriptionTierSchema = z.enum([
   "free",
   "basic",
-  "pro",
-  "enterprise",
+  "professional",
 ]);
+export type SubscriptionTier = z.infer<typeof subscriptionTierSchema>;
 export const toneOfVoiceSchema = z.enum([
   "friendly",
   "formal",

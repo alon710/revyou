@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore";
+import type { SubscriptionTier } from "@/lib/validation/database";
 
-export type SubscriptionTier = "free" | "basic" | "pro" | "enterprise";
+export type { SubscriptionTier };
 
 export type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";
 
@@ -151,25 +152,19 @@ export const DEFAULT_PROMPT_TEMPLATE = `אתה עוזר AI שכותב תגובו
 export const SUBSCRIPTION_LIMITS = {
   free: {
     businesses: 1,
-    reviewsPerMonth: 10,
+    reviewsPerMonth: 5,
     autoPost: false,
     requireApproval: true,
   },
   basic: {
     businesses: 3,
-    reviewsPerMonth: 100,
+    reviewsPerMonth: 250,
     autoPost: true,
     requireApproval: false,
   },
-  pro: {
+  professional: {
     businesses: 10,
-    reviewsPerMonth: 500,
-    autoPost: true,
-    requireApproval: false,
-  },
-  enterprise: {
-    businesses: Infinity,
-    reviewsPerMonth: Infinity,
+    reviewsPerMonth: 1000,
     autoPost: true,
     requireApproval: false,
   },

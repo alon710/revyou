@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
-import { useRouter, useParams } from "next/navigation";
 import {
   collection,
   query,
@@ -20,46 +19,23 @@ import { Review } from "@/types/database";
 import { ReviewCard } from "@/components/dashboard/ReviewCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageSquare, ChevronLeft, Building2 } from "lucide-react";
+import { MessageSquare, ChevronLeft, Building2, Plus } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
+import Link from "next/link";
 
 /**
- * Business-Scoped Reviews Page
+ * Reviews Page
  * Shows reviews for the currently selected business
  */
-export default function BusinessReviewsPage() {
+export default function ReviewsPage() {
   const { user } = useAuth();
-  const { currentBusiness, loading: businessLoading } = useBusiness();
-  const router = useRouter();
-  const params = useParams();
+  const { currentBusiness, businesses, loading: businessLoading } = useBusiness();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
   const [lastDoc, setLastDoc] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
-
-  // Verify params match context
-  useEffect(() => {
-    if (!user || businessLoading) return;
-
-    // Verify userId matches
-    if (params.userId !== user.uid) {
-      router.push("/businesses");
-      return;
-    }
-
-    // If no business selected or wrong business, redirect
-    if (!currentBusiness) {
-      router.push("/businesses");
-      return;
-    }
-
-    if (params.businessId !== currentBusiness.id) {
-      router.push(`/dashboard/${user.uid}/${currentBusiness.id}/reviews`);
-      return;
-    }
-  }, [user, currentBusiness, businessLoading, params, router]);
 
   const loadReviews = useCallback(
     async (loadMore = false) => {
@@ -126,21 +102,69 @@ export default function BusinessReviewsPage() {
     loadReviews(false);
   };
 
-  if (businessLoading || !currentBusiness) {
+  // Empty State - No businesses connected
+  if (!businessLoading && businesses.length === 0) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <div className="text-center">
-          <Building2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">טוען עסק...</p>
+      <PageContainer maxWidth="7xl">
+        <PageHeader
+          title="ביקורות"
+          description="כל הביקורות עבור העסקים שלך"
+        />
+        <div className="flex flex-col items-center justify-center py-12 text-center border rounded-lg">
+          <Building2 className="h-16 w-16 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-semibold mb-2">אין עסקים מחוברים</h3>
+          <p className="text-muted-foreground max-w-sm mb-4">
+            חבר עסק כדי להתחיל לקבל ביקורות
+          </p>
+          <Button asChild>
+            <Link href="/businesses/connect">
+              <Plus className="ml-2 h-5 w-5" />
+              חבר עסק
+            </Link>
+          </Button>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
+  // No business selected - Show selection prompt
+  if (!businessLoading && !currentBusiness) {
+    return (
+      <PageContainer maxWidth="7xl">
+        <PageHeader
+          title="ביקורות"
+          description="כל הביקורות עבור העסקים שלך"
+        />
+        <div className="flex flex-col items-center justify-center py-12 text-center border rounded-lg">
+          <MessageSquare className="h-16 w-16 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-semibold mb-2">בחר עסק</h3>
+          <p className="text-muted-foreground max-w-sm">
+            בחר עסק מהתפריט למעלה כדי לראות את הביקורות שלו
+          </p>
+        </div>
+      </PageContainer>
+    );
+  }
+
+  // Loading state
+  if (businessLoading) {
+    return (
+      <PageContainer maxWidth="7xl">
+        <Skeleton className="h-10 w-64 mb-4" />
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-[300px] w-full" />
+          ))}
+        </div>
+      </PageContainer>
+    );
+  }
+
+  // Show reviews for selected business
   return (
     <PageContainer maxWidth="7xl">
       <PageHeader
-        title={`ביקורות - ${currentBusiness.name}`}
+        title={`ביקורות - ${currentBusiness?.name}`}
         description="כל הביקורות עבור עסק זה ממוינות מחדש לישן"
       />
 
@@ -155,11 +179,11 @@ export default function BusinessReviewsPage() {
           </>
         ) : reviews.length === 0 ? (
           // Empty State
-          <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="flex flex-col items-center justify-center py-12 text-center border rounded-lg">
             <MessageSquare className="h-16 w-16 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">אין ביקורות עדיין</h3>
             <p className="text-muted-foreground max-w-sm">
-              הביקורות של {currentBusiness.name} יופיעו כאן ברגע שהן יגיעו מגוגל
+              הביקורות של {currentBusiness?.name} יופיעו כאן ברגע שהן יגיעו מגוגל
             </p>
           </div>
         ) : (

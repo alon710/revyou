@@ -65,9 +65,7 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
           <nav className="flex-1 space-y-1 p-4">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const href = user
-                ? item.href(user.uid, currentBusiness?.id)
-                : "#";
+              const href = item.href;
               const isActive = pathname === href || pathname.startsWith(href);
               const isDisabled = item.requiresBusiness && !currentBusiness;
 

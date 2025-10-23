@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRouter, useParams } from "next/navigation";
 import {
   getUser,
   updateNotificationPreferences,
@@ -16,10 +15,12 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
 
+/**
+ * Settings Page
+ * User account settings and notification preferences
+ */
 export default function SettingsPage() {
   const { user: authUser, loading: authLoading } = useAuth();
-  const router = useRouter();
-  const params = useParams();
   const { toast } = useToast();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,11 +32,6 @@ export default function SettingsPage() {
   useEffect(() => {
     const loadUserData = async () => {
       if (!authUser) return;
-
-      if (params.userId !== authUser.uid) {
-        router.push(`/dashboard/${authUser.uid}/settings`);
-        return;
-      }
 
       try {
         setLoading(true);
@@ -65,7 +61,7 @@ export default function SettingsPage() {
     if (!authLoading && authUser) {
       loadUserData();
     }
-  }, [authUser, authLoading, params.userId, router, toast]);
+  }, [authUser, authLoading, toast]);
 
   const handleSaveNotifications = async () => {
     if (!authUser) return;

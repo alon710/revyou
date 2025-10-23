@@ -1,7 +1,6 @@
 "use client";
 
 import { useBusiness } from "@/contexts/BusinessContext";
-import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -11,12 +10,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Building2 } from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Loading } from "@/components/ui/loading";
 
 export function BusinessToggler() {
-  const { user } = useAuth();
   const {
     currentBusiness,
     businesses,
@@ -24,15 +21,10 @@ export function BusinessToggler() {
     selectBusiness,
     loading,
   } = useBusiness();
-  const router = useRouter();
-  const pathname = usePathname();
 
   const handleBusinessChange = (businessId: string) => {
     selectBusiness(businessId);
-
-    if (user && pathname.includes("/dashboard/")) {
-      router.push(`/dashboard/${user.uid}/${businessId}/reviews`);
-    }
+    // Context change will automatically update the display
   };
 
   if (loading) {

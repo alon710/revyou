@@ -58,7 +58,10 @@ export default function BusinessConfigForm({
   onSave,
   loading = false,
 }: BusinessConfigFormProps) {
-  const [config, setConfig] = useState<BusinessConfig>(initialConfig);
+  const [config, setConfig] = useState<BusinessConfig>({
+    ...initialConfig,
+    promptTemplate: initialConfig.promptTemplate || DEFAULT_PROMPT_TEMPLATE,
+  });
   const [saving, setSaving] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -368,7 +371,8 @@ export default function BusinessConfigForm({
             <div className="flex items-center justify-between mb-2">
               <Label htmlFor="prompt-template">תבנית ההנחיה</Label>
               <span className="text-xs text-muted-foreground">
-                {config.promptTemplate.length.toLocaleString("he-IL")} תווים
+                {(config.promptTemplate?.length || 0).toLocaleString("he-IL")}{" "}
+                תווים
               </span>
             </div>
             <Textarea
@@ -414,41 +418,35 @@ export default function BusinessConfigForm({
             <div className="space-y-0.5">
               <Label htmlFor="autoPost">פרסום אוטומטי</Label>
               <p className="text-xs text-muted-foreground">
-                פרסם תשובות אוטומטית ללא צורך באישור ידני
+                פרסם תשובות AI אוטומטית ללא אישור ידני. כשמופעל, תשובות יפורסמו מיד. כשכבוי, תדרש לאשר כל תשובה לפני פרסום.
               </p>
             </div>
             <Switch
               id="autoPost"
               checked={config.autoPost}
               onCheckedChange={(checked) =>
-                setConfig({ ...config, autoPost: checked })
+                setConfig({
+                  ...config,
+                  autoPost: checked,
+                  requireApproval: !checked
+                })
               }
               disabled={loading}
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="requireApproval">דרוש אישור</Label>
-              <p className="text-xs text-muted-foreground">
-                בקש אישור ידני לפני פרסום תשובות (עוקף פרסום אוטומטי)
-              </p>
-            </div>
-            <Switch
-              id="requireApproval"
-              checked={config.requireApproval}
-              onCheckedChange={(checked) =>
-                setConfig({ ...config, requireApproval: checked })
-              }
-              disabled={loading}
-            />
-          </div>
-
-          {config.autoPost && !config.requireApproval && (
+          {config.autoPost && (
             <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                <strong>אזהרה:</strong> עם פרסום אוטומטי ללא אישור, תשובות
-                יפורסמו מיד לאחר יצירתן. וודא שההגדרות שלך מדויקות.
+                <strong>אזהרה:</strong> תשובות AI יפורסמו אוטומטית ללא אישור ידני. וודא שההגדרות שלך מדויקות לפני הפעלה.
+              </p>
+            </div>
+          )}
+
+          {!config.autoPost && (
+            <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                תשובות AI ייווצרו אוטומטית אך תצטרך לאשר כל תשובה לפני פרסומה לגוגל.
               </p>
             </div>
           )}
@@ -473,7 +471,6 @@ export default function BusinessConfigForm({
 
       <div className="flex justify-end gap-3">
         <Button type="submit" disabled={saving || loading} size="lg">
-          {saving && <Loading size="sm" />}
           <Save className="ml-2 h-5 w-5" />
           שמור שינויים
         </Button>
