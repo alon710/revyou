@@ -18,10 +18,10 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Redirect to dashboard if already authenticated
+  // Redirect to businesses page if already authenticated
   useEffect(() => {
     if (!authLoading && user) {
-      router.push('/dashboard');
+      router.push('/businesses');
     }
   }, [user, authLoading, router]);
 
@@ -35,8 +35,8 @@ export default function LoginPage() {
       setError(error);
       setIsLoading(false);
     } else if (user) {
-      // Redirect to dashboard
-      router.push('/dashboard');
+      // Redirect to businesses page
+      router.push('/businesses');
     }
   };
 

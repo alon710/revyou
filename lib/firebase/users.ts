@@ -202,3 +202,52 @@ export async function userExists(uid: string): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Update user's notification preferences
+ * @param uid - User ID
+ * @param preferences - Notification preferences
+ */
+export async function updateNotificationPreferences(
+  uid: string,
+  preferences: { emailOnNewReview: boolean; emailOnFailedPost: boolean }
+): Promise<void> {
+  if (!db) {
+    throw new Error("Firestore not initialized");
+  }
+
+  try {
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, { notificationPreferences: preferences });
+  } catch (error) {
+    console.error("Error updating notification preferences:", error);
+    throw new Error("לא ניתן לעדכן את הגדרות ההתראות");
+  }
+}
+
+/**
+ * Delete user account and all associated data
+ * Cascades deletion to: businesses, reviews, subscriptions
+ * @param uid - User ID
+ */
+export async function deleteUserAccount(uid: string): Promise<void> {
+  if (!db) {
+    throw new Error("Firestore not initialized");
+  }
+
+  try {
+    // This should be done in a Cloud Function for security and atomicity
+    // For now, we'll just delete the user document
+    // TODO: Implement cascading deletion in Cloud Function
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, {
+      deletedAt: serverTimestamp(),
+      email: `deleted_${uid}@deleted.com` // Anonymize
+    });
+
+    console.warn("User marked for deletion. Implement cascading deletion in Cloud Function");
+  } catch (error) {
+    console.error("Error deleting user account:", error);
+    throw new Error("לא ניתן למחוק את החשבון");
+  }
+}

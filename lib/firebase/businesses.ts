@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./config";
 import { Business, BusinessConfig, ToneOfVoice, LanguageMode } from "@/types/database";
-import { SUBSCRIPTION_LIMITS } from "@/types/database";
+import { SUBSCRIPTION_LIMITS, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
 import {
   businessSchema,
   businessCreateSchema,
@@ -106,6 +106,7 @@ export function getDefaultBusinessConfig(): BusinessConfig {
     toneOfVoice: "professional" as ToneOfVoice,
     useEmojis: false,
     languageMode: "hebrew" as LanguageMode,
+    promptTemplate: DEFAULT_PROMPT_TEMPLATE,
     autoPost: false,
     requireApproval: true,
     starConfigs: {

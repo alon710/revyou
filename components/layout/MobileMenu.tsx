@@ -4,15 +4,17 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { useBusiness } from '@/contexts/BusinessContext';
+import { BusinessToggler } from '@/components/dashboard/BusinessToggler';
 import { signOut } from '@/lib/firebase/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import {
-  LayoutDashboard,
   Building2,
   MessageSquare,
   Settings,
+  Sliders,
   CreditCard,
   LogOut,
   Sparkles
@@ -21,35 +23,41 @@ import { useRouter } from 'next/navigation';
 
 interface NavItem {
   title: string;
-  href: string;
+  href: (userId: string, businessId?: string) => string;
   icon: React.ComponentType<{ className?: string }>;
+  requiresBusiness: boolean;
 }
 
 const navItems: NavItem[] = [
   {
-    title: 'לוח בקרה',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-  },
-  {
     title: 'עסקים',
-    href: '/businesses',
+    href: () => '/businesses',
     icon: Building2,
+    requiresBusiness: false,
   },
   {
     title: 'ביקורות',
-    href: '/reviews',
+    href: (userId, businessId) => businessId ? `/dashboard/${userId}/${businessId}/reviews` : '/businesses',
     icon: MessageSquare,
+    requiresBusiness: true,
   },
   {
-    title: 'הגדרות',
-    href: '/settings',
+    title: 'תצורת עסק',
+    href: (userId, businessId) => businessId ? `/dashboard/${userId}/${businessId}/configuration` : '/businesses',
+    icon: Sliders,
+    requiresBusiness: true,
+  },
+  {
+    title: 'הגדרות חשבון',
+    href: (userId) => `/dashboard/${userId}/settings`,
     icon: Settings,
+    requiresBusiness: false,
   },
   {
     title: 'חיוב',
-    href: '/billing',
+    href: () => '/billing',
     icon: CreditCard,
+    requiresBusiness: false,
   },
 ];
 
@@ -61,6 +69,7 @@ interface MobileMenuProps {
 export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
   const pathname = usePathname();
   const { user } = useAuth();
+  const { currentBusiness } = useBusiness();
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -81,7 +90,7 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
           <SheetHeader className="border-b p-6">
             <SheetTitle className="text-right">
               <Link
-                href="/dashboard"
+                href="/businesses"
                 className="flex items-center justify-end gap-2 font-bold text-lg"
                 onClick={handleNavClick}
               >
@@ -91,21 +100,34 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
             </SheetTitle>
           </SheetHeader>
 
+          {/* Business Toggler */}
+          <BusinessToggler />
+
           {/* Navigation */}
           <nav className="flex-1 space-y-1 p-4">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href;
+              const href = user ? item.href(user.uid, currentBusiness?.id) : '#';
+              const isActive = pathname === href || pathname.startsWith(href);
+              const isDisabled = item.requiresBusiness && !currentBusiness;
 
               return (
                 <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={handleNavClick}
+                  key={item.title}
+                  href={isDisabled ? '#' : href}
+                  onClick={(e) => {
+                    if (isDisabled) {
+                      e.preventDefault();
+                    } else {
+                      handleNavClick();
+                    }
+                  }}
                   className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                    isActive
+                    isActive && !isDisabled
                       ? 'bg-primary text-primary-foreground'
+                      : isDisabled
+                      ? 'text-muted-foreground/50 cursor-not-allowed'
                       : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                   )}
                 >

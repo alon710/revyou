@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { BusinessConfig, ToneOfVoice, LanguageMode, StarConfig } from "@/types/database";
+import { useState, useRef } from "react";
+import { BusinessConfig, ToneOfVoice, LanguageMode, StarConfig, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,8 +16,24 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Save } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Save, RotateCcw } from "lucide-react";
 import StarConfigAccordion from "./StarConfigAccordion";
+
+const AVAILABLE_VARIABLES = [
+  { name: "{{BUSINESS_NAME}}", description: "שם העסק" },
+  { name: "{{BUSINESS_DESCRIPTION}}", description: "תיאור העסק" },
+  { name: "{{BUSINESS_PHONE}}", description: "טלפון העסק" },
+  { name: "{{REVIEWER_NAME}}", description: "שם המבקר" },
+  { name: "{{RATING}}", description: "דירוג (1-5)" },
+  { name: "{{REVIEW_TEXT}}", description: "טקסט הביקורת" },
+  { name: "{{TONE}}", description: "טון התגובה" },
+  { name: "{{LANGUAGE_INSTRUCTION}}", description: "הנחיות שפה" },
+  { name: "{{MAX_SENTENCES}}", description: "מספר משפטים מקסימלי" },
+  { name: "{{SIGNATURE}}", description: "חתימה" },
+  { name: "{{EMOJI_INSTRUCTIONS}}", description: "הנחיות אימוג'ים" },
+  { name: "{{CUSTOM_INSTRUCTIONS}}", description: "הנחיות ספציפיות לדירוג" },
+];
 
 interface BusinessConfigFormProps {
   initialConfig: BusinessConfig;
@@ -25,10 +41,6 @@ interface BusinessConfigFormProps {
   loading?: boolean;
 }
 
-/**
- * Business Configuration Form
- * Complete form for editing business AI configuration
- */
 export default function BusinessConfigForm({
   initialConfig,
   onSave,
@@ -36,6 +48,7 @@ export default function BusinessConfigForm({
 }: BusinessConfigFormProps) {
   const [config, setConfig] = useState<BusinessConfig>(initialConfig);
   const [saving, setSaving] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,18 +71,58 @@ export default function BusinessConfigForm({
     }));
   };
 
+  const insertVariable = (variable: string) => {
+    if (!textareaRef.current) return;
+
+    const textarea = textareaRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+
+    const newText = text.substring(0, start) + variable + text.substring(end);
+    setConfig({ ...config, promptTemplate: newText });
+
+    setTimeout(() => {
+      textarea.selectionStart = textarea.selectionEnd = start + variable.length;
+      textarea.focus();
+    }, 0);
+  };
+
+  const handleResetTemplate = () => {
+    if (confirm("האם אתה בטוח שברצונך לאפס את התבנית לברירת המחדל?")) {
+      setConfig({ ...config, promptTemplate: DEFAULT_PROMPT_TEMPLATE });
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* General Settings */}
       <Card>
         <CardHeader>
-          <CardTitle>הגדרות כלליות</CardTitle>
+          <CardTitle>פרטי עסק</CardTitle>
           <CardDescription>
-            הגדר את תיאור העסק וסגנון התשובות האוטומטיות
+            הגדר את פרטי הזהות של העסק לשימוש בתגובות AI
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Business Description */}
+          <div className="space-y-2">
+            <Label htmlFor="businessName">שם העסק (עקיפה)</Label>
+            <Input
+              id="businessName"
+              type="text"
+              value={config.businessName || ""}
+              onChange={(e) =>
+                setConfig({ ...config, businessName: e.target.value })
+              }
+              placeholder="השאר ריק כדי להשתמש בשם מגוגל"
+              disabled={loading}
+            />
+            <p className="text-xs text-muted-foreground">
+              אופציונלי - שם עסק חלופי לשימוש בתגובות AI במקום שם Google Business
+            </p>
+          </div>
+
+          <Separator />
+
           <div className="space-y-2">
             <Label htmlFor="businessDescription">תיאור העסק</Label>
             <Textarea
@@ -89,7 +142,33 @@ export default function BusinessConfigForm({
 
           <Separator />
 
-          {/* Tone of Voice */}
+          <div className="space-y-2">
+            <Label htmlFor="businessPhone">טלפון ליצירת קשר (לביקורות שליליות)</Label>
+            <Input
+              id="businessPhone"
+              type="tel"
+              value={config.businessPhone || ""}
+              onChange={(e) =>
+                setConfig({ ...config, businessPhone: e.target.value })
+              }
+              placeholder="03-123-4567"
+              disabled={loading}
+            />
+            <p className="text-xs text-muted-foreground">
+              מספר טלפון שיופיע בתגובות לביקורות שליליות (1-2 כוכבים)
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>הגדרות תגובה AI</CardTitle>
+          <CardDescription>
+            הגדר את אופן יצירת התגובות האוטומטיות
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="toneOfVoice">סגנון תשובה</Label>
             <Select
@@ -114,7 +193,35 @@ export default function BusinessConfigForm({
             </p>
           </div>
 
-          {/* Use Emojis */}
+          <Separator />
+
+          <div className="space-y-2">
+            <Label htmlFor="languageInstructions">שפת תגובה</Label>
+            <Select
+              value={config.languageInstructions || "auto-detect"}
+              onValueChange={(value) =>
+                setConfig({ ...config, languageInstructions: value })
+              }
+              disabled={loading}
+            >
+              <SelectTrigger id="languageInstructions">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="auto-detect">זיהוי אוטומטי</SelectItem>
+                <SelectItem value="hebrew">עברית</SelectItem>
+                <SelectItem value="english">English</SelectItem>
+                <SelectItem value="russian">Русский</SelectItem>
+                <SelectItem value="arabic">العربية</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              בחר את השפה שבה AI ייצור תגובות. זיהוי אוטומטי מזהה את שפת הביקורת
+            </p>
+          </div>
+
+          <Separator />
+
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label htmlFor="useEmojis">השתמש באימוג&apos;י</Label>
@@ -134,54 +241,28 @@ export default function BusinessConfigForm({
 
           <Separator />
 
-          {/* Language Mode */}
           <div className="space-y-2">
-            <Label htmlFor="languageMode">שפת תשובה</Label>
-            <Select
-              value={config.languageMode}
-              onValueChange={(value: LanguageMode) =>
-                setConfig({ ...config, languageMode: value })
-              }
-              disabled={loading}
-            >
-              <SelectTrigger id="languageMode">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="hebrew">עברית</SelectItem>
-                <SelectItem value="english">אנגלית</SelectItem>
-                <SelectItem value="auto-detect">זיהוי אוטומטי</SelectItem>
-                <SelectItem value="match-reviewer">התאם למבקר</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              {getLanguageHelp(config.languageMode)}
-            </p>
-          </div>
-
-          <Separator />
-
-          {/* Business Phone */}
-          <div className="space-y-2">
-            <Label htmlFor="businessPhone">טלפון ליצירת קשר (לביקורות שליליות)</Label>
+            <Label htmlFor="allowedEmojis">אימוג&apos;ים מותרים</Label>
             <Input
-              id="businessPhone"
-              type="tel"
-              value={config.businessPhone || ""}
+              id="allowedEmojis"
+              type="text"
+              value={(config.allowedEmojis || []).join(" ")}
               onChange={(e) =>
-                setConfig({ ...config, businessPhone: e.target.value })
+                setConfig({
+                  ...config,
+                  allowedEmojis: e.target.value.split(" ").filter((e) => e.trim()),
+                })
               }
-              placeholder="03-123-4567"
-              disabled={loading}
+              placeholder="🥂 ✨ 🙏 💐"
+              disabled={loading || !config.useEmojis}
             />
             <p className="text-xs text-muted-foreground">
-              מספר טלפון שיופיע בתגובות לביקורות שליליות (1-2 כוכבים)
+              רשימת אימוג&apos;ים שה-AI יכול להשתמש בהם (הפרד ברווחים)
             </p>
           </div>
 
           <Separator />
 
-          {/* Max Sentences */}
           <div className="space-y-2">
             <Label htmlFor="maxSentences">מספר משפטים מקסימלי בתגובה</Label>
             <div className="flex items-center gap-4">
@@ -209,30 +290,6 @@ export default function BusinessConfigForm({
 
           <Separator />
 
-          {/* Allowed Emojis */}
-          <div className="space-y-2">
-            <Label htmlFor="allowedEmojis">אימוג&apos;ים מותרים</Label>
-            <Input
-              id="allowedEmojis"
-              type="text"
-              value={(config.allowedEmojis || []).join(" ")}
-              onChange={(e) =>
-                setConfig({
-                  ...config,
-                  allowedEmojis: e.target.value.split(" ").filter((e) => e.trim()),
-                })
-              }
-              placeholder="🥂 ✨ 🙏 💐"
-              disabled={loading || !config.useEmojis}
-            />
-            <p className="text-xs text-muted-foreground">
-              רשימת אימוג&apos;ים שה-AI יכול להשתמש בהם (הפרד ברווחים)
-            </p>
-          </div>
-
-          <Separator />
-
-          {/* Signature */}
           <div className="space-y-2">
             <Label htmlFor="signature">חתימה</Label>
             <Input
@@ -252,7 +309,72 @@ export default function BusinessConfigForm({
         </CardContent>
       </Card>
 
-      {/* Automation Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle>תבנית הנחיה מותאמת אישית</CardTitle>
+          <CardDescription>
+            עצב את ההנחיה שתשלח ל-AI. השתמש במשתנים כדי להכניס מידע דינמי.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label className="text-sm font-medium mb-2">משתנים זמינים (לחץ להוספה)</Label>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {AVAILABLE_VARIABLES.map((variable) => (
+                <Badge
+                  key={variable.name}
+                  variant="outline"
+                  className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                  onClick={() => insertVariable(variable.name)}
+                  title={variable.description}
+                >
+                  {variable.name}
+                </Badge>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              לחץ על משתנה כדי להוסיף אותו במיקום הסמן
+            </p>
+          </div>
+
+          <Separator />
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <Label htmlFor="prompt-template">תבנית ההנחיה</Label>
+              <span className="text-xs text-muted-foreground">
+                {config.promptTemplate.length.toLocaleString("he-IL")} תווים
+              </span>
+            </div>
+            <Textarea
+              ref={textareaRef}
+              id="prompt-template"
+              value={config.promptTemplate}
+              onChange={(e) => setConfig({ ...config, promptTemplate: e.target.value })}
+              className="min-h-[400px] font-mono text-sm"
+              dir="rtl"
+              disabled={loading}
+            />
+            <p className="text-xs text-muted-foreground mt-2">
+              המערכת תחליף את המשתנים במידע האמיתי בעת יצירת התגובה
+            </p>
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleResetTemplate}
+              disabled={loading}
+              className="gap-2"
+            >
+              <RotateCcw className="h-4 w-4" />
+              אפס לברירת מחדל
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>הגדרות אוטומציה</CardTitle>
@@ -261,7 +383,6 @@ export default function BusinessConfigForm({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Auto Post */}
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label htmlFor="autoPost">פרסום אוטומטי</Label>
@@ -279,7 +400,6 @@ export default function BusinessConfigForm({
             />
           </div>
 
-          {/* Require Approval */}
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label htmlFor="requireApproval">דרוש אישור</Label>
@@ -301,14 +421,13 @@ export default function BusinessConfigForm({
             <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
                 <strong>אזהרה:</strong> עם פרסום אוטומטי ללא אישור, תשובות יפורסמו מיד לאחר יצירתן.
-                וודא שההגדרות שלך מדוי קות.
+                וודא שההגדרות שלך מדויקות.
               </p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Star-Specific Configuration */}
       <Card>
         <CardHeader>
           <CardTitle>התאמה אישית לפי דירוג</CardTitle>
@@ -325,7 +444,6 @@ export default function BusinessConfigForm({
         </CardContent>
       </Card>
 
-      {/* Submit Button */}
       <div className="flex justify-end gap-3">
         <Button type="submit" disabled={saving || loading} size="lg">
           {saving && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
@@ -335,14 +453,4 @@ export default function BusinessConfigForm({
       </div>
     </form>
   );
-}
-
-function getLanguageHelp(mode: LanguageMode): string {
-  const help: Record<LanguageMode, string> = {
-    hebrew: "כל התשובות יהיו בעברית",
-    english: "כל התשובות יהיו באנגלית",
-    "auto-detect": "זהה את שפת הביקורת אוטומטית והשב באותה שפה",
-    "match-reviewer": "התאם את שפת התשובה לשפה שבה כתב המבקר",
-  };
-  return help[mode];
 }
