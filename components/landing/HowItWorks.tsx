@@ -1,5 +1,7 @@
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Link2, Settings, MessageSquare, CheckCircle } from "lucide-react";
+import Link from "next/link";
 
 const steps = [
   {
@@ -34,9 +36,8 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-20 sm:py-32 bg-secondary/20">
+    <section id="how-it-works" className="bg-secondary/5">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
             איך זה עובד?
@@ -46,7 +47,6 @@ export function HowItWorks() {
           </p>
         </div>
 
-        {/* Steps */}
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {steps.map((step, index) => {
@@ -56,12 +56,10 @@ export function HowItWorks() {
                   key={index}
                   className="p-8 relative overflow-hidden hover:shadow-lg transition-shadow duration-300"
                 >
-                  {/* Step Number */}
                   <div className="absolute top-4 left-4 text-6xl font-bold text-primary/10">
                     {step.number}
                   </div>
 
-                  {/* Content */}
                   <div className="relative">
                     <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
                       <Icon className="h-7 w-7 text-primary" />
@@ -79,17 +77,15 @@ export function HowItWorks() {
           </div>
         </div>
 
-        {/* Bottom CTA */}
         <div className="text-center mt-16">
           <p className="text-lg text-muted-foreground mb-6">
             מוכנים להתחיל? זה לוקח פחות מ-5 דקות
           </p>
-          <a
-            href="/register"
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8"
-          >
-            התחל עכשיו בחינם
-          </a>
+          <Link href="/register">
+            <Button size="lg" className="text-lg px-8">
+              התחל עכשיו בחינם
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

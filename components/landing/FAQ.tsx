@@ -55,9 +55,8 @@ export function FAQ() {
   };
 
   return (
-    <section id="faq" className="py-20 sm:py-32 bg-secondary/20">
+    <section id="faq" className="bg-secondary/5">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
             שאלות נפוצות
@@ -67,7 +66,6 @@ export function FAQ() {
           </p>
         </div>
 
-        {/* FAQ Items */}
         <div className="max-w-3xl mx-auto space-y-4">
           {faqs.map((faq, index) => (
             <Card key={index} className="overflow-hidden">
@@ -95,7 +93,6 @@ export function FAQ() {
           ))}
         </div>
 
-        {/* Contact CTA */}
         <div className="text-center mt-12">
           <p className="text-muted-foreground mb-4">
             לא מצאתם את מה שחיפשתם?

@@ -1,6 +1,5 @@
 import { Header } from "@/components/landing/Header";
 import { Hero } from "@/components/landing/Hero";
-import { Features } from "@/components/landing/Features";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { Pricing } from "@/components/landing/Pricing";
 import { FAQ } from "@/components/landing/FAQ";
@@ -10,9 +9,8 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow">
+      <main className="flex-grow pt-10 space-y-20 sm:space-y-32">
         <Hero />
-        <Features />
         <HowItWorks />
         <Pricing />
         <FAQ />

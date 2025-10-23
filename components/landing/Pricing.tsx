@@ -79,9 +79,8 @@ const plans = [
 
 export function Pricing() {
   return (
-    <section id="pricing" className="py-20 sm:py-32 bg-background">
+    <section id="pricing" className="bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
             תוכניות מחיר שמתאימות לכם
@@ -91,7 +90,6 @@ export function Pricing() {
           </p>
         </div>
 
-        {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {plans.map((plan, index) => (
             <Card
@@ -108,7 +106,6 @@ export function Pricing() {
                 </div>
               )}
 
-              {/* Plan Header */}
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-foreground mb-2">
                   {plan.name}
@@ -126,7 +123,6 @@ export function Pricing() {
                 </div>
               </div>
 
-              {/* Features */}
               <ul className="space-y-3 mb-8 flex-grow">
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-start gap-2">
@@ -136,7 +132,6 @@ export function Pricing() {
                 ))}
               </ul>
 
-              {/* CTA */}
               <Link href="/register" className="w-full">
                 <Button
                   className="w-full"
@@ -149,7 +144,6 @@ export function Pricing() {
           ))}
         </div>
 
-        {/* Bottom Note */}
         <div className="text-center mt-12">
           <p className="text-sm text-muted-foreground">
             כל התוכניות כוללות ניסיון חינם ל-14 יום. ללא צורך בכרטיס אשראי.
