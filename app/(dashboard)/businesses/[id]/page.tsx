@@ -2,14 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { getBusiness, deleteBusiness, disconnectBusiness } from "@/lib/firebase/businesses";
+import {
+  getBusiness,
+  deleteBusiness,
+  disconnectBusiness,
+} from "@/lib/firebase/businesses";
 import { Business } from "@/types/database";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { BackButton } from "@/components/ui/back-button";
 import {
-  ArrowRight,
   MapPin,
   Settings,
   Trash2,
@@ -69,7 +79,9 @@ export default function BusinessDetailsPage() {
 
   // Handle delete
   const handleDelete = async () => {
-    if (!confirm("האם אתה בטוח שברצונך למחוק עסק זה? פעולה זו לא ניתנת לביטול.")) {
+    if (
+      !confirm("האם אתה בטוח שברצונך למחוק עסק זה? פעולה זו לא ניתנת לביטול.")
+    ) {
       return;
     }
 
@@ -114,18 +126,15 @@ export default function BusinessDetailsPage() {
   }
 
   const connectedDate = business.connectedAt
-    ? format(business.connectedAt.toDate(), "d MMMM yyyy בשעה HH:mm", { locale: he })
+    ? format(business.connectedAt.toDate(), "d MMMM yyyy בשעה HH:mm", {
+        locale: he,
+      })
     : "";
 
   return (
     <PageContainer>
       <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href="/businesses">
-            <ArrowRight className="ml-2 h-4 w-4" />
-            חזור
-          </Link>
-        </Button>
+        <BackButton href="/businesses" />
       </div>
 
       <PageHeader
@@ -187,9 +196,7 @@ export default function BusinessDetailsPage() {
       <Card>
         <CardHeader>
           <CardTitle>הגדרות AI</CardTitle>
-          <CardDescription>
-            כך ה-AI יגיב לביקורות על העסק שלך
-          </CardDescription>
+          <CardDescription>כך ה-AI יגיב לביקורות על העסק שלך</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Business Description */}

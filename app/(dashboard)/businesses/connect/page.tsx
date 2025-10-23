@@ -5,14 +5,23 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { createBusiness, checkBusinessLimit } from "@/lib/firebase/businesses";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowRight, Building2, Loader2, AlertCircle } from "lucide-react";
-import Link from "next/link";
-import BusinessSelector, { GoogleLocationData } from "@/components/dashboard/BusinessSelector";
+import { BackButton } from "@/components/ui/back-button";
+import { Building2, AlertCircle } from "lucide-react";
+import BusinessSelector, {
+  GoogleLocationData,
+} from "@/components/dashboard/BusinessSelector";
 import { toast } from "sonner";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { Loading } from "@/components/ui/loading";
 
 /**
  * Connect Business Page
@@ -25,7 +34,8 @@ export default function ConnectBusinessPage() {
 
   const [step, setStep] = useState<"auth" | "select">("auth");
   const [locations, setLocations] = useState<GoogleLocationData[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<GoogleLocationData | null>(null);
+  const [selectedLocation, setSelectedLocation] =
+    useState<GoogleLocationData | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingLocations, setLoadingLocations] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +55,10 @@ export default function ConnectBusinessPage() {
       if (!response.ok) {
         // Handle rate limit errors specifically
         if (response.status === 429) {
-          throw new Error(data.error || "Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב.");
+          throw new Error(
+            data.error ||
+              "Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב."
+          );
         }
         throw new Error(data.error || "Failed to load locations");
       }
@@ -57,7 +70,8 @@ export default function ConnectBusinessPage() {
       }
     } catch (err) {
       console.error("Error loading locations:", err);
-      const errorMessage = err instanceof Error ? err.message : "לא ניתן לטעון מיקומים";
+      const errorMessage =
+        err instanceof Error ? err.message : "לא ניתן לטעון מיקומים";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -92,7 +106,9 @@ export default function ConnectBusinessPage() {
       // Check if user can add more businesses
       const canAdd = await checkBusinessLimit(user.uid);
       if (!canAdd) {
-        setError("הגעת למגבלת העסקים בחבילת המינוי שלך. שדרג כדי להוסיף עסקים נוספים.");
+        setError(
+          "הגעת למגבלת העסקים בחבילת המינוי שלך. שדרג כדי להוסיף עסקים נוספים."
+        );
         return;
       }
 
@@ -134,7 +150,8 @@ export default function ConnectBusinessPage() {
       router.push("/businesses");
     } catch (err) {
       console.error("Error connecting business:", err);
-      const errorMessage = err instanceof Error ? err.message : "לא ניתן לחבר את העסק";
+      const errorMessage =
+        err instanceof Error ? err.message : "לא ניתן לחבר את העסק";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -145,7 +162,7 @@ export default function ConnectBusinessPage() {
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loading size="md" />
       </div>
     );
   }
@@ -153,12 +170,7 @@ export default function ConnectBusinessPage() {
   return (
     <PageContainer maxWidth="4xl">
       <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href="/businesses">
-            <ArrowRight className="ml-2 h-4 w-4" />
-            חזור
-          </Link>
-        </Button>
+        <BackButton href="/businesses" />
       </div>
 
       <PageHeader
@@ -180,7 +192,8 @@ export default function ConnectBusinessPage() {
           <CardHeader>
             <CardTitle>התחבר ל-Google Business Profile</CardTitle>
             <CardDescription>
-              אנחנו צריכים הרשאה כדי לגשת לחשבון Google Business Profile שלך ולנהל תשובות לביקורות
+              אנחנו צריכים הרשאה כדי לגשת לחשבון Google Business Profile שלך
+              ולנהל תשובות לביקורות
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -208,7 +221,7 @@ export default function ConnectBusinessPage() {
               size="lg"
               className="w-full"
             >
-              {loading && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
+              {loading && <Loading size="sm" />}
               התחבר עם Google
             </Button>
           </CardContent>
@@ -230,7 +243,7 @@ export default function ConnectBusinessPage() {
                 <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                 <p className="text-muted-foreground mb-4">{error}</p>
                 <Button onClick={loadLocations} disabled={loadingLocations}>
-                  {loadingLocations && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                  {loadingLocations && <Loading size="sm" />}
                   נסה שוב
                 </Button>
               </div>
@@ -253,7 +266,7 @@ export default function ConnectBusinessPage() {
                   size="lg"
                   className="flex-1"
                 >
-                  {connecting && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
+                  {connecting && <Loading size="sm" />}
                   חבר עסק זה
                 </Button>
                 <Button

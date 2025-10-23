@@ -90,7 +90,9 @@ export async function generateReplyWithRetry(
 
       // Wait before retrying (exponential backoff)
       if (attempt < maxRetries - 1) {
-        await new Promise((resolve) => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+        await new Promise((resolve) =>
+          setTimeout(resolve, Math.pow(2, attempt) * 1000)
+        );
       }
     }
   }
@@ -104,7 +106,10 @@ export async function generateReplyWithRetry(
  * @param maxSentences - Maximum allowed sentences
  * @returns True if valid, false otherwise
  */
-export function validateReply(reply: string, maxSentences: number = 2): boolean {
+export function validateReply(
+  reply: string,
+  maxSentences: number = 2
+): boolean {
   // Check if reply is not empty
   if (!reply || reply.trim().length === 0) {
     return false;
@@ -113,7 +118,9 @@ export function validateReply(reply: string, maxSentences: number = 2): boolean 
   // Check sentence count (rough estimation)
   const sentences = reply.split(/[.!?]+/).filter((s) => s.trim().length > 0);
   if (sentences.length > maxSentences) {
-    console.warn(`Reply has ${sentences.length} sentences, max is ${maxSentences}`);
+    console.warn(
+      `Reply has ${sentences.length} sentences, max is ${maxSentences}`
+    );
     return false;
   }
 

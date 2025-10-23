@@ -2,12 +2,26 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { getUserBusinesses, deleteBusiness, disconnectBusiness } from "@/lib/firebase/businesses";
+import {
+  getUserBusinesses,
+  deleteBusiness,
+  disconnectBusiness,
+} from "@/lib/firebase/businesses";
 import { getUserSubscriptionTier } from "@/lib/firebase/users";
-import { Business, SubscriptionTier, SUBSCRIPTION_LIMITS } from "@/types/database";
+import {
+  Business,
+  SubscriptionTier,
+  SUBSCRIPTION_LIMITS,
+} from "@/types/database";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Loader2 } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import BusinessCard from "@/components/dashboard/BusinessCard";
 import EmptyBusinessState from "@/components/dashboard/EmptyBusinessState";
@@ -15,6 +29,7 @@ import BusinessLimitBanner from "@/components/dashboard/BusinessLimitBanner";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { toast } from "sonner";
+import { Loading } from "@/components/ui/loading";
 
 /**
  * Business Management Page
@@ -24,7 +39,8 @@ export default function BusinessesPage() {
   const { user, loading: authLoading } = useAuth();
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
-  const [subscriptionTier, setSubscriptionTier] = useState<SubscriptionTier>("free");
+  const [subscriptionTier, setSubscriptionTier] =
+    useState<SubscriptionTier>("free");
 
   // Load businesses and subscription info
   useEffect(() => {
@@ -86,12 +102,13 @@ export default function BusinessesPage() {
   };
 
   const maxBusinesses = SUBSCRIPTION_LIMITS[subscriptionTier].businesses;
-  const canAddMore = maxBusinesses === Infinity || businesses.length < maxBusinesses;
+  const canAddMore =
+    maxBusinesses === Infinity || businesses.length < maxBusinesses;
 
   if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loading size="md" />
       </div>
     );
   }
@@ -155,7 +172,9 @@ export default function BusinessesPage() {
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
                 <div className="text-2xl font-bold">{businesses.length}</div>
-                <div className="text-sm text-muted-foreground">עסקים מחוברים</div>
+                <div className="text-sm text-muted-foreground">
+                  עסקים מחוברים
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">
@@ -167,7 +186,9 @@ export default function BusinessesPage() {
                 <div className="text-2xl font-bold">
                   {businesses.filter((b) => b.config.autoPost).length}
                 </div>
-                <div className="text-sm text-muted-foreground">פרסום אוטומטי</div>
+                <div className="text-sm text-muted-foreground">
+                  פרסום אוטומטי
+                </div>
               </div>
             </div>
           </CardContent>

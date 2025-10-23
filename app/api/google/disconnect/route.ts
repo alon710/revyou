@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUser, removeUserGoogleRefreshToken } from "@/lib/firebase/admin-users";
+import {
+  getUser,
+  removeUserGoogleRefreshToken,
+} from "@/lib/firebase/admin-users";
 import { decryptToken, revokeToken } from "@/lib/google/oauth";
 
 /**
@@ -13,19 +16,13 @@ export async function POST(request: NextRequest) {
     const { userId } = body;
 
     if (!userId) {
-      return NextResponse.json(
-        { error: "חסר מזהה משתמש" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "חסר מזהה משתמש" }, { status: 400 });
     }
 
     // Get user data
     const user = await getUser(userId);
     if (!user) {
-      return NextResponse.json(
-        { error: "משתמש לא נמצא" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "משתמש לא נמצא" }, { status: 404 });
     }
 
     // If user has a refresh token, revoke it

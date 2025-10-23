@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/firebase/admin-users";
 import { decryptToken } from "@/lib/google/oauth";
-import { getAllLocations, formatAddress, extractLocationId, extractAccountId } from "@/lib/google/business-profile";
+import {
+  getAllLocations,
+  formatAddress,
+  extractLocationId,
+  extractAccountId,
+} from "@/lib/google/business-profile";
 
 /**
  * GET /api/google/locations
@@ -15,19 +20,13 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get("userId");
 
     if (!userId) {
-      return NextResponse.json(
-        { error: "חסר מזהה משתמש" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "חסר מזהה משתמש" }, { status: 400 });
     }
 
     // Get user data to retrieve refresh token
     const user = await getUser(userId);
     if (!user) {
-      return NextResponse.json(
-        { error: "משתמש לא נמצא" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "משתמש לא נמצא" }, { status: 404 });
     }
 
     if (!user.googleRefreshToken) {
@@ -60,19 +59,23 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching locations:", error);
 
     // Extract error message and determine appropriate status code
-    const errorMessage = error instanceof Error ? error.message : "לא ניתן לטעון את המיקומים";
+    const errorMessage =
+      error instanceof Error ? error.message : "לא ניתן לטעון את המיקומים";
 
     // Check if it's a rate limit error
     let statusCode = 500;
-    if (errorMessage.includes("מגביל את מספר הבקשות") || errorMessage.includes("rate limit")) {
+    if (
+      errorMessage.includes("מגביל את מספר הבקשות") ||
+      errorMessage.includes("rate limit")
+    ) {
       statusCode = 429;
-    } else if (errorMessage.includes("חסרות הרשאות") || errorMessage.includes("permission")) {
+    } else if (
+      errorMessage.includes("חסרות הרשאות") ||
+      errorMessage.includes("permission")
+    ) {
       statusCode = 403;
     }
 
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: statusCode }
-    );
+    return NextResponse.json({ error: errorMessage }, { status: statusCode });
   }
 }

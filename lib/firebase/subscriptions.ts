@@ -31,7 +31,9 @@ import {
  * @param userId - User ID
  * @returns Active subscription or null if none found
  */
-export async function getUserSubscription(userId: string): Promise<Subscription | null> {
+export async function getUserSubscription(
+  userId: string
+): Promise<Subscription | null> {
   if (!db) {
     console.error("Firestore not initialized");
     return null;
@@ -68,7 +70,9 @@ export async function getUserSubscription(userId: string): Promise<Subscription 
  * @param subscriptionId - Subscription ID
  * @returns Subscription data or null if not found
  */
-export async function getSubscription(subscriptionId: string): Promise<Subscription | null> {
+export async function getSubscription(
+  subscriptionId: string
+): Promise<Subscription | null> {
   if (!db) {
     console.error("Firestore not initialized");
     return null;
@@ -80,7 +84,10 @@ export async function getSubscription(subscriptionId: string): Promise<Subscript
 
     if (subscriptionSnap.exists()) {
       const data = subscriptionSnap.data();
-      const validated = subscriptionSchema.parse({ id: subscriptionSnap.id, ...data });
+      const validated = subscriptionSchema.parse({
+        id: subscriptionSnap.id,
+        ...data,
+      });
       return validated as Subscription;
     }
 
@@ -232,7 +239,9 @@ export async function updateSubscription(
  * @param subscriptionId - Subscription ID
  * @returns Updated subscription
  */
-export async function cancelSubscription(subscriptionId: string): Promise<Subscription> {
+export async function cancelSubscription(
+  subscriptionId: string
+): Promise<Subscription> {
   if (!db) {
     throw new Error("Firestore not initialized");
   }
@@ -254,7 +263,9 @@ export async function cancelSubscription(subscriptionId: string): Promise<Subscr
  * @param subscriptionId - Subscription ID
  * @returns Updated subscription
  */
-export async function reactivateSubscription(subscriptionId: string): Promise<Subscription> {
+export async function reactivateSubscription(
+  subscriptionId: string
+): Promise<Subscription> {
   if (!db) {
     throw new Error("Firestore not initialized");
   }
@@ -291,7 +302,9 @@ export async function hasActiveSubscription(userId: string): Promise<boolean> {
  * @param userId - User ID
  * @returns Array of subscriptions
  */
-export async function getUserSubscriptions(userId: string): Promise<Subscription[]> {
+export async function getUserSubscriptions(
+  userId: string
+): Promise<Subscription[]> {
   if (!db) {
     console.error("Firestore not initialized");
     return [];
@@ -330,10 +343,14 @@ export async function getUserSubscriptions(userId: string): Promise<Subscription
  * @param subscription - Subscription object
  * @returns True if expiring soon
  */
-export function isSubscriptionExpiringSoon(subscription: Subscription): boolean {
+export function isSubscriptionExpiringSoon(
+  subscription: Subscription
+): boolean {
   const now = new Date();
   const periodEnd = subscription.currentPeriodEnd.toDate();
-  const daysUntilExpiry = Math.ceil((periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  const daysUntilExpiry = Math.ceil(
+    (periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+  );
 
   return daysUntilExpiry <= 7 && daysUntilExpiry > 0;
 }
@@ -358,5 +375,7 @@ export function isSubscriptionExpired(subscription: Subscription): boolean {
 export function getDaysRemaining(subscription: Subscription): number {
   const now = new Date();
   const periodEnd = subscription.currentPeriodEnd.toDate();
-  return Math.ceil((periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  return Math.ceil(
+    (periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+  );
 }

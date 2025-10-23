@@ -1,7 +1,17 @@
-import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "./config";
 import { User, SubscriptionTier } from "@/types/database";
-import { userSchema, userUpdateSchema, UserUpdateInput } from "@/lib/validation/database";
+import {
+  userSchema,
+  userUpdateSchema,
+  UserUpdateInput,
+} from "@/lib/validation/database";
 
 /**
  * User Database Operations
@@ -56,7 +66,9 @@ export async function createUser(
   }
 
   try {
-    const userData: Omit<User, "createdAt"> & { createdAt: ReturnType<typeof serverTimestamp> } = {
+    const userData: Omit<User, "createdAt"> & {
+      createdAt: ReturnType<typeof serverTimestamp>;
+    } = {
       uid,
       email,
       displayName,
@@ -69,7 +81,7 @@ export async function createUser(
     await setDoc(userRef, userData);
 
     // Return the created user
-    return await getUser(uid) as User;
+    return (await getUser(uid)) as User;
   } catch (error) {
     console.error("Error creating user:", error);
     throw new Error("לא ניתן ליצור משתמש חדש");
@@ -82,7 +94,10 @@ export async function createUser(
  * @param data - Partial user data to update
  * @returns Updated user data
  */
-export async function updateUser(uid: string, data: UserUpdateInput): Promise<User> {
+export async function updateUser(
+  uid: string,
+  data: UserUpdateInput
+): Promise<User> {
   if (!db) {
     throw new Error("Firestore not initialized");
   }
@@ -95,7 +110,7 @@ export async function updateUser(uid: string, data: UserUpdateInput): Promise<Us
     await updateDoc(userRef, validatedData);
 
     // Return the updated user
-    return await getUser(uid) as User;
+    return (await getUser(uid)) as User;
   } catch (error) {
     console.error("Error updating user:", error);
     throw new Error("לא ניתן לעדכן את פרטי המשתמש");
@@ -107,7 +122,9 @@ export async function updateUser(uid: string, data: UserUpdateInput): Promise<Us
  * @param uid - User ID
  * @returns Subscription tier or 'free' as default
  */
-export async function getUserSubscriptionTier(uid: string): Promise<SubscriptionTier> {
+export async function getUserSubscriptionTier(
+  uid: string
+): Promise<SubscriptionTier> {
   try {
     const user = await getUser(uid);
     return user?.subscriptionTier || "free";
@@ -242,10 +259,12 @@ export async function deleteUserAccount(uid: string): Promise<void> {
     const userRef = doc(db, "users", uid);
     await updateDoc(userRef, {
       deletedAt: serverTimestamp(),
-      email: `deleted_${uid}@deleted.com` // Anonymize
+      email: `deleted_${uid}@deleted.com`, // Anonymize
     });
 
-    console.warn("User marked for deletion. Implement cascading deletion in Cloud Function");
+    console.warn(
+      "User marked for deletion. Implement cascading deletion in Cloud Function"
+    );
   } catch (error) {
     console.error("Error deleting user account:", error);
     throw new Error("לא ניתן למחוק את החשבון");

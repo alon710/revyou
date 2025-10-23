@@ -14,7 +14,12 @@ const sizeMap = {
   lg: "h-12 w-12",
 };
 
-export function Loading({ className, size = "md", fullScreen = false, text }: LoadingProps) {
+export function Loading({
+  className,
+  size = "md",
+  fullScreen = false,
+  text,
+}: LoadingProps) {
   const spinner = (
     <div className="flex flex-col items-center gap-2">
       <Loader2

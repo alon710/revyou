@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
 import {
   signInWithPopup,
   signOut as firebaseSignOut,
   GoogleAuthProvider,
   onAuthStateChanged,
-  User
-} from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db } from './config';
-import { useState, useEffect } from 'react';
+  User,
+} from "firebase/auth";
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "./config";
+import { useState, useEffect } from "react";
 
 // Initialize Google Auth Provider
 const googleProvider = new GoogleAuthProvider();
-googleProvider.addScope('https://www.googleapis.com/auth/userinfo.email');
-googleProvider.addScope('https://www.googleapis.com/auth/userinfo.profile');
+googleProvider.addScope("https://www.googleapis.com/auth/userinfo.email");
+googleProvider.addScope("https://www.googleapis.com/auth/userinfo.profile");
 
 /**
  * Sign in with Google OAuth
@@ -22,7 +22,10 @@ googleProvider.addScope('https://www.googleapis.com/auth/userinfo.profile');
  */
 export async function signInWithGoogle() {
   if (!auth || !db) {
-    return { user: null, error: 'Firebase לא מוגדר. אנא בדוק את הגדרות הפרויקט.' };
+    return {
+      user: null,
+      error: "Firebase לא מוגדר. אנא בדוק את הגדרות הפרויקט.",
+    };
   }
 
   try {
@@ -30,7 +33,7 @@ export async function signInWithGoogle() {
     const user = result.user;
 
     // Check if user document exists in Firestore
-    const userDocRef = doc(db, 'users', user.uid);
+    const userDocRef = doc(db, "users", user.uid);
     const userDoc = await getDoc(userDocRef);
 
     // Create user document if it doesn't exist
@@ -41,7 +44,7 @@ export async function signInWithGoogle() {
         displayName: user.displayName,
         photoURL: user.photoURL,
         createdAt: serverTimestamp(),
-        subscriptionTier: 'free',
+        subscriptionTier: "free",
         stripeCustomerId: null,
         googleRefreshToken: null,
       });
@@ -49,19 +52,19 @@ export async function signInWithGoogle() {
 
     return { user, error: null };
   } catch (error) {
-    console.error('Error signing in with Google:', error);
+    console.error("Error signing in with Google:", error);
 
     // Hebrew error messages
-    let message = 'אירעה שגיאה בהתחברות';
+    let message = "אירעה שגיאה בהתחברות";
 
-    if (error && typeof error === 'object' && 'code' in error) {
+    if (error && typeof error === "object" && "code" in error) {
       const errorCode = error.code;
-      if (errorCode === 'auth/popup-closed-by-user') {
-        message = 'חלון ההתחברות נסגר';
-      } else if (errorCode === 'auth/cancelled-popup-request') {
-        message = 'בקשת ההתחברות בוטלה';
-      } else if (errorCode === 'auth/network-request-failed') {
-        message = 'בעיית רשת - נסה שוב';
+      if (errorCode === "auth/popup-closed-by-user") {
+        message = "חלון ההתחברות נסגר";
+      } else if (errorCode === "auth/cancelled-popup-request") {
+        message = "בקשת ההתחברות בוטלה";
+      } else if (errorCode === "auth/network-request-failed") {
+        message = "בעיית רשת - נסה שוב";
       }
     }
 
@@ -74,15 +77,15 @@ export async function signInWithGoogle() {
  */
 export async function signOut() {
   if (!auth) {
-    return { error: 'Firebase לא מוגדר' };
+    return { error: "Firebase לא מוגדר" };
   }
 
   try {
     await firebaseSignOut(auth);
     return { error: null };
   } catch (error) {
-    console.error('Error signing out:', error);
-    return { error: 'אירעה שגיאה בהתנתקות' };
+    console.error("Error signing out:", error);
+    return { error: "אירעה שגיאה בהתנתקות" };
   }
 }
 
@@ -99,7 +102,7 @@ export function useAuth() {
     // Check if auth is available
     if (!auth) {
       setLoading(false);
-      setError('Firebase לא מוגדר');
+      setError("Firebase לא מוגדר");
       return;
     }
 
@@ -112,8 +115,8 @@ export function useAuth() {
         setError(null);
       },
       (error) => {
-        console.error('Auth state change error:', error);
-        setError('אירעה שגיאה בטעינת המשתמש');
+        console.error("Auth state change error:", error);
+        setError("אירעה שגיאה בטעינת המשתמש");
         setLoading(false);
       }
     );

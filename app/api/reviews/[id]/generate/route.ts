@@ -69,7 +69,8 @@ export async function POST(
     console.error("Error generating reply:", error);
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Failed to generate reply",
+        error:
+          error instanceof Error ? error.message : "Failed to generate reply",
       },
       { status: 500 }
     );

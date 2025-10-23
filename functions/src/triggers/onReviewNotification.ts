@@ -50,12 +50,10 @@ export const onReviewNotification = functions.onRequest(
       logger.info("Received review notification:", notification);
 
       // Extract location and review IDs from resource names
-      const locationMatch = notification.locationResourceName.match(
-        /locations\/([^/]+)/
-      );
-      const reviewMatch = notification.reviewResourceName.match(
-        /reviews\/([^/]+)/
-      );
+      const locationMatch =
+        notification.locationResourceName.match(/locations\/([^/]+)/);
+      const reviewMatch =
+        notification.reviewResourceName.match(/reviews\/([^/]+)/);
 
       if (!locationMatch || !reviewMatch) {
         logger.error("Invalid resource names in notification");

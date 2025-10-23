@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 /**
  * Simplified middleware - Client-side auth handling is done in AuthContext
@@ -24,6 +24,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public files (images, etc.)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|$).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|$).*)",
   ],
 };

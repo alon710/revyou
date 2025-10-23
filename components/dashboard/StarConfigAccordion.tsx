@@ -33,7 +33,11 @@ export default function StarConfigAccordion({
   onChange,
   disabled = false,
 }: StarConfigAccordionProps) {
-  const starRatings: Array<{ value: 1 | 2 | 3 | 4 | 5; label: string; color: string }> = [
+  const starRatings: Array<{
+    value: 1 | 2 | 3 | 4 | 5;
+    label: string;
+    color: string;
+  }> = [
     { value: 5, label: "5 כוכבים - מצוין", color: "text-green-500" },
     { value: 4, label: "4 כוכבים - טוב", color: "text-lime-500" },
     { value: 3, label: "3 כוכבים - בינוני", color: "text-yellow-500" },
@@ -71,10 +75,14 @@ export default function StarConfigAccordion({
                   {renderStars(value, color)}
                   <span className="font-medium">{label}</span>
                   {!config.enabled && (
-                    <span className="text-sm text-muted-foreground">(מושבת)</span>
+                    <span className="text-sm text-muted-foreground">
+                      (מושבת)
+                    </span>
                   )}
                   {config.customInstructions && config.enabled && (
-                    <span className="text-sm text-muted-foreground">(מותאם אישית)</span>
+                    <span className="text-sm text-muted-foreground">
+                      (מותאם אישית)
+                    </span>
                   )}
                 </div>
               </AccordionTrigger>

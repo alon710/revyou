@@ -12,12 +12,11 @@ export default function EmptyBusinessState() {
         <Building2 className="h-12 w-12 text-muted-foreground" />
       </div>
 
-      <h3 className="text-lg font-semibold mb-2">
-        עדיין לא חיברת עסקים
-      </h3>
+      <h3 className="text-lg font-semibold mb-2">עדיין לא חיברת עסקים</h3>
 
       <p className="text-muted-foreground mb-6 max-w-md">
-        חבר את חשבון Google Business Profile שלך כדי להתחיל לקבל תשובות AI אוטומטיות לביקורות הלקוחות שלך
+        חבר את חשבון Google Business Profile שלך כדי להתחיל לקבל תשובות AI
+        אוטומטיות לביקורות הלקוחות שלך
       </p>
 
       <Button asChild size="lg">

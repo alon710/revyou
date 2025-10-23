@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { BusinessProvider } from '@/contexts/BusinessContext';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { MobileMenu } from '@/components/layout/MobileMenu';
-import { Loading } from '@/components/ui/loading';
-import { Logo } from '@/components/ui/Logo';
-import { Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { BusinessProvider } from "@/contexts/BusinessContext";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { MobileMenu } from "@/components/layout/MobileMenu";
+import { Loading } from "@/components/ui/loading";
+import { Logo } from "@/components/ui/Logo";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardLayout({
   children,
@@ -20,19 +20,16 @@ export default function DashboardLayout({
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login?from=' + encodeURIComponent(window.location.pathname));
+      router.push("/login");
     }
   }, [user, loading, router]);
 
-  
   if (loading) {
     return <Loading fullScreen />;
   }
 
-  
   if (!user) {
     return null;
   }
@@ -52,7 +49,6 @@ export default function DashboardLayout({
 
         {/* Main Content Area */}
         <div className="flex flex-1 flex-col overflow-hidden">
-          
           {/* Mobile Header - Only visible on mobile */}
           <header className="flex items-center justify-between gap-4 border-b bg-white px-4 py-3 md:hidden">
             <Button
@@ -63,7 +59,7 @@ export default function DashboardLayout({
             >
               <Menu className="h-6 w-6" />
             </Button>
-            <Logo href='businesses' />
+            <Logo href="businesses" />
           </header>
 
           {/* Page Content */}

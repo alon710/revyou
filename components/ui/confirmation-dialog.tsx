@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
+import { Loading } from "@/components/ui/loading";
 
 export interface ConfirmationDialogProps {
   open: boolean;
@@ -74,7 +75,8 @@ export function ConfirmationDialog({
     onOpenChange(false);
   };
 
-  const isConfirmValid = !requiresTextConfirmation || inputValue === confirmationText;
+  const isConfirmValid =
+    !requiresTextConfirmation || inputValue === confirmationText;
   const showLoading = loading || isLoading;
 
   return (
@@ -86,11 +88,18 @@ export function ConfirmationDialog({
               variant === "destructive" ? "text-destructive" : ""
             }`}
           >
-            {icon || (variant === "destructive" && <AlertTriangle className="h-5 w-5" />)}
+            {icon ||
+              (variant === "destructive" && (
+                <AlertTriangle className="h-5 w-5" />
+              ))}
             {title}
           </DialogTitle>
           <DialogDescription className="space-y-2 text-right">
-            {typeof description === "string" ? <p>{description}</p> : description}
+            {typeof description === "string" ? (
+              <p>{description}</p>
+            ) : (
+              description
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -98,14 +107,12 @@ export function ConfirmationDialog({
           <div className="space-y-4 py-4">
             <div>
               {confirmationLabel && (
-                <Label htmlFor="confirm-input" className="text-sm font-medium">
+                <Label
+                  htmlFor="confirm-input"
+                  className="text-sm font-medium text-right"
+                >
                   {confirmationLabel}
                 </Label>
-              )}
-              {confirmationText && (
-                <p className="text-sm text-muted-foreground mb-2" dir="ltr">
-                  {confirmationText}
-                </p>
               )}
               <Input
                 id="confirm-input"
@@ -113,10 +120,17 @@ export function ConfirmationDialog({
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder={confirmationPlaceholder}
-                className="mt-2"
+                className="mt-2 text-right"
                 disabled={showLoading}
-                dir="ltr"
               />
+              {confirmationText && (
+                <div
+                  className="pt-2 ps-2 text-sm text-muted-foreground mb-2 text-right"
+                  dir="ltr"
+                >
+                  {confirmationText}
+                </div>
+              )}
             </div>
 
             {inputValue && !isConfirmValid && (
@@ -127,7 +141,7 @@ export function ConfirmationDialog({
           </div>
         )}
 
-        <DialogFooter className="flex gap-2 sm:gap-2">
+        <DialogFooter className="flex justify-between gap-2">
           <Button
             variant="outline"
             onClick={handleCancel}
@@ -143,7 +157,7 @@ export function ConfirmationDialog({
           >
             {showLoading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loading size="sm" />
                 {loadingText}
               </>
             ) : (

@@ -1,16 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { useBusiness } from '@/contexts/BusinessContext';
-import { updateBusinessConfig } from '@/lib/firebase/businesses';
-import { BusinessConfig } from '@/types/database';
-import { Loader2, Settings, Building2 } from 'lucide-react';
-import BusinessConfigForm from '@/components/dashboard/BusinessConfigForm';
-import { useToast } from '@/hooks/use-toast';
-import { PageContainer } from '@/components/layout/PageContainer';
-import { PageHeader } from '@/components/layout/PageHeader';
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { useBusiness } from "@/contexts/BusinessContext";
+import { updateBusinessConfig } from "@/lib/firebase/businesses";
+import { BusinessConfig } from "@/types/database";
+import { Settings, Building2 } from "lucide-react";
+import BusinessConfigForm from "@/components/dashboard/BusinessConfigForm";
+import { useToast } from "@/hooks/use-toast";
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { Loading } from "@/components/ui/loading";
 
 /**
  * Business Configuration Page
@@ -20,7 +21,11 @@ export default function BusinessConfigurationPage() {
   const router = useRouter();
   const params = useParams();
   const { user } = useAuth();
-  const { currentBusiness, loading: businessLoading, refreshBusinesses } = useBusiness();
+  const {
+    currentBusiness,
+    loading: businessLoading,
+    refreshBusinesses,
+  } = useBusiness();
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
 
@@ -30,13 +35,13 @@ export default function BusinessConfigurationPage() {
 
     // Verify userId matches
     if (params.userId !== user.uid) {
-      router.push('/businesses');
+      router.push("/businesses");
       return;
     }
 
     // If no business selected or wrong business, redirect
     if (!currentBusiness) {
-      router.push('/businesses');
+      router.push("/businesses");
       return;
     }
 
@@ -55,18 +60,18 @@ export default function BusinessConfigurationPage() {
       await updateBusinessConfig(currentBusiness.id, config);
 
       toast({
-        title: 'נשמר בהצלחה',
-        description: 'הגדרות העסק עודכנו',
+        title: "נשמר בהצלחה",
+        description: "הגדרות העסק עודכנו",
       });
 
       // Refresh business data in context
       await refreshBusinesses();
     } catch (error) {
-      console.error('Error saving config:', error);
+      console.error("Error saving config:", error);
       toast({
-        title: 'שגיאה',
-        description: 'לא ניתן לשמור את ההגדרות',
-        variant: 'destructive',
+        title: "שגיאה",
+        description: "לא ניתן לשמור את ההגדרות",
+        variant: "destructive",
       });
       throw error; // Re-throw so form can handle it
     } finally {
@@ -79,8 +84,7 @@ export default function BusinessConfigurationPage() {
       <div className="flex h-full items-center justify-center">
         <div className="text-center">
           <Building2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
-          <p className="text-muted-foreground">טוען עסק...</p>
+          <Loading size="md" text="טוען עסק..." />
         </div>
       </div>
     );

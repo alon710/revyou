@@ -13,8 +13,8 @@ export function Hero() {
           </h1>
 
           <p className="mb-10 text-lg text-muted-foreground sm:text-xl md:text-2xl max-w-3xl mx-auto">
-            חסכו זמן יקר והגיבו לכל ביקורת בצורה אישית ומקצועית עם הכוח של בינה מלאכותית.
-            שמרו על קול המותג שלכם ושפרו את המוניטין העסקי.
+            חסכו זמן יקר והגיבו לכל ביקורת בצורה אישית ומקצועית עם הכוח של בינה
+            מלאכותית. שמרו על קול המותג שלכם ושפרו את המוניטין העסקי.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

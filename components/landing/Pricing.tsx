@@ -159,7 +159,8 @@ export function Pricing() {
                   </div>
                   {billingPeriod === "yearly" && plan.monthlyPrice > 0 && (
                     <span className="text-xs text-primary mt-1">
-                      חסכון של ₪{Math.round(plan.monthlyPrice * YEARLY_DISCOUNT)} לחודש
+                      חסכון של ₪
+                      {Math.round(plan.monthlyPrice * YEARLY_DISCOUNT)} לחודש
                     </span>
                   )}
                 </div>
@@ -184,7 +185,9 @@ export function Pricing() {
                       )}
                       <span
                         className={`text-sm ${
-                          isEnabled ? "text-foreground" : "text-muted-foreground"
+                          isEnabled
+                            ? "text-foreground"
+                            : "text-muted-foreground"
                         }`}
                       >
                         {isBoolean ? feature.name : `${feature.name}: ${value}`}

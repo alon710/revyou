@@ -1,15 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { getReview } from "@/lib/firebase/reviews";
 import { getBusiness } from "@/lib/firebase/businesses";
 import { Review, Business } from "@/types/database";
 import { ReviewCard } from "@/components/dashboard/ReviewCard";
-import { Button } from "@/components/ui/button";
+import { BackButton } from "@/components/ui/back-button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowRight } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 
@@ -19,7 +18,6 @@ import { PageHeader } from "@/components/layout/PageHeader";
  */
 export default function ReviewDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const { user } = useAuth();
   const [review, setReview] = useState<Review | null>(null);
   const [business, setBusiness] = useState<Business | null>(null);
@@ -75,10 +73,6 @@ export default function ReviewDetailPage() {
     loadReview();
   };
 
-  const handleBack = () => {
-    router.push("/reviews");
-  };
-
   if (!user) {
     return (
       <PageContainer maxWidth="4xl">
@@ -99,12 +93,11 @@ export default function ReviewDetailPage() {
   if (error || !review || !business) {
     return (
       <PageContainer maxWidth="4xl">
-        <Button onClick={handleBack} variant="ghost">
-          <ArrowRight className="ml-2 h-4 w-4" />
-          חזרה לביקורות
-        </Button>
+        <BackButton href="/reviews" label="חזרה לביקורות" />
         <div className="text-center py-12">
-          <p className="text-lg text-muted-foreground">{error || "הביקורת לא נמצאה"}</p>
+          <p className="text-lg text-muted-foreground">
+            {error || "הביקורת לא נמצאה"}
+          </p>
         </div>
       </PageContainer>
     );
@@ -112,15 +105,9 @@ export default function ReviewDetailPage() {
 
   return (
     <PageContainer maxWidth="4xl">
-      <Button onClick={handleBack} variant="ghost" className="mb-6">
-        <ArrowRight className="ml-2 h-4 w-4" />
-        חזרה לביקורות
-      </Button>
+      <BackButton href="/reviews" label="חזרה לביקורות" className="mb-6" />
 
-      <PageHeader
-        title={business.name}
-        description="פרטי ביקורת"
-      />
+      <PageHeader title={business.name} description="פרטי ביקורת" />
 
       {/* Business Info */}
       <div className="rounded-lg border p-4 bg-muted/50">
@@ -143,7 +130,9 @@ export default function ReviewDetailPage() {
             <div className="flex justify-between">
               <span className="text-muted-foreground">תגובה נוצרה:</span>
               <span>
-                {review.aiReplyGeneratedAt.toDate?.().toLocaleDateString("he-IL")}
+                {review.aiReplyGeneratedAt
+                  .toDate?.()
+                  .toLocaleDateString("he-IL")}
               </span>
             </div>
           )}

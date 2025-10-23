@@ -4,13 +4,12 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { getBusiness, updateBusinessConfig } from "@/lib/firebase/businesses";
 import { Business, BusinessConfig } from "@/types/database";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Loader2 } from "lucide-react";
-import Link from "next/link";
+import { BackButton } from "@/components/ui/back-button";
 import BusinessConfigForm from "@/components/dashboard/BusinessConfigForm";
 import { toast } from "sonner";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { Loading } from "@/components/ui/loading";
 
 /**
  * Business Edit Page
@@ -72,7 +71,7 @@ export default function BusinessEditPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loading size="md" />
       </div>
     );
   }
@@ -84,18 +83,10 @@ export default function BusinessEditPage() {
   return (
     <PageContainer maxWidth="4xl">
       <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href={`/businesses/${businessId}`}>
-            <ArrowRight className="ml-2 h-4 w-4" />
-            חזור
-          </Link>
-        </Button>
+        <BackButton href={`/businesses/${businessId}`} />
       </div>
 
-      <PageHeader
-        title="עריכת הגדרות"
-        description={business.name}
-      />
+      <PageHeader title="עריכת הגדרות" description={business.name} />
 
       {/* Configuration Form */}
       <BusinessConfigForm

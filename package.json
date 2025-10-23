@@ -6,7 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "format:staged": "prettier --write"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -52,7 +57,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.6",
+    "eslint-config-prettier": "^10.1.8",
     "firebase-tools": "^14.20.0",
+    "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   },

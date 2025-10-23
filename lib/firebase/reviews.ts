@@ -76,10 +76,14 @@ export async function getReviewsByBusiness(
       constraints.push(where("rating", "==", filters.rating));
     }
     if (filters?.startDate) {
-      constraints.push(where("receivedAt", ">=", Timestamp.fromDate(filters.startDate)));
+      constraints.push(
+        where("receivedAt", ">=", Timestamp.fromDate(filters.startDate))
+      );
     }
     if (filters?.endDate) {
-      constraints.push(where("receivedAt", "<=", Timestamp.fromDate(filters.endDate)));
+      constraints.push(
+        where("receivedAt", "<=", Timestamp.fromDate(filters.endDate))
+      );
     }
 
     // Order by receivedAt descending
@@ -472,7 +476,11 @@ export async function reviewExists(googleReviewId: string): Promise<boolean> {
 
   try {
     const reviewsRef = collection(db, "reviews");
-    const q = query(reviewsRef, where("googleReviewId", "==", googleReviewId), firestoreLimit(1));
+    const q = query(
+      reviewsRef,
+      where("googleReviewId", "==", googleReviewId),
+      firestoreLimit(1)
+    );
     const querySnapshot = await getDocs(q);
 
     return !querySnapshot.empty;

@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 interface PageHeaderProps {
   title: string;
@@ -17,7 +17,7 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn('flex items-start justify-between gap-4', className)}>
+    <div className={cn("flex items-start justify-between gap-4", className)}>
       <div className="space-y-1">
         <div className="flex items-center gap-3">
           {icon && <div className="flex-shrink-0">{icon}</div>}
@@ -25,9 +25,7 @@ export function PageHeader({
             {title}
           </h1>
         </div>
-        {description && (
-          <p className="text-sm text-gray-500">{description}</p>
-        )}
+        {description && <p className="text-sm text-gray-500">{description}</p>}
       </div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>

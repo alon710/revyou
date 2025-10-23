@@ -21,7 +21,8 @@ function getErrorStatus(error: unknown): number | undefined {
   return undefined;
 }
 
-const mybusinessbusinessinformation = google.mybusinessbusinessinformation("v1");
+const mybusinessbusinessinformation =
+  google.mybusinessbusinessinformation("v1");
 const mybusinessaccountmanagement = google.mybusinessaccountmanagement("v1");
 
 export interface GoogleLocation {
@@ -74,7 +75,9 @@ export interface GoogleReview {
  * @param refreshToken - User's Google refresh token
  * @returns Array of accounts
  */
-export async function getAccounts(refreshToken: string): Promise<GoogleAccount[]> {
+export async function getAccounts(
+  refreshToken: string
+): Promise<GoogleAccount[]> {
   try {
     const auth = await getAuthenticatedClient(refreshToken);
 
@@ -91,7 +94,9 @@ export async function getAccounts(refreshToken: string): Promise<GoogleAccount[]
     if (status === 429) {
       throw new Error("Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב.");
     } else if (status === 403) {
-      throw new Error("חסרות הרשאות לגשת ל-Google Business. נא לבדוק הגדרות API.");
+      throw new Error(
+        "חסרות הרשאות לגשת ל-Google Business. נא לבדוק הגדרות API."
+      );
     }
 
     throw new Error("לא ניתן לטעון את חשבונות Google Business");
@@ -111,11 +116,13 @@ export async function getLocations(
   try {
     const auth = await getAuthenticatedClient(refreshToken);
 
-    const response = await mybusinessbusinessinformation.accounts.locations.list({
-      parent: accountName,
-      readMask: "name,title,storefrontAddress,phoneNumbers,websiteUri,profile,metadata",
-      auth,
-    });
+    const response =
+      await mybusinessbusinessinformation.accounts.locations.list({
+        parent: accountName,
+        readMask:
+          "name,title,storefrontAddress,phoneNumbers,websiteUri,profile,metadata",
+        auth,
+      });
 
     return (response.data.locations as GoogleLocation[]) || [];
   } catch (error) {
@@ -126,7 +133,9 @@ export async function getLocations(
     if (status === 429) {
       throw new Error("Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב.");
     } else if (status === 403) {
-      throw new Error("חסרות הרשאות לגשת ל-Google Business. נא לבדוק הגדרות API.");
+      throw new Error(
+        "חסרות הרשאות לגשת ל-Google Business. נא לבדוק הגדרות API."
+      );
     }
 
     throw new Error("לא ניתן לטעון את המיקומים");
@@ -143,7 +152,9 @@ export async function getAllLocations(
 ): Promise<Array<GoogleLocation & { accountId: string; accountName: string }>> {
   try {
     const accounts = await getAccounts(refreshToken);
-    const allLocations: Array<GoogleLocation & { accountId: string; accountName: string }> = [];
+    const allLocations: Array<
+      GoogleLocation & { accountId: string; accountName: string }
+    > = [];
 
     for (const account of accounts) {
       const locations = await getLocations(refreshToken, account.name);
@@ -177,7 +188,8 @@ export async function getLocation(
 
     const response = await mybusinessbusinessinformation.locations.get({
       name: locationName,
-      readMask: "name,title,storefrontAddress,phoneNumbers,websiteUri,profile,metadata",
+      readMask:
+        "name,title,storefrontAddress,phoneNumbers,websiteUri,profile,metadata",
       auth,
     });
 

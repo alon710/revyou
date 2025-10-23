@@ -1,9 +1,15 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Business } from '@/types/database';
-import { getBusiness, getUserBusinesses } from '@/lib/firebase/businesses';
-import { useAuth } from './AuthContext';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { Business } from "@/types/database";
+import { getBusiness, getUserBusinesses } from "@/lib/firebase/businesses";
+import { useAuth } from "./AuthContext";
 
 interface BusinessContextType {
   currentBusiness: Business | null;
@@ -15,19 +21,23 @@ interface BusinessContextType {
   refreshBusinesses: () => Promise<void>;
 }
 
-const BusinessContext = createContext<BusinessContextType | undefined>(undefined);
+const BusinessContext = createContext<BusinessContextType | undefined>(
+  undefined
+);
 
-const STORAGE_KEY = 'selectedBusinessId';
+const STORAGE_KEY = "selectedBusinessId";
 
 export function BusinessProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [currentBusiness, setCurrentBusiness] = useState<Business | null>(null);
   const [businesses, setBusinesses] = useState<Business[]>([]);
-  const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
+  const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         setSelectedBusinessId(stored);
@@ -92,7 +102,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   const selectBusiness = (businessId: string) => {
     setSelectedBusinessId(businessId);
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEY, businessId);
     }
   };
@@ -101,7 +111,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     setSelectedBusinessId(null);
     setCurrentBusiness(null);
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       localStorage.removeItem(STORAGE_KEY);
     }
   };
@@ -130,7 +140,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
 export function useBusiness() {
   const context = useContext(BusinessContext);
   if (context === undefined) {
-    throw new Error('useBusiness must be used within a BusinessProvider');
+    throw new Error("useBusiness must be used within a BusinessProvider");
   }
   return context;
 }

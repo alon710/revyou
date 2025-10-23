@@ -37,13 +37,16 @@ export default function BusinessLimitBanner({
         <div className="flex-1">
           {isAtLimit ? (
             <p>
-              השתמשת בכל {maxAllowed} העסקים המותרים בחבילת {getTierName(currentTier)} שלך.
-              שדרג כדי לחבר עסקים נוספים.
+              השתמשת בכל {maxAllowed} העסקים המותרים בחבילת{" "}
+              {getTierName(currentTier)} שלך. שדרג כדי לחבר עסקים נוספים.
             </p>
           ) : (
             <p>
-              אתה משתמש ב-{currentCount} מתוך {maxAllowed} עסקים בחבילת {getTierName(currentTier)} שלך.
-              {remaining === 1 ? " נשאר עסק אחד." : ` נותרו ${remaining} עסקים.`}
+              אתה משתמש ב-{currentCount} מתוך {maxAllowed} עסקים בחבילת{" "}
+              {getTierName(currentTier)} שלך.
+              {remaining === 1
+                ? " נשאר עסק אחד."
+                : ` נותרו ${remaining} עסקים.`}
             </p>
           )}
         </div>

@@ -16,9 +16,10 @@ export async function GET(request: NextRequest) {
 
     // Handle user cancellation or errors
     if (error) {
-      const errorMessage = error === "access_denied"
-        ? "המשתמש ביטל את ההזדהות"
-        : "שגיאה בתהליך ההזדהות";
+      const errorMessage =
+        error === "access_denied"
+          ? "המשתמש ביטל את ההזדהות"
+          : "שגיאה בתהליך ההזדהות";
 
       return NextResponse.redirect(
         `${process.env.NEXT_PUBLIC_APP_URL}/businesses?error=${encodeURIComponent(errorMessage)}`

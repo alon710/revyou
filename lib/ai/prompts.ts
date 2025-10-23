@@ -85,12 +85,16 @@ function getToneDescription(tone: ToneOfVoice): string {
  * @param allowedEmojis - List of allowed emojis
  * @returns Instruction string
  */
-function getEmojiInstructions(useEmojis: boolean, allowedEmojis?: string[]): string {
+function getEmojiInstructions(
+  useEmojis: boolean,
+  allowedEmojis?: string[]
+): string {
   if (!useEmojis) {
     return "אסור להשתמש באימוג'ים.";
   }
 
-  let instruction = "מותרים אך מושתתים על הטון. השתמש רק אם הם מוסיפים חום או נימוס.";
+  let instruction =
+    "מותרים אך מושתתים על הטון. השתמש רק אם הם מוסיפים חום או נימוס.";
 
   if (allowedEmojis && allowedEmojis.length > 0) {
     instruction += ` רשימת אימוג'ים מותרת (מועדפים): ${allowedEmojis.join(" ")}`;
@@ -113,7 +117,8 @@ export function buildReplyPrompt(
   businessPhone?: string
 ): string {
   // Get star-specific instructions
-  const starConfig = businessConfig.starConfigs[review.rating as 1 | 2 | 3 | 4 | 5];
+  const starConfig =
+    businessConfig.starConfigs[review.rating as 1 | 2 | 3 | 4 | 5];
   const starInstructions = starConfig?.customInstructions
     ? `הנחיות נוספות לדירוג ${review.rating}:\n${starConfig.customInstructions}`
     : "";
@@ -132,7 +137,9 @@ export function buildReplyPrompt(
   const toneDescription = getToneDescription(businessConfig.toneOfVoice);
 
   // Get language instruction
-  const languageInstruction = getLanguageInstruction(businessConfig.languageMode);
+  const languageInstruction = getLanguageInstruction(
+    businessConfig.languageMode
+  );
 
   // Default values
   const maxSentences = businessConfig.maxSentences || 2;
@@ -145,7 +152,10 @@ export function buildReplyPrompt(
   // Replace all variables
   const prompt = template
     .replace(/\{\{BUSINESS_NAME\}\}/g, businessName)
-    .replace(/\{\{BUSINESS_DESCRIPTION\}\}/g, businessConfig.businessDescription)
+    .replace(
+      /\{\{BUSINESS_DESCRIPTION\}\}/g,
+      businessConfig.businessDescription
+    )
     .replace(/\{\{BUSINESS_PHONE\}\}/g, phone)
     .replace(/\{\{LANGUAGE_INSTRUCTION\}\}/g, languageInstruction)
     .replace(/\{\{TONE_DESCRIPTION\}\}/g, toneDescription)

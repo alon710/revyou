@@ -64,10 +64,7 @@ export async function POST(
     const replyText = review.editedReply || review.aiReply;
 
     if (!replyText) {
-      return NextResponse.json(
-        { error: "No reply to post" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No reply to post" }, { status: 400 });
     }
 
     // Construct review resource name

@@ -13,10 +13,7 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get("userId");
 
     if (!userId) {
-      return NextResponse.json(
-        { error: "חסר מזהה משתמש" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "חסר מזהה משתמש" }, { status: 400 });
     }
 
     // Generate state parameter for CSRF protection

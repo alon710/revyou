@@ -17,7 +17,12 @@ import {
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { he } from "date-fns/locale";
-import { approveReply, rejectReply, postReplyToGoogle, regenerateReply } from "@/lib/reviews/actions";
+import {
+  approveReply,
+  rejectReply,
+  postReplyToGoogle,
+  regenerateReply,
+} from "@/lib/reviews/actions";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { ReplyEditor } from "./ReplyEditor";
@@ -62,7 +67,8 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
     } catch (error) {
       toast({
         title: "שגיאה",
-        description: error instanceof Error ? error.message : "לא ניתן לאשר את התגובה",
+        description:
+          error instanceof Error ? error.message : "לא ניתן לאשר את התגובה",
         variant: "destructive",
       });
     } finally {
@@ -81,7 +87,8 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
     } catch (error) {
       toast({
         title: "שגיאה",
-        description: error instanceof Error ? error.message : "לא ניתן לדחות את התגובה",
+        description:
+          error instanceof Error ? error.message : "לא ניתן לדחות את התגובה",
         variant: "destructive",
       });
     } finally {
@@ -104,7 +111,8 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
     } catch (error) {
       toast({
         title: "שגיאה בפרסום",
-        description: error instanceof Error ? error.message : "לא ניתן לפרסם את התגובה",
+        description:
+          error instanceof Error ? error.message : "לא ניתן לפרסם את התגובה",
         variant: "destructive",
       });
     } finally {
@@ -127,7 +135,8 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
     } catch (error) {
       toast({
         title: "שגיאה",
-        description: error instanceof Error ? error.message : "לא ניתן ליצור תגובה מחדש",
+        description:
+          error instanceof Error ? error.message : "לא ניתן ליצור תגובה מחדש",
         variant: "destructive",
       });
     } finally {
@@ -157,7 +166,10 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
                 <span>•</span>
                 <Calendar className="h-3 w-3" />
                 <span>
-                  {formatDistanceToNow(reviewDate, { addSuffix: true, locale: he })}
+                  {formatDistanceToNow(reviewDate, {
+                    addSuffix: true,
+                    locale: he,
+                  })}
                 </span>
               </div>
             </div>
@@ -184,7 +196,9 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
                 )}
               </div>
               <div className="rounded-md border border-blue-200 bg-blue-50 p-3">
-                <p className="text-sm">{review.editedReply || review.aiReply}</p>
+                <p className="text-sm">
+                  {review.editedReply || review.aiReply}
+                </p>
               </div>
             </div>
           )}
@@ -196,7 +210,10 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
               <span>
                 פורסם{" "}
                 {postedDate &&
-                  formatDistanceToNow(postedDate, { addSuffix: true, locale: he })}
+                  formatDistanceToNow(postedDate, {
+                    addSuffix: true,
+                    locale: he,
+                  })}
               </span>
             </div>
           )}
@@ -258,7 +275,8 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
               </>
             )}
 
-            {(review.replyStatus === "failed" || review.replyStatus === "rejected") && (
+            {(review.replyStatus === "failed" ||
+              review.replyStatus === "rejected") && (
               <>
                 <Button
                   onClick={handleRegenerate}

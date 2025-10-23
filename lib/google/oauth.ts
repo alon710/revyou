@@ -65,7 +65,9 @@ export async function exchangeCodeForTokens(code: string) {
  * @param refreshToken - Stored refresh token
  * @returns New access token
  */
-export async function refreshAccessToken(refreshToken: string): Promise<string> {
+export async function refreshAccessToken(
+  refreshToken: string
+): Promise<string> {
   const oauth2Client = createOAuthClient();
   oauth2Client.setCredentials({ refresh_token: refreshToken });
 

@@ -83,9 +83,7 @@ export default function BusinessSelector({
                     <div className="flex items-center gap-2">
                       <Building2 className="h-5 w-5 text-primary" />
                       <h4 className="font-semibold text-lg">{location.name}</h4>
-                      {isSelected && (
-                        <Check className="h-5 w-5 text-primary" />
-                      )}
+                      {isSelected && <Check className="h-5 w-5 text-primary" />}
                     </div>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
                       <MapPin className="h-4 w-4" />
@@ -101,9 +99,7 @@ export default function BusinessSelector({
                   {location.phone && (
                     <Badge variant="outline">{location.phone}</Badge>
                   )}
-                  {location.website && (
-                    <Badge variant="outline">יש אתר</Badge>
-                  )}
+                  {location.website && <Badge variant="outline">יש אתר</Badge>}
                 </div>
               </CardContent>
             </Card>

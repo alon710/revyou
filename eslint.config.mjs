@@ -20,6 +20,12 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    rules: {
+      // Add any custom rules here
+    },
+  },
+  ...compat.extends("prettier"), // Disable ESLint rules that conflict with Prettier
 ];
 
 export default eslintConfig;

@@ -29,15 +29,16 @@ export async function enableNotifications(
   try {
     const auth = await getAuthenticatedClient(refreshToken);
 
-    const response = await mybusinessnotifications.accounts.updateNotificationSetting({
-      name: `${accountName}/notificationSetting`,
-      updateMask: "notificationTypes,pubsubTopic",
-      auth,
-      requestBody: {
-        notificationTypes: ["NEW_REVIEW", "UPDATED_REVIEW"],
-        pubsubTopic: pubsubTopicName,
-      },
-    });
+    const response =
+      await mybusinessnotifications.accounts.updateNotificationSetting({
+        name: `${accountName}/notificationSetting`,
+        updateMask: "notificationTypes,pubsubTopic",
+        auth,
+        requestBody: {
+          notificationTypes: ["NEW_REVIEW", "UPDATED_REVIEW"],
+          pubsubTopic: pubsubTopicName,
+        },
+      });
 
     return response.data as NotificationSetting;
   } catch (error) {
@@ -87,10 +88,11 @@ export async function getNotificationSettings(
   try {
     const auth = await getAuthenticatedClient(refreshToken);
 
-    const response = await mybusinessnotifications.accounts.getNotificationSetting({
-      name: `${accountName}/notificationSetting`,
-      auth,
-    });
+    const response =
+      await mybusinessnotifications.accounts.getNotificationSetting({
+        name: `${accountName}/notificationSetting`,
+        auth,
+      });
 
     return response.data as NotificationSetting;
   } catch (error) {
@@ -104,7 +106,9 @@ export async function getNotificationSettings(
  * @returns Full topic name
  */
 export function getPubSubTopicName(): string {
-  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.FIREBASE_ADMIN_PROJECT_ID;
+  const projectId =
+    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
+    process.env.FIREBASE_ADMIN_PROJECT_ID;
   const topicName = process.env.PUBSUB_TOPIC_NAME || "google-business-reviews";
 
   if (!projectId) {

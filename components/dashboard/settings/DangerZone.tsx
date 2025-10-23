@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { AlertTriangle, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -20,7 +26,6 @@ export function DangerZone({ userEmail, onDeleteAccount }: DangerZoneProps) {
   const handleDelete = async () => {
     await onDeleteAccount();
 
-    // Sign out and redirect
     await signOut();
     router.push("/");
   };
@@ -39,7 +44,9 @@ export function DangerZone({ userEmail, onDeleteAccount }: DangerZoneProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-lg bg-destructive/10 p-4 border border-destructive/20">
-            <h4 className="font-semibold text-destructive mb-2">מחק חשבון לצמיתות</h4>
+            <h4 className="font-semibold text-destructive mb-2">
+              מחק חשבון לצמיתות
+            </h4>
             <p className="text-sm text-muted-foreground mb-4">
               פעולה זו תמחק את כל הנתונים שלך כולל:
             </p>
@@ -70,9 +77,9 @@ export function DangerZone({ userEmail, onDeleteAccount }: DangerZoneProps) {
         title="אישור מחיקת חשבון"
         description={
           <>
-            <p className="font-semibold">פעולה זו תמחק את החשבון שלך לצמיתות!</p>
-            <p>כל הנתונים, העסקים, הביקורות וההגדרות יימחקו ולא ניתן יהיה לשחזר אותם.</p>
-            <p className="text-destructive font-semibold">פעולה זו אינה ניתנת לביטול.</p>
+            <p className="font-semibold">
+              פעולה זו תמחק את החשבון שלך לצמיתות!
+            </p>
           </>
         }
         confirmText={

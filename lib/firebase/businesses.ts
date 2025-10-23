@@ -12,7 +12,12 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./config";
-import { Business, BusinessConfig, ToneOfVoice, LanguageMode } from "@/types/database";
+import {
+  Business,
+  BusinessConfig,
+  ToneOfVoice,
+  LanguageMode,
+} from "@/types/database";
 import { SUBSCRIPTION_LIMITS, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
 import {
   businessSchema,
@@ -73,7 +78,9 @@ export async function getUserBusinesses(userId: string): Promise<Business[]> {
  * @param businessId - Business ID
  * @returns Business data or null if not found
  */
-export async function getBusiness(businessId: string): Promise<Business | null> {
+export async function getBusiness(
+  businessId: string
+): Promise<Business | null> {
   if (!db) {
     console.error("Firestore not initialized");
     return null;
@@ -276,7 +283,9 @@ export async function checkBusinessLimit(userId: string): Promise<boolean> {
  * @param userId - User ID
  * @returns Number of businesses available
  */
-export async function getRemainingBusinessSlots(userId: string): Promise<number> {
+export async function getRemainingBusinessSlots(
+  userId: string
+): Promise<number> {
   try {
     const tier = await getUserSubscriptionTier(userId);
     const limit = SUBSCRIPTION_LIMITS[tier].businesses;
@@ -337,7 +346,9 @@ export async function reconnectBusiness(businessId: string): Promise<void> {
  * @param userId - User ID
  * @returns Array of connected businesses
  */
-export async function getConnectedBusinesses(userId: string): Promise<Business[]> {
+export async function getConnectedBusinesses(
+  userId: string
+): Promise<Business[]> {
   const businesses = await getUserBusinesses(userId);
   return businesses.filter((b) => b.connected);
 }

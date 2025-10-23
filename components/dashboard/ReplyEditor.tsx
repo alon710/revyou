@@ -26,7 +26,12 @@ interface ReplyEditorProps {
  * Reply Editor Component
  * Modal dialog for editing AI-generated replies
  */
-export function ReplyEditor({ review, open, onClose, onSave }: ReplyEditorProps) {
+export function ReplyEditor({
+  review,
+  open,
+  onClose,
+  onSave,
+}: ReplyEditorProps) {
   const { toast } = useToast();
   const [replyText, setReplyText] = useState(
     review.editedReply || review.aiReply || ""
@@ -54,7 +59,8 @@ export function ReplyEditor({ review, open, onClose, onSave }: ReplyEditorProps)
     } catch (error) {
       toast({
         title: "שגיאה",
-        description: error instanceof Error ? error.message : "לא ניתן לשמור את התגובה",
+        description:
+          error instanceof Error ? error.message : "לא ניתן לשמור את התגובה",
         variant: "destructive",
       });
     } finally {
@@ -123,7 +129,10 @@ export function ReplyEditor({ review, open, onClose, onSave }: ReplyEditorProps)
           >
             ביטול
           </Button>
-          <Button onClick={handleSave} disabled={isLoading || !replyText.trim()}>
+          <Button
+            onClick={handleSave}
+            disabled={isLoading || !replyText.trim()}
+          >
             {isLoading ? "שומר..." : "שמור"}
           </Button>
         </DialogFooter>

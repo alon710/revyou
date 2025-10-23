@@ -1,18 +1,19 @@
-'use client';
+"use client";
 
-import { useBusiness } from '@/contexts/BusinessContext';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
+import { useBusiness } from "@/contexts/BusinessContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Building2, Loader2, AlertCircle } from 'lucide-react';
-import { useRouter, usePathname } from 'next/navigation';
-import Link from 'next/link';
+} from "@/components/ui/select";
+import { Building2, AlertCircle } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
+import { Loading } from "@/components/ui/loading";
 
 export function BusinessToggler() {
   const { user } = useAuth();
@@ -29,7 +30,7 @@ export function BusinessToggler() {
   const handleBusinessChange = (businessId: string) => {
     selectBusiness(businessId);
 
-    if (user && pathname.includes('/dashboard/')) {
+    if (user && pathname.includes("/dashboard/")) {
       router.push(`/dashboard/${user.uid}/${businessId}/reviews`);
     }
   };
@@ -38,8 +39,7 @@ export function BusinessToggler() {
     return (
       <div className="px-3 py-3 border-b">
         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          <span>טוען עסקים...</span>
+          <Loading size="sm" text="טוען עסקים..." />
         </div>
       </div>
     );
@@ -55,10 +55,13 @@ export function BusinessToggler() {
               <p className="text-xs font-medium text-yellow-800 dark:text-yellow-200 mb-1">
                 אין עסקים מחוברים
               </p>
-              <Button asChild variant="outline" size="sm" className="w-full text-xs h-7">
-                <Link href="/businesses/connect">
-                  חבר עסק ראשון
-                </Link>
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="w-full text-xs h-7"
+              >
+                <Link href="/businesses/connect">חבר עסק ראשון</Link>
               </Button>
             </div>
           </div>

@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { BusinessConfig, ToneOfVoice, LanguageMode, StarConfig, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
+import {
+  BusinessConfig,
+  ToneOfVoice,
+  LanguageMode,
+  StarConfig,
+  DEFAULT_PROMPT_TEMPLATE,
+} from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,11 +20,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Save, RotateCcw } from "lucide-react";
+import { Save, RotateCcw } from "lucide-react";
 import StarConfigAccordion from "./StarConfigAccordion";
+import { Loading } from "@/components/ui/loading";
 
 const AVAILABLE_VARIABLES = [
   { name: "{{BUSINESS_NAME}}", description: "שם העסק" },
@@ -61,7 +74,10 @@ export default function BusinessConfigForm({
     }
   };
 
-  const updateStarConfig = (rating: 1 | 2 | 3 | 4 | 5, starConfig: StarConfig) => {
+  const updateStarConfig = (
+    rating: 1 | 2 | 3 | 4 | 5,
+    starConfig: StarConfig
+  ) => {
     setConfig((prev) => ({
       ...prev,
       starConfigs: {
@@ -117,7 +133,8 @@ export default function BusinessConfigForm({
               disabled={loading}
             />
             <p className="text-xs text-muted-foreground">
-              אופציונלי - שם עסק חלופי לשימוש בתגובות AI במקום שם Google Business
+              אופציונלי - שם עסק חלופי לשימוש בתגובות AI במקום שם Google
+              Business
             </p>
           </div>
 
@@ -143,7 +160,9 @@ export default function BusinessConfigForm({
           <Separator />
 
           <div className="space-y-2">
-            <Label htmlFor="businessPhone">טלפון ליצירת קשר (לביקורות שליליות)</Label>
+            <Label htmlFor="businessPhone">
+              טלפון ליצירת קשר (לביקורות שליליות)
+            </Label>
             <Input
               id="businessPhone"
               type="tel"
@@ -250,7 +269,9 @@ export default function BusinessConfigForm({
               onChange={(e) =>
                 setConfig({
                   ...config,
-                  allowedEmojis: e.target.value.split(" ").filter((e) => e.trim()),
+                  allowedEmojis: e.target.value
+                    .split(" ")
+                    .filter((e) => e.trim()),
                 })
               }
               placeholder="🥂 ✨ 🙏 💐"
@@ -274,7 +295,10 @@ export default function BusinessConfigForm({
                 step="1"
                 value={config.maxSentences || 2}
                 onChange={(e) =>
-                  setConfig({ ...config, maxSentences: parseInt(e.target.value) })
+                  setConfig({
+                    ...config,
+                    maxSentences: parseInt(e.target.value),
+                  })
                 }
                 className="flex-1"
                 disabled={loading}
@@ -318,7 +342,9 @@ export default function BusinessConfigForm({
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label className="text-sm font-medium mb-2">משתנים זמינים (לחץ להוספה)</Label>
+            <Label className="text-sm font-medium mb-2">
+              משתנים זמינים (לחץ להוספה)
+            </Label>
             <div className="flex flex-wrap gap-2 mt-2">
               {AVAILABLE_VARIABLES.map((variable) => (
                 <Badge
@@ -350,7 +376,9 @@ export default function BusinessConfigForm({
               ref={textareaRef}
               id="prompt-template"
               value={config.promptTemplate}
-              onChange={(e) => setConfig({ ...config, promptTemplate: e.target.value })}
+              onChange={(e) =>
+                setConfig({ ...config, promptTemplate: e.target.value })
+              }
               className="min-h-[400px] font-mono text-sm"
               dir="rtl"
               disabled={loading}
@@ -420,8 +448,8 @@ export default function BusinessConfigForm({
           {config.autoPost && !config.requireApproval && (
             <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                <strong>אזהרה:</strong> עם פרסום אוטומטי ללא אישור, תשובות יפורסמו מיד לאחר יצירתן.
-                וודא שההגדרות שלך מדויקות.
+                <strong>אזהרה:</strong> עם פרסום אוטומטי ללא אישור, תשובות
+                יפורסמו מיד לאחר יצירתן. וודא שההגדרות שלך מדויקות.
               </p>
             </div>
           )}
@@ -446,7 +474,7 @@ export default function BusinessConfigForm({
 
       <div className="flex justify-end gap-3">
         <Button type="submit" disabled={saving || loading} size="lg">
-          {saving && <Loader2 className="ml-2 h-5 w-5 animate-spin" />}
+          {saving && <Loading size="sm" />}
           <Save className="ml-2 h-5 w-5" />
           שמור שינויים
         </Button>

@@ -1,18 +1,23 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { signInWithGoogle } from '@/lib/firebase/auth';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Logo } from '@/components/ui/Logo';
-import { Loading } from '@/components/ui/loading';
-import { Chrome } from 'lucide-react';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { signInWithGoogle } from "@/lib/firebase/auth";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Logo } from "@/components/ui/Logo";
+import { Loading } from "@/components/ui/loading";
+import { Chrome } from "lucide-react";
+import Link from "next/link";
 
-
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,10 +25,9 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  
   useEffect(() => {
     if (!authLoading && user) {
-      router.push('/businesses');
+      router.push("/businesses");
     }
   }, [user, authLoading, router]);
 
@@ -37,17 +41,14 @@ export default function LoginPage() {
       setError(error);
       setIsLoading(false);
     } else if (user) {
-      
-      router.push('/businesses');
+      router.push("/businesses");
     }
   };
-
 
   if (authLoading) {
     return <Loading fullScreen />;
   }
 
-  
   if (user) {
     return null;
   }
@@ -57,18 +58,14 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Logo className="justify-center mb-4" textClassName="text-3xl" />
-          <p className="text-gray-600">
-            היכנס כדי להתחיל לנהל את הביקורות שלך
-          </p>
+          <p className="text-gray-600">היכנס כדי להתחיל לנהל את הביקורות שלך</p>
         </div>
 
         {/* Login Card */}
         <Card>
           <CardHeader className="text-center">
             <CardTitle>התחברות</CardTitle>
-            <CardDescription>
-              התחבר עם חשבון Google שלך להמשך
-            </CardDescription>
+            <CardDescription>התחבר עם חשבון Google שלך להמשך</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Error Message */}
@@ -97,7 +94,6 @@ export default function LoginPage() {
                 </>
               )}
             </Button>
-
           </CardContent>
         </Card>
 

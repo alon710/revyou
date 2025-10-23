@@ -4,7 +4,7 @@ import {
   Settings,
   Sliders,
   CreditCard,
-} from 'lucide-react';
+} from "lucide-react";
 
 export interface NavItem {
   title: string;
@@ -15,25 +15,29 @@ export interface NavItem {
 
 export const navItems: NavItem[] = [
   {
-    title: 'עסקים',
-    href: () => '/businesses',
+    title: "עסקים",
+    href: () => "/businesses",
     icon: Building2,
     requiresBusiness: false,
   },
   {
-    title: 'ביקורות',
-    href: (userId, businessId) => businessId ? `/dashboard/${userId}/${businessId}/reviews` : '/businesses',
+    title: "ביקורות",
+    href: (userId, businessId) =>
+      businessId ? `/dashboard/${userId}/${businessId}/reviews` : "/businesses",
     icon: MessageSquare,
     requiresBusiness: true,
   },
   {
-    title: 'קונפיגורציה',
-    href: (userId, businessId) => businessId ? `/dashboard/${userId}/${businessId}/configuration` : '/businesses',
+    title: "קונפיגורציה",
+    href: (userId, businessId) =>
+      businessId
+        ? `/dashboard/${userId}/${businessId}/configuration`
+        : "/businesses",
     icon: Sliders,
     requiresBusiness: true,
   },
   {
-    title: 'הגדרות חשבון',
+    title: "הגדרות חשבון",
     href: (userId) => `/dashboard/${userId}/settings`,
     icon: Settings,
     requiresBusiness: false,

@@ -145,9 +145,7 @@ export function ReviewFilters({
             >
               <Star
                 size={16}
-                className={
-                  filters.rating === rating ? "fill-current" : ""
-                }
+                className={filters.rating === rating ? "fill-current" : ""}
               />
               <span className="sr-only">{rating} כוכבים</span>
             </Button>

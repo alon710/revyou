@@ -1,16 +1,40 @@
 import { z } from "zod";
 import { Timestamp } from "firebase/firestore";
 
-const timestampSchema = z.custom<Timestamp>(
-  (val) => val instanceof Timestamp,
-  { message: "Must be a Firestore Timestamp" }
-);
+const timestampSchema = z.custom<Timestamp>((val) => val instanceof Timestamp, {
+  message: "Must be a Firestore Timestamp",
+});
 
-export const subscriptionTierSchema = z.enum(["free", "basic", "pro", "enterprise"]);
-export const toneOfVoiceSchema = z.enum(["friendly", "formal", "humorous", "professional"]);
-export const languageModeSchema = z.enum(["hebrew", "english", "auto-detect", "match-reviewer"]);
-export const replyStatusSchema = z.enum(["pending", "approved", "rejected", "posted", "failed"]);
-export const subscriptionStatusSchema = z.enum(["active", "canceled", "past_due"]);
+export const subscriptionTierSchema = z.enum([
+  "free",
+  "basic",
+  "pro",
+  "enterprise",
+]);
+export const toneOfVoiceSchema = z.enum([
+  "friendly",
+  "formal",
+  "humorous",
+  "professional",
+]);
+export const languageModeSchema = z.enum([
+  "hebrew",
+  "english",
+  "auto-detect",
+  "match-reviewer",
+]);
+export const replyStatusSchema = z.enum([
+  "pending",
+  "approved",
+  "rejected",
+  "posted",
+  "failed",
+]);
+export const subscriptionStatusSchema = z.enum([
+  "active",
+  "canceled",
+  "past_due",
+]);
 
 export const starConfigSchema = z.object({
   customInstructions: z.string().max(1000),
@@ -44,7 +68,9 @@ export const userSchema = z.object({
   googleRefreshToken: z.string().nullish(),
 });
 
-export const userUpdateSchema = userSchema.partial().omit({ uid: true, createdAt: true });
+export const userUpdateSchema = userSchema
+  .partial()
+  .omit({ uid: true, createdAt: true });
 
 export const businessSchema = z.object({
   id: z.string().min(1),

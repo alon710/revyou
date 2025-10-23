@@ -4,9 +4,18 @@ export type SubscriptionTier = "free" | "basic" | "pro" | "enterprise";
 
 export type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";
 
-export type LanguageMode = "hebrew" | "english" | "auto-detect" | "match-reviewer";
+export type LanguageMode =
+  | "hebrew"
+  | "english"
+  | "auto-detect"
+  | "match-reviewer";
 
-export type ReplyStatus = "pending" | "approved" | "rejected" | "posted" | "failed";
+export type ReplyStatus =
+  | "pending"
+  | "approved"
+  | "rejected"
+  | "posted"
+  | "failed";
 
 export type SubscriptionStatus = "active" | "canceled" | "past_due";
 

@@ -2,10 +2,25 @@
 
 import { useState } from "react";
 import { Business } from "@/types/database";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Building2, MapPin, Settings, Trash2, Link as LinkIcon, Power, Bell, BellOff } from "lucide-react";
+import {
+  Building2,
+  MapPin,
+  Settings,
+  Trash2,
+  Link as LinkIcon,
+  Power,
+  Bell,
+  BellOff,
+} from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
@@ -55,7 +70,8 @@ export default function BusinessCard({
     } catch (error) {
       toast({
         title: "שגיאה",
-        description: error instanceof Error ? error.message : "לא ניתן להפעיל התראות",
+        description:
+          error instanceof Error ? error.message : "לא ניתן להפעיל התראות",
         variant: "destructive",
       });
     } finally {
@@ -71,9 +87,7 @@ export default function BusinessCard({
             <div className="flex items-center gap-2 mb-2">
               <Building2 className="h-5 w-5 text-primary" />
               <CardTitle className="text-xl">{business.name}</CardTitle>
-              {!business.connected && (
-                <Badge variant="secondary">מנותק</Badge>
-              )}
+              {!business.connected && <Badge variant="secondary">מנותק</Badge>}
               {business.connected && business.config.autoPost && (
                 <Badge variant="default">פרסום אוטומטי</Badge>
               )}
