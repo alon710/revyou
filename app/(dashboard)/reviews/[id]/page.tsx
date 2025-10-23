@@ -10,6 +10,8 @@ import { ReviewCard } from "@/components/dashboard/ReviewCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight } from "lucide-react";
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 /**
  * Single Review Detail Page
@@ -79,24 +81,24 @@ export default function ReviewDetailPage() {
 
   if (!user) {
     return (
-      <div className="mx-auto max-w-4xl">
+      <PageContainer maxWidth="4xl">
         <p>נא להתחבר כדי לצפות בביקורת</p>
-      </div>
+      </PageContainer>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-4xl space-y-4">
+      <PageContainer maxWidth="4xl">
         <Skeleton className="h-10 w-32" />
         <Skeleton className="h-[400px] w-full" />
-      </div>
+      </PageContainer>
     );
   }
 
   if (error || !review || !business) {
     return (
-      <div className="mx-auto max-w-4xl space-y-4">
+      <PageContainer maxWidth="4xl">
         <Button onClick={handleBack} variant="ghost">
           <ArrowRight className="ml-2 h-4 w-4" />
           חזרה לביקורות
@@ -104,17 +106,21 @@ export default function ReviewDetailPage() {
         <div className="text-center py-12">
           <p className="text-lg text-muted-foreground">{error || "הביקורת לא נמצאה"}</p>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
-      {/* Back Button */}
-      <Button onClick={handleBack} variant="ghost">
+    <PageContainer maxWidth="4xl">
+      <Button onClick={handleBack} variant="ghost" className="mb-6">
         <ArrowRight className="ml-2 h-4 w-4" />
         חזרה לביקורות
       </Button>
+
+      <PageHeader
+        title={business.name}
+        description="פרטי ביקורת"
+      />
 
       {/* Business Info */}
       <div className="rounded-lg border p-4 bg-muted/50">
@@ -151,6 +157,6 @@ export default function ReviewDetailPage() {
           )}
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

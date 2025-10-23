@@ -7,10 +7,12 @@ import { createBusiness, checkBusinessLimit } from "@/lib/firebase/businesses";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowLeft, Building2, Loader2, AlertCircle } from "lucide-react";
+import { ArrowRight, Building2, Loader2, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import BusinessSelector, { GoogleLocationData } from "@/components/dashboard/BusinessSelector";
 import { toast } from "sonner";
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 /**
  * Connect Business Page
@@ -149,22 +151,20 @@ export default function ConnectBusinessPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
+    <PageContainer maxWidth="4xl">
+      <div className="flex items-center gap-4 mb-6">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/businesses">
-            <ArrowLeft className="ml-2 h-4 w-4" />
+            <ArrowRight className="ml-2 h-4 w-4" />
             חזור
           </Link>
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold">חבר עסק חדש</h1>
-          <p className="text-muted-foreground">
-            חבר את חשבון Google Business Profile שלך
-          </p>
-        </div>
       </div>
+
+      <PageHeader
+        title="חבר עסק חדש"
+        description="חבר את חשבון Google Business Profile שלך"
+      />
 
       {/* Error Alert */}
       {error && (
@@ -268,6 +268,6 @@ export default function ConnectBusinessPage() {
           </CardContent>
         </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }

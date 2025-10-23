@@ -27,7 +27,7 @@ export const navItems: NavItem[] = [
     requiresBusiness: true,
   },
   {
-    title: 'תצורת עסק',
+    title: 'קונפיגורציה',
     href: (userId, businessId) => businessId ? `/dashboard/${userId}/${businessId}/configuration` : '/businesses',
     icon: Sliders,
     requiresBusiness: true,

@@ -5,10 +5,12 @@ import { useRouter, useParams } from "next/navigation";
 import { getBusiness, updateBusinessConfig } from "@/lib/firebase/businesses";
 import { Business, BusinessConfig } from "@/types/database";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import BusinessConfigForm from "@/components/dashboard/BusinessConfigForm";
 import { toast } from "sonner";
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 /**
  * Business Edit Page
@@ -80,20 +82,20 @@ export default function BusinessEditPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
+    <PageContainer maxWidth="4xl">
+      <div className="flex items-center gap-4 mb-6">
         <Button variant="ghost" size="sm" asChild>
           <Link href={`/businesses/${businessId}`}>
-            <ArrowLeft className="ml-2 h-4 w-4" />
+            <ArrowRight className="ml-2 h-4 w-4" />
             חזור
           </Link>
         </Button>
-        <div>
-          <h1 className="text-3xl font-bold">עריכת הגדרות</h1>
-          <p className="text-muted-foreground">{business.name}</p>
-        </div>
       </div>
+
+      <PageHeader
+        title="עריכת הגדרות"
+        description={business.name}
+      />
 
       {/* Configuration Form */}
       <BusinessConfigForm
@@ -101,6 +103,6 @@ export default function BusinessEditPage() {
         onSave={handleSave}
         loading={loading}
       />
-    </div>
+    </PageContainer>
   );
 }

@@ -9,6 +9,8 @@ import { BusinessConfig } from '@/types/database';
 import { Loader2, Settings, Building2 } from 'lucide-react';
 import BusinessConfigForm from '@/components/dashboard/BusinessConfigForm';
 import { useToast } from '@/hooks/use-toast';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 /**
  * Business Configuration Page
@@ -85,26 +87,23 @@ export default function BusinessConfigurationPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
-        {/* Header */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Settings className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">תצורת עסק</h1>
-              <p className="text-muted-foreground">{currentBusiness.name}</p>
-            </div>
+    <PageContainer maxWidth="4xl">
+      <PageHeader
+        title="תצורת עסק"
+        description={currentBusiness.name}
+        icon={
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <Settings className="h-6 w-6 text-primary" />
           </div>
-        </div>
+        }
+      />
 
-        {/* Configuration Form */}
-        <BusinessConfigForm
-          initialConfig={currentBusiness.config}
-          onSave={handleSave}
-          loading={saving}
-        />
-    </div>
+      {/* Configuration Form */}
+      <BusinessConfigForm
+        initialConfig={currentBusiness.config}
+        onSave={handleSave}
+        loading={saving}
+      />
+    </PageContainer>
   );
 }

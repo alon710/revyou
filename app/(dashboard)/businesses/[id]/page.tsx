@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
-  ArrowLeft,
+  ArrowRight,
   MapPin,
   Settings,
   Trash2,
@@ -26,6 +26,8 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
 import { toast } from "sonner";
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 /**
  * Business Details Page
@@ -116,40 +118,41 @@ export default function BusinessDetailsPage() {
     : "";
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/businesses">
-              <ArrowLeft className="ml-2 h-4 w-4" />
-              חזור
-            </Link>
-          </Button>
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <h1 className="text-3xl font-bold">{business.name}</h1>
-              {!business.connected && <Badge variant="secondary">מנותק</Badge>}
-              {business.connected && business.config.autoPost && (
-                <Badge variant="default">פרסום אוטומטי</Badge>
-              )}
-            </div>
-            <p className="text-muted-foreground flex items-center gap-1">
-              <MapPin className="h-4 w-4" />
-              {business.address}
-            </p>
-          </div>
-        </div>
+    <PageContainer>
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="sm" asChild>
+          <Link href="/businesses">
+            <ArrowRight className="ml-2 h-4 w-4" />
+            חזור
+          </Link>
+        </Button>
+      </div>
 
-        <div className="flex gap-2">
+      <PageHeader
+        title={business.name}
+        description={
+          <span className="flex items-center gap-1">
+            <MapPin className="h-4 w-4" />
+            {business.address}
+          </span>
+        }
+        icon={
+          <div className="flex items-center gap-2">
+            {!business.connected && <Badge variant="secondary">מנותק</Badge>}
+            {business.connected && business.config.autoPost && (
+              <Badge variant="default">פרסום אוטומטי</Badge>
+            )}
+          </div>
+        }
+        actions={
           <Button asChild>
             <Link href={`/businesses/${businessId}/edit`}>
               <Settings className="ml-2 h-5 w-5" />
               עריכה
             </Link>
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Basic Info */}
       <Card>
@@ -318,7 +321,7 @@ export default function BusinessDetailsPage() {
           </Button>
         </CardContent>
       </Card>
-    </div>
+    </PageContainer>
   );
 }
 

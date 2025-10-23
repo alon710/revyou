@@ -11,6 +11,8 @@ import { ReviewCard } from '@/components/dashboard/ReviewCard';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MessageSquare, ChevronLeft, Building2 } from 'lucide-react';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 /**
  * Business-Scoped Reviews Page
@@ -122,16 +124,11 @@ export default function BusinessReviewsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">ביקורות - {currentBusiness.name}</h1>
-            <p className="text-muted-foreground mt-1">
-              כל הביקורות עבור עסק זה ממוינות מחדש לישן
-            </p>
-          </div>
-        </div>
+    <PageContainer maxWidth="7xl">
+      <PageHeader
+        title={`ביקורות - ${currentBusiness.name}`}
+        description="כל הביקורות עבור עסק זה ממוינות מחדש לישן"
+      />
 
         {/* Reviews List */}
         <div className="space-y-4">
@@ -177,6 +174,6 @@ export default function BusinessReviewsPage() {
             </>
           )}
         </div>
-    </div>
+    </PageContainer>
   );
 }

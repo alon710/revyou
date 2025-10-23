@@ -3,16 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { AlertTriangle, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signOut } from "@/lib/firebase/auth";
@@ -24,29 +15,15 @@ interface DangerZoneProps {
 
 export function DangerZone({ userEmail, onDeleteAccount }: DangerZoneProps) {
   const [showDialog, setShowDialog] = useState(false);
-  const [confirmEmail, setConfirmEmail] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
   const handleDelete = async () => {
-    if (confirmEmail !== userEmail) {
-      return;
-    }
+    await onDeleteAccount();
 
-    setIsDeleting(true);
-    try {
-      await onDeleteAccount();
-
-      // Sign out and redirect
-      await signOut();
-      router.push("/");
-    } catch (error) {
-      console.error("Error deleting account:", error);
-      setIsDeleting(false);
-    }
+    // Sign out and redirect
+    await signOut();
+    router.push("/");
   };
-
-  const isConfirmValid = confirmEmail === userEmail;
 
   return (
     <>
@@ -87,74 +64,32 @@ export function DangerZone({ userEmail, onDeleteAccount }: DangerZoneProps) {
         </CardContent>
       </Card>
 
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-destructive">
-              <AlertTriangle className="h-5 w-5" />
-              אישור מחיקת חשבון
-            </DialogTitle>
-            <DialogDescription className="space-y-2">
-              <p className="font-semibold">פעולה זו תמחק את החשבון שלך לצמיתות!</p>
-              <p>כל הנתונים, העסקים, הביקורות וההגדרות יימחקו ולא ניתן יהיה לשחזר אותם.</p>
-              <p className="text-destructive font-semibold">פעולה זו אינה ניתנת לביטול.</p>
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 py-4">
-            <div>
-              <Label htmlFor="confirm-email" className="text-sm font-medium">
-                כדי לאשר, הקלד את כתובת האימייל שלך:
-              </Label>
-              <p className="text-sm text-muted-foreground mb-2">{userEmail}</p>
-              <Input
-                id="confirm-email"
-                type="email"
-                value={confirmEmail}
-                onChange={(e) => setConfirmEmail(e.target.value)}
-                placeholder="הקלד את האימייל שלך"
-                className="mt-2"
-                disabled={isDeleting}
-                dir="ltr"
-              />
-            </div>
-
-            {confirmEmail && !isConfirmValid && (
-              <p className="text-sm text-destructive">
-                כתובת האימייל אינה תואמת
-              </p>
-            )}
-          </div>
-
-          <DialogFooter className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowDialog(false);
-                setConfirmEmail("");
-              }}
-              disabled={isDeleting}
-            >
-              ביטול
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={!isConfirmValid || isDeleting}
-              className="gap-2"
-            >
-              {isDeleting ? (
-                <>מוחק...</>
-              ) : (
-                <>
-                  <Trash2 className="h-4 w-4" />
-                  מחק חשבון לצמיתות
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmationDialog
+        open={showDialog}
+        onOpenChange={setShowDialog}
+        title="אישור מחיקת חשבון"
+        description={
+          <>
+            <p className="font-semibold">פעולה זו תמחק את החשבון שלך לצמיתות!</p>
+            <p>כל הנתונים, העסקים, הביקורות וההגדרות יימחקו ולא ניתן יהיה לשחזר אותם.</p>
+            <p className="text-destructive font-semibold">פעולה זו אינה ניתנת לביטול.</p>
+          </>
+        }
+        confirmText={
+          <>
+            <Trash2 className="h-4 w-4" />
+            מחק חשבון לצמיתות
+          </>
+        }
+        cancelText="ביטול"
+        onConfirm={handleDelete}
+        variant="destructive"
+        requiresTextConfirmation
+        confirmationText={userEmail}
+        confirmationLabel="כדי לאשר, הקלד את כתובת האימייל שלך:"
+        confirmationPlaceholder="הקלד את האימייל שלך"
+        loadingText="מוחק..."
+      />
     </>
   );
 }

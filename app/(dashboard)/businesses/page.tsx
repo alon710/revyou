@@ -12,6 +12,8 @@ import Link from "next/link";
 import BusinessCard from "@/components/dashboard/BusinessCard";
 import EmptyBusinessState from "@/components/dashboard/EmptyBusinessState";
 import BusinessLimitBanner from "@/components/dashboard/BusinessLimitBanner";
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { toast } from "sonner";
 
 /**
@@ -95,25 +97,21 @@ export default function BusinessesPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">העסקים שלי</h1>
-          <p className="text-muted-foreground">
-            נהל את חשבונות Google Business Profile המחוברים שלך
-          </p>
-        </div>
-
-        {businesses.length > 0 && (
-          <Button asChild disabled={!canAddMore}>
-            <Link href="/businesses/connect">
-              <Plus className="ml-2 h-5 w-5" />
-              חבר עסק
-            </Link>
-          </Button>
-        )}
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="העסקים שלי"
+        description="נהל את חשבונות Google Business Profile המחוברים שלך"
+        actions={
+          businesses.length > 0 && (
+            <Button asChild disabled={!canAddMore}>
+              <Link href="/businesses/connect">
+                <Plus className="ml-2 h-5 w-5" />
+                חבר עסק
+              </Link>
+            </Button>
+          )
+        }
+      />
 
       {/* Subscription Limit Banner */}
       {businesses.length > 0 && maxBusinesses !== Infinity && (
@@ -175,6 +173,6 @@ export default function BusinessesPage() {
           </CardContent>
         </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }

@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Bell, Save } from 'lucide-react';
 import { DangerZone } from '@/components/dashboard/settings/DangerZone';
 import { useToast } from '@/hooks/use-toast';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 export default function SettingsPage() {
   const { user: authUser, loading: authLoading } = useAuth();
@@ -123,14 +125,11 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8">
-        {/* Page Header */}
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">הגדרות חשבון</h1>
-          <p className="mt-2 text-muted-foreground">
-            נהל את הגדרות החשבון והתראות האימייל שלך
-          </p>
-        </div>
+    <PageContainer maxWidth="4xl">
+      <PageHeader
+        title="הגדרות חשבון"
+        description="נהל את הגדרות החשבון והתראות האימייל שלך"
+      />
 
         {/* Notification Preferences */}
         <Card>
@@ -196,6 +195,6 @@ export default function SettingsPage() {
           userEmail={authUser.email || ''}
           onDeleteAccount={handleDeleteAccount}
         />
-    </div>
+    </PageContainer>
   );
 }
