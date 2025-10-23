@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
 /**
  * Simplified middleware - Client-side auth handling is done in AuthContext
  * This middleware only prevents direct access to protected routes without
  * creating redirect loops. The actual auth state is managed by Firebase Auth.
  */
-export function middleware(request: NextRequest) {
+export function middleware() {
   // Let Next.js handle all routing
   // Auth state is managed client-side by AuthContext and Firebase
   // Protected routes are handled in the dashboard layout

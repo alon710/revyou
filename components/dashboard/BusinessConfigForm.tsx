@@ -4,7 +4,6 @@ import { useState, useRef } from "react";
 import {
   BusinessConfig,
   ToneOfVoice,
-  LanguageMode,
   StarConfig,
   DEFAULT_PROMPT_TEMPLATE,
 } from "@/types/database";

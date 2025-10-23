@@ -1,10 +1,4 @@
-import {
-  Building2,
-  MessageSquare,
-  Settings,
-  Sliders,
-  CreditCard,
-} from "lucide-react";
+import { Building2, MessageSquare, Settings, Sliders } from "lucide-react";
 
 export interface NavItem {
   title: string;

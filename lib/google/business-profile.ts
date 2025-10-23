@@ -264,10 +264,7 @@ export function convertStarRating(
  * @param locationName - Location resource name
  * @returns Array of reviews
  */
-export async function getReviews(
-  _refreshToken: string,
-  _locationName: string
-): Promise<GoogleReview[]> {
+export async function getReviews(): Promise<GoogleReview[]> {
   try {
     // Note: The new Business Profile API doesn't provide a reviews.list endpoint
     // Reviews are received via Pub/Sub notifications

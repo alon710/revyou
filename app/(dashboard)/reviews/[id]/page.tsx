@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { getReview } from "@/lib/firebase/reviews";
@@ -26,13 +26,7 @@ export default function ReviewDetailPage() {
 
   const reviewId = params.id as string;
 
-  useEffect(() => {
-    if (user && reviewId) {
-      loadReview();
-    }
-  }, [user, reviewId]);
-
-  const loadReview = async () => {
+  const loadReview = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -67,7 +61,13 @@ export default function ReviewDetailPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [reviewId, user]);
+
+  useEffect(() => {
+    if (user && reviewId) {
+      loadReview();
+    }
+  }, [user, reviewId, loadReview]);
 
   const handleUpdate = () => {
     loadReview();

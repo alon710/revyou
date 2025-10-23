@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
 import { useRouter, useParams } from "next/navigation";
@@ -61,59 +61,63 @@ export default function BusinessReviewsPage() {
     }
   }, [user, currentBusiness, businessLoading, params, router]);
 
+  const loadReviews = useCallback(
+    async (loadMore = false) => {
+      if (!db || !currentBusiness) return;
+
+      try {
+        setIsLoading(true);
+
+        // Build query - fetch reviews for this business only
+        let q = query(
+          collection(db, "reviews"),
+          where("businessId", "==", currentBusiness.id),
+          orderBy("receivedAt", "desc"),
+          limit(20)
+        );
+
+        // If loading more, start after last document
+        if (loadMore && lastDoc) {
+          q = query(
+            collection(db, "reviews"),
+            where("businessId", "==", currentBusiness.id),
+            orderBy("receivedAt", "desc"),
+            startAfter(lastDoc),
+            limit(20)
+          );
+        }
+
+        const snapshot = await getDocs(q);
+
+        const fetchedReviews = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Review[];
+
+        if (loadMore) {
+          setReviews((prev) => [...prev, ...fetchedReviews]);
+        } else {
+          setReviews(fetchedReviews);
+        }
+
+        setHasMore(snapshot.docs.length === 20);
+        setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null);
+      } catch (error) {
+        console.error("Error loading reviews:", error);
+      } finally {
+        setIsLoading(false);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [currentBusiness]
+  );
+
   // Load reviews when business is selected
   useEffect(() => {
     if (currentBusiness && !businessLoading) {
       loadReviews(false);
     }
-  }, [currentBusiness, businessLoading]);
-
-  const loadReviews = async (loadMore = false) => {
-    if (!db || !currentBusiness) return;
-
-    try {
-      setIsLoading(true);
-
-      // Build query - fetch reviews for this business only
-      let q = query(
-        collection(db, "reviews"),
-        where("businessId", "==", currentBusiness.id),
-        orderBy("receivedAt", "desc"),
-        limit(20)
-      );
-
-      // If loading more, start after last document
-      if (loadMore && lastDoc) {
-        q = query(
-          collection(db, "reviews"),
-          where("businessId", "==", currentBusiness.id),
-          orderBy("receivedAt", "desc"),
-          startAfter(lastDoc),
-          limit(20)
-        );
-      }
-
-      const snapshot = await getDocs(q);
-
-      const fetchedReviews = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Review[];
-
-      if (loadMore) {
-        setReviews((prev) => [...prev, ...fetchedReviews]);
-      } else {
-        setReviews(fetchedReviews);
-      }
-
-      setHasMore(snapshot.docs.length === 20);
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null);
-    } catch (error) {
-      console.error("Error loading reviews:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [currentBusiness, businessLoading, loadReviews]);
 
   const handleLoadMore = () => {
     loadReviews(true);

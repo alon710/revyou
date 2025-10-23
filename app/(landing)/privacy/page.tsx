@@ -26,7 +26,7 @@ export default function PrivacyPage() {
               אנו אוספים מספר סוגים של מידע:
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2 me-6">
-              <li>מידע אישי: שם, כתובת דוא"ל, מספר טלפון</li>
+              <li>מידע אישי: שם, כתובת דוא&quot;ל, מספר טלפון</li>
               <li>מידע עסקי: פרטי עסק, Google Business Profile</li>
               <li>תוכן: ביקורות, תשובות, הגדרות מערכת</li>
               <li>מידע טכני: כתובת IP, סוג דפדפן, מערכת הפעלה</li>
@@ -120,7 +120,7 @@ export default function PrivacyPage() {
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               אנו עשויים לעדכן את מדיניות הפרטיות מעת לעת. נודיע לך על שינויים
-              משמעותיים דרך האתר או בדוא"ל. המשך השימוש בשירות לאחר שינויים
+              משמעותיים דרך האתר או בדוא&quot;ל. המשך השימוש בשירות לאחר שינויים
               מהווה הסכמה למדיניות המעודכנת.
             </p>
           </section>
@@ -135,7 +135,7 @@ export default function PrivacyPage() {
             </p>
             <div className="mt-4 space-y-2 text-muted-foreground">
               <p>
-                דוא"ל:{" "}
+                דוא&quot;ל:{" "}
                 <a
                   href="mailto:alon710@gmail.com"
                   className="text-primary hover:underline"

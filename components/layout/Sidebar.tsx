@@ -11,7 +11,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Logo } from "@/components/ui/Logo";
-import { Loading } from "@/components/ui/loading";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { navItems } from "./nav-items";

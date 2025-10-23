@@ -5,6 +5,7 @@ import React, {
   useContext,
   useState,
   useEffect,
+  useCallback,
   ReactNode,
 } from "react";
 import { Business } from "@/types/database";
@@ -45,26 +46,15 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      loadBusinesses();
-    } else {
-      setBusinesses([]);
-      setCurrentBusiness(null);
-      setSelectedBusinessId(null);
-      setLoading(false);
-    }
-  }, [user]);
+  const selectBusiness = useCallback((businessId: string) => {
+    setSelectedBusinessId(businessId);
 
-  useEffect(() => {
-    if (selectedBusinessId && user) {
-      loadCurrentBusiness(selectedBusinessId);
-    } else {
-      setCurrentBusiness(null);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEY, businessId);
     }
-  }, [selectedBusinessId, user]);
+  }, []);
 
-  const loadBusinesses = async () => {
+  const loadBusinesses = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -80,32 +70,30 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
         if (!stillExists && connected.length > 0) {
           selectBusiness(connected[0].id);
         } else if (!stillExists) {
-          clearBusiness();
+          if (typeof window !== "undefined") {
+            localStorage.removeItem(STORAGE_KEY);
+          }
+          setSelectedBusinessId(null);
+          setCurrentBusiness(null);
         }
       }
-    } catch (error) {
+    } catch (_error) {
+      console.error("Failed to load businesses:", _error);
       setBusinesses([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, selectedBusinessId, selectBusiness]);
 
-  const loadCurrentBusiness = async (businessId: string) => {
+  const loadCurrentBusiness = useCallback(async (businessId: string) => {
     try {
       const business = await getBusiness(businessId);
       setCurrentBusiness(business);
-    } catch (error) {
+    } catch (_error) {
+      console.error("Failed to load current business:", _error);
       setCurrentBusiness(null);
     }
-  };
-
-  const selectBusiness = (businessId: string) => {
-    setSelectedBusinessId(businessId);
-
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, businessId);
-    }
-  };
+  }, []);
 
   const clearBusiness = () => {
     setSelectedBusinessId(null);
@@ -116,9 +104,28 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const refreshBusinesses = async () => {
+  useEffect(() => {
+    if (user) {
+      loadBusinesses();
+    } else {
+      setBusinesses([]);
+      setCurrentBusiness(null);
+      setSelectedBusinessId(null);
+      setLoading(false);
+    }
+  }, [user, loadBusinesses]);
+
+  useEffect(() => {
+    if (selectedBusinessId && user) {
+      loadCurrentBusiness(selectedBusinessId);
+    } else {
+      setCurrentBusiness(null);
+    }
+  }, [selectedBusinessId, user, loadCurrentBusiness]);
+
+  const refreshBusinesses = useCallback(async () => {
     await loadBusinesses();
-  };
+  }, [loadBusinesses]);
 
   return (
     <BusinessContext.Provider
