@@ -1,0 +1,156 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { getReview } from "@/lib/firebase/reviews";
+import { getBusiness } from "@/lib/firebase/businesses";
+import { Review, Business } from "@/types/database";
+import { ReviewCard } from "@/components/dashboard/ReviewCard";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowRight } from "lucide-react";
+
+/**
+ * Single Review Detail Page
+ * Displays full details for a single review
+ */
+export default function ReviewDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const { user } = useAuth();
+  const [review, setReview] = useState<Review | null>(null);
+  const [business, setBusiness] = useState<Business | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const reviewId = params.id as string;
+
+  useEffect(() => {
+    if (user && reviewId) {
+      loadReview();
+    }
+  }, [user, reviewId]);
+
+  const loadReview = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // Load review
+      const reviewData = await getReview(reviewId);
+
+      if (!reviewData) {
+        setError("הביקורת לא נמצאה");
+        return;
+      }
+
+      // Load business
+      const businessData = await getBusiness(reviewData.businessId);
+
+      if (!businessData) {
+        setError("העסק לא נמצא");
+        return;
+      }
+
+      // Verify ownership
+      if (businessData.userId !== user?.uid) {
+        setError("אין הרשאה לצפות בביקורת זו");
+        return;
+      }
+
+      setReview(reviewData);
+      setBusiness(businessData);
+    } catch (error) {
+      console.error("Error loading review:", error);
+      setError("שגיאה בטעינת הביקורת");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdate = () => {
+    loadReview();
+  };
+
+  const handleBack = () => {
+    router.push("/reviews");
+  };
+
+  if (!user) {
+    return (
+      <div className="container mx-auto py-8">
+        <p>נא להתחבר כדי לצפות בביקורת</p>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-8 space-y-4">
+        <Skeleton className="h-10 w-32" />
+        <Skeleton className="h-[400px] w-full" />
+      </div>
+    );
+  }
+
+  if (error || !review || !business) {
+    return (
+      <div className="container mx-auto py-8">
+        <Button onClick={handleBack} variant="ghost" className="mb-4">
+          <ArrowRight className="ml-2 h-4 w-4" />
+          חזרה לביקורות
+        </Button>
+        <div className="text-center py-12">
+          <p className="text-lg text-muted-foreground">{error || "הביקורת לא נמצאה"}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto py-8 space-y-6">
+      {/* Back Button */}
+      <Button onClick={handleBack} variant="ghost">
+        <ArrowRight className="ml-2 h-4 w-4" />
+        חזרה לביקורות
+      </Button>
+
+      {/* Business Info */}
+      <div className="rounded-lg border p-4 bg-muted/50">
+        <p className="text-sm text-muted-foreground">עסק</p>
+        <h2 className="text-xl font-semibold">{business.name}</h2>
+      </div>
+
+      {/* Review Card */}
+      <ReviewCard review={review} onUpdate={handleUpdate} />
+
+      {/* Additional Info */}
+      <div className="rounded-lg border p-4 space-y-2">
+        <h3 className="font-semibold">פרטים נוספים</h3>
+        <div className="grid gap-2 text-sm">
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">מזהה ביקורת:</span>
+            <span className="font-mono text-xs">{review.googleReviewId}</span>
+          </div>
+          {review.aiReplyGeneratedAt && (
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">תגובה נוצרה:</span>
+              <span>
+                {review.aiReplyGeneratedAt.toDate?.().toLocaleDateString("he-IL")}
+              </span>
+            </div>
+          )}
+          {review.postedAt && (
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">תאריך פרסום:</span>
+              <span>
+                {review.postedAt.toDate?.().toLocaleDateString("he-IL")}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

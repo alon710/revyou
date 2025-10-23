@@ -40,6 +40,12 @@ export interface BusinessConfig {
     4: StarConfig;
     5: StarConfig;
   };
+  // New fields for Phase 7
+  businessPhone?: string; // Contact phone for negative reviews
+  maxSentences?: number; // Max sentences in reply (default: 2)
+  allowedEmojis?: string[]; // List of allowed emojis (e.g., ["🥂", "✨", "🙏"])
+  signature?: string; // Business signature line (e.g., "צוות חמישים ושמונה")
+  promptTemplate?: string; // Custom prompt template (optional override)
 }
 
 export interface Business {
@@ -53,6 +59,7 @@ export interface Business {
   connected: boolean;
   connectedAt: Timestamp;
   config: BusinessConfig;
+  notificationsEnabled?: boolean; // Pub/Sub notifications status
 }
 
 export interface Review {

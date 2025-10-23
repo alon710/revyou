@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { BusinessConfig, ToneOfVoice, LanguageMode, StarConfig } from "@/types/database";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
@@ -155,6 +156,97 @@ export default function BusinessConfigForm({
             </Select>
             <p className="text-xs text-muted-foreground">
               {getLanguageHelp(config.languageMode)}
+            </p>
+          </div>
+
+          <Separator />
+
+          {/* Business Phone */}
+          <div className="space-y-2">
+            <Label htmlFor="businessPhone">טלפון ליצירת קשר (לביקורות שליליות)</Label>
+            <Input
+              id="businessPhone"
+              type="tel"
+              value={config.businessPhone || ""}
+              onChange={(e) =>
+                setConfig({ ...config, businessPhone: e.target.value })
+              }
+              placeholder="03-123-4567"
+              disabled={loading}
+            />
+            <p className="text-xs text-muted-foreground">
+              מספר טלפון שיופיע בתגובות לביקורות שליליות (1-2 כוכבים)
+            </p>
+          </div>
+
+          <Separator />
+
+          {/* Max Sentences */}
+          <div className="space-y-2">
+            <Label htmlFor="maxSentences">מספר משפטים מקסימלי בתגובה</Label>
+            <div className="flex items-center gap-4">
+              <input
+                id="maxSentences"
+                type="range"
+                min="1"
+                max="3"
+                step="1"
+                value={config.maxSentences || 2}
+                onChange={(e) =>
+                  setConfig({ ...config, maxSentences: parseInt(e.target.value) })
+                }
+                className="flex-1"
+                disabled={loading}
+              />
+              <span className="text-sm font-medium w-8 text-center">
+                {config.maxSentences || 2}
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              מגביל את אורך התגובות האוטומטיות (מומלץ: 2)
+            </p>
+          </div>
+
+          <Separator />
+
+          {/* Allowed Emojis */}
+          <div className="space-y-2">
+            <Label htmlFor="allowedEmojis">אימוג&apos;ים מותרים</Label>
+            <Input
+              id="allowedEmojis"
+              type="text"
+              value={(config.allowedEmojis || []).join(" ")}
+              onChange={(e) =>
+                setConfig({
+                  ...config,
+                  allowedEmojis: e.target.value.split(" ").filter((e) => e.trim()),
+                })
+              }
+              placeholder="🥂 ✨ 🙏 💐"
+              disabled={loading || !config.useEmojis}
+            />
+            <p className="text-xs text-muted-foreground">
+              רשימת אימוג&apos;ים שה-AI יכול להשתמש בהם (הפרד ברווחים)
+            </p>
+          </div>
+
+          <Separator />
+
+          {/* Signature */}
+          <div className="space-y-2">
+            <Label htmlFor="signature">חתימה</Label>
+            <Input
+              id="signature"
+              type="text"
+              value={config.signature || ""}
+              onChange={(e) =>
+                setConfig({ ...config, signature: e.target.value })
+              }
+              placeholder="צוות העסק"
+              disabled={loading}
+            />
+            <p className="text-xs text-muted-foreground">
+              החתימה שתופיע בסוף כל תגובה
             </p>
           </div>
         </CardContent>

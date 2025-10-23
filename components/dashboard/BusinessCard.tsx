@@ -1,18 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { Business } from "@/types/database";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Building2, MapPin, Settings, Trash2, Link as LinkIcon, Power } from "lucide-react";
+import { Building2, MapPin, Settings, Trash2, Link as LinkIcon, Power, Bell, BellOff } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
+import { enableNotificationsForBusiness } from "@/lib/reviews/actions";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface BusinessCardProps {
   business: Business;
   onDelete?: (businessId: string) => void;
   onDisconnect?: (businessId: string) => void;
+  onUpdate?: () => void;
   showActions?: boolean;
 }
 
@@ -24,11 +29,39 @@ export default function BusinessCard({
   business,
   onDelete,
   onDisconnect,
+  onUpdate,
   showActions = true,
 }: BusinessCardProps) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isEnablingNotifications, setIsEnablingNotifications] = useState(false);
+
   const connectedDate = business.connectedAt
     ? format(business.connectedAt.toDate(), "d MMMM yyyy", { locale: he })
     : "";
+
+  const handleEnableNotifications = async () => {
+    if (!user) return;
+
+    try {
+      setIsEnablingNotifications(true);
+      const token = await user.getIdToken();
+      await enableNotificationsForBusiness(business.id, token);
+      toast({
+        title: "התראות הופעלו",
+        description: "ביקורות חדשות יופיעו אוטומטית במערכת",
+      });
+      onUpdate?.();
+    } catch (error) {
+      toast({
+        title: "שגיאה",
+        description: error instanceof Error ? error.message : "לא ניתן להפעיל התראות",
+        variant: "destructive",
+      });
+    } finally {
+      setIsEnablingNotifications(false);
+    }
+  };
 
   return (
     <Card className={!business.connected ? "opacity-60" : ""}>
@@ -43,6 +76,17 @@ export default function BusinessCard({
               )}
               {business.connected && business.config.autoPost && (
                 <Badge variant="default">פרסום אוטומטי</Badge>
+              )}
+              {business.notificationsEnabled ? (
+                <Badge variant="outline" className="gap-1">
+                  <Bell className="h-3 w-3" />
+                  התראות פעילות
+                </Badge>
+              ) : (
+                <Badge variant="secondary" className="gap-1">
+                  <BellOff className="h-3 w-3" />
+                  התראות כבויות
+                </Badge>
               )}
             </div>
             <CardDescription className="flex items-center gap-1">
@@ -80,6 +124,24 @@ export default function BusinessCard({
               <p className="font-medium">{connectedDate}</p>
             </div>
           </div>
+
+          {/* Enable Notifications */}
+          {business.connected && !business.notificationsEnabled && (
+            <div className="rounded-md bg-blue-50 p-3 border border-blue-200">
+              <p className="text-sm text-blue-800 mb-2">
+                <strong>הפעל התראות</strong> כדי לקבל ביקורות חדשות אוטומטית
+              </p>
+              <Button
+                onClick={handleEnableNotifications}
+                disabled={isEnablingNotifications}
+                size="sm"
+                variant="default"
+              >
+                <Bell className="ml-2 h-4 w-4" />
+                {isEnablingNotifications ? "מפעיל..." : "הפעל התראות"}
+              </Button>
+            </div>
+          )}
 
           {/* Actions */}
           {showActions && (

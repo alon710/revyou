@@ -1,22 +1,11 @@
 /**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
+ * Cloud Functions for Google Review AI Reply
+ * Phase 7: Review Management & AI Reply Generation
  */
 
-// import {onRequest} from "firebase-functions/v2/https";
-// import * as logger from "firebase-functions/logger";
+// Review notification and processing triggers
+export { onReviewNotification } from "./triggers/onReviewNotification";
+export { onReviewCreated } from "./triggers/onReviewCreated";
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-
-// Cloud Functions will be added here as we develop them
-export {};
+// Export auto-post service for potential manual triggering
+export { autoPostReply } from "./services/autoPost";

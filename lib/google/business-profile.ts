@@ -271,37 +271,56 @@ export async function getReviews(
 /**
  * Post a reply to a review
  * @param refreshToken - User's Google refresh token
- * @param reviewName - Review resource name
+ * @param reviewName - Review resource name (e.g., "accounts/123/locations/456/reviews/789")
  * @param replyText - Reply text
  */
 export async function postReviewReply(
-  _refreshToken: string,
-  _reviewName: string,
-  _replyText: string
+  refreshToken: string,
+  reviewName: string,
+  replyText: string
 ): Promise<void> {
   try {
-    // TODO: Implement with proper API when available
-    // const auth = await getAuthenticatedClient(refreshToken);
-    // Note: Business Profile API v1 doesn't have direct reply endpoint yet
-    throw new Error("פיצ'ר זה עדיין לא זמין");
+    const auth = await getAuthenticatedClient(refreshToken);
+
+    // Use direct API call as the googleapis library may not have the reviews endpoint
+    await auth.request({
+      url: `https://mybusiness.googleapis.com/v4/${reviewName}/reply`,
+      method: "PUT",
+      data: {
+        comment: replyText,
+      },
+    });
   } catch (error) {
     console.error("Error posting review reply:", error);
+
+    const status = getErrorStatus(error);
+    if (status === 403) {
+      throw new Error("אין הרשאות לפרסם תגובות. נא לבדוק הגדרות API.");
+    } else if (status === 404) {
+      throw new Error("הביקורת לא נמצאה.");
+    }
+
     throw new Error("לא ניתן לפרסם את התגובה");
   }
 }
 
 /**
  * Delete a review reply
- * @param _refreshToken - User's Google refresh token
- * @param _reviewName - Review resource name
+ * @param refreshToken - User's Google refresh token
+ * @param reviewName - Review resource name
  */
 export async function deleteReviewReply(
-  _refreshToken: string,
-  _reviewName: string
+  refreshToken: string,
+  reviewName: string
 ): Promise<void> {
   try {
-    // TODO: Implement with proper API when available
-    throw new Error("פיצ'ר זה עדיין לא זמין");
+    const auth = await getAuthenticatedClient(refreshToken);
+
+    // Use direct API call to delete reply
+    await auth.request({
+      url: `https://mybusiness.googleapis.com/v4/${reviewName}/reply`,
+      method: "DELETE",
+    });
   } catch (error) {
     console.error("Error deleting review reply:", error);
     throw new Error("לא ניתן למחוק את התגובה");
