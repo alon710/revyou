@@ -79,7 +79,7 @@ export default function ReviewDetailPage() {
 
   if (!user) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="mx-auto max-w-4xl">
         <p>נא להתחבר כדי לצפות בביקורת</p>
       </div>
     );
@@ -87,7 +87,7 @@ export default function ReviewDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8 space-y-4">
+      <div className="mx-auto max-w-4xl space-y-4">
         <Skeleton className="h-10 w-32" />
         <Skeleton className="h-[400px] w-full" />
       </div>
@@ -96,8 +96,8 @@ export default function ReviewDetailPage() {
 
   if (error || !review || !business) {
     return (
-      <div className="container mx-auto py-8">
-        <Button onClick={handleBack} variant="ghost" className="mb-4">
+      <div className="mx-auto max-w-4xl space-y-4">
+        <Button onClick={handleBack} variant="ghost">
           <ArrowRight className="ml-2 h-4 w-4" />
           חזרה לביקורות
         </Button>
@@ -109,7 +109,7 @@ export default function ReviewDetailPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
+    <div className="mx-auto max-w-4xl space-y-6">
       {/* Back Button */}
       <Button onClick={handleBack} variant="ghost">
         <ArrowRight className="ml-2 h-4 w-4" />

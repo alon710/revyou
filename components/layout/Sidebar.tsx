@@ -10,56 +10,11 @@ import { signOut } from '@/lib/firebase/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Building2,
-  MessageSquare,
-  Settings,
-  Sliders,
-  CreditCard,
-  LogOut,
-  Sparkles
-} from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
+import { Loading } from '@/components/ui/loading';
+import { LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
-interface NavItem {
-  title: string;
-  href: (userId: string, businessId?: string) => string;
-  icon: React.ComponentType<{ className?: string }>;
-  requiresBusiness: boolean;
-}
-
-const navItems: NavItem[] = [
-  {
-    title: 'עסקים',
-    href: () => '/businesses',
-    icon: Building2,
-    requiresBusiness: false,
-  },
-  {
-    title: 'ביקורות',
-    href: (userId, businessId) => businessId ? `/dashboard/${userId}/${businessId}/reviews` : '/businesses',
-    icon: MessageSquare,
-    requiresBusiness: true,
-  },
-  {
-    title: 'תצורת עסק',
-    href: (userId, businessId) => businessId ? `/dashboard/${userId}/${businessId}/configuration` : '/businesses',
-    icon: Sliders,
-    requiresBusiness: true,
-  },
-  {
-    title: 'הגדרות חשבון',
-    href: (userId) => `/dashboard/${userId}/settings`,
-    icon: Settings,
-    requiresBusiness: false,
-  },
-  {
-    title: 'חיוב',
-    href: () => '/billing',
-    icon: CreditCard,
-    requiresBusiness: false,
-  },
-];
+import { navItems } from './nav-items';
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -73,13 +28,10 @@ export function Sidebar() {
   };
 
   return (
-    <div className="flex h-full flex-col border-l bg-background">
+    <div className="flex h-full flex-col border-s bg-background" dir="rtl">
       {/* Logo/Brand */}
       <div className="flex h-16 items-center justify-center border-b px-6">
-        <Link href="/businesses" className="flex items-center gap-2 font-bold text-lg">
-          <Sparkles className="h-6 w-6 text-primary" />
-          <span>ביקורות AI</span>
-        </Link>
+        <Logo href="/businesses" textClassName="text-lg" />
       </div>
 
       {/* Business Toggler */}
@@ -99,7 +51,7 @@ export function Sidebar() {
                 key={item.title}
                 href={isDisabled ? '#' : href}
                 className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  'flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   isActive && !isDisabled
                     ? 'bg-primary text-primary-foreground'
                     : isDisabled

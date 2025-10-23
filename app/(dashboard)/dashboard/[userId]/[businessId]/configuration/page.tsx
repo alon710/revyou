@@ -85,8 +85,7 @@ export default function BusinessConfigurationPage() {
   }
 
   return (
-    <div className="p-6 md:p-8">
-      <div className="mx-auto max-w-4xl space-y-6">
+    <div className="mx-auto max-w-4xl space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
@@ -106,7 +105,6 @@ export default function BusinessConfigurationPage() {
           onSave={handleSave}
           loading={saving}
         />
-      </div>
     </div>
   );
 }

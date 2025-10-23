@@ -122,8 +122,7 @@ export default function BusinessReviewsPage() {
   }
 
   return (
-    <div className="p-6 md:p-8">
-      <div className="mx-auto max-w-7xl space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -178,7 +177,6 @@ export default function BusinessReviewsPage() {
             </>
           )}
         </div>
-      </div>
     </div>
   );
 }

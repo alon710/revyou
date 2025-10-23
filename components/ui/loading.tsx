@@ -5,6 +5,7 @@ interface LoadingProps {
   className?: string;
   size?: "sm" | "md" | "lg";
   fullScreen?: boolean;
+  text?: string;
 }
 
 const sizeMap = {
@@ -13,11 +14,14 @@ const sizeMap = {
   lg: "h-12 w-12",
 };
 
-export function Loading({ className, size = "md", fullScreen = false }: LoadingProps) {
+export function Loading({ className, size = "md", fullScreen = false, text }: LoadingProps) {
   const spinner = (
-    <Loader2
-      className={cn("animate-spin text-primary", sizeMap[size], className)}
-    />
+    <div className="flex flex-col items-center gap-2">
+      <Loader2
+        className={cn("animate-spin text-primary", sizeMap[size], className)}
+      />
+      {text && <p className="text-sm text-muted-foreground">{text}</p>}
+    </div>
   );
 
   if (fullScreen) {

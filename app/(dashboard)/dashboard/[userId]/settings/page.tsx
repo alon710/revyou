@@ -123,8 +123,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="p-6 md:p-8">
-      <div className="mx-auto max-w-4xl space-y-8">
+    <div className="mx-auto max-w-4xl space-y-8">
         {/* Page Header */}
         <div>
           <h1 className="text-3xl font-bold tracking-tight">הגדרות חשבון</h1>
@@ -197,7 +196,6 @@ export default function SettingsPage() {
           userEmail={authUser.email || ''}
           onDeleteAccount={handleDeleteAccount}
         />
-      </div>
     </div>
   );
 }

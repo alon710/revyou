@@ -10,56 +10,10 @@ import { signOut } from '@/lib/firebase/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import {
-  Building2,
-  MessageSquare,
-  Settings,
-  Sliders,
-  CreditCard,
-  LogOut,
-  Sparkles
-} from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
+import { LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
-interface NavItem {
-  title: string;
-  href: (userId: string, businessId?: string) => string;
-  icon: React.ComponentType<{ className?: string }>;
-  requiresBusiness: boolean;
-}
-
-const navItems: NavItem[] = [
-  {
-    title: 'עסקים',
-    href: () => '/businesses',
-    icon: Building2,
-    requiresBusiness: false,
-  },
-  {
-    title: 'ביקורות',
-    href: (userId, businessId) => businessId ? `/dashboard/${userId}/${businessId}/reviews` : '/businesses',
-    icon: MessageSquare,
-    requiresBusiness: true,
-  },
-  {
-    title: 'תצורת עסק',
-    href: (userId, businessId) => businessId ? `/dashboard/${userId}/${businessId}/configuration` : '/businesses',
-    icon: Sliders,
-    requiresBusiness: true,
-  },
-  {
-    title: 'הגדרות חשבון',
-    href: (userId) => `/dashboard/${userId}/settings`,
-    icon: Settings,
-    requiresBusiness: false,
-  },
-  {
-    title: 'חיוב',
-    href: () => '/billing',
-    icon: CreditCard,
-    requiresBusiness: false,
-  },
-];
+import { navItems } from './nav-items';
 
 interface MobileMenuProps {
   open: boolean;
@@ -89,14 +43,9 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
           {/* Logo/Brand */}
           <SheetHeader className="border-b p-6">
             <SheetTitle className="text-right">
-              <Link
-                href="/businesses"
-                className="flex items-center justify-end gap-2 font-bold text-lg"
-                onClick={handleNavClick}
-              >
-                <span>ביקורות AI</span>
-                <Sparkles className="h-6 w-6 text-primary" />
-              </Link>
+              <div onClick={handleNavClick}>
+                <Logo href="/businesses" textClassName="text-lg" className="justify-end" />
+              </div>
             </SheetTitle>
           </SheetHeader>
 
