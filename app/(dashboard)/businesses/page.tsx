@@ -5,10 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
 import { deleteBusiness } from "@/lib/firebase/businesses";
 import { getUserSubscriptionTier } from "@/lib/firebase/users";
-import {
-  SubscriptionTier,
-  SUBSCRIPTION_LIMITS,
-} from "@/types/database";
+import { SubscriptionTier, SUBSCRIPTION_LIMITS } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import {
   Card,

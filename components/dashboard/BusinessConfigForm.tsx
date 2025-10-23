@@ -30,7 +30,6 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Save, RotateCcw } from "lucide-react";
 import StarConfigAccordion from "./StarConfigAccordion";
-import { Loading } from "@/components/ui/loading";
 
 const AVAILABLE_VARIABLES = [
   { name: "{{BUSINESS_NAME}}", description: "שם העסק" },
@@ -418,7 +417,8 @@ export default function BusinessConfigForm({
             <div className="space-y-0.5">
               <Label htmlFor="autoPost">פרסום אוטומטי</Label>
               <p className="text-xs text-muted-foreground">
-                פרסם תשובות AI אוטומטית ללא אישור ידני. כשמופעל, תשובות יפורסמו מיד. כשכבוי, תדרש לאשר כל תשובה לפני פרסום.
+                פרסם תשובות AI אוטומטית ללא אישור ידני. כשמופעל, תשובות יפורסמו
+                מיד. כשכבוי, תדרש לאשר כל תשובה לפני פרסום.
               </p>
             </div>
             <Switch
@@ -428,7 +428,7 @@ export default function BusinessConfigForm({
                 setConfig({
                   ...config,
                   autoPost: checked,
-                  requireApproval: !checked
+                  requireApproval: !checked,
                 })
               }
               disabled={loading}
@@ -438,7 +438,8 @@ export default function BusinessConfigForm({
           {config.autoPost && (
             <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                <strong>אזהרה:</strong> תשובות AI יפורסמו אוטומטית ללא אישור ידני. וודא שההגדרות שלך מדויקות לפני הפעלה.
+                <strong>אזהרה:</strong> תשובות AI יפורסמו אוטומטית ללא אישור
+                ידני. וודא שההגדרות שלך מדויקות לפני הפעלה.
               </p>
             </div>
           )}
@@ -446,7 +447,8 @@ export default function BusinessConfigForm({
           {!config.autoPost && (
             <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
               <p className="text-sm text-blue-800 dark:text-blue-200">
-                תשובות AI ייווצרו אוטומטית אך תצטרך לאשר כל תשובה לפני פרסומה לגוגל.
+                תשובות AI ייווצרו אוטומטית אך תצטרך לאשר כל תשובה לפני פרסומה
+                לגוגל.
               </p>
             </div>
           )}

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
 import {
   collection,
@@ -29,8 +28,11 @@ import Link from "next/link";
  * Shows reviews for the currently selected business
  */
 export default function ReviewsPage() {
-  const { user } = useAuth();
-  const { currentBusiness, businesses, loading: businessLoading } = useBusiness();
+  const {
+    currentBusiness,
+    businesses,
+    loading: businessLoading,
+  } = useBusiness();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
@@ -106,10 +108,7 @@ export default function ReviewsPage() {
   if (!businessLoading && businesses.length === 0) {
     return (
       <PageContainer maxWidth="7xl">
-        <PageHeader
-          title="ביקורות"
-          description="כל הביקורות עבור העסקים שלך"
-        />
+        <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
         <div className="flex flex-col items-center justify-center py-12 text-center border rounded-lg">
           <Building2 className="h-16 w-16 text-muted-foreground mb-4" />
           <h3 className="text-lg font-semibold mb-2">אין עסקים מחוברים</h3>
@@ -131,10 +130,7 @@ export default function ReviewsPage() {
   if (!businessLoading && !currentBusiness) {
     return (
       <PageContainer maxWidth="7xl">
-        <PageHeader
-          title="ביקורות"
-          description="כל הביקורות עבור העסקים שלך"
-        />
+        <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
         <div className="flex flex-col items-center justify-center py-12 text-center border rounded-lg">
           <MessageSquare className="h-16 w-16 text-muted-foreground mb-4" />
           <h3 className="text-lg font-semibold mb-2">בחר עסק</h3>
@@ -183,7 +179,8 @@ export default function ReviewsPage() {
             <MessageSquare className="h-16 w-16 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">אין ביקורות עדיין</h3>
             <p className="text-muted-foreground max-w-sm">
-              הביקורות של {currentBusiness?.name} יופיעו כאן ברגע שהן יגיעו מגוגל
+              הביקורות של {currentBusiness?.name} יופיעו כאן ברגע שהן יגיעו
+              מגוגל
             </p>
           </div>
         ) : (

@@ -5,11 +5,7 @@ const timestampSchema = z.custom<Timestamp>((val) => val instanceof Timestamp, {
   message: "Must be a Firestore Timestamp",
 });
 
-export const subscriptionTierSchema = z.enum([
-  "free",
-  "basic",
-  "professional",
-]);
+export const subscriptionTierSchema = z.enum(["free", "basic", "professional"]);
 export type SubscriptionTier = z.infer<typeof subscriptionTierSchema>;
 export const toneOfVoiceSchema = z.enum([
   "friendly",

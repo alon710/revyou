@@ -49,7 +49,13 @@ export function DeleteConfirmation({
   const [showDialog, setShowDialog] = useState(false);
 
   const content = (
-    <div className={variant === "inline" ? "" : "rounded-lg bg-destructive/10 p-4 border border-destructive/20"}>
+    <div
+      className={
+        variant === "inline"
+          ? ""
+          : "rounded-lg bg-destructive/10 p-4 border border-destructive/20"
+      }
+    >
       {variant === "card" && (
         <>
           <h4 className="font-semibold text-destructive mb-2">{title}</h4>
@@ -93,9 +99,7 @@ export function DeleteConfirmation({
               פעולות בלתי הפיכות שישפיעו על החשבון שלך
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {content}
-          </CardContent>
+          <CardContent className="space-y-4">{content}</CardContent>
         </Card>
 
         <ConfirmationDialog
@@ -104,9 +108,7 @@ export function DeleteConfirmation({
           title={`אישור ${title.toLowerCase()}`}
           description={
             <>
-              <p className="font-semibold">
-                {description}
-              </p>
+              <p className="font-semibold">{description}</p>
             </>
           }
           confirmText={
