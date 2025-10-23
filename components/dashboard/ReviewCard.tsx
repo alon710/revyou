@@ -18,7 +18,6 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { he } from "date-fns/locale";
 import {
-  approveReply,
   rejectReply,
   postReplyToGoogle,
   regenerateReply,
@@ -26,6 +25,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { ReplyEditor } from "./ReplyEditor";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 interface ReviewCardProps {
   review: Review;
@@ -41,6 +41,7 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
+  const [showPublishDialog, setShowPublishDialog] = useState(false);
 
   const getStatusBadge = (status: ReplyStatus) => {
     const statusMap = {
@@ -53,27 +54,6 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
 
     const statusInfo = statusMap[status] || statusMap.pending;
     return <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>;
-  };
-
-  const handleApprove = async () => {
-    try {
-      setIsLoading(true);
-      await approveReply(review.id);
-      toast({
-        title: "התגובה אושרה",
-        description: "ניתן כעת לפרסם את התגובה לגוגל",
-      });
-      onUpdate?.();
-    } catch (error) {
-      toast({
-        title: "שגיאה",
-        description:
-          error instanceof Error ? error.message : "לא ניתן לאשר את התגובה",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const handleReject = async () => {
@@ -96,11 +76,10 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
     }
   };
 
-  const handlePost = async () => {
+  const handlePublishConfirm = async () => {
     if (!user) return;
 
     try {
-      setIsLoading(true);
       const token = await user.getIdToken();
       await postReplyToGoogle(review.id, token);
       toast({
@@ -115,8 +94,7 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
           error instanceof Error ? error.message : "לא ניתן לפרסם את התגובה",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
+      throw error; // Re-throw to let dialog handle loading state
     }
   };
 
@@ -223,13 +201,13 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
             {review.replyStatus === "pending" && (
               <>
                 <Button
-                  onClick={handleApprove}
+                  onClick={() => setShowPublishDialog(true)}
                   disabled={isLoading}
                   size="sm"
                   variant="default"
                 >
-                  <CheckCircle className="ml-2 h-4 w-4" />
-                  אשר
+                  <Send className="ml-2 h-4 w-4" />
+                  פרסם לגוגל
                 </Button>
                 <Button
                   onClick={handleReject}
@@ -255,7 +233,7 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
             {review.replyStatus === "approved" && (
               <>
                 <Button
-                  onClick={handlePost}
+                  onClick={() => setShowPublishDialog(true)}
                   disabled={isLoading}
                   size="sm"
                   variant="default"
@@ -323,6 +301,51 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
           setShowEditor(false);
           onUpdate?.();
         }}
+      />
+
+      {/* Publish Confirmation Dialog */}
+      <ConfirmationDialog
+        open={showPublishDialog}
+        onOpenChange={setShowPublishDialog}
+        title="פרסום תגובה לגוגל"
+        description={
+          <div className="space-y-3">
+            <p>האם אתה בטוח שברצונך לפרסם את התגובה הזו לגוגל?</p>
+            <div className="rounded-md bg-gray-50 p-3 space-y-2">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="font-medium">למבקר:</span>
+                <span>{review.reviewerName}</span>
+                <span>•</span>
+                <StarRating rating={review.rating} size={14} />
+              </div>
+              <div className="text-sm">
+                <span className="font-medium">הביקורת:</span>
+                <p className="mt-1 text-gray-600">
+                  {review.reviewText || "(אין טקסט)"}
+                </p>
+              </div>
+            </div>
+            <div className="rounded-md border border-blue-200 bg-blue-50 p-3">
+              <p className="text-sm font-medium mb-1">התגובה שתפורסם:</p>
+              <p className="text-sm text-gray-700">
+                {review.editedReply || review.aiReply}
+              </p>
+            </div>
+            <p className="text-sm text-amber-700 font-medium">
+              ⚠️ לאחר הפרסום, לא ניתן לבטל את הפעולה
+            </p>
+          </div>
+        }
+        confirmText={
+          <span className="flex items-center gap-2">
+            <Send className="h-4 w-4" />
+            פרסם לגוגל
+          </span>
+        }
+        cancelText="ביטול"
+        onConfirm={handlePublishConfirm}
+        variant="default"
+        loadingText="מפרסם..."
       />
     </>
   );
