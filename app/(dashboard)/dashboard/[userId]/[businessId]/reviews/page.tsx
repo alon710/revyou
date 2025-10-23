@@ -107,9 +107,8 @@ export default function BusinessReviewsPage() {
       } finally {
         setIsLoading(false);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [currentBusiness]
+    [currentBusiness, lastDoc]
   );
 
   // Load reviews when business is selected

@@ -57,6 +57,11 @@ export const businessConfigSchema = z.object({
   }),
 });
 
+export const notificationPreferencesSchema = z.object({
+  emailOnNewReview: z.boolean(),
+  emailOnFailedPost: z.boolean(),
+});
+
 export const userSchema = z.object({
   uid: z.string().min(1),
   email: z.string().email(),
@@ -66,6 +71,8 @@ export const userSchema = z.object({
   subscriptionTier: subscriptionTierSchema,
   stripeCustomerId: z.string().nullish(),
   googleRefreshToken: z.string().nullish(),
+  selectedBusinessId: z.string().optional(),
+  notificationPreferences: notificationPreferencesSchema.optional(),
 });
 
 export const userUpdateSchema = userSchema
