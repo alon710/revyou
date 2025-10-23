@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateReplyWithRetry } from "@/lib/ai/gemini";
 import { buildReplyPrompt } from "@/lib/ai/prompts";
-import { getReview, updateReviewReply } from "@/lib/firebase/reviews";
-import { getBusiness } from "@/lib/firebase/businesses";
+import {
+  getReviewAdmin,
+  updateReviewReplyAdmin,
+} from "@/lib/firebase/reviews.admin";
+import { getBusinessAdmin } from "@/lib/firebase/businesses.admin";
 import { adminAuth } from "@/lib/firebase/admin";
 
 /**
@@ -24,16 +27,16 @@ export async function POST(
     const decodedToken = await adminAuth.verifyIdToken(token);
     const userId = decodedToken.uid;
 
-    // Get review
+    // Get review using Admin SDK
     const { id } = await params;
-    const review = await getReview(id);
+    const review = await getReviewAdmin(id);
 
     if (!review) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    // Get business and verify ownership
-    const business = await getBusiness(review.businessId);
+    // Get business and verify ownership using Admin SDK
+    const business = await getBusinessAdmin(review.businessId);
 
     if (!business) {
       return NextResponse.json(
@@ -61,8 +64,8 @@ export async function POST(
     // Generate reply with Gemini
     const aiReply = await generateReplyWithRetry(prompt);
 
-    // Update review
-    await updateReviewReply(id, aiReply, false);
+    // Update review using Admin SDK
+    await updateReviewReplyAdmin(id, aiReply, false);
 
     return NextResponse.json({ aiReply, success: true });
   } catch (error) {

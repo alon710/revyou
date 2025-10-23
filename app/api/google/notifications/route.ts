@@ -3,12 +3,13 @@ import {
   enableNotifications,
   getPubSubTopicName,
 } from "@/lib/google/notifications";
-import { getBusiness } from "@/lib/firebase/businesses";
-import { getUser } from "@/lib/firebase/users";
+import {
+  getBusinessAdmin,
+  updateBusinessAdmin,
+} from "@/lib/firebase/businesses.admin";
+import { getUserAdmin } from "@/lib/firebase/users.admin";
 import { adminAuth } from "@/lib/firebase/admin";
 import { decryptToken } from "@/lib/google/oauth";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
 
 /**
  * POST /api/google/notifications
@@ -36,8 +37,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get business and verify ownership
-    const business = await getBusiness(businessId);
+    // Get business and verify ownership using Admin SDK
+    const business = await getBusinessAdmin(businessId);
 
     if (!business) {
       return NextResponse.json(
@@ -50,8 +51,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Get user's Google refresh token
-    const user = await getUser(userId);
+    // Get user's Google refresh token using Admin SDK
+    const user = await getUserAdmin(userId);
 
     if (!user || !user.googleRefreshToken) {
       return NextResponse.json(
@@ -73,13 +74,10 @@ export async function POST(req: NextRequest) {
       topicName
     );
 
-    // Update business record
-    if (db) {
-      const businessRef = doc(db, "businesses", businessId);
-      await updateDoc(businessRef, {
-        notificationsEnabled: true,
-      });
-    }
+    // Update business record using Admin SDK
+    await updateBusinessAdmin(businessId, {
+      notificationsEnabled: true,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

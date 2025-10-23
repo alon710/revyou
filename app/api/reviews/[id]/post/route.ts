@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { postReviewReply } from "@/lib/google/business-profile";
-import { getReview, markAsPosted, markAsFailed } from "@/lib/firebase/reviews";
-import { getBusiness } from "@/lib/firebase/businesses";
-import { getUser } from "@/lib/firebase/users";
+import {
+  getReviewAdmin,
+  markAsPostedAdmin,
+  markAsFailedAdmin,
+} from "@/lib/firebase/reviews.admin";
+import { getBusinessAdmin } from "@/lib/firebase/businesses.admin";
+import { getUserAdmin } from "@/lib/firebase/users.admin";
 import { adminAuth } from "@/lib/firebase/admin";
 import { decryptToken } from "@/lib/google/oauth";
 
@@ -25,16 +29,16 @@ export async function POST(
     const decodedToken = await adminAuth.verifyIdToken(token);
     const userId = decodedToken.uid;
 
-    // Get review
+    // Get review using Admin SDK
     const { id } = await params;
-    const review = await getReview(id);
+    const review = await getReviewAdmin(id);
 
     if (!review) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    // Get business and verify ownership
-    const business = await getBusiness(review.businessId);
+    // Get business and verify ownership using Admin SDK
+    const business = await getBusinessAdmin(review.businessId);
 
     if (!business) {
       return NextResponse.json(
@@ -47,8 +51,8 @@ export async function POST(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Get user to access Google refresh token
-    const user = await getUser(userId);
+    // Get user to access Google refresh token using Admin SDK
+    const user = await getUserAdmin(userId);
 
     if (!user || !user.googleRefreshToken) {
       return NextResponse.json(
@@ -74,17 +78,17 @@ export async function POST(
     // Post to Google
     await postReviewReply(refreshToken, reviewName, replyText);
 
-    // Update review status
-    await markAsPosted(id, replyText, userId);
+    // Update review status using Admin SDK
+    await markAsPostedAdmin(id, replyText, userId);
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error posting reply:", error);
 
-    // Mark as failed
+    // Mark as failed using Admin SDK
     const { id: failedId } = await params;
     try {
-      await markAsFailed(failedId);
+      await markAsFailedAdmin(failedId);
     } catch (updateError) {
       console.error("Error marking review as failed:", updateError);
     }

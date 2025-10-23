@@ -37,7 +37,7 @@ export async function generateReply(
   try {
     const client = getGeminiClient();
     const model = client.getGenerativeModel({
-      model: "gemini-1.5-flash", // Fast and cost-effective
+      model: "gemini-2.5-flash-lite", // Fast, low-cost, optimized for short responses
     });
 
     const generationConfig = {
