@@ -73,7 +73,7 @@ export function FAQ() {
                 onClick={() => toggleFAQ(index)}
                 className="w-full text-right p-6 flex items-center justify-between hover:bg-secondary/50 transition-colors"
               >
-                <h3 className="text-lg font-semibold text-foreground pr-4">
+                <h3 className="text-lg font-semibold text-foreground pe-4">
                   {faq.question}
                 </h3>
                 <ChevronDown

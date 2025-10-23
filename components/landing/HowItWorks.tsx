@@ -56,7 +56,7 @@ export function HowItWorks() {
                   key={index}
                   className="p-8 relative overflow-hidden hover:shadow-lg transition-shadow duration-300"
                 >
-                  <div className="absolute top-4 left-4 text-6xl font-bold text-primary/10">
+                  <div className="absolute top-4 start-4 text-6xl font-bold text-primary/10">
                     {step.number}
                   </div>
 

@@ -21,7 +21,7 @@ export function Hero() {
             <Link href="/register">
               <Button size="lg" className="text-lg px-8 py-6">
                 התחל ניסיון חינם
-                <Sparkles className="mr-2 h-5 w-5" />
+                <Sparkles className="ms-2 h-5 w-5" />
               </Button>
             </Link>
             <Link href="#how-it-works">
