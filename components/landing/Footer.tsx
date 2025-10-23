@@ -20,18 +20,18 @@ export function Footer() {
             </p>
             <div className="flex flex-col gap-2">
               <a
-                href="mailto:support@example.com"
+                href="mailto:alon710@gmail.com"
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Mail className="h-4 w-4" />
-                <span>support@example.com</span>
+                <span>alon710@gmail.com</span>
               </a>
               <a
-                href="tel:+972-50-000-0000"
+                href="tel:+972-50-671-5060"
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Phone className="h-4 w-4" />
-                <span>050-000-0000</span>
+                <span>050-671-5060</span>
               </a>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4" />
@@ -50,12 +50,12 @@ export function Footer() {
                 <button
                   onClick={() =>
                     document
-                      .getElementById("features")
+                      .getElementById("how-it-works")
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  תכונות
+                  איך זה עובד
                 </button>
               </li>
               <li>
@@ -74,21 +74,13 @@ export function Footer() {
                 <button
                   onClick={() =>
                     document
-                      .getElementById("how-it-works")
+                      .getElementById("faq")
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  איך זה עובד
+                  שאלות נפוצות
                 </button>
-              </li>
-              <li>
-                <Link
-                  href="/register"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  התחל ניסיון חינם
-                </Link>
               </li>
             </ul>
           </div>
@@ -101,38 +93,10 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/docs"
+                  href="/sitemap"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  מדריך למשתמש
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/blog"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  בלוג
-                </Link>
-              </li>
-              <li>
-                <button
-                  onClick={() =>
-                    document
-                      .getElementById("faq")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  שאלות נפוצות
-                </button>
-              </li>
-              <li>
-                <Link
-                  href="/api-docs"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  תיעוד API
+                  מפת אתר
                 </Link>
               </li>
             </ul>
@@ -158,22 +122,6 @@ export function Footer() {
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   תנאי שימוש
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/security"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  אבטחה
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  צור קשר
                 </Link>
               </li>
             </ul>

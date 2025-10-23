@@ -37,12 +37,6 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <button
-              onClick={() => scrollToSection("features")}
-              className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
-            >
-              תכונות
-            </button>
-            <button
               onClick={() => scrollToSection("how-it-works")}
               className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
             >

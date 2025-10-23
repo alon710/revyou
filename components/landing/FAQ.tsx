@@ -43,7 +43,7 @@ const faqs = [
   {
     question: "האם אני יכול לנסות את המערכת לפני התשלום?",
     answer:
-      "כן! יש לנו תוכנית חינמית שמאפשרת לכם לנהל עסק אחד ועד 10 ביקורות בחודש. בנוסף, כל התוכניות בתשלום כוללות תקופת ניסיון של 14 יום ללא צורך בכרטיס אשראי.",
+      "כן! יש לנו תוכנית חינמית שמאפשרת לכם לנהל עסק אחד ועד 5 ביקורות בחודש ללא צורך בכרטיס אשראי. תוכלו לשדרג לתוכנית בתשלום בכל עת.",
   },
 ];
 
@@ -91,18 +91,6 @@ export function FAQ() {
               )}
             </Card>
           ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <p className="text-muted-foreground mb-4">
-            לא מצאתם את מה שחיפשתם?
-          </p>
-          <a
-            href="mailto:support@example.com"
-            className="text-primary hover:underline font-medium"
-          >
-            צרו קשר עם צוות התמיכה שלנו
-          </a>
         </div>
       </div>
     </section>
