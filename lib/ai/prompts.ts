@@ -11,7 +11,6 @@ export interface ReviewData {
   reviewText: string;
 }
 
-
 /**
  * Build complete prompt from template and data
  * @param businessConfig - Business configuration

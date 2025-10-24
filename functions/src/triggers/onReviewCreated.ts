@@ -155,7 +155,7 @@ export const onReviewCreated = functions.onDocumentCreated(
 
       logger.info(`Generated AI reply: ${aiReply}`);
 
-      const replyStatus: "approved" = "approved";
+      const replyStatus = "approved" as const;
       logger.info(
         `Auto-reply enabled for ${reviewData.rating} stars, marking as approved`
       );

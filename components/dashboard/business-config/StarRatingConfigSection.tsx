@@ -56,7 +56,11 @@ export default function StarRatingConfigSection({
                         ? "bg-green-500"
                         : "bg-gray-300 dark:bg-gray-600"
                     }`}
-                    title={starConfig.autoReply ? "תגובה אוטומטית פעילה" : "תגובה אוטומטית כבויה"}
+                    title={
+                      starConfig.autoReply
+                        ? "תגובה אוטומטית פעילה"
+                        : "תגובה אוטומטית כבויה"
+                    }
                   />
                 </div>
                 {isEditMode && (

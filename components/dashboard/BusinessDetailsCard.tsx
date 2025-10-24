@@ -47,7 +47,12 @@ export default function BusinessDetailsCard({
 
   // Debug: Log variant changes
   useEffect(() => {
-    console.log("📝 BusinessDetailsCard variant:", variant, "isEditMode:", isEditMode);
+    console.log(
+      "📝 BusinessDetailsCard variant:",
+      variant,
+      "isEditMode:",
+      isEditMode
+    );
   }, [variant, isEditMode]);
 
   useEffect(() => {
@@ -151,11 +156,7 @@ export default function BusinessDetailsCard({
               <X className="ml-2 h-5 w-5" />
               ביטול
             </Button>
-            <Button
-              type="submit"
-              disabled={saving || loading}
-              size="default"
-            >
+            <Button type="submit" disabled={saving || loading} size="default">
               <Save className="ml-2 h-5 w-5" />
               שמור שינויים
             </Button>
