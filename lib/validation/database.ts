@@ -34,7 +34,7 @@ export const subscriptionStatusSchema = z.enum([
 
 export const starConfigSchema = z.object({
   customInstructions: z.string().max(1000),
-  enabled: z.boolean(),
+  autoReply: z.boolean(),
 });
 
 export const businessConfigSchema = z.object({
@@ -42,8 +42,6 @@ export const businessConfigSchema = z.object({
   toneOfVoice: toneOfVoiceSchema,
   useEmojis: z.boolean(),
   languageMode: languageModeSchema,
-  autoPost: z.boolean(),
-  requireApproval: z.boolean(),
   starConfigs: z.object({
     1: starConfigSchema,
     2: starConfigSchema,

@@ -113,10 +113,10 @@ export const onReviewCreated = functions.onDocumentCreated(
         return;
       }
 
-      // Check if AI generation is enabled for this rating
+      // Check if auto-reply is enabled for this rating
       const starConfig = config.starConfigs?.[reviewData.rating];
-      if (!starConfig || !starConfig.enabled) {
-        logger.info(`AI generation disabled for ${reviewData.rating} stars`);
+      if (!starConfig || !starConfig.autoReply) {
+        logger.info(`Auto-reply disabled for ${reviewData.rating} stars`);
         await db.collection("reviews").doc(reviewId).update({
           replyStatus: "skipped",
         });
@@ -161,16 +161,10 @@ export const onReviewCreated = functions.onDocumentCreated(
 
       logger.info(`Generated AI reply: ${aiReply}`);
 
-      // Determine reply status
-      let replyStatus: "pending" | "approved" = "pending";
-
-      if (config.autoPost && !config.requireApproval) {
-        replyStatus = "approved";
-        logger.info("Auto-post enabled, marking as approved");
-        // TODO: Trigger auto-post (implement in next task)
-      } else if (config.requireApproval) {
-        logger.info("Approval required, marking as pending");
-      }
+      // Auto-reply is enabled for this rating, mark as approved for auto-posting
+      const replyStatus: "approved" = "approved";
+      logger.info(`Auto-reply enabled for ${reviewData.rating} stars, marking as approved`);
+      // TODO: Trigger auto-post (implement in next task)
 
       // Update review with AI reply
       await db.collection("reviews").doc(reviewId).update({

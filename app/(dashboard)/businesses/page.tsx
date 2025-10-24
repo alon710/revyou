@@ -3,35 +3,20 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
-import { deleteBusiness } from "@/lib/firebase/businesses";
+import { deleteBusiness, updateBusinessConfig } from "@/lib/firebase/businesses";
 import { getUserSubscriptionTier } from "@/lib/firebase/users";
-import { SubscriptionTier, SUBSCRIPTION_LIMITS } from "@/types/database";
+import { SubscriptionTier, SUBSCRIPTION_LIMITS, BusinessConfig } from "@/types/database";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import {
-  Plus,
-  Settings,
-  Globe,
-  MessageSquare,
-  Smile,
-  Languages,
-} from "lucide-react";
+import { Plus, Settings, X, Save } from "lucide-react";
 import Link from "next/link";
-import { format } from "date-fns";
-import { he } from "date-fns/locale";
 import EmptyBusinessState from "@/components/dashboard/EmptyBusinessState";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { toast } from "sonner";
 import { Loading } from "@/components/ui/loading";
+import BusinessDetailsCard from "@/components/dashboard/BusinessDetailsCard";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
 
 /**
@@ -48,6 +33,8 @@ export default function BusinessesPage() {
   } = useBusiness();
   const [subscriptionTier, setSubscriptionTier] =
     useState<SubscriptionTier>("free");
+  const [editMode, setEditMode] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!user || authLoading) return;
@@ -71,10 +58,30 @@ export default function BusinessesPage() {
       await deleteBusiness(currentBusiness.id);
       toast.success("העסק נמחק בהצלחה");
       await refreshBusinesses();
+      setEditMode(false);
     } catch (error) {
       console.error("Error deleting business:", error);
       toast.error("לא ניתן למחוק את העסק");
     }
+  };
+
+  const handleSave = async (config: BusinessConfig) => {
+    if (!currentBusiness) return;
+
+    try {
+      await updateBusinessConfig(currentBusiness.id, config);
+      toast.success("ההגדרות נשמרו בהצלחה");
+      await refreshBusinesses();
+      setEditMode(false);
+    } catch (error) {
+      console.error("Error saving config:", error);
+      toast.error("לא ניתן לשמור את ההגדרות");
+      throw error;
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditMode(false);
   };
 
   const maxBusinesses = SUBSCRIPTION_LIMITS[subscriptionTier].businesses;
@@ -135,218 +142,75 @@ export default function BusinessesPage() {
   }
 
   // Show selected business details
-  const connectedDate = currentBusiness.connectedAt
-    ? format(currentBusiness.connectedAt.toDate(), "d MMMM yyyy בשעה HH:mm", {
-        locale: he,
-      })
-    : "";
-
   return (
     <PageContainer>
       <PageHeader
-        title={currentBusiness.name}
-        description={currentBusiness.address}
+        title={editMode ? "עריכת הגדרות" : currentBusiness.name}
+        description={editMode ? currentBusiness.name : currentBusiness.address}
         icon={
-          <div className="flex items-center gap-2">
-            {!currentBusiness.connected && (
-              <Badge variant="secondary">מנותק</Badge>
-            )}
-            {currentBusiness.connected && currentBusiness.config.autoPost && (
-              <Badge variant="default">פרסום אוטומטי</Badge>
-            )}
-          </div>
+          !editMode && !currentBusiness.connected && (
+            <Badge variant="secondary">מנותק</Badge>
+          )
         }
         actions={
           <div className="flex gap-2">
-            <Button asChild disabled={!canAddMore}>
-              <Link href="/businesses/connect">
-                <Plus className="ml-2 h-5 w-5" />
-                חבר עסק
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/businesses/edit">
-                <Settings className="ml-2 h-5 w-5" />
-                עריכה
-              </Link>
-            </Button>
+            {editMode ? (
+              <>
+                <Button
+                  type="submit"
+                  form="business-config-form"
+                  disabled={saving || businessLoading}
+                  size="default"
+                >
+                  <Save className="ml-2 h-5 w-5" />
+                  שמור שינויים
+                </Button>
+                <Button variant="outline" onClick={handleCancelEdit}>
+                  <X className="ml-2 h-5 w-5" />
+                  ביטול
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button asChild disabled={!canAddMore}>
+                  <Link href="/businesses/connect">
+                    <Plus className="ml-2 h-5 w-5" />
+                    חבר עסק
+                  </Link>
+                </Button>
+                <Button onClick={() => setEditMode(true)}>
+                  <Settings className="ml-2 h-5 w-5" />
+                  עריכה
+                </Button>
+                <DeleteConfirmation
+                  title="מחיקת עסק"
+                  description={`פעולה זו תמחק את העסק "${currentBusiness.name}" לצמיתות!`}
+                  items={[
+                    "כל הביקורות והתגובות המקושרות",
+                    "הגדרות ותצורות AI",
+                    "היסטוריית פעילות",
+                    "חיבור ל-Google Business Profile",
+                  ]}
+                  confirmationText={currentBusiness.name}
+                  confirmationLabel="כדי לאשר, הקלד את שם העסק:"
+                  confirmationPlaceholder="שם העסק"
+                  onDelete={handleDelete}
+                  deleteButtonText="מחק עסק"
+                  variant="inline"
+                />
+              </>
+            )}
           </div>
         }
       />
 
-      {/* Basic Info */}
-      <Card>
-        <CardHeader>
-          <CardTitle>מידע כללי</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">סטטוס</p>
-              <p className="font-medium">
-                {currentBusiness.connected ? "מחובר ופעיל" : "מנותק"}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">תאריך חיבור</p>
-              <p className="font-medium">{connectedDate}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">מזהה Google</p>
-              <p className="font-mono text-sm">
-                {currentBusiness.googleLocationId}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">חשבון Google</p>
-              <p className="font-mono text-sm">
-                {currentBusiness.googleAccountId}
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* AI Configuration */}
-      <Card>
-        <CardHeader>
-          <CardTitle>הגדרות AI</CardTitle>
-          <CardDescription>כך ה-AI יגיב לביקורות על העסק שלך</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Business Description */}
-          {currentBusiness.config.businessDescription && (
-            <div>
-              <p className="text-sm font-medium mb-2">תיאור העסק</p>
-              <p className="text-sm text-muted-foreground bg-muted p-3 rounded-lg">
-                {currentBusiness.config.businessDescription}
-              </p>
-            </div>
-          )}
-
-          <Separator />
-
-          {/* Settings Grid */}
-          <div className="grid grid-cols-2 gap-6">
-            <div className="flex items-start gap-3">
-              <MessageSquare className="h-5 w-5 text-primary mt-0.5" />
-              <div>
-                <p className="font-medium">סגנון תשובה</p>
-                <p className="text-sm text-muted-foreground">
-                  {getToneLabel(currentBusiness.config.toneOfVoice)}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <Smile className="h-5 w-5 text-primary mt-0.5" />
-              <div>
-                <p className="font-medium">אימוג&apos;י</p>
-                <p className="text-sm text-muted-foreground">
-                  {currentBusiness.config.useEmojis ? "כן" : "לא"}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <Languages className="h-5 w-5 text-primary mt-0.5" />
-              <div>
-                <p className="font-medium">שפה</p>
-                <p className="text-sm text-muted-foreground">
-                  {getLanguageLabel(currentBusiness.config.languageMode)}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <Globe className="h-5 w-5 text-primary mt-0.5" />
-              <div>
-                <p className="font-medium">פרסום אוטומטי</p>
-                <p className="text-sm text-muted-foreground">
-                  {currentBusiness.config.autoPost
-                    ? "מופעל - תשובות יפורסמו אוטומטית"
-                    : "כבוי - נדרש אישור ידני"}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Star Configurations */}
-          <div>
-            <p className="text-sm font-medium mb-3">התאמה אישית לפי דירוג</p>
-            <div className="space-y-2">
-              {([5, 4, 3, 2, 1] as const).map((rating) => {
-                const config = currentBusiness.config.starConfigs[rating];
-                return (
-                  <div
-                    key={rating}
-                    className="flex items-center justify-between p-3 bg-muted rounded-lg"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{rating} כוכבים</span>
-                      {!config.enabled && (
-                        <Badge variant="secondary">מושבת</Badge>
-                      )}
-                      {config.customInstructions && (
-                        <Badge variant="outline">מותאם אישית</Badge>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>פעולות</CardTitle>
-          <CardDescription>נהל את חיבור העסק</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <DeleteConfirmation
-            title="מחיקת עסק"
-            description={`פעולה זו תמחק את העסק "${currentBusiness.name}" לצמיתות!`}
-            items={[
-              "כל הביקורות והתגובות המקושרות",
-              "הגדרות ותצורות AI",
-              "היסטוריית פעילות",
-              "חיבור ל-Google Business Profile",
-            ]}
-            confirmationText={currentBusiness.name}
-            confirmationLabel="כדי לאשר, הקלד את שם העסק:"
-            confirmationPlaceholder="שם העסק"
-            onDelete={handleDelete}
-            deleteButtonText="מחק עסק לצמיתות"
-            variant="inline"
-            className="w-full justify-start"
-          />
-        </CardContent>
-      </Card>
+      <BusinessDetailsCard
+        variant={editMode ? "edit" : "display"}
+        business={currentBusiness}
+        onSave={editMode ? handleSave : undefined}
+        loading={businessLoading}
+        onSavingChange={setSaving}
+      />
     </PageContainer>
   );
-}
-
-function getToneLabel(tone: string): string {
-  const labels: Record<string, string> = {
-    friendly: "ידידותי",
-    formal: "פורמלי",
-    humorous: "הומוריסטי",
-    professional: "מקצועי",
-  };
-  return labels[tone] || tone;
-}
-
-function getLanguageLabel(mode: string): string {
-  const labels: Record<string, string> = {
-    hebrew: "עברית",
-    english: "אנגלית",
-    "auto-detect": "זיהוי אוטומטי",
-    "match-reviewer": "התאם למבקר",
-  };
-  return labels[mode] || mode;
 }

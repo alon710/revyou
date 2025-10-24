@@ -10,6 +10,7 @@ import {
 import { User } from "@/types/database";
 import { DangerZone } from "@/components/dashboard/settings/DangerZone";
 import { NotificationPreferences } from "@/components/dashboard/settings/NotificationPreferences";
+import { AccountInfo } from "@/components/dashboard/settings/AccountInfo";
 import { useToast } from "@/hooks/use-toast";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -126,6 +127,14 @@ export default function SettingsPage() {
       <PageHeader
         title="הגדרות חשבון"
         description="נהל את הגדרות החשבון והתראות האימייל שלך"
+      />
+
+      {/* Account Information */}
+      <AccountInfo
+        displayName={authUser.displayName}
+        email={authUser.email}
+        photoURL={authUser.photoURL}
+        uid={authUser.uid}
       />
 
       {/* Notification Preferences */}

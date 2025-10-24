@@ -88,9 +88,6 @@ export default function BusinessCard({
               <Building2 className="h-5 w-5 text-primary" />
               <CardTitle className="text-xl">{business.name}</CardTitle>
               {!business.connected && <Badge variant="secondary">מנותק</Badge>}
-              {business.connected && business.config.autoPost && (
-                <Badge variant="default">פרסום אוטומטי</Badge>
-              )}
               {business.notificationsEnabled ? (
                 <Badge variant="outline" className="gap-1">
                   <Bell className="h-3 w-3" />
@@ -125,12 +122,6 @@ export default function BusinessCard({
               <p className="text-muted-foreground">שפה</p>
               <p className="font-medium">
                 {getLanguageLabel(business.config.languageMode)}
-              </p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">דרוש אישור</p>
-              <p className="font-medium">
-                {business.config.requireApproval ? "כן" : "לא"}
               </p>
             </div>
             <div>

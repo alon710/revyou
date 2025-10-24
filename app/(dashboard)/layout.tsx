@@ -36,9 +36,9 @@ export default function DashboardLayout({
 
   return (
     <BusinessProvider>
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-screen overflow-hidden bg-background">
         {/* Desktop Sidebar */}
-        <aside className="hidden w-64 md:block">
+        <aside className="hidden w-64 md:block border-l">
           <Sidebar />
         </aside>
 
@@ -50,7 +50,7 @@ export default function DashboardLayout({
         {/* Main Content Area */}
         <div className="flex flex-1 flex-col overflow-hidden">
           {/* Mobile Header - Only visible on mobile */}
-          <header className="flex items-center justify-between gap-4 border-b bg-white px-4 py-3 md:hidden">
+          <header className="flex items-center justify-between gap-4 border-b bg-background px-4 py-3 md:hidden">
             <Button
               variant="ghost"
               size="icon"
@@ -63,7 +63,7 @@ export default function DashboardLayout({
           </header>
 
           {/* Page Content */}
-          <main className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
+          <main className="flex-1 overflow-y-auto bg-muted/30 p-4 md:p-6 lg:p-8">
             {children}
           </main>
         </div>

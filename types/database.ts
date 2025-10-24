@@ -38,7 +38,7 @@ export interface User {
 
 export interface StarConfig {
   customInstructions: string;
-  enabled: boolean;
+  autoReply: boolean;
 }
 
 export interface BusinessConfig {
@@ -58,10 +58,6 @@ export interface BusinessConfig {
 
   // Prompt Template (required for each business)
   promptTemplate: string; // Custom AI prompt template for this business
-
-  // Automation Settings
-  autoPost: boolean; // Auto-post replies without approval
-  requireApproval: boolean; // Require manual approval before posting
 
   // Star-specific Configuration
   starConfigs: {

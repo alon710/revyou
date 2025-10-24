@@ -114,14 +114,12 @@ export function getDefaultBusinessConfig(): BusinessConfig {
     useEmojis: false,
     languageMode: "hebrew" as LanguageMode,
     promptTemplate: DEFAULT_PROMPT_TEMPLATE,
-    autoPost: false,
-    requireApproval: true,
     starConfigs: {
-      1: { customInstructions: "", enabled: true },
-      2: { customInstructions: "", enabled: true },
-      3: { customInstructions: "", enabled: true },
-      4: { customInstructions: "", enabled: true },
-      5: { customInstructions: "", enabled: true },
+      1: { customInstructions: "", autoReply: true },
+      2: { customInstructions: "", autoReply: true },
+      3: { customInstructions: "", autoReply: true },
+      4: { customInstructions: "", autoReply: true },
+      5: { customInstructions: "", autoReply: true },
     },
   };
 }

@@ -122,29 +122,27 @@ async function seedDatabase() {
         maxSentences: 2,
         allowedEmojis: ["🥂", "✨", "🙏", "❤️", "👨‍🍳"],
         signature: "צוות חמישים ושמונה",
-        autoPost: false,
-        requireApproval: true,
         promptTemplate: DEFAULT_PROMPT_TEMPLATE,
         starConfigs: {
           1: {
-            enabled: true,
+            autoReply: true,
             customInstructions:
               "התנצל בצורה כנה, הציע פיצוי כמו ארוחה חינם, וספק טלפון ליצירת קשר",
           },
           2: {
-            enabled: true,
+            autoReply: true,
             customInstructions: "הכר בבעיה, התנצל, והצע שיפור",
           },
           3: {
-            enabled: true,
+            autoReply: true,
             customInstructions: "הודה על המשוב ושאל מה ניתן לשפר",
           },
           4: {
-            enabled: true,
+            autoReply: true,
             customInstructions: "הודה חם ושאל מה היה אפשר לעשות טוב יותר",
           },
           5: {
-            enabled: true,
+            autoReply: true,
             customInstructions: "הודה בהתלהבות והזמן לבקר שוב",
           },
         },
@@ -172,28 +170,26 @@ async function seedDatabase() {
         maxSentences: 3,
         allowedEmojis: ["☕"],
         signature: "בברכה, צוות בית הקפה",
-        autoPost: false,
-        requireApproval: true,
         promptTemplate: DEFAULT_PROMPT_TEMPLATE,
         starConfigs: {
           1: {
-            enabled: true,
+            autoReply: true,
             customInstructions: "התנצל בצורה פורמלית ומקצועית",
           },
           2: {
-            enabled: true,
+            autoReply: true,
             customInstructions: "הכר בבעיה והצע פתרון",
           },
           3: {
-            enabled: true,
+            autoReply: true,
             customInstructions: "הודה ושאל על משוב נוסף",
           },
           4: {
-            enabled: true,
+            autoReply: true,
             customInstructions: "הודה והזמן לבקר שוב",
           },
           5: {
-            enabled: true,
+            autoReply: true,
             customInstructions: "הודה והדגש את המחויבות לשירות",
           },
         },

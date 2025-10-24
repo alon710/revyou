@@ -207,13 +207,13 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
                   variant="default"
                 >
                   <Send className="ml-2 h-4 w-4" />
-                  פרסם לגוגל
+                  פרסם תגובה
                 </Button>
                 <Button
                   onClick={handleReject}
                   disabled={isLoading}
                   size="sm"
-                  variant="outline"
+                  variant="secondary"
                 >
                   <XCircle className="ml-2 h-4 w-4" />
                   דחה
@@ -222,71 +222,21 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
                   onClick={() => setShowEditor(true)}
                   disabled={isLoading}
                   size="sm"
-                  variant="ghost"
+                  variant="secondary"
                 >
                   <Edit className="ml-2 h-4 w-4" />
                   ערוך
                 </Button>
-              </>
-            )}
-
-            {review.replyStatus === "approved" && (
-              <>
-                <Button
-                  onClick={() => setShowPublishDialog(true)}
-                  disabled={isLoading}
-                  size="sm"
-                  variant="default"
-                >
-                  <Send className="ml-2 h-4 w-4" />
-                  פרסם לגוגל
-                </Button>
-                <Button
-                  onClick={() => setShowEditor(true)}
-                  disabled={isLoading}
-                  size="sm"
-                  variant="outline"
-                >
-                  <Edit className="ml-2 h-4 w-4" />
-                  ערוך
-                </Button>
-              </>
-            )}
-
-            {(review.replyStatus === "failed" ||
-              review.replyStatus === "rejected") && (
-              <>
                 <Button
                   onClick={handleRegenerate}
                   disabled={isLoading}
                   size="sm"
-                  variant="default"
+                  variant="secondary"
                 >
                   <RefreshCw className="ml-2 h-4 w-4" />
-                  נסה שוב
-                </Button>
-                <Button
-                  onClick={() => setShowEditor(true)}
-                  disabled={isLoading}
-                  size="sm"
-                  variant="outline"
-                >
-                  <Edit className="ml-2 h-4 w-4" />
-                  ערוך
+                  צור מחדש
                 </Button>
               </>
-            )}
-
-            {review.replyStatus !== "posted" && review.aiReply && (
-              <Button
-                onClick={handleRegenerate}
-                disabled={isLoading}
-                size="sm"
-                variant="ghost"
-              >
-                <RefreshCw className="ml-2 h-4 w-4" />
-                צור מחדש
-              </Button>
             )}
           </div>
         </CardContent>
