@@ -58,7 +58,9 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Logo className="justify-center mb-4" textClassName="text-3xl" />
-          <p className="text-muted-foreground">היכנס כדי להתחיל לנהל את הביקורות שלך</p>
+          <p className="text-muted-foreground">
+            היכנס כדי להתחיל לנהל את הביקורות שלך
+          </p>
         </div>
 
         {/* Login Card */}

@@ -52,9 +52,7 @@ export default function StarRatingConfigSection({
                   </Label>
                   <div
                     className={`w-2 h-2 rounded-full ${
-                      starConfig.autoReply
-                        ? "bg-primary"
-                        : "bg-muted"
+                      starConfig.autoReply ? "bg-primary" : "bg-muted"
                     }`}
                     title={
                       starConfig.autoReply

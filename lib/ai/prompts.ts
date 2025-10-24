@@ -1,4 +1,4 @@
-import { BusinessConfig, ToneOfVoice, LanguageMode } from "@/types/database";
+import { BusinessConfig, ToneOfVoice, LanguageMode, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
 
 /**
  * Prompt Template Builder
@@ -42,36 +42,32 @@ export function buildReplyPrompt(
   };
   const tone = toneLabels[businessConfig.toneOfVoice];
 
-  // Get allowed emojis as string
+  // Safe defaults for all optional values
   const allowedEmojis = businessConfig.allowedEmojis?.join(" ") || "";
-
-  // Default values
   const maxSentences = businessConfig.maxSentences || 2;
   const signature = businessConfig.signature || `צוות ${businessName}`;
   const phone = businessPhone || businessConfig.businessPhone || "";
+  const businessDescription = businessConfig.businessDescription || "";
 
-  // Get star-specific custom instructions
+  // Get star-specific custom instructions with safe defaults
   const customInstructions1 =
-    businessConfig.starConfigs[1]?.customInstructions || "";
+    businessConfig.starConfigs?.[1]?.customInstructions || "";
   const customInstructions2 =
-    businessConfig.starConfigs[2]?.customInstructions || "";
+    businessConfig.starConfigs?.[2]?.customInstructions || "";
   const customInstructions3 =
-    businessConfig.starConfigs[3]?.customInstructions || "";
+    businessConfig.starConfigs?.[3]?.customInstructions || "";
   const customInstructions4 =
-    businessConfig.starConfigs[4]?.customInstructions || "";
+    businessConfig.starConfigs?.[4]?.customInstructions || "";
   const customInstructions5 =
-    businessConfig.starConfigs[5]?.customInstructions || "";
+    businessConfig.starConfigs?.[5]?.customInstructions || "";
 
-  // Use the prompt template from business config
-  const template = businessConfig.promptTemplate;
+  // Use the prompt template from business config, fallback to default
+  const template = businessConfig.promptTemplate || DEFAULT_PROMPT_TEMPLATE;
 
-  // Replace all variables
+  // Replace all variables with actual data
   const prompt = template
-    .replace(/\{\{BUSINESS_NAME\}\}/g, businessName)
-    .replace(
-      /\{\{BUSINESS_DESCRIPTION\}\}/g,
-      businessConfig.businessDescription
-    )
+    .replace(/\{\{BUSINESS_NAME\}\}/g, businessName || "")
+    .replace(/\{\{BUSINESS_DESCRIPTION\}\}/g, businessDescription)
     .replace(/\{\{BUSINESS_PHONE\}\}/g, phone)
     .replace(/\{\{LANGUAGE\}\}/g, language)
     .replace(/\{\{TONE\}\}/g, tone)
@@ -84,7 +80,7 @@ export function buildReplyPrompt(
     .replace(/\{\{CUSTOM_INSTRUCTIONS_4\}\}/g, customInstructions4)
     .replace(/\{\{CUSTOM_INSTRUCTIONS_5\}\}/g, customInstructions5)
     .replace(/\{\{RATING\}\}/g, review.rating.toString())
-    .replace(/\{\{REVIEWER_NAME\}\}/g, review.reviewerName)
+    .replace(/\{\{REVIEWER_NAME\}\}/g, review.reviewerName || "")
     .replace(/\{\{REVIEW_TEXT\}\}/g, review.reviewText || "(אין טקסט)");
 
   return prompt;

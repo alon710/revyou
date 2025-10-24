@@ -11,7 +11,10 @@ interface AuthButtonsProps {
   onAction?: () => void; // Callback after any action (for closing mobile menu)
 }
 
-export function AuthButtons({ variant = "desktop", onAction }: AuthButtonsProps) {
+export function AuthButtons({
+  variant = "desktop",
+  onAction,
+}: AuthButtonsProps) {
   const { user } = useAuth();
   const router = useRouter();
 

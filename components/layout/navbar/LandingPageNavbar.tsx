@@ -74,7 +74,10 @@ export function LandingPageNavbar({
         ))}
 
         <div className="flex flex-col gap-2 pt-2 border-t mt-2">
-          <AuthButtons variant="mobile" onAction={() => setMobileMenuOpen(false)} />
+          <AuthButtons
+            variant="mobile"
+            onAction={() => setMobileMenuOpen(false)}
+          />
         </div>
       </MobileMenuSheet>
     </>

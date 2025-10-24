@@ -129,14 +129,6 @@ export function ReplyEditor({
               )}
             </div>
           </div>
-
-          {/* Tips */}
-          <div className="rounded-md border border-accent bg-accent/10 p-3">
-            <p className="text-xs text-accent-foreground text-right">
-              <strong>טיפים:</strong> שמור על טון אדיב, ענה בקצרה, וודא שהתגובה
-              רלוונטית לביקורת.
-            </p>
-          </div>
         </div>
 
         <DialogFooter className="flex justify-between gap-2">

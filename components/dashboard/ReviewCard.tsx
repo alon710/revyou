@@ -3,20 +3,9 @@
 import { useState } from "react";
 import { Review, ReplyStatus } from "@/types/database";
 import { StarRating } from "@/components/ui/StarRating";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  CheckCircle,
-  XCircle,
-  Edit,
-  Send,
-  RefreshCw,
-  Calendar,
-} from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { he } from "date-fns/locale";
 import {
   rejectReply,
   postReplyToGoogle,
@@ -47,7 +36,7 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
     const statusMap = {
       pending: { label: "ממתין לאישור", variant: "secondary" as const },
       approved: { label: "מאושר", variant: "default" as const },
-      posted: { label: "פורסם", variant: "outline" as const },
+      posted: { label: "פורסם", variant: "default" as const },
       rejected: { label: "נדחה", variant: "destructive" as const },
       failed: { label: "נכשל", variant: "destructive" as const },
     };
@@ -122,118 +111,72 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
     }
   };
 
-  const reviewDate = review.reviewDate?.toDate?.() || new Date();
-  const postedDate = review.postedAt?.toDate?.();
-
   return (
     <>
       <Card className="w-full">
-        <CardHeader className="flex flex-row items-start justify-between space-y-0">
-          <div className="flex items-start gap-3">
-            <Avatar>
-              <AvatarImage src={review.reviewerPhotoUrl} />
-              <AvatarFallback>{review.reviewerName[0]}</AvatarFallback>
-            </Avatar>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold">{review.reviewerName}</h3>
-                {getStatusBadge(review.replyStatus)}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <StarRating rating={review.rating} size={16} />
-                <span>•</span>
-                <Calendar className="h-3 w-3" />
-                <span>
-                  {formatDistanceToNow(reviewDate, {
-                    addSuffix: true,
-                    locale: he,
-                  })}
-                </span>
-              </div>
+        <CardContent className="p-4 space-y-3">
+          {/* Header: Name, Status, Stars */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <h3 className="font-semibold truncate">{review.reviewerName}</h3>
+              {getStatusBadge(review.replyStatus)}
             </div>
+            <StarRating rating={review.rating} size={16} />
           </div>
-        </CardHeader>
 
-        <CardContent className="space-y-4">
           {/* Review Text */}
           {review.reviewText && (
-            <div className="rounded-md bg-muted p-3">
+            <div className="rounded-md bg-muted p-2">
               <p className="text-sm">{review.reviewText}</p>
             </div>
           )}
 
           {/* AI Reply */}
           {(review.aiReply || review.editedReply) && (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <h4 className="text-sm font-medium">תגובה אוטומטית:</h4>
-              </div>
-              <div className="rounded-md border border-accent bg-accent/10 p-3">
-                <p className="text-sm">
-                  {review.editedReply || review.aiReply}
-                </p>
-              </div>
+            <div className="rounded-md border border-accent bg-accent/10 p-2">
+              <p className="text-sm">
+                {review.editedReply || review.aiReply}
+              </p>
             </div>
           )}
 
-          {/* Posted Reply */}
-          {review.replyStatus === "posted" && review.postedAt && (
-            <div className="flex items-center gap-2 text-sm text-primary">
-              <CheckCircle className="h-4 w-4" />
-              <span>
-                פורסם{" "}
-                {postedDate &&
-                  formatDistanceToNow(postedDate, {
-                    addSuffix: true,
-                    locale: he,
-                  })}
-              </span>
+          {/* Action Buttons - For Pending and Failed */}
+          {(review.replyStatus === "pending" || review.replyStatus === "failed") && (
+            <div className="flex flex-wrap gap-2 pt-1">
+              <Button
+                onClick={() => setShowEditor(true)}
+                disabled={isLoading}
+                size="sm"
+                variant="outline"
+              >
+                ערוך
+              </Button>
+              <Button
+                onClick={() => setShowPublishDialog(true)}
+                disabled={isLoading}
+                size="sm"
+                variant="default"
+              >
+                פרסם
+              </Button>
+              <Button
+                onClick={handleReject}
+                disabled={isLoading}
+                size="sm"
+                variant="destructive"
+              >
+                דחה
+              </Button>
+              <Button
+                onClick={handleRegenerate}
+                disabled={isLoading}
+                size="sm"
+                variant="outline"
+              >
+                צור מחדש
+              </Button>
             </div>
           )}
-
-          {/* Action Buttons */}
-          <div className="flex flex-wrap gap-2">
-            {review.replyStatus === "pending" && (
-              <>
-                <Button
-                  onClick={() => setShowPublishDialog(true)}
-                  disabled={isLoading}
-                  size="sm"
-                  variant="default"
-                >
-                  <Send className="ml-2 h-4 w-4" />
-                  פרסם תגובה
-                </Button>
-                <Button
-                  onClick={handleReject}
-                  disabled={isLoading}
-                  size="sm"
-                  variant="secondary"
-                >
-                  <XCircle className="ml-2 h-4 w-4" />
-                  דחה
-                </Button>
-                <Button
-                  onClick={() => setShowEditor(true)}
-                  disabled={isLoading}
-                  size="sm"
-                  variant="secondary"
-                >
-                  <Edit className="ml-2 h-4 w-4" />
-                  ערוך
-                </Button>
-                <Button
-                  onClick={handleRegenerate}
-                  disabled={isLoading}
-                  size="sm"
-                  variant="secondary"
-                >
-                  <RefreshCw className="ml-2 h-4 w-4" />
-                  צור מחדש
-                </Button>
-              </>
-            )}
-          </div>
         </CardContent>
       </Card>
 
@@ -281,12 +224,7 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
             </p>
           </div>
         }
-        confirmText={
-          <span className="flex items-center gap-2">
-            <Send className="h-4 w-4" />
-            פרסם לגוגל
-          </span>
-        }
+        confirmText="פרסם לגוגל"
         cancelText="ביטול"
         onConfirm={handlePublishConfirm}
         variant="default"
