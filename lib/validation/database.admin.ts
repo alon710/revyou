@@ -8,7 +8,11 @@ import { Timestamp } from "firebase-admin/firestore";
 
 // Admin SDK returns timestamps as firebase-admin Timestamp objects
 const timestampSchemaAdmin = z.custom<Timestamp | Date>(
-  (val) => val instanceof Timestamp || val instanceof Date || val === null || val === undefined,
+  (val) =>
+    val instanceof Timestamp ||
+    val instanceof Date ||
+    val === null ||
+    val === undefined,
   {
     message: "Must be a Firestore Admin Timestamp or Date object",
   }

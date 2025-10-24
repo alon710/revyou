@@ -30,9 +30,7 @@ export default function BusinessIdentitySection({
     <Card>
       <CardHeader>
         <CardTitle>פרטי עסק</CardTitle>
-        <CardDescription>
-          פרטי זהות העסק לשימוש בתגובות AI
-        </CardDescription>
+        <CardDescription>פרטי זהות העסק לשימוש בתגובות AI</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Business Name */}
@@ -44,9 +42,7 @@ export default function BusinessIdentitySection({
                 id="businessName"
                 type="text"
                 value={config.businessName || ""}
-                onChange={(e) =>
-                  onChange({ businessName: e.target.value })
-                }
+                onChange={(e) => onChange({ businessName: e.target.value })}
                 placeholder={business.name}
                 disabled={loading}
               />
@@ -98,9 +94,7 @@ export default function BusinessIdentitySection({
                 id="businessPhone"
                 type="tel"
                 value={config.businessPhone || ""}
-                onChange={(e) =>
-                  onChange({ businessPhone: e.target.value })
-                }
+                onChange={(e) => onChange({ businessPhone: e.target.value })}
                 placeholder="03-123-4567"
                 disabled={loading}
               />

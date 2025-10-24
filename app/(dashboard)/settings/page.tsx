@@ -123,7 +123,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <PageContainer maxWidth="4xl">
+    <PageContainer>
       <PageHeader
         title="הגדרות חשבון"
         description="נהל את הגדרות החשבון והתראות האימייל שלך"
@@ -133,7 +133,6 @@ export default function SettingsPage() {
       <AccountInfo
         displayName={authUser.displayName}
         email={authUser.email}
-        photoURL={authUser.photoURL}
         uid={authUser.uid}
       />
 

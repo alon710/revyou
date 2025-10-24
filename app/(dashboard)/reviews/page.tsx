@@ -107,7 +107,7 @@ export default function ReviewsPage() {
   // Empty State - No businesses connected
   if (!businessLoading && businesses.length === 0) {
     return (
-      <PageContainer maxWidth="7xl">
+      <PageContainer>
         <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
         <div className="flex flex-col items-center justify-center py-12 text-center border rounded-lg">
           <Building2 className="h-16 w-16 text-muted-foreground mb-4" />
@@ -129,7 +129,7 @@ export default function ReviewsPage() {
   // No business selected - Show selection prompt
   if (!businessLoading && !currentBusiness) {
     return (
-      <PageContainer maxWidth="7xl">
+      <PageContainer>
         <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
         <div className="flex flex-col items-center justify-center py-12 text-center border rounded-lg">
           <MessageSquare className="h-16 w-16 text-muted-foreground mb-4" />
@@ -145,7 +145,7 @@ export default function ReviewsPage() {
   // Loading state
   if (businessLoading) {
     return (
-      <PageContainer maxWidth="7xl">
+      <PageContainer>
         <Skeleton className="h-10 w-64 mb-4" />
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
@@ -158,7 +158,7 @@ export default function ReviewsPage() {
 
   // Show reviews for selected business
   return (
-    <PageContainer maxWidth="7xl">
+    <PageContainer>
       <PageHeader
         title={`ביקורות - ${currentBusiness?.name}`}
         description="כל הביקורות עבור עסק זה ממוינות מחדש לישן"

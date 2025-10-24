@@ -17,8 +17,7 @@ export const LANGUAGE_LABELS: Record<string, string> = {
   hebrew: "עברית",
   english: "אנגלית",
   "auto-detect": "זיהוי אוטומטי",
-  russian: "רוסית",
-  arabic: "ערבית",
+  "match-reviewer": "התאמה למבקר",
 };
 
 // Available template variables
@@ -30,11 +29,30 @@ export const AVAILABLE_VARIABLES = [
   { name: "{{RATING}}", description: "דירוג (1-5)" },
   { name: "{{REVIEW_TEXT}}", description: "טקסט הביקורת" },
   { name: "{{TONE}}", description: "טון התגובה" },
-  { name: "{{LANGUAGE_INSTRUCTION}}", description: "הנחיות שפה" },
+  { name: "{{LANGUAGE}}", description: "שפת התגובה" },
   { name: "{{MAX_SENTENCES}}", description: "מספר משפטים מקסימלי" },
   { name: "{{SIGNATURE}}", description: "חתימה" },
-  { name: "{{EMOJI_INSTRUCTIONS}}", description: "הנחיות אימוג'ים" },
-  { name: "{{CUSTOM_INSTRUCTIONS}}", description: "הנחיות ספציפיות לדירוג" },
+  { name: "{{ALLOWED_EMOJIS}}", description: "אימוג'ים מותרים" },
+  {
+    name: "{{CUSTOM_INSTRUCTIONS_1}}",
+    description: "הנחיות מיוחדות לכוכב אחד",
+  },
+  {
+    name: "{{CUSTOM_INSTRUCTIONS_2}}",
+    description: "הנחיות מיוחדות לשני כוכבים",
+  },
+  {
+    name: "{{CUSTOM_INSTRUCTIONS_3}}",
+    description: "הנחיות מיוחדות לשלושה כוכבים",
+  },
+  {
+    name: "{{CUSTOM_INSTRUCTIONS_4}}",
+    description: "הנחיות מיוחדות לארבעה כוכבים",
+  },
+  {
+    name: "{{CUSTOM_INSTRUCTIONS_5}}",
+    description: "הנחיות מיוחדות לחמישה כוכבים",
+  },
 ];
 
 // Common props for section components

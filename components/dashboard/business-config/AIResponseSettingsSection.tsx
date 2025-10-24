@@ -1,4 +1,4 @@
-import { BusinessConfig, ToneOfVoice } from "@/types/database";
+import { BusinessConfig, ToneOfVoice, LanguageMode } from "@/types/database";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -15,7 +15,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SectionBaseProps, ConfigUpdateCallback, TONE_LABELS, LANGUAGE_LABELS } from "./types";
+import {
+  SectionBaseProps,
+  ConfigUpdateCallback,
+  TONE_LABELS,
+  LANGUAGE_LABELS,
+} from "./types";
 
 interface AIResponseSettingsSectionProps extends SectionBaseProps {
   config: BusinessConfig;
@@ -34,9 +39,7 @@ export default function AIResponseSettingsSection({
     <Card>
       <CardHeader>
         <CardTitle>הגדרות תגובה AI</CardTitle>
-        <CardDescription>
-          הגדר את אופן יצירת התגובות האוטומטיות
-        </CardDescription>
+        <CardDescription>הגדר את אופן יצירת התגובות האוטומטיות</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Tone of Voice */}
@@ -69,29 +72,28 @@ export default function AIResponseSettingsSection({
 
         {/* Language */}
         <div className="space-y-2">
-          <Label htmlFor="languageInstructions">שפת תגובה</Label>
+          <Label htmlFor="languageMode">שפת תגובה</Label>
           {isEditMode ? (
             <Select
-              value={config.languageInstructions || "auto-detect"}
-              onValueChange={(value) =>
-                onChange({ languageInstructions: value })
+              value={config.languageMode || "auto-detect"}
+              onValueChange={(value: LanguageMode) =>
+                onChange({ languageMode: value })
               }
               disabled={loading}
             >
-              <SelectTrigger id="languageInstructions">
+              <SelectTrigger id="languageMode">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="auto-detect">זיהוי אוטומטי</SelectItem>
                 <SelectItem value="hebrew">עברית</SelectItem>
                 <SelectItem value="english">English</SelectItem>
-                <SelectItem value="russian">Русский</SelectItem>
-                <SelectItem value="arabic">العربية</SelectItem>
+                <SelectItem value="match-reviewer">התאמה למבקר</SelectItem>
               </SelectContent>
             </Select>
           ) : (
             <p className="text-sm font-medium">
-              {LANGUAGE_LABELS[config.languageInstructions || "auto-detect"]}
+              {LANGUAGE_LABELS[config.languageMode || "auto-detect"]}
             </p>
           )}
         </div>
@@ -164,9 +166,7 @@ export default function AIResponseSettingsSection({
                 id="signature"
                 type="text"
                 value={config.signature || ""}
-                onChange={(e) =>
-                  onChange({ signature: e.target.value })
-                }
+                onChange={(e) => onChange({ signature: e.target.value })}
                 placeholder="צוות העסק"
                 disabled={loading}
               />

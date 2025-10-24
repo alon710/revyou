@@ -5,8 +5,6 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const db = admin.firestore();
 
-// Initialize Gemini AI
-// Note: Set GEMINI_API_KEY in Firebase Functions config
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 /**
@@ -94,7 +92,6 @@ export const onReviewCreated = functions.onDocumentCreated(
 
       logger.info(`Processing new review: ${reviewId}`);
 
-      // Get business configuration
       const businessDoc = await db
         .collection("businesses")
         .doc(reviewData.businessId)
@@ -113,7 +110,6 @@ export const onReviewCreated = functions.onDocumentCreated(
         return;
       }
 
-      // Check if auto-reply is enabled for this rating
       const starConfig = config.starConfigs?.[reviewData.rating];
       if (!starConfig || !starConfig.autoReply) {
         logger.info(`Auto-reply disabled for ${reviewData.rating} stars`);
@@ -123,7 +119,6 @@ export const onReviewCreated = functions.onDocumentCreated(
         return;
       }
 
-      // Build prompt
       const prompt = buildPrompt(
         business.name,
         config.businessDescription,
@@ -142,7 +137,6 @@ export const onReviewCreated = functions.onDocumentCreated(
 
       logger.info("Generated prompt for Gemini");
 
-      // Generate reply with Gemini
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       const generationConfig = {
@@ -161,12 +155,11 @@ export const onReviewCreated = functions.onDocumentCreated(
 
       logger.info(`Generated AI reply: ${aiReply}`);
 
-      // Auto-reply is enabled for this rating, mark as approved for auto-posting
       const replyStatus: "approved" = "approved";
-      logger.info(`Auto-reply enabled for ${reviewData.rating} stars, marking as approved`);
-      // TODO: Trigger auto-post (implement in next task)
+      logger.info(
+        `Auto-reply enabled for ${reviewData.rating} stars, marking as approved`
+      );
 
-      // Update review with AI reply
       await db.collection("reviews").doc(reviewId).update({
         aiReply,
         aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -177,7 +170,6 @@ export const onReviewCreated = functions.onDocumentCreated(
     } catch (error) {
       logger.error("Error generating AI reply:", error);
 
-      // Mark as failed
       try {
         await db.collection("reviews").doc(event.params.reviewId).update({
           replyStatus: "failed",

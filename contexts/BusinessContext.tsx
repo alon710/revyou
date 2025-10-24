@@ -125,7 +125,11 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
 
   const refreshBusinesses = useCallback(async () => {
     await loadBusinesses();
-  }, [loadBusinesses]);
+    // Also reload the current business to get fresh data
+    if (selectedBusinessId) {
+      await loadCurrentBusiness(selectedBusinessId);
+    }
+  }, [loadBusinesses, selectedBusinessId, loadCurrentBusiness]);
 
   return (
     <BusinessContext.Provider

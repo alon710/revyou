@@ -75,7 +75,7 @@ export default function ReviewDetailPage() {
 
   if (!user) {
     return (
-      <PageContainer maxWidth="4xl">
+      <PageContainer>
         <p>נא להתחבר כדי לצפות בביקורת</p>
       </PageContainer>
     );
@@ -83,7 +83,7 @@ export default function ReviewDetailPage() {
 
   if (isLoading) {
     return (
-      <PageContainer maxWidth="4xl">
+      <PageContainer>
         <Skeleton className="h-10 w-32" />
         <Skeleton className="h-[400px] w-full" />
       </PageContainer>
@@ -92,7 +92,7 @@ export default function ReviewDetailPage() {
 
   if (error || !review || !business) {
     return (
-      <PageContainer maxWidth="4xl">
+      <PageContainer>
         <BackButton href="/reviews" label="חזרה לביקורות" />
         <div className="text-center py-12">
           <p className="text-lg text-muted-foreground">
@@ -104,7 +104,7 @@ export default function ReviewDetailPage() {
   }
 
   return (
-    <PageContainer maxWidth="4xl">
+    <PageContainer>
       <BackButton href="/reviews" label="חזרה לביקורות" className="mb-6" />
 
       <PageHeader title={business.name} description="פרטי ביקורת" />

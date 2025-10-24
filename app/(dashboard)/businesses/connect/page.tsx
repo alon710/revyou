@@ -168,7 +168,7 @@ export default function ConnectBusinessPage() {
   }
 
   return (
-    <PageContainer maxWidth="4xl">
+    <PageContainer>
       <div className="flex items-center gap-4 mb-6">
         <BackButton href="/businesses" />
       </div>

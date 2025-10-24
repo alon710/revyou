@@ -7,38 +7,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "lucide-react";
 
 interface AccountInfoProps {
   displayName: string | null;
   email: string | null;
-  photoURL: string | null;
   uid: string;
 }
 
-export function AccountInfo({
-  displayName,
-  email,
-  photoURL,
-  uid,
-}: AccountInfoProps) {
-  // Get initials for avatar fallback
-  const getInitials = () => {
-    if (displayName) {
-      return displayName
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-    }
-    if (email) {
-      return email[0].toUpperCase();
-    }
-    return "U";
-  };
-
+export function AccountInfo({ displayName, email, uid }: AccountInfoProps) {
   return (
     <Card>
       <CardHeader>

@@ -22,7 +22,10 @@ export async function getBusinessAdmin(
 
     if (businessSnap.exists) {
       const data = businessSnap.data();
-      const validated = businessSchemaAdmin.parse({ id: businessSnap.id, ...data });
+      const validated = businessSchemaAdmin.parse({
+        id: businessSnap.id,
+        ...data,
+      });
       return validated as Business;
     }
 

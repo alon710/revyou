@@ -3,13 +3,20 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
-import { deleteBusiness, updateBusinessConfig } from "@/lib/firebase/businesses";
+import {
+  deleteBusiness,
+  updateBusinessConfig,
+} from "@/lib/firebase/businesses";
 import { getUserSubscriptionTier } from "@/lib/firebase/users";
-import { SubscriptionTier, SUBSCRIPTION_LIMITS, BusinessConfig } from "@/types/database";
+import {
+  SubscriptionTier,
+  SUBSCRIPTION_LIMITS,
+  BusinessConfig,
+} from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Settings, X, Save } from "lucide-react";
+import { Plus, Settings } from "lucide-react";
 import Link from "next/link";
 import EmptyBusinessState from "@/components/dashboard/EmptyBusinessState";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -19,10 +26,6 @@ import { Loading } from "@/components/ui/loading";
 import BusinessDetailsCard from "@/components/dashboard/BusinessDetailsCard";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
 
-/**
- * Business Management Page
- * Shows selected business details and allows management
- */
 export default function BusinessesPage() {
   const { user, loading: authLoading } = useAuth();
   const {
@@ -35,6 +38,11 @@ export default function BusinessesPage() {
     useState<SubscriptionTier>("free");
   const [editMode, setEditMode] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  // Debug: Log editMode changes
+  useEffect(() => {
+    console.log("🔍 EditMode changed:", editMode);
+  }, [editMode]);
 
   useEffect(() => {
     if (!user || authLoading) return;
@@ -66,6 +74,7 @@ export default function BusinessesPage() {
   };
 
   const handleSave = async (config: BusinessConfig) => {
+    console.log("💾 handleSave called");
     if (!currentBusiness) return;
 
     try {
@@ -81,6 +90,7 @@ export default function BusinessesPage() {
   };
 
   const handleCancelEdit = () => {
+    console.log("❌ Cancel edit clicked");
     setEditMode(false);
   };
 
@@ -96,7 +106,6 @@ export default function BusinessesPage() {
     );
   }
 
-  // Empty State - No businesses connected
   if (businesses.length === 0) {
     return (
       <PageContainer>
@@ -113,7 +122,6 @@ export default function BusinessesPage() {
     );
   }
 
-  // No business selected - Show selection prompt
   if (!currentBusiness) {
     return (
       <PageContainer>
@@ -141,66 +149,14 @@ export default function BusinessesPage() {
     );
   }
 
-  // Show selected business details
   return (
     <PageContainer>
       <PageHeader
         title={editMode ? "עריכת הגדרות" : currentBusiness.name}
         description={editMode ? currentBusiness.name : currentBusiness.address}
         icon={
-          !editMode && !currentBusiness.connected && (
-            <Badge variant="secondary">מנותק</Badge>
-          )
-        }
-        actions={
-          <div className="flex gap-2">
-            {editMode ? (
-              <>
-                <Button
-                  type="submit"
-                  form="business-config-form"
-                  disabled={saving || businessLoading}
-                  size="default"
-                >
-                  <Save className="ml-2 h-5 w-5" />
-                  שמור שינויים
-                </Button>
-                <Button variant="outline" onClick={handleCancelEdit}>
-                  <X className="ml-2 h-5 w-5" />
-                  ביטול
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button asChild disabled={!canAddMore}>
-                  <Link href="/businesses/connect">
-                    <Plus className="ml-2 h-5 w-5" />
-                    חבר עסק
-                  </Link>
-                </Button>
-                <Button onClick={() => setEditMode(true)}>
-                  <Settings className="ml-2 h-5 w-5" />
-                  עריכה
-                </Button>
-                <DeleteConfirmation
-                  title="מחיקת עסק"
-                  description={`פעולה זו תמחק את העסק "${currentBusiness.name}" לצמיתות!`}
-                  items={[
-                    "כל הביקורות והתגובות המקושרות",
-                    "הגדרות ותצורות AI",
-                    "היסטוריית פעילות",
-                    "חיבור ל-Google Business Profile",
-                  ]}
-                  confirmationText={currentBusiness.name}
-                  confirmationLabel="כדי לאשר, הקלד את שם העסק:"
-                  confirmationPlaceholder="שם העסק"
-                  onDelete={handleDelete}
-                  deleteButtonText="מחק עסק"
-                  variant="inline"
-                />
-              </>
-            )}
-          </div>
+          !editMode &&
+          !currentBusiness.connected && <Badge variant="secondary">מנותק</Badge>
         }
       />
 
@@ -208,9 +164,49 @@ export default function BusinessesPage() {
         variant={editMode ? "edit" : "display"}
         business={currentBusiness}
         onSave={editMode ? handleSave : undefined}
+        onCancel={handleCancelEdit}
         loading={businessLoading}
         onSavingChange={setSaving}
+        saving={saving}
       />
+
+      {!editMode && (
+        <div className="flex items-center justify-end gap-2 mt-6">
+          <DeleteConfirmation
+            title="מחיקת עסק"
+            description={`פעולה זו תמחק את העסק "${currentBusiness.name}" לצמיתות!`}
+            items={[
+              "כל הביקורות והתגובות המקושרות",
+              "הגדרות ותצורות AI",
+              "היסטוריית פעילות",
+              "חיבור ל-Google Business Profile",
+            ]}
+            confirmationText={currentBusiness.name}
+            confirmationLabel="כדי לאשר, הקלד את שם העסק:"
+            confirmationPlaceholder="שם העסק"
+            onDelete={handleDelete}
+            deleteButtonText="מחק עסק"
+            variant="inline"
+          />
+          <Button
+            type="button"
+            onClick={() => {
+              console.log("🖱️ Edit button clicked");
+              setEditMode(true);
+            }}
+            size="default"
+          >
+            <Settings className="ml-2 h-5 w-5" />
+            עריכה
+          </Button>
+          <Button asChild disabled={!canAddMore} size="default">
+            <Link href="/businesses/connect">
+              <Plus className="ml-2 h-5 w-5" />
+              חבר עסק
+            </Link>
+          </Button>
+        </div>
+      )}
     </PageContainer>
   );
 }

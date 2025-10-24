@@ -1,7 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import { DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
+import {
+  DEFAULT_PROMPT_TEMPLATE,
+  Business,
+  BusinessConfig,
+} from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,11 +20,14 @@ import {
 } from "@/components/ui/card";
 import { RotateCcw } from "lucide-react";
 import { SectionBaseProps, AVAILABLE_VARIABLES } from "./types";
+import { parseTemplate } from "@/lib/utils/template-variables";
 
 interface PromptTemplateSectionProps extends SectionBaseProps {
   promptTemplate: string;
   onChange: (template: string) => void;
   onReset: () => void;
+  business?: Business;
+  config?: BusinessConfig;
 }
 
 export default function PromptTemplateSection({
@@ -29,9 +36,17 @@ export default function PromptTemplateSection({
   loading,
   onChange,
   onReset,
+  business,
+  config,
 }: PromptTemplateSectionProps) {
   const isEditMode = variant === "edit";
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Parse template for display mode with colored variables
+  const segments =
+    !isEditMode && business && config
+      ? parseTemplate(promptTemplate, business, config)
+      : [];
 
   const insertVariable = (variable: string) => {
     if (!textareaRef.current) return;
@@ -115,8 +130,28 @@ export default function PromptTemplateSection({
             />
           ) : (
             <div className="bg-muted p-4 rounded-lg">
-              <pre className="text-xs whitespace-pre-wrap font-mono" dir="rtl">
-                {promptTemplate || DEFAULT_PROMPT_TEMPLATE}
+              <pre className="text-sm whitespace-pre-wrap font-mono" dir="rtl">
+                {segments.length > 0
+                  ? segments.map((segment, index) => {
+                      if (segment.type === "text") {
+                        return <span key={index}>{segment.content}</span>;
+                      }
+                      // Variable rendering with colors
+                      const colorClass =
+                        segment.variableType === "known"
+                          ? "text-blue-600 dark:text-blue-400 font-semibold"
+                          : "text-purple-600 dark:text-purple-400 font-semibold";
+                      return (
+                        <span
+                          key={index}
+                          className={colorClass}
+                          title={segment.originalVariable}
+                        >
+                          {segment.content}
+                        </span>
+                      );
+                    })
+                  : promptTemplate || DEFAULT_PROMPT_TEMPLATE}
               </pre>
             </div>
           )}

@@ -24,7 +24,6 @@ export function BusinessToggler() {
 
   const handleBusinessChange = (businessId: string) => {
     selectBusiness(businessId);
-    // Context change will automatically update the display
   };
 
   if (loading) {
@@ -42,7 +41,6 @@ export function BusinessToggler() {
   if (businesses.length === 1) {
     return (
       <div className="flex items-center gap-2 w-full px-3 py-2 rounded-md border bg-background">
-        <Building2 className="h-4 w-4 text-muted-foreground" />
         <span className="truncate text-sm">{currentBusiness?.name}</span>
       </div>
     );
@@ -53,11 +51,10 @@ export function BusinessToggler() {
       value={selectedBusinessId || undefined}
       onValueChange={handleBusinessChange}
     >
-      <SelectTrigger className="w-full">
+      <SelectTrigger className="w-full" dir="rtl">
         <SelectValue placeholder="בחר עסק">
           {currentBusiness && (
             <div className="flex items-center gap-2">
-              <Building2 className="h-4 w-4" />
               <span className="truncate">{currentBusiness.name}</span>
             </div>
           )}
@@ -66,10 +63,7 @@ export function BusinessToggler() {
       <SelectContent>
         {businesses.map((business) => (
           <SelectItem key={business.id} value={business.id}>
-            <div className="flex items-center gap-2">
-              <Building2 className="h-4 w-4" />
-              <span>{business.name}</span>
-            </div>
+            <span>{business.name}</span>
           </SelectItem>
         ))}
       </SelectContent>
