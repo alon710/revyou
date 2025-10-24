@@ -25,13 +25,13 @@ export function StarRating({
           size={size}
           className={
             star <= rating
-              ? "fill-yellow-400 text-yellow-400"
-              : "fill-gray-200 text-gray-200"
+              ? "fill-secondary text-secondary"
+              : "fill-muted text-muted"
           }
         />
       ))}
       {showNumber && (
-        <span className="mr-1 text-sm font-medium text-gray-600">
+        <span className="mr-1 text-sm font-medium text-muted-foreground">
           {rating.toFixed(1)}
         </span>
       )}

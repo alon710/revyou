@@ -53,8 +53,8 @@ export default function StarRatingConfigSection({
                   <div
                     className={`w-2 h-2 rounded-full ${
                       starConfig.autoReply
-                        ? "bg-green-500"
-                        : "bg-gray-300 dark:bg-gray-600"
+                        ? "bg-primary"
+                        : "bg-muted"
                     }`}
                     title={
                       starConfig.autoReply

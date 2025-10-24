@@ -132,8 +132,8 @@ export default function BusinessCard({
 
           {/* Enable Notifications */}
           {business.connected && !business.notificationsEnabled && (
-            <div className="rounded-md bg-blue-50 p-3 border border-blue-200">
-              <p className="text-sm text-blue-800 mb-2">
+            <div className="rounded-md bg-accent/10 p-3 border border-accent">
+              <p className="text-sm text-accent-foreground mb-2">
                 <strong>הפעל התראות</strong> כדי לקבל ביקורות חדשות אוטומטית
               </p>
               <Button

@@ -139,8 +139,8 @@ export default function PromptTemplateSection({
                       // Variable rendering with colors
                       const colorClass =
                         segment.variableType === "known"
-                          ? "text-blue-600 dark:text-blue-400 font-semibold"
-                          : "text-purple-600 dark:text-purple-400 font-semibold";
+                          ? "text-primary font-semibold"
+                          : "text-accent font-semibold";
                       return (
                         <span
                           key={index}

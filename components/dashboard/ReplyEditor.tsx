@@ -98,11 +98,11 @@ export function ReplyEditor({
 
         <div className="space-y-4 py-4">
           {/* Review Info */}
-          <div className="rounded-md bg-gray-50 p-3">
+          <div className="rounded-md bg-muted p-3">
             <p className="text-sm font-medium mb-1 text-right">
               הביקורת המקורית:
             </p>
-            <p className="text-sm text-gray-600 text-right">
+            <p className="text-sm text-muted-foreground text-right">
               {review.reviewText || "(אין טקסט)"}
             </p>
           </div>
@@ -125,14 +125,14 @@ export function ReplyEditor({
                 {charCount} / {maxChars} תווים
               </span>
               {review.wasEdited && (
-                <span className="text-blue-600">נערך בעבר</span>
+                <span className="text-accent">נערך בעבר</span>
               )}
             </div>
           </div>
 
           {/* Tips */}
-          <div className="rounded-md border border-blue-200 bg-blue-50 p-3">
-            <p className="text-xs text-blue-800 text-right">
+          <div className="rounded-md border border-accent bg-accent/10 p-3">
+            <p className="text-xs text-accent-foreground text-right">
               <strong>טיפים:</strong> שמור על טון אדיב, ענה בקצרה, וודא שהתגובה
               רלוונטית לביקורת.
             </p>

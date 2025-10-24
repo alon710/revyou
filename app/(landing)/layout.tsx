@@ -1,4 +1,4 @@
-import { Header } from "@/components/landing/Header";
+import { LandingPageNavbar } from "@/components/layout/navbar/LandingPageNavbar";
 import { Footer } from "@/components/landing/Footer";
 
 export default function LandingLayout({
@@ -8,7 +8,7 @@ export default function LandingLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <LandingPageNavbar />
       {children}
       <Footer />
     </div>

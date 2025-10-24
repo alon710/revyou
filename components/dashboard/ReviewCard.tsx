@@ -157,7 +157,7 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
         <CardContent className="space-y-4">
           {/* Review Text */}
           {review.reviewText && (
-            <div className="rounded-md bg-gray-50 p-3">
+            <div className="rounded-md bg-muted p-3">
               <p className="text-sm">{review.reviewText}</p>
             </div>
           )}
@@ -167,13 +167,8 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <h4 className="text-sm font-medium">תגובה אוטומטית:</h4>
-                {review.wasEdited && (
-                  <Badge variant="outline" className="text-xs">
-                    נערך
-                  </Badge>
-                )}
               </div>
-              <div className="rounded-md border border-blue-200 bg-blue-50 p-3">
+              <div className="rounded-md border border-accent bg-accent/10 p-3">
                 <p className="text-sm">
                   {review.editedReply || review.aiReply}
                 </p>
@@ -183,7 +178,7 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
 
           {/* Posted Reply */}
           {review.replyStatus === "posted" && review.postedAt && (
-            <div className="flex items-center gap-2 text-sm text-green-600">
+            <div className="flex items-center gap-2 text-sm text-primary">
               <CheckCircle className="h-4 w-4" />
               <span>
                 פורסם{" "}
@@ -261,7 +256,7 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
         description={
           <div className="space-y-3">
             <p>האם אתה בטוח שברצונך לפרסם את התגובה הזו לגוגל?</p>
-            <div className="rounded-md bg-gray-50 p-3 space-y-2">
+            <div className="rounded-md bg-muted p-3 space-y-2">
               <div className="flex items-center gap-2 text-sm">
                 <span className="font-medium">למבקר:</span>
                 <span>{review.reviewerName}</span>
@@ -270,18 +265,18 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
               </div>
               <div className="text-sm">
                 <span className="font-medium">הביקורת:</span>
-                <p className="mt-1 text-gray-600">
+                <p className="mt-1 text-muted-foreground">
                   {review.reviewText || "(אין טקסט)"}
                 </p>
               </div>
             </div>
-            <div className="rounded-md border border-blue-200 bg-blue-50 p-3">
+            <div className="rounded-md border border-accent bg-accent/10 p-3">
               <p className="text-sm font-medium mb-1">התגובה שתפורסם:</p>
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-foreground">
                 {review.editedReply || review.aiReply}
               </p>
             </div>
-            <p className="text-sm text-amber-700 font-medium">
+            <p className="text-sm text-secondary font-medium">
               ⚠️ לאחר הפרסום, לא ניתן לבטל את הפעולה
             </p>
           </div>

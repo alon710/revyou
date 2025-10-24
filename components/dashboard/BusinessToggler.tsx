@@ -59,7 +59,7 @@ export function BusinessToggler() {
           )}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent dir="rtl">
         {businesses.map((business) => (
           <SelectItem key={business.id} value={business.id}>
             <span>{business.name}</span>

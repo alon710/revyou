@@ -54,11 +54,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-muted p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Logo className="justify-center mb-4" textClassName="text-3xl" />
-          <p className="text-gray-600">היכנס כדי להתחיל לנהל את הביקורות שלך</p>
+          <p className="text-muted-foreground">היכנס כדי להתחיל לנהל את הביקורות שלך</p>
         </div>
 
         {/* Login Card */}
@@ -70,7 +70,7 @@ export default function LoginPage() {
           <CardContent className="space-y-4">
             {/* Error Message */}
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -98,7 +98,7 @@ export default function LoginPage() {
         </Card>
 
         {/* Terms & Privacy */}
-        <p className="text-center text-sm text-gray-600 mt-6">
+        <p className="text-center text-sm text-muted-foreground mt-6">
           על ידי התחברות, אתה מסכים ל
           <Link href="/terms" className="text-primary hover:underline mx-1">
             תנאי השימוש
