@@ -30,11 +30,13 @@ export function AuthButtons({
     return (
       <>
         <Link href="/businesses">
-          <Button variant="outline" className={buttonClass}>
-            החשבון שלי
-          </Button>
+          <Button className={buttonClass}>החשבון שלי</Button>
         </Link>
-        <Button onClick={handleSignOut} className={buttonClass}>
+        <Button
+          variant="outline"
+          onClick={handleSignOut}
+          className={buttonClass}
+        >
           התנתק
         </Button>
       </>

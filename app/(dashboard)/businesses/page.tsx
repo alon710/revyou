@@ -89,6 +89,23 @@ export default function BusinessesPage() {
         icon={
           !currentBusiness.connected && <Badge variant="secondary">מנותק</Badge>
         }
+        actions={
+          <>
+            <DeleteConfirmation
+              title="מחיקת עסק"
+              description={`פעולה זו תמחק את העסק "${currentBusiness.name}" לצמיתות!`}
+              confirmationText={currentBusiness.name}
+              confirmationLabel="כדי לאשר, הקלד את שם העסק:"
+              confirmationPlaceholder="שם העסק"
+              onDelete={handleDelete}
+              deleteButtonText="מחק עסק"
+              variant="inline"
+            />
+            <Button asChild disabled={!canAddMore} variant="outline" size="sm">
+              <Link href="/businesses/connect">הוסף עסק</Link>
+            </Button>
+          </>
+        }
       />
 
       <BusinessDetailsCard
@@ -96,31 +113,6 @@ export default function BusinessesPage() {
         loading={businessLoading}
         onUpdate={refreshBusinesses}
       />
-
-      <div className="flex items-center justify-end gap-2 mt-6">
-        <DeleteConfirmation
-          title="מחיקת עסק"
-          description={`פעולה זו תמחק את העסק "${currentBusiness.name}" לצמיתות!`}
-          items={[
-            "כל הביקורות והתגובות המקושרות",
-            "הגדרות ותצורות AI",
-            "היסטוריית פעילות",
-            "חיבור ל-Google Business Profile",
-          ]}
-          confirmationText={currentBusiness.name}
-          confirmationLabel="כדי לאשר, הקלד את שם העסק:"
-          confirmationPlaceholder="שם העסק"
-          onDelete={handleDelete}
-          deleteButtonText="מחק עסק"
-          variant="inline"
-        />
-        <Button asChild disabled={!canAddMore} size="default">
-          <Link href="/businesses/connect">
-            <Plus className="ml-2 h-5 w-5" />
-            חבר עסק
-          </Link>
-        </Button>
-      </div>
     </PageContainer>
   );
 }

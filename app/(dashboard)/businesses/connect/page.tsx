@@ -6,12 +6,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { createBusiness, checkBusinessLimit } from "@/lib/firebase/businesses";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  DashboardCard,
+  DashboardCardContent,
+  DashboardCardDescription,
+  DashboardCardHeader,
+  DashboardCardTitle,
+} from "@/components/ui/dashboard-card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BackButton } from "@/components/ui/back-button";
 import { Building2, AlertCircle } from "lucide-react";
@@ -188,15 +188,17 @@ export default function ConnectBusinessPage() {
 
       {/* Step 1: OAuth Authorization */}
       {step === "auth" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>התחבר ל-Google Business Profile</CardTitle>
-            <CardDescription>
+        <DashboardCard>
+          <DashboardCardHeader>
+            <DashboardCardTitle>
+              התחבר ל-Google Business Profile
+            </DashboardCardTitle>
+            <DashboardCardDescription>
               אנחנו צריכים הרשאה כדי לגשת לחשבון Google Business Profile שלך
               ולנהל תשובות לביקורות
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            </DashboardCardDescription>
+          </DashboardCardHeader>
+          <DashboardCardContent className="space-y-4">
             <div className="bg-muted p-4 rounded-lg">
               <h4 className="font-semibold mb-2">מה נבקש גישה אליו:</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
@@ -224,20 +226,20 @@ export default function ConnectBusinessPage() {
               {loading && <Loading size="sm" />}
               התחבר עם Google
             </Button>
-          </CardContent>
-        </Card>
+          </DashboardCardContent>
+        </DashboardCard>
       )}
 
       {/* Step 2: Business Selection */}
       {step === "select" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>בחר עסק</CardTitle>
-            <CardDescription>
+        <DashboardCard>
+          <DashboardCardHeader>
+            <DashboardCardTitle>בחר עסק</DashboardCardTitle>
+            <DashboardCardDescription>
               בחר את העסק שברצונך לחבר מרשימת העסקים שלך
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+            </DashboardCardDescription>
+          </DashboardCardHeader>
+          <DashboardCardContent>
             {error && locations.length === 0 && (
               <div className="text-center py-8">
                 <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
@@ -278,8 +280,8 @@ export default function ConnectBusinessPage() {
                 </Button>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </DashboardCardContent>
+        </DashboardCard>
       )}
     </PageContainer>
   );

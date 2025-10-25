@@ -1,6 +1,10 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  DashboardCard,
+  DashboardCardContent,
+  DashboardCardHeader,
+} from "@/components/ui/dashboard-card";
 import { Badge } from "@/components/ui/badge";
 import { Building2, MapPin, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -43,15 +47,15 @@ export default function BusinessSelector({
 
   if (locations.length === 0) {
     return (
-      <Card>
-        <CardContent className="py-8 text-center">
+      <DashboardCard>
+        <DashboardCardContent className="py-8 text-center">
           <Building2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
           <h3 className="text-lg font-semibold mb-2">לא נמצאו עסקים</h3>
           <p className="text-muted-foreground">
             לא נמצאו עסקים בחשבון Google Business Profile שלך
           </p>
-        </CardContent>
-      </Card>
+        </DashboardCardContent>
+      </DashboardCard>
     );
   }
 
@@ -69,7 +73,7 @@ export default function BusinessSelector({
           const isSelected = selectedLocationId === location.id;
 
           return (
-            <Card
+            <DashboardCard
               key={location.id}
               className={cn(
                 "cursor-pointer transition-all hover:border-primary",
@@ -77,7 +81,7 @@ export default function BusinessSelector({
               )}
               onClick={() => onSelect(location)}
             >
-              <CardHeader className="pb-3">
+              <DashboardCardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
@@ -91,9 +95,9 @@ export default function BusinessSelector({
                     </div>
                   </div>
                 </div>
-              </CardHeader>
+              </DashboardCardHeader>
 
-              <CardContent className="pt-0">
+              <DashboardCardContent className="pt-0">
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="secondary">{location.accountName}</Badge>
                   {location.phone && (
@@ -101,8 +105,8 @@ export default function BusinessSelector({
                   )}
                   {location.website && <Badge variant="outline">יש אתר</Badge>}
                 </div>
-              </CardContent>
-            </Card>
+              </DashboardCardContent>
+            </DashboardCard>
           );
         })}
       </div>

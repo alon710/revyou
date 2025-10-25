@@ -40,8 +40,8 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
       pending: { label: "ממתין לאישור", variant: "secondary" as const },
       approved: { label: "מאושר", variant: "default" as const },
       posted: { label: "פורסם", variant: "default" as const },
-      rejected: { label: "נדחה", variant: "destructive" as const },
-      failed: { label: "נכשל", variant: "destructive" as const },
+      rejected: { label: "נדחה", variant: "secondary" as const },
+      failed: { label: "נכשל", variant: "secondary" as const },
     };
 
     const statusInfo = statusMap[status] || statusMap.pending;

@@ -59,7 +59,7 @@ export function DashboardNavbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <BusinessToggler />
-          <Button variant="outline" onClick={handleSignOut}>
+          <Button size="sm" variant="outline" onClick={handleSignOut}>
             התנתק
           </Button>
         </div>

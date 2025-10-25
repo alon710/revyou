@@ -17,7 +17,7 @@ interface DeleteConfirmationProps {
   title: string;
   description: string;
   warningText?: string;
-  items: string[];
+  items?: string[];
 
   // Confirmation
   confirmationText: string;
@@ -63,7 +63,7 @@ export function DeleteConfirmation({
         </>
       )}
 
-      {items.length > 0 && (
+      {items && items.length > 0 && (
         <ul className="text-sm text-muted-foreground space-y-1 mb-4 list-disc list-inside">
           {items.map((item, index) => (
             <li key={index}>{item}</li>
@@ -134,9 +134,10 @@ export function DeleteConfirmation({
   return (
     <>
       <Button
-        variant="destructive"
+        variant="outline"
+        size="sm"
         onClick={() => setShowDialog(true)}
-        className={`gap-2 ${className}`}
+        className={`gap-2 text-destructive hover:text-destructive border-destructive/30 hover:border-destructive hover:bg-destructive/10 ${className}`}
       >
         <Trash2 className="h-4 w-4" />
         {deleteButtonText}
@@ -149,7 +150,7 @@ export function DeleteConfirmation({
         description={
           <>
             <p className="font-semibold mb-3">{description}</p>
-            {items.length > 0 && (
+            {items && items.length > 0 && (
               <>
                 <p className="text-sm mb-2">פעולה זו תמחק:</p>
                 <ul className="text-sm space-y-1 mb-3 list-disc list-inside">
