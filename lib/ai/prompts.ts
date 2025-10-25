@@ -1,4 +1,9 @@
-import { BusinessConfig, ToneOfVoice, LanguageMode, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
+import {
+  BusinessConfig,
+  ToneOfVoice,
+  LanguageMode,
+  DEFAULT_PROMPT_TEMPLATE,
+} from "@/types/database";
 
 /**
  * Prompt Template Builder

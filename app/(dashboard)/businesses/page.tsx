@@ -14,11 +14,10 @@ import {
   BusinessConfig,
 } from "@/types/database";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Settings } from "lucide-react";
 import Link from "next/link";
-import EmptyBusinessState from "@/components/dashboard/EmptyBusinessState";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { toast } from "sonner";
@@ -106,6 +105,7 @@ export default function BusinessesPage() {
     );
   }
 
+  // Show empty state if no businesses
   if (businesses.length === 0) {
     return (
       <PageContainer>
@@ -113,38 +113,22 @@ export default function BusinessesPage() {
           title="העסקים שלי"
           description="נהל את חשבונות Google Business Profile המחוברים שלך"
         />
-        <Card>
-          <CardContent className="pt-6">
-            <EmptyBusinessState />
-          </CardContent>
-        </Card>
+        <EmptyState />
       </PageContainer>
     );
   }
 
+  // No business selected - just show empty content
   if (!currentBusiness) {
     return (
       <PageContainer>
         <PageHeader
           title="העסקים שלי"
           description="נהל את חשבונות Google Business Profile המחוברים שלך"
-          actions={
-            <Button asChild disabled={!canAddMore}>
-              <Link href="/businesses/connect">
-                <Plus className="ml-2 h-5 w-5" />
-                חבר עסק
-              </Link>
-            </Button>
-          }
         />
-
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground">
-              בחר עסק מהתפריט למעלה כדי לראות את הפרטים
-            </p>
-          </CardContent>
-        </Card>
+        <div className="text-center text-muted-foreground py-12">
+          בחר עסק מהתפריט למעלה כדי לראות את הפרטים
+        </div>
       </PageContainer>
     );
   }

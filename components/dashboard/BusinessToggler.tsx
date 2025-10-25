@@ -31,7 +31,7 @@ export function BusinessToggler() {
 
   if (businesses.length === 0) {
     return (
-      <Button asChild variant="outline" size="sm" className="w-full">
+      <Button asChild className="w-full">
         <Link href="/businesses/connect">חבר עסק ראשון</Link>
       </Button>
     );

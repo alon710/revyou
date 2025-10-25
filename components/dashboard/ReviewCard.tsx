@@ -134,14 +134,13 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
           {/* AI Reply */}
           {(review.aiReply || review.editedReply) && (
             <div className="rounded-md border border-accent bg-accent/10 p-2">
-              <p className="text-sm">
-                {review.editedReply || review.aiReply}
-              </p>
+              <p className="text-sm">{review.editedReply || review.aiReply}</p>
             </div>
           )}
 
           {/* Action Buttons - For Pending and Failed */}
-          {(review.replyStatus === "pending" || review.replyStatus === "failed") && (
+          {(review.replyStatus === "pending" ||
+            review.replyStatus === "failed") && (
             <div className="flex flex-wrap gap-2 pt-1">
               <Button
                 onClick={() => setShowEditor(true)}

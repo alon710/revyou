@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/Logo";
-import { useBusiness } from "@/contexts/BusinessContext";
 import { signOut } from "@/lib/firebase/auth";
 import { cn } from "@/lib/utils";
 import { navItems } from "../nav-items";
@@ -16,7 +15,6 @@ import { MobileMenuSheet } from "./shared/MobileMenuSheet";
 
 export function DashboardNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { currentBusiness } = useBusiness();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -40,22 +38,16 @@ export function DashboardNavbar() {
             const Icon = item.icon;
             const isActive =
               pathname === item.href || pathname.startsWith(item.href);
-            const isDisabled = item.requiresBusiness && !currentBusiness;
 
             return (
               <Link
                 key={item.title}
-                href={isDisabled ? "#" : item.href}
-                onClick={(e) => {
-                  if (isDisabled) e.preventDefault();
-                }}
+                href={item.href}
                 className={cn(
                   "flex items-center gap-2 text-sm font-medium transition-colors px-3 py-2 rounded-md",
-                  isActive && !isDisabled
+                  isActive
                     ? "bg-accent text-accent-foreground"
-                    : isDisabled
-                      ? "text-muted-foreground/50 cursor-not-allowed"
-                      : "text-foreground/80 hover:text-foreground hover:bg-accent/50"
+                    : "text-foreground/80 hover:text-foreground hover:bg-accent/50"
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -67,7 +59,9 @@ export function DashboardNavbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <BusinessToggler />
-          <Button onClick={handleSignOut}>התנתק</Button>
+          <Button variant="destructive" onClick={handleSignOut}>
+            התנתק
+          </Button>
         </div>
 
         <MobileMenuButton
@@ -85,26 +79,17 @@ export function DashboardNavbar() {
           const Icon = item.icon;
           const isActive =
             pathname === item.href || pathname.startsWith(item.href);
-          const isDisabled = item.requiresBusiness && !currentBusiness;
 
           return (
             <Link
               key={item.title}
-              href={isDisabled ? "#" : item.href}
-              onClick={(e) => {
-                if (isDisabled) {
-                  e.preventDefault();
-                } else {
-                  handleNavClick();
-                }
-              }}
+              href={item.href}
+              onClick={handleNavClick}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                isActive && !isDisabled
+                isActive
                   ? "bg-accent text-accent-foreground"
-                  : isDisabled
-                    ? "text-muted-foreground/50 cursor-not-allowed"
-                    : "text-foreground/80 hover:bg-accent hover:text-foreground"
+                  : "text-foreground/80 hover:bg-accent hover:text-foreground"
               )}
             >
               <Icon className="h-5 w-5" />
