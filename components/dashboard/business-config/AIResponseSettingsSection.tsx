@@ -1,6 +1,5 @@
 import { BusinessConfig, ToneOfVoice, LanguageMode } from "@/types/database";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -9,12 +8,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  DashboardCard,
+  DashboardCardHeader,
+  DashboardCardTitle,
+  DashboardCardDescription,
+  DashboardCardContent,
+  DashboardCardField,
+} from "@/components/ui/dashboard-card";
+import { Sparkles } from "lucide-react";
 import {
   SectionBaseProps,
   ConfigUpdateCallback,
@@ -36,15 +37,18 @@ export default function AIResponseSettingsSection({
   const isEditMode = variant === "edit";
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>הגדרות תגובה AI</CardTitle>
-        <CardDescription>הגדר את אופן יצירת התגובות האוטומטיות</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <DashboardCard>
+      <DashboardCardHeader>
+        <DashboardCardTitle icon={<Sparkles className="h-5 w-5" />}>
+          הגדרות תגובה AI
+        </DashboardCardTitle>
+        <DashboardCardDescription>
+          הגדר את אופן יצירת התגובות האוטומטיות
+        </DashboardCardDescription>
+      </DashboardCardHeader>
+      <DashboardCardContent className="space-y-6">
         {/* Tone of Voice */}
-        <div className="space-y-2">
-          <Label htmlFor="toneOfVoice">סגנון תשובה</Label>
+        <DashboardCardField label="סגנון תשובה">
           {isEditMode ? (
             <Select
               value={config.toneOfVoice}
@@ -68,11 +72,10 @@ export default function AIResponseSettingsSection({
               {TONE_LABELS[config.toneOfVoice]}
             </p>
           )}
-        </div>
+        </DashboardCardField>
 
         {/* Language */}
-        <div className="space-y-2">
-          <Label htmlFor="languageMode">שפת תגובה</Label>
+        <DashboardCardField label="שפת תגובה">
           {isEditMode ? (
             <Select
               value={config.languageMode || "auto-detect"}
@@ -96,13 +99,12 @@ export default function AIResponseSettingsSection({
               {LANGUAGE_LABELS[config.languageMode || "auto-detect"]}
             </p>
           )}
-        </div>
+        </DashboardCardField>
 
         {/* Allowed Emojis */}
-        <div className="space-y-2">
-          <Label htmlFor="allowedEmojis">אימוג&apos;ים מותרים</Label>
+        <DashboardCardField label="אימוג'ים מותרים">
           {isEditMode ? (
-            <>
+            <div className="space-y-2">
               <Input
                 id="allowedEmojis"
                 type="text"
@@ -120,7 +122,7 @@ export default function AIResponseSettingsSection({
               <p className="text-xs text-muted-foreground">
                 הפרד באמצעות רווחים. השאר ריק אם אינך רוצה שימוש באימוג&apos;ים
               </p>
-            </>
+            </div>
           ) : (
             <p className="text-sm font-medium">
               {config.allowedEmojis?.length
@@ -128,11 +130,10 @@ export default function AIResponseSettingsSection({
                 : "ללא שימוש באימוג'ים"}
             </p>
           )}
-        </div>
+        </DashboardCardField>
 
         {/* Max Sentences */}
-        <div className="space-y-2">
-          <Label htmlFor="maxSentences">מספר משפטים מקסימלי</Label>
+        <DashboardCardField label="מספר משפטים מקסימלי">
           {isEditMode ? (
             <Select
               value={(config.maxSentences || 2).toString()}
@@ -155,13 +156,12 @@ export default function AIResponseSettingsSection({
               {config.maxSentences || 2} משפטים
             </p>
           )}
-        </div>
+        </DashboardCardField>
 
         {/* Signature */}
-        <div className="space-y-2">
-          <Label htmlFor="signature">חתימה</Label>
+        <DashboardCardField label="חתימה">
           {isEditMode ? (
-            <>
+            <div className="space-y-2">
               <Input
                 id="signature"
                 type="text"
@@ -173,14 +173,14 @@ export default function AIResponseSettingsSection({
               <p className="text-xs text-muted-foreground">
                 החתימה שתופיע בסוף כל תגובה
               </p>
-            </>
+            </div>
           ) : (
             <p className="text-sm font-medium">
               {config.signature || "ללא חתימה"}
             </p>
           )}
-        </div>
-      </CardContent>
-    </Card>
+        </DashboardCardField>
+      </DashboardCardContent>
+    </DashboardCard>
   );
 }

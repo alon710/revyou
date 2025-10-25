@@ -3,12 +3,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  DashboardCard,
+  DashboardCardHeader,
+  DashboardCardTitle,
+  DashboardCardDescription,
+  DashboardCardContent,
+} from "@/components/ui/dashboard-card";
+import { Star } from "lucide-react";
 import { SectionBaseProps, StarConfigUpdateCallback } from "./types";
 
 interface StarRatingConfigSectionProps extends SectionBaseProps {
@@ -33,26 +34,34 @@ export default function StarRatingConfigSection({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>הגדרות לפי דירוג כוכבים</CardTitle>
-        <CardDescription>התאם אישית תגובות AI עבור כל דירוג</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <DashboardCard>
+      <DashboardCardHeader>
+        <DashboardCardTitle icon={<Star className="h-5 w-5" />}>
+          הגדרות לפי דירוג כוכבים
+        </DashboardCardTitle>
+        <DashboardCardDescription>
+          התאם אישית תגובות AI עבור כל דירוג
+        </DashboardCardDescription>
+      </DashboardCardHeader>
+      <DashboardCardContent className="space-y-6">
         {([5, 4, 3, 2, 1] as const).map((rating) => {
           const starConfig = starConfigs[rating];
 
           return (
-            <div key={rating} className="space-y-2">
-              {/* Rating Header with Auto-Reply Indicator */}
+            <div
+              key={rating}
+              className="pb-1 last:pb-0 border-b last:border-b-0 border-border/40"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Label className="text-sm font-medium">
                     {starLabels[rating]}
                   </Label>
                   <div
-                    className={`w-2 h-2 rounded-full ${
-                      starConfig.autoReply ? "bg-primary" : "bg-muted"
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      starConfig.autoReply
+                        ? "bg-primary"
+                        : "bg-muted-foreground/30"
                     }`}
                     title={
                       starConfig.autoReply
@@ -84,10 +93,10 @@ export default function StarRatingConfigSection({
                   placeholder="הוסף הנחיות ספציפיות לדירוג זה..."
                   rows={2}
                   disabled={loading}
-                  className="text-sm"
+                  className="text-sm resize-none"
                 />
               ) : starConfig.customInstructions ? (
-                <p className="text-sm bg-muted/30 p-2 rounded whitespace-pre-wrap">
+                <p className="text-sm bg-muted/50 p-3 rounded-md whitespace-pre-wrap leading-relaxed">
                   {starConfig.customInstructions}
                 </p>
               ) : (
@@ -98,7 +107,7 @@ export default function StarRatingConfigSection({
             </div>
           );
         })}
-      </CardContent>
-    </Card>
+      </DashboardCardContent>
+    </DashboardCard>
   );
 }

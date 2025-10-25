@@ -25,8 +25,8 @@ export function StarRating({
           size={size}
           className={
             star <= rating
-              ? "fill-secondary text-secondary"
-              : "fill-muted text-muted"
+              ? "fill-primary text-primary"
+              : "fill-secondary text-primary/50"
           }
         />
       ))}

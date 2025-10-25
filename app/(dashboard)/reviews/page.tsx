@@ -60,7 +60,6 @@ export default function ReviewsPage() {
     loadReviews();
   };
 
-  // Show loading while checking business status
   if (businessLoading) {
     return (
       <PageContainer>
@@ -69,7 +68,6 @@ export default function ReviewsPage() {
     );
   }
 
-  // Show empty state if no businesses
   if (businesses.length === 0) {
     return (
       <PageContainer>
@@ -79,7 +77,6 @@ export default function ReviewsPage() {
     );
   }
 
-  // No business selected - show simple message
   if (!currentBusiness) {
     return (
       <PageContainer>

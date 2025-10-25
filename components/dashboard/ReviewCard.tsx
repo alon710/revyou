@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { Review, ReplyStatus } from "@/types/database";
 import { StarRating } from "@/components/ui/StarRating";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  DashboardCard,
+  DashboardCardHeader,
+  DashboardCardContent,
+  DashboardCardSection,
+  DashboardCardFooter,
+} from "@/components/ui/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -15,16 +21,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { ReplyEditor } from "./ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { MessageSquare, User } from "lucide-react";
 
 interface ReviewCardProps {
   review: Review;
   onUpdate?: () => void;
 }
 
-/**
- * Review Card Component
- * Displays a single review with AI reply and actions
- */
 export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -113,71 +116,92 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
 
   return (
     <>
-      <Card className="w-full">
-        <CardContent className="p-4 space-y-3">
-          {/* Header: Name, Status, Stars */}
+      <DashboardCard className="w-full">
+        <DashboardCardHeader className="pb-3">
+          {/* Header: Name and Status Badge */}
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0 flex-1">
+              <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               <h3 className="font-semibold truncate">{review.reviewerName}</h3>
-              {getStatusBadge(review.replyStatus)}
             </div>
-            <StarRating rating={review.rating} size={16} />
+            <StarRating rating={review.rating} size={18} />
+            {getStatusBadge(review.replyStatus)}
           </div>
+        </DashboardCardHeader>
 
+        <DashboardCardContent className="space-y-4">
           {/* Review Text */}
           {review.reviewText && (
-            <div className="rounded-md bg-muted p-2">
-              <p className="text-sm">{review.reviewText}</p>
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  ביקורת
+                </span>
+              </div>
+              <div className="rounded-md bg-muted/50 p-3">
+                <p className="text-sm leading-relaxed">{review.reviewText}</p>
+              </div>
             </div>
           )}
 
           {/* AI Reply */}
           {(review.aiReply || review.editedReply) && (
-            <div className="rounded-md border border-accent bg-accent/10 p-2">
-              <p className="text-sm">{review.editedReply || review.aiReply}</p>
-            </div>
+            <DashboardCardSection withBorder={!!review.reviewText}>
+              <div className="flex items-center gap-2 mb-2">
+                <MessageSquare className="h-4 w-4 text-primary" />
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  תגובה AI
+                </span>
+              </div>
+              <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
+                <p className="text-sm leading-relaxed">
+                  {review.editedReply || review.aiReply}
+                </p>
+              </div>
+            </DashboardCardSection>
           )}
+        </DashboardCardContent>
 
-          {/* Action Buttons - For Pending and Failed */}
-          {(review.replyStatus === "pending" ||
-            review.replyStatus === "failed") && (
-            <div className="flex flex-wrap gap-2 pt-1">
-              <Button
-                onClick={() => setShowEditor(true)}
-                disabled={isLoading}
-                size="sm"
-                variant="outline"
-              >
-                ערוך
-              </Button>
-              <Button
-                onClick={() => setShowPublishDialog(true)}
-                disabled={isLoading}
-                size="sm"
-                variant="default"
-              >
-                פרסם
-              </Button>
-              <Button
-                onClick={handleReject}
-                disabled={isLoading}
-                size="sm"
-                variant="destructive"
-              >
-                דחה
-              </Button>
-              <Button
-                onClick={handleRegenerate}
-                disabled={isLoading}
-                size="sm"
-                variant="outline"
-              >
-                צור מחדש
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+        {/* Action Buttons - For Pending and Failed */}
+        {(review.replyStatus === "pending" ||
+          review.replyStatus === "failed") && (
+          <DashboardCardFooter>
+            <Button
+              onClick={handleReject}
+              disabled={isLoading}
+              variant="outline"
+              size="sm"
+            >
+              דחה
+            </Button>
+            <Button
+              onClick={handleRegenerate}
+              disabled={isLoading}
+              size="sm"
+              variant="outline"
+            >
+              צור מחדש
+            </Button>
+            <Button
+              onClick={() => setShowEditor(true)}
+              disabled={isLoading}
+              size="sm"
+              variant="outline"
+            >
+              ערוך
+            </Button>
+            <Button
+              onClick={() => setShowPublishDialog(true)}
+              disabled={isLoading}
+              size="sm"
+              variant="default"
+            >
+              פרסם
+            </Button>
+          </DashboardCardFooter>
+        )}
+      </DashboardCard>
 
       {/* Reply Editor Modal */}
       <ReplyEditor

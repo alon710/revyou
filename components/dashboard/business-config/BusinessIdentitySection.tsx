@@ -1,14 +1,15 @@
 import { Business, BusinessConfig } from "@/types/database";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  DashboardCard,
+  DashboardCardHeader,
+  DashboardCardTitle,
+  DashboardCardDescription,
+  DashboardCardContent,
+  DashboardCardField,
+} from "@/components/ui/dashboard-card";
+import { Building2 } from "lucide-react";
 import { SectionBaseProps, ConfigUpdateCallback } from "./types";
 
 interface BusinessIdentitySectionProps extends SectionBaseProps {
@@ -27,17 +28,20 @@ export default function BusinessIdentitySection({
   const isEditMode = variant === "edit";
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>פרטי עסק</CardTitle>
-        <CardDescription>פרטי זהות העסק לשימוש בתגובות AI</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <DashboardCard>
+      <DashboardCardHeader>
+        <DashboardCardTitle icon={<Building2 className="h-5 w-5" />}>
+          פרטי עסק
+        </DashboardCardTitle>
+        <DashboardCardDescription>
+          פרטי זהות העסק לשימוש בתגובות AI
+        </DashboardCardDescription>
+      </DashboardCardHeader>
+      <DashboardCardContent className="space-y-6">
         {/* Business Name */}
-        <div className="space-y-2">
-          <Label htmlFor="businessName">שם העסק</Label>
+        <DashboardCardField label="שם העסק">
           {isEditMode ? (
-            <>
+            <div className="space-y-2">
               <Input
                 id="businessName"
                 type="text"
@@ -49,19 +53,18 @@ export default function BusinessIdentitySection({
               <p className="text-xs text-muted-foreground">
                 השאר ריק כדי להשתמש בשם מ-Google: {business.name}
               </p>
-            </>
+            </div>
           ) : (
             <p className="text-sm font-medium">
               {config.businessName || business.name}
             </p>
           )}
-        </div>
+        </DashboardCardField>
 
         {/* Business Description */}
-        <div className="space-y-2">
-          <Label htmlFor="businessDescription">תיאור העסק</Label>
+        <DashboardCardField label="תיאור העסק">
           {isEditMode ? (
-            <>
+            <div className="space-y-2">
               <Textarea
                 id="businessDescription"
                 value={config.businessDescription}
@@ -71,25 +74,23 @@ export default function BusinessIdentitySection({
                 placeholder="תאר את העסק שלך, את השירותים שאתה מספק..."
                 rows={4}
                 disabled={loading}
+                className="resize-none"
               />
               <p className="text-xs text-muted-foreground">
                 תיאור זה יעזור ל-AI ליצור תשובות מותאמות יותר
               </p>
-            </>
+            </div>
           ) : (
-            <p className="text-sm bg-muted p-3 rounded-lg whitespace-pre-wrap">
+            <p className="text-sm bg-muted/50 p-3 rounded-md whitespace-pre-wrap leading-relaxed">
               {config.businessDescription || "אין תיאור"}
             </p>
           )}
-        </div>
+        </DashboardCardField>
 
         {/* Business Phone */}
-        <div className="space-y-2">
-          <Label htmlFor="businessPhone">
-            טלפון ליצירת קשר (לביקורות שליליות)
-          </Label>
+        <DashboardCardField label="טלפון ליצירת קשר (לביקורות שליליות)">
           {isEditMode ? (
-            <>
+            <div className="space-y-2">
               <Input
                 id="businessPhone"
                 type="tel"
@@ -101,14 +102,14 @@ export default function BusinessIdentitySection({
               <p className="text-xs text-muted-foreground">
                 מספר טלפון שיופיע בתגובות שליליות (1-2 כוכבים)
               </p>
-            </>
+            </div>
           ) : (
             <p className="text-sm font-medium">
               {config.businessPhone || "לא הוגדר"}
             </p>
           )}
-        </div>
-      </CardContent>
-    </Card>
+        </DashboardCardField>
+      </DashboardCardContent>
+    </DashboardCard>
   );
 }
