@@ -223,7 +223,6 @@ export default function ConnectBusinessPage() {
               size="lg"
               className="w-full"
             >
-              {loading && <Loading size="sm" />}
               התחבר עם Google
             </Button>
           </DashboardCardContent>
@@ -245,7 +244,6 @@ export default function ConnectBusinessPage() {
                 <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                 <p className="text-muted-foreground mb-4">{error}</p>
                 <Button onClick={loadLocations} disabled={loadingLocations}>
-                  {loadingLocations && <Loading size="sm" />}
                   נסה שוב
                 </Button>
               </div>
@@ -268,7 +266,6 @@ export default function ConnectBusinessPage() {
                   size="lg"
                   className="flex-1"
                 >
-                  {connecting && <Loading size="sm" />}
                   חבר עסק זה
                 </Button>
                 <Button

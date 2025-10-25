@@ -67,7 +67,6 @@ export const businessConfigSchema = z.object({
 
 export const notificationPreferencesSchema = z.object({
   emailOnNewReview: z.boolean(),
-  emailOnFailedPost: z.boolean(),
 });
 
 export const userSchema = z.object({

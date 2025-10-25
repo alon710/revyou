@@ -81,7 +81,7 @@ export function HowItWorks() {
           <p className="text-lg text-muted-foreground mb-6">
             מוכנים להתחיל? זה לוקח פחות מ-5 דקות
           </p>
-          <Link href="/register">
+          <Link href="/login">
             <Button size="lg" className="text-lg px-8">
               התחל עכשיו בחינם
             </Button>

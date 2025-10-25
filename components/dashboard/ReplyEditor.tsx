@@ -146,14 +146,7 @@ export function ReplyEditor({
             disabled={isLoading || !replyText.trim()}
             className="gap-2"
           >
-            {isLoading ? (
-              <>
-                <Loading size="sm" />
-                {loadingText}
-              </>
-            ) : (
-              "שמור"
-            )}
+            {isLoading ? <>{loadingText}</> : "שמור"}
           </Button>
         </DialogFooter>
       </DialogContent>

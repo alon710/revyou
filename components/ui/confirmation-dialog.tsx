@@ -155,14 +155,7 @@ export function ConfirmationDialog({
             disabled={!isConfirmValid || showLoading}
             className="gap-2"
           >
-            {showLoading ? (
-              <>
-                <Loading size="sm" />
-                {loadingText}
-              </>
-            ) : (
-              confirmText
-            )}
+            {showLoading ? <>{loadingText}</> : confirmText}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -85,10 +85,7 @@ export default function LoginPage() {
               size="lg"
             >
               {isLoading ? (
-                <>
-                  <Loading size="sm" />
-                  מתחבר...
-                </>
+                <>מתחבר...</>
               ) : (
                 <>
                   <Chrome className="h-5 w-5" />

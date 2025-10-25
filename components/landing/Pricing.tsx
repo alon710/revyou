@@ -197,7 +197,7 @@ export function Pricing() {
                 })}
               </ul>
 
-              <Link href="/register" className="w-full">
+              <Link href="/login" className="w-full">
                 <Button
                   className="w-full"
                   variant={plan.recommended ? "default" : "outline"}

@@ -5,24 +5,17 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/Logo";
-import { signOut } from "@/lib/firebase/auth";
 import { cn } from "@/lib/utils";
 import { navItems } from "../nav-items";
 import { BusinessToggler } from "@/components/dashboard/BusinessToggler";
 import { NavbarContainer } from "./shared/NavbarContainer";
 import { MobileMenuButton } from "./shared/MobileMenuButton";
 import { MobileMenuSheet } from "./shared/MobileMenuSheet";
+import { Settings } from "lucide-react";
 
 export function DashboardNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const router = useRouter();
   const pathname = usePathname();
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.push("/");
-    setMobileMenuOpen(false);
-  };
 
   const handleNavClick = () => {
     setMobileMenuOpen(false);
@@ -57,8 +50,10 @@ export function DashboardNavbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <BusinessToggler />
-          <Button size="sm" variant="outline" onClick={handleSignOut}>
-            התנתק
+          <Button size="sm" variant="outline" asChild>
+            <Link href="/settings">
+              <Settings className="h-4 w-4" />
+            </Link>
           </Button>
         </div>
 
@@ -99,9 +94,12 @@ export function DashboardNavbar() {
             variant="outline"
             size="sm"
             className="w-full"
-            onClick={handleSignOut}
+            asChild
           >
-            התנתק
+            <Link href="/settings" onClick={handleNavClick}>
+              <Settings className="h-4 w-4 mr-2" />
+              הגדרות חשבון
+            </Link>
           </Button>
         </div>
       </MobileMenuSheet>

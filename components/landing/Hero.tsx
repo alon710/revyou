@@ -18,7 +18,7 @@ export function Hero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/register">
+            <Link href="/login">
               <Button size="lg" className="text-lg px-8 py-6">
                 התחל ניסיון חינם
               </Button>

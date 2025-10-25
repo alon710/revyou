@@ -142,7 +142,6 @@ export function BusinessIdentityEditModal({
             onClick={handleCancel}
             disabled={isLoading}
           >
-            <X className="ml-2 h-5 w-5" />
             ביטול
           </Button>
           <Button
@@ -151,17 +150,7 @@ export function BusinessIdentityEditModal({
             disabled={isLoading}
             className="gap-2"
           >
-            {isLoading ? (
-              <>
-                <Loading size="sm" />
-                שומר...
-              </>
-            ) : (
-              <>
-                <Save className="ml-2 h-5 w-5" />
-                שמור שינויים
-              </>
-            )}
+            {isLoading ? <>שומר...</> : <>שמירה</>}
           </Button>
         </DialogFooter>
       </DialogContent>

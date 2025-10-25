@@ -97,7 +97,6 @@ async function seedDatabase() {
         selectedBusinessId: "business_test_001",
         notificationPreferences: {
           emailOnNewReview: true,
-          emailOnFailedPost: true,
         },
       });
     console.log("✅ User created\n");

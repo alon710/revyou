@@ -1,23 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  getUser,
-  updateNotificationPreferences,
-  deleteUserAccount,
-} from "@/lib/firebase/users";
+import { getUser, updateNotificationPreferences } from "@/lib/firebase/users";
+import { signOut } from "@/lib/firebase/auth";
 import { User } from "@/types/database";
-import { DangerZone } from "@/components/dashboard/settings/DangerZone";
 import { NotificationPreferences } from "@/components/dashboard/settings/NotificationPreferences";
 import { AccountInfo } from "@/components/dashboard/settings/AccountInfo";
 import { useToast } from "@/hooks/use-toast";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
+import { Button } from "@/components/ui/button";
 
 export default function SettingsPage() {
   const { user: authUser, loading: authLoading } = useAuth();
+  const router = useRouter();
   const { toast } = useToast();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +49,6 @@ export default function SettingsPage() {
 
   const handleUpdateNotifications = async (preferences: {
     emailOnNewReview: boolean;
-    emailOnFailedPost: boolean;
   }) => {
     if (!authUser) return;
 
@@ -72,24 +70,9 @@ export default function SettingsPage() {
     }
   };
 
-  const handleDeleteAccount = async () => {
-    if (!authUser) return;
-
-    try {
-      await deleteUserAccount(authUser.uid);
-      toast({
-        title: "החשבון נמחק",
-        description: "החשבון שלך נמחק בהצלחה",
-      });
-    } catch (error) {
-      console.error("Error deleting account:", error);
-      toast({
-        title: "שגיאה",
-        description: "לא ניתן למחוק את החשבון",
-        variant: "destructive",
-      });
-      throw error;
-    }
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/");
   };
 
   if (authLoading || loading) {
@@ -109,6 +92,11 @@ export default function SettingsPage() {
       <PageHeader
         title="הגדרות חשבון"
         description="נהל את הגדרות החשבון והתראות האימייל שלך"
+        actions={
+          <Button size="sm" variant="outline" onClick={handleSignOut}>
+            התנתק
+          </Button>
+        }
       />
 
       <AccountInfo
@@ -121,16 +109,8 @@ export default function SettingsPage() {
         emailOnNewReview={
           userData.notificationPreferences?.emailOnNewReview || false
         }
-        emailOnFailedPost={
-          userData.notificationPreferences?.emailOnFailedPost || false
-        }
         loading={loading}
         onUpdate={handleUpdateNotifications}
-      />
-
-      <DangerZone
-        userEmail={authUser.email || ""}
-        onDeleteAccount={handleDeleteAccount}
       />
     </PageContainer>
   );

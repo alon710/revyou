@@ -50,7 +50,7 @@ export function AuthButtons({
           התחברות
         </Button>
       </Link>
-      <Link href="/register">
+      <Link href="/login">
         <Button className={buttonClass}>התחל ניסיון חינם</Button>
       </Link>
     </>

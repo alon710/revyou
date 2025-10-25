@@ -32,7 +32,6 @@ export interface User {
   selectedBusinessId?: string; // Currently selected business (persisted in Firestore)
   notificationPreferences?: {
     emailOnNewReview: boolean;
-    emailOnFailedPost: boolean;
   };
 }
 
