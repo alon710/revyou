@@ -15,7 +15,7 @@ export function MobileMenuSheet({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-80 md:hidden">
-        <div className="flex flex-col gap-4 mt-8">{children}</div>
+        <div className="flex flex-col gap-2 mt-8">{children}</div>
       </SheetContent>
     </Sheet>
   );

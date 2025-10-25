@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Building2 } from "lucide-react";
 
 export function BusinessToggler() {
   const {
@@ -39,8 +40,11 @@ export function BusinessToggler() {
 
   if (businesses.length === 1) {
     return (
-      <div className="flex items-center gap-2 w-full px-3 py-2 rounded-md border bg-background">
-        <span className="truncate text-sm">{currentBusiness?.name}</span>
+      <div className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-border/40 bg-background shadow-sm">
+        <Building2 className="h-4 w-4 text-muted-foreground" />
+        <span className="truncate text-sm font-medium">
+          {currentBusiness?.name}
+        </span>
       </div>
     );
   }
@@ -50,11 +54,12 @@ export function BusinessToggler() {
       value={selectedBusinessId || undefined}
       onValueChange={handleBusinessChange}
     >
-      <SelectTrigger className="w-full" dir="rtl">
+      <SelectTrigger className="w-full shadow-sm" dir="rtl">
         <SelectValue placeholder="בחר עסק">
           {currentBusiness && (
             <div className="flex items-center gap-2">
-              <span className="truncate">{currentBusiness.name}</span>
+              <Building2 className="h-4 w-4 text-muted-foreground" />
+              <span className="truncate font-medium">{currentBusiness.name}</span>
             </div>
           )}
         </SelectValue>

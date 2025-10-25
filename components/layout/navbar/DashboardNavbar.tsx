@@ -33,7 +33,7 @@ export function DashboardNavbar() {
       <NavbarContainer>
         <Logo href="/businesses" />
 
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-2">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -44,9 +44,9 @@ export function DashboardNavbar() {
                 key={item.title}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-2 text-sm font-medium transition-colors px-3 py-2 rounded-md",
+                  "flex items-center gap-2 text-sm font-medium transition-all px-3 py-2 rounded-lg",
                   isActive
-                    ? "bg-accent text-accent-foreground"
+                    ? "bg-accent text-accent-foreground shadow-sm"
                     : "text-foreground/80 hover:text-foreground hover:bg-accent/50"
                 )}
               >
@@ -71,7 +71,7 @@ export function DashboardNavbar() {
       </NavbarContainer>
 
       <MobileMenuSheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <div className="pb-2 border-b">
+        <div className="pb-3 border-b border-border/40">
           <BusinessToggler />
         </div>
 
@@ -86,10 +86,10 @@ export function DashboardNavbar() {
               href={item.href}
               onClick={handleNavClick}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
                 isActive
-                  ? "bg-accent text-accent-foreground"
-                  : "text-foreground/80 hover:bg-accent hover:text-foreground"
+                  ? "bg-accent text-accent-foreground shadow-sm"
+                  : "text-foreground/80 hover:bg-accent/50 hover:text-foreground"
               )}
             >
               <Icon className="h-5 w-5" />
@@ -98,7 +98,7 @@ export function DashboardNavbar() {
           );
         })}
 
-        <div className="pt-2 border-t mt-2">
+        <div className="pt-3 border-t border-border/40 mt-3">
           <Button
             variant="outline"
             size="sm"

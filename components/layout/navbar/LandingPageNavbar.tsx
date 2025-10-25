@@ -40,12 +40,12 @@ export function LandingPageNavbar({
       <NavbarContainer>
         <Logo href="/" />
 
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-2">
           {sections.map((section) => (
             <button
               key={section.id}
               onClick={() => scrollToSection(section.id)}
-              className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+              className="text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-accent/10 transition-all px-3 py-2 rounded-lg"
             >
               {section.label}
             </button>
@@ -67,13 +67,13 @@ export function LandingPageNavbar({
           <button
             key={section.id}
             onClick={() => scrollToSection(section.id)}
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-foreground/80 hover:bg-accent hover:text-foreground text-right"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all text-foreground/80 hover:bg-accent/50 hover:text-foreground text-right"
           >
             {section.label}
           </button>
         ))}
 
-        <div className="flex flex-col gap-2 pt-2 border-t mt-2">
+        <div className="flex flex-col gap-2 pt-3 border-t border-border/40 mt-3">
           <AuthButtons
             variant="mobile"
             onAction={() => setMobileMenuOpen(false)}

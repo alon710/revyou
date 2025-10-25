@@ -242,9 +242,6 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
                 {review.editedReply || review.aiReply}
               </p>
             </div>
-            <p className="text-sm text-secondary font-medium">
-              ⚠️ לאחר הפרסום, לא ניתן לבטל את הפעולה
-            </p>
           </div>
         }
         confirmText="פרסם לגוגל"

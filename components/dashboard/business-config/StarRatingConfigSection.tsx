@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dashboard-card";
 import { Star } from "lucide-react";
 import { SectionBaseProps, StarConfigUpdateCallback } from "./types";
+import { StarRating } from "@/components/ui/StarRating";
 
 interface StarRatingConfigSectionProps extends SectionBaseProps {
   starConfigs: BusinessConfig["starConfigs"];
@@ -53,23 +54,6 @@ export default function StarRatingConfigSection({
               className="pb-1 last:pb-0 border-b last:border-b-0 border-border/40"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm font-medium">
-                    {starLabels[rating]}
-                  </Label>
-                  <div
-                    className={`w-2 h-2 rounded-full transition-colors ${
-                      starConfig.autoReply
-                        ? "bg-primary"
-                        : "bg-muted-foreground/30"
-                    }`}
-                    title={
-                      starConfig.autoReply
-                        ? "תגובה אוטומטית פעילה"
-                        : "תגובה אוטומטית כבויה"
-                    }
-                  />
-                </div>
                 {isEditMode && (
                   <Switch
                     id={`auto-reply-${rating}`}
@@ -96,9 +80,12 @@ export default function StarRatingConfigSection({
                   className="text-sm resize-none"
                 />
               ) : starConfig.customInstructions ? (
-                <p className="text-sm bg-muted/50 p-3 rounded-md whitespace-pre-wrap leading-relaxed">
-                  {starConfig.customInstructions}
-                </p>
+                <div className="text-sm bg-muted/50 p-3 rounded-md flex items-start gap-3">
+                  <p className="whitespace-pre-wrap leading-relaxed flex-1">
+                    {starConfig.customInstructions}
+                  </p>
+                  <StarRating rating={rating} size={14} />
+                </div>
               ) : (
                 <p className="text-sm text-muted-foreground italic">
                   אין הנחיות מיוחדות

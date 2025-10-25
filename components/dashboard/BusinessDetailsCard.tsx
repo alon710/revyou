@@ -45,16 +45,6 @@ export default function BusinessDetailsCard({
 
   const isEditMode = variant === "edit";
 
-  // Debug: Log variant changes
-  useEffect(() => {
-    console.log(
-      "📝 BusinessDetailsCard variant:",
-      variant,
-      "isEditMode:",
-      isEditMode
-    );
-  }, [variant, isEditMode]);
-
   useEffect(() => {
     setConfig({
       ...business.config,
