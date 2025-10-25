@@ -1,158 +1,76 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Business,
-  BusinessConfig,
-  StarConfig,
-  DEFAULT_PROMPT_TEMPLATE,
-} from "@/types/database";
+import { Business, BusinessConfig } from "@/types/database";
 import {
   BusinessIdentitySection,
   AIResponseSettingsSection,
   StarRatingConfigSection,
   PromptTemplateSection,
 } from "./business-config";
-import { Button } from "@/components/ui/button";
-import { Save, X } from "lucide-react";
+import { toast } from "sonner";
+import { updateBusinessConfig } from "@/lib/firebase/businesses";
 
 interface BusinessDetailsCardProps {
-  variant: "display" | "edit";
   business: Business;
-  onSave?: (config: BusinessConfig) => Promise<void>;
-  onCancel?: () => void;
   loading?: boolean;
-  onSavingChange?: (saving: boolean) => void;
-  saving?: boolean;
+  onUpdate: () => Promise<void>;
 }
 
 export default function BusinessDetailsCard({
-  variant,
   business,
-  onSave,
-  onCancel,
   loading = false,
-  onSavingChange,
-  saving = false,
+  onUpdate,
 }: BusinessDetailsCardProps) {
-  const [config, setConfig] = useState<BusinessConfig>({
-    ...business.config,
-    promptTemplate: business.config.promptTemplate || DEFAULT_PROMPT_TEMPLATE,
-    maxSentences: business.config.maxSentences || 2,
-    allowedEmojis: business.config.allowedEmojis || [],
-    signature: business.config.signature || "",
-  });
-
-  const isEditMode = variant === "edit";
-
-  useEffect(() => {
-    setConfig({
-      ...business.config,
-      promptTemplate: business.config.promptTemplate || DEFAULT_PROMPT_TEMPLATE,
-      maxSentences: business.config.maxSentences || 2,
-      allowedEmojis: business.config.allowedEmojis || [],
-      signature: business.config.signature || "",
-    });
-  }, [business, variant]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    console.log("📋 handleSubmit called in BusinessDetailsCard");
-    e.preventDefault();
-    if (!onSave) return;
-
+  const handleSaveSection = async (partialConfig: Partial<BusinessConfig>) => {
     try {
-      onSavingChange?.(true);
-      await onSave(config);
-    } finally {
-      onSavingChange?.(false);
+      await updateBusinessConfig(business.id, partialConfig);
+      toast.success("ההגדרות נשמרו בהצלחה");
+      await onUpdate();
+    } catch (error) {
+      console.error("Error saving config:", error);
+      toast.error("לא ניתן לשמור את ההגדרות");
+      throw error;
     }
   };
 
-  const updateConfig = (updates: Partial<BusinessConfig>) => {
-    setConfig((prev) => ({ ...prev, ...updates }));
-  };
-
-  const updateStarConfig = (
-    rating: 1 | 2 | 3 | 4 | 5,
-    field: keyof StarConfig,
-    value: string | boolean
+  const handleSaveStarConfigs = async (
+    starConfigs: BusinessConfig["starConfigs"]
   ) => {
-    setConfig((prev) => ({
-      ...prev,
-      starConfigs: {
-        ...prev.starConfigs,
-        [rating]: {
-          ...prev.starConfigs[rating],
-          [field]: value,
-        },
-      },
-    }));
+    await handleSaveSection({ starConfigs });
   };
 
-  const handleResetTemplate = () => {
-    setConfig({ ...config, promptTemplate: DEFAULT_PROMPT_TEMPLATE });
+  const handleSavePromptTemplate = async (promptTemplate: string) => {
+    await handleSaveSection({ promptTemplate });
   };
-
-  const FormWrapper = isEditMode ? "form" : "div";
-  const formProps = isEditMode
-    ? { onSubmit: handleSubmit, id: "business-config-form" }
-    : {};
 
   return (
-    <>
-      <FormWrapper {...formProps} className="space-y-6">
-        <BusinessIdentitySection
-          variant={variant}
-          config={config}
-          business={business}
-          loading={loading}
-          onChange={updateConfig}
-        />
+    <div className="space-y-6">
+      <BusinessIdentitySection
+        config={business.config}
+        business={business}
+        loading={loading}
+        onSave={handleSaveSection}
+      />
 
-        <AIResponseSettingsSection
-          variant={variant}
-          config={config}
-          loading={loading}
-          onChange={updateConfig}
-        />
+      <AIResponseSettingsSection
+        config={business.config}
+        loading={loading}
+        onSave={handleSaveSection}
+      />
 
-        <StarRatingConfigSection
-          variant={variant}
-          starConfigs={config.starConfigs}
-          loading={loading}
-          onChange={updateStarConfig}
-        />
+      <StarRatingConfigSection
+        starConfigs={business.config.starConfigs}
+        loading={loading}
+        onSave={handleSaveStarConfigs}
+      />
 
-        <PromptTemplateSection
-          variant={variant}
-          promptTemplate={config.promptTemplate}
-          loading={loading}
-          onChange={(template) =>
-            setConfig({ ...config, promptTemplate: template })
-          }
-          onReset={handleResetTemplate}
-          business={business}
-          config={config}
-        />
-
-        {isEditMode && (
-          <div className="flex items-center justify-end gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              size="default"
-            >
-              <X className="ml-2 h-5 w-5" />
-              ביטול
-            </Button>
-            <Button type="submit" disabled={saving || loading} size="default">
-              <Save className="ml-2 h-5 w-5" />
-              שמור שינויים
-            </Button>
-          </div>
-        )}
-      </FormWrapper>
-    </>
+      <PromptTemplateSection
+        promptTemplate={business.config.promptTemplate}
+        business={business}
+        config={business.config}
+        loading={loading}
+        onSave={handleSavePromptTemplate}
+      />
+    </div>
   );
 }
