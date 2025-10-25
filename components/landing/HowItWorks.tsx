@@ -54,9 +54,9 @@ export function HowItWorks() {
               return (
                 <Card
                   key={index}
-                  className="p-8 relative overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                  className="p-8 relative overflow-hidden border border-border/40 shadow-sm hover:shadow-md transition-all rounded-lg"
                 >
-                  <div className="absolute top-4 start-4 text-6xl font-bold text-primary/10">
+                  <div className="absolute top-4 end-4 text-6xl font-bold text-primary/10">
                     {step.number}
                   </div>
 

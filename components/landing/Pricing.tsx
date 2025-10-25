@@ -126,10 +126,10 @@ export function Pricing() {
           {plans.map((plan) => (
             <Card
               key={plan.id}
-              className={`relative p-8 flex flex-col ${
+              className={`relative p-8 flex flex-col rounded-lg ${
                 plan.recommended
-                  ? "border-primary border-2 shadow-xl"
-                  : "border-border"
+                  ? "border border-primary/40 shadow-md"
+                  : "border border-border/40 shadow-sm"
               }`}
             >
               {plan.recommended && (
