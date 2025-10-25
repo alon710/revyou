@@ -55,8 +55,8 @@ export function buildReplyPrompt(
     REVIEW_TEXT: review.reviewText || "(אין טקסט)",
   };
 
-  // Use the prompt template from business config, fallback to default
-  const template = businessConfig.promptTemplate || DEFAULT_PROMPT_TEMPLATE;
+  // Always use the default prompt template
+  const template = DEFAULT_PROMPT_TEMPLATE;
 
   // Render template with Mustache
   return Mustache.render(template, templateData);

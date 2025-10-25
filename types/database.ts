@@ -55,9 +55,6 @@ export interface BusinessConfig {
   allowedEmojis?: string[]; // List of allowed emojis (e.g., ["🥂", "✨", "🙏"])
   signature?: string; // Business signature line (e.g., "צוות חמישים ושמונה")
 
-  // Prompt Template (required for each business)
-  promptTemplate: string; // Custom AI prompt template for this business
-
   // Star-specific Configuration
   starConfigs: {
     1: StarConfig;

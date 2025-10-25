@@ -18,7 +18,7 @@ import {
   ToneOfVoice,
   LanguageMode,
 } from "@/types/database";
-import { SUBSCRIPTION_LIMITS, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
+import { SUBSCRIPTION_LIMITS } from "@/types/database";
 import {
   businessSchema,
   businessCreateSchema,
@@ -113,7 +113,6 @@ export function getDefaultBusinessConfig(): BusinessConfig {
     toneOfVoice: "professional" as ToneOfVoice,
     useEmojis: false,
     languageMode: "hebrew" as LanguageMode,
-    promptTemplate: DEFAULT_PROMPT_TEMPLATE,
     starConfigs: {
       1: { customInstructions: "", autoReply: true },
       2: { customInstructions: "", autoReply: true },

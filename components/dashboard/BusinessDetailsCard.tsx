@@ -5,7 +5,6 @@ import {
   BusinessIdentitySection,
   AIResponseSettingsSection,
   StarRatingConfigSection,
-  PromptTemplateSection,
 } from "./business-config";
 import { toast } from "sonner";
 import { updateBusinessConfig } from "@/lib/firebase/businesses";
@@ -39,10 +38,6 @@ export default function BusinessDetailsCard({
     await handleSaveSection({ starConfigs });
   };
 
-  const handleSavePromptTemplate = async (promptTemplate: string) => {
-    await handleSaveSection({ promptTemplate });
-  };
-
   return (
     <div className="space-y-6">
       <BusinessIdentitySection
@@ -62,14 +57,6 @@ export default function BusinessDetailsCard({
         starConfigs={business.config.starConfigs}
         loading={loading}
         onSave={handleSaveStarConfigs}
-      />
-
-      <PromptTemplateSection
-        promptTemplate={business.config.promptTemplate}
-        business={business}
-        config={business.config}
-        loading={loading}
-        onSave={handleSavePromptTemplate}
       />
     </div>
   );

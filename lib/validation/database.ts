@@ -52,9 +52,6 @@ export const businessConfigSchema = z.object({
   allowedEmojis: z.array(z.string()).optional().default([]),
   signature: z.string().max(100).optional().default(""),
 
-  // Prompt Template (required)
-  promptTemplate: z.string().min(1).max(10000),
-
   // Star-specific Configuration
   starConfigs: z.object({
     1: starConfigSchema,

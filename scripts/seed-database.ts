@@ -125,7 +125,6 @@ async function seedDatabase() {
         maxSentences: 2,
         allowedEmojis: ["🥂", "✨", "🙏", "❤️", "👨‍🍳"],
         signature: "צוות חמישים ושמונה",
-        promptTemplate: DEFAULT_PROMPT_TEMPLATE,
         starConfigs: {
           1: {
             autoReply: true,
@@ -173,7 +172,6 @@ async function seedDatabase() {
         maxSentences: 3,
         allowedEmojis: ["☕"],
         signature: "בברכה, צוות בית הקפה",
-        promptTemplate: DEFAULT_PROMPT_TEMPLATE,
         starConfigs: {
           1: {
             autoReply: true,
