@@ -21,59 +21,46 @@ export default function SettingsPage() {
   const { toast } = useToast();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
 
-  const [emailOnNewReview, setEmailOnNewReview] = useState(false);
-  const [emailOnFailedPost, setEmailOnFailedPost] = useState(false);
+  const loadUserData = async () => {
+    if (!authUser) return;
+
+    try {
+      setLoading(true);
+      const data = await getUser(authUser.uid);
+      setUserData(data);
+    } catch (error) {
+      console.error("Error loading user data:", error);
+      toast({
+        title: "שגיאה",
+        description: "לא ניתן לטעון את נתוני המשתמש",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadUserData = async () => {
-      if (!authUser) return;
-
-      try {
-        setLoading(true);
-        const data = await getUser(authUser.uid);
-        setUserData(data);
-
-        if (data?.notificationPreferences) {
-          setEmailOnNewReview(
-            data.notificationPreferences.emailOnNewReview || false
-          );
-          setEmailOnFailedPost(
-            data.notificationPreferences.emailOnFailedPost || false
-          );
-        }
-      } catch (error) {
-        console.error("Error loading user data:", error);
-        toast({
-          title: "שגיאה",
-          description: "לא ניתן לטעון את נתוני המשתמש",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (!authLoading && authUser) {
       loadUserData();
     }
-  }, [authUser, authLoading, toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser, authLoading]);
 
-  const handleSaveNotifications = async () => {
+  const handleUpdateNotifications = async (preferences: {
+    emailOnNewReview: boolean;
+    emailOnFailedPost: boolean;
+  }) => {
     if (!authUser) return;
 
-    setSaving(true);
     try {
-      await updateNotificationPreferences(authUser.uid, {
-        emailOnNewReview,
-        emailOnFailedPost,
-      });
-
+      await updateNotificationPreferences(authUser.uid, preferences);
       toast({
         title: "נשמר בהצלחה",
         description: "העדפות ההתראות עודכנו",
       });
+      await loadUserData();
     } catch (error) {
       console.error("Error saving notification preferences:", error);
       toast({
@@ -81,8 +68,7 @@ export default function SettingsPage() {
         description: "לא ניתן לשמור את העדפות ההתראות",
         variant: "destructive",
       });
-    } finally {
-      setSaving(false);
+      throw error;
     }
   };
 
@@ -132,12 +118,14 @@ export default function SettingsPage() {
       />
 
       <NotificationPreferences
-        emailOnNewReview={emailOnNewReview}
-        emailOnFailedPost={emailOnFailedPost}
-        onEmailOnNewReviewChange={setEmailOnNewReview}
-        onEmailOnFailedPostChange={setEmailOnFailedPost}
-        onSave={handleSaveNotifications}
-        saving={saving}
+        emailOnNewReview={
+          userData.notificationPreferences?.emailOnNewReview || false
+        }
+        emailOnFailedPost={
+          userData.notificationPreferences?.emailOnFailedPost || false
+        }
+        loading={loading}
+        onUpdate={handleUpdateNotifications}
       />
 
       <DangerZone

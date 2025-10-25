@@ -31,7 +31,8 @@ export function PromptTemplateEditModal({
   onClose,
   onSave,
 }: PromptTemplateEditModalProps) {
-  const [localPromptTemplate, setLocalPromptTemplate] = useState(promptTemplate);
+  const [localPromptTemplate, setLocalPromptTemplate] =
+    useState(promptTemplate);
   const [isLoading, setIsLoading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 

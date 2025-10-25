@@ -12,10 +12,7 @@ import {
 } from "@/components/ui/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Settings } from "lucide-react";
-import {
-  TONE_LABELS,
-  LANGUAGE_LABELS,
-} from "./types";
+import { TONE_LABELS, LANGUAGE_LABELS } from "./types";
 import { AIResponseSettingsEditModal } from "./AIResponseSettingsEditModal";
 
 interface AIResponseSettingsSectionProps {

@@ -70,7 +70,6 @@ export function AIResponseSettingsEditModal({
   };
 
   const handleCancel = () => {
-    // Reset to original values
     setToneOfVoice(config.toneOfVoice);
     setLanguageMode(config.languageMode || "auto-detect");
     setAllowedEmojis(config.allowedEmojis || []);
@@ -95,7 +94,7 @@ export function AIResponseSettingsEditModal({
         <div className="space-y-6 py-4">
           {/* Tone of Voice */}
           <div className="space-y-2">
-            <Label htmlFor="toneOfVoice" className="text-right block">
+            <Label htmlFor="toneOfVoice" className="block">
               סגנון תשובה
             </Label>
             <Select
@@ -103,10 +102,10 @@ export function AIResponseSettingsEditModal({
               onValueChange={(value: ToneOfVoice) => setToneOfVoice(value)}
               disabled={isLoading}
             >
-              <SelectTrigger id="toneOfVoice">
+              <SelectTrigger id="toneOfVoice" dir="rtl">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent dir="rtl">
                 <SelectItem value="professional">מקצועי</SelectItem>
                 <SelectItem value="friendly">ידידותי</SelectItem>
                 <SelectItem value="formal">פורמלי</SelectItem>
@@ -125,10 +124,10 @@ export function AIResponseSettingsEditModal({
               onValueChange={(value: LanguageMode) => setLanguageMode(value)}
               disabled={isLoading}
             >
-              <SelectTrigger id="languageMode">
+              <SelectTrigger id="languageMode" dir="rtl">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent dir="rtl">
                 <SelectItem value="auto-detect">זיהוי אוטומטי</SelectItem>
                 <SelectItem value="hebrew">עברית</SelectItem>
                 <SelectItem value="english">English</SelectItem>
@@ -169,10 +168,10 @@ export function AIResponseSettingsEditModal({
               onValueChange={(value) => setMaxSentences(parseInt(value))}
               disabled={isLoading}
             >
-              <SelectTrigger id="maxSentences">
+              <SelectTrigger id="maxSentences" dir="rtl">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent dir="rtl">
                 <SelectItem value="1">משפט אחד</SelectItem>
                 <SelectItem value="2">שני משפטים (מומלץ)</SelectItem>
                 <SelectItem value="3">שלושה משפטים</SelectItem>

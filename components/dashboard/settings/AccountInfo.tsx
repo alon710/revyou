@@ -27,9 +27,7 @@ export function AccountInfo({ displayName, email, uid }: AccountInfoProps) {
       </DashboardCardHeader>
       <DashboardCardContent className="space-y-4">
         {/* Name */}
-        {displayName && (
-          <DashboardCardField label="שם" value={displayName} />
-        )}
+        {displayName && <DashboardCardField label="שם" value={displayName} />}
 
         {/* Email */}
         {email && <DashboardCardField label="כתובת אימייל" value={email} />}

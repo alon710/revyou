@@ -10,6 +10,7 @@ import {
   DashboardCardContent,
 } from "@/components/ui/dashboard-card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Star, Settings } from "lucide-react";
 import { StarRating } from "@/components/ui/StarRating";
 import { StarRatingConfigEditModal } from "./StarRatingConfigEditModal";
@@ -61,9 +62,11 @@ export default function StarRatingConfigSection({
                 className="pb-6 last:pb-0 border-b last:border-b-0 border-border/40"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium">
+                  <Badge
+                    variant={starConfig.autoReply ? "default" : "secondary"}
+                  >
                     תגובה אוטומטית {starConfig.autoReply ? "פעילה" : "כבויה"}
-                  </span>
+                  </Badge>
                   <StarRating rating={rating} size={18} />
                 </div>
 

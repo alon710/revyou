@@ -41,10 +41,7 @@ export function BusinessToggler() {
   if (businesses.length === 1) {
     return (
       <div className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-border/40 bg-background shadow-sm">
-        <Building2 className="h-4 w-4 text-muted-foreground" />
-        <span className="truncate text-sm font-medium">
-          {currentBusiness?.name}
-        </span>
+        <span className="truncate text-sm">{currentBusiness?.name}</span>
       </div>
     );
   }
@@ -54,12 +51,11 @@ export function BusinessToggler() {
       value={selectedBusinessId || undefined}
       onValueChange={handleBusinessChange}
     >
-      <SelectTrigger className="w-full shadow-sm" dir="rtl">
+      <SelectTrigger dir="rtl">
         <SelectValue placeholder="בחר עסק">
           {currentBusiness && (
             <div className="flex items-center gap-2">
-              <Building2 className="h-4 w-4 text-muted-foreground" />
-              <span className="truncate font-medium">{currentBusiness.name}</span>
+              <span className="mx-2">{currentBusiness.name}</span>
             </div>
           )}
         </SelectValue>

@@ -9,18 +9,23 @@ This document outlines the design language and visual system used throughout the
 ## Core Design Principles
 
 ### 1. **Subtle Depth**
+
 Create visual hierarchy through gentle shadows and layering rather than heavy borders or stark contrasts.
 
 ### 2. **Soft Boundaries**
+
 Use muted, semi-transparent borders to define spaces without creating harsh divisions.
 
 ### 3. **Smooth Interactions**
+
 All interactive elements feature fluid transitions and multi-layered feedback states.
 
 ### 4. **Breathable Spacing**
+
 Consistent, generous spacing creates a clean, uncluttered interface.
 
 ### 5. **Meaningful Icons**
+
 Icons are used purposefully to enhance understanding and visual hierarchy.
 
 ---
@@ -28,6 +33,7 @@ Icons are used purposefully to enhance understanding and visual hierarchy.
 ## Color & Opacity System
 
 ### Border Opacity
+
 ```css
 /* Standard borders - softer, less intrusive */
 border-border/40
@@ -37,6 +43,7 @@ border-border/40
 ```
 
 ### Background Opacity
+
 ```css
 /* Muted backgrounds for content areas */
 bg-muted/50
@@ -52,6 +59,7 @@ bg-primary/5
 ```
 
 ### Shadow System
+
 ```css
 /* Subtle elevation - for most cards and interactive elements */
 shadow-sm
@@ -70,28 +78,22 @@ hover:shadow-md
 ### Cards (DashboardCard)
 
 #### Structure
+
 ```tsx
 <DashboardCard>
   <DashboardCardHeader>
-    <DashboardCardTitle icon={<Icon />}>
-      Title Text
-    </DashboardCardTitle>
-    <DashboardCardDescription>
-      Description text
-    </DashboardCardDescription>
+    <DashboardCardTitle icon={<Icon />}>Title Text</DashboardCardTitle>
+    <DashboardCardDescription>Description text</DashboardCardDescription>
   </DashboardCardHeader>
 
-  <DashboardCardContent>
-    {/* Main content */}
-  </DashboardCardContent>
+  <DashboardCardContent>{/* Main content */}</DashboardCardContent>
 
-  <DashboardCardFooter>
-    {/* Actions */}
-  </DashboardCardFooter>
+  <DashboardCardFooter>{/* Actions */}</DashboardCardFooter>
 </DashboardCard>
 ```
 
 #### Visual Properties
+
 - **Border**: `border-border/40` - Soft, subtle outline
 - **Shadow**: `shadow-sm` - Gentle elevation
 - **Hover**: `hover:shadow-md` - Increased depth on interaction
@@ -99,6 +101,7 @@ hover:shadow-md
 - **Background**: `bg-card` - Theme-aware background
 
 #### Field Layout
+
 ```tsx
 <DashboardCardField label="Field Label">
   <content or value>
@@ -106,16 +109,19 @@ hover:shadow-md
 ```
 
 **Label Styling**:
+
 - `text-xs` - Small, unobtrusive
 - `font-medium` - Readable weight
 - `text-muted-foreground` - Subdued color
 - `uppercase tracking-wide` - Clear hierarchy
 
 **Value Styling**:
+
 - `text-sm font-medium` - Emphasized content
 - `leading-relaxed` - Better readability
 
 #### Section Separators
+
 ```tsx
 <DashboardCardSection withBorder={true}>
   {/* Separated content */}
@@ -130,6 +136,7 @@ hover:shadow-md
 ### Navigation (Navbar)
 
 #### Container
+
 - **Border**: `border-b border-border/40` - Soft bottom border
 - **Shadow**: `shadow-sm` - Subtle depth
 - **Background**: `bg-background/95 backdrop-blur` - Frosted glass effect
@@ -138,6 +145,7 @@ hover:shadow-md
 #### Navigation Items
 
 **Desktop Nav Items**:
+
 ```tsx
 className={cn(
   "flex items-center gap-2 text-sm font-medium transition-all px-3 py-2 rounded-lg",
@@ -148,15 +156,18 @@ className={cn(
 ```
 
 **States**:
+
 - **Default**: `text-foreground/80` - Muted text
 - **Hover**: `hover:bg-accent/50` - Subtle background + `hover:text-foreground` - Full opacity text
 - **Active**: `bg-accent text-accent-foreground shadow-sm` - Clear indication with shadow
 
 **Spacing**:
+
 - **Gap between items**: `gap-2` - Compact, modern spacing
 - **Item padding**: `px-3 py-2` - Comfortable click target
 
 #### Mobile Menu
+
 - **Container gap**: `gap-2` - Tight, efficient spacing
 - **Border separators**: `border-border/40` - Consistent with theme
 - **Section padding**: `pt-3 mt-3` - Clear separation
@@ -166,6 +177,7 @@ className={cn(
 ### Form Elements
 
 #### Input Fields
+
 ```tsx
 <DashboardCardField label="Field Name">
   <Input
@@ -178,11 +190,13 @@ className={cn(
 ```
 
 **Styling Enhancements**:
+
 - Inputs inherit theme styling
 - Labels use uppercase tracking for clarity
 - Helper text in `text-xs text-muted-foreground`
 
 #### Textareas
+
 ```tsx
 <Textarea
   value={value}
@@ -193,6 +207,7 @@ className={cn(
 ```
 
 **Display Mode**:
+
 ```tsx
 <p className="text-sm bg-muted/50 p-3 rounded-md whitespace-pre-wrap leading-relaxed">
   {displayValue}
@@ -200,6 +215,7 @@ className={cn(
 ```
 
 #### Selects
+
 - **Trigger**: Add `shadow-sm` for consistency
 - **Content**: Theme-styled automatically
 - **Icon integration**: Include meaningful icons in select values
@@ -209,6 +225,7 @@ className={cn(
 ### Review Cards
 
 #### Structure
+
 ```tsx
 <DashboardCard>
   <DashboardCardHeader>
@@ -221,13 +238,12 @@ className={cn(
     {/* Star rating - bottom right */}
   </DashboardCardContent>
 
-  <DashboardCardFooter>
-    {/* Action buttons */}
-  </DashboardCardFooter>
+  <DashboardCardFooter>{/* Action buttons */}</DashboardCardFooter>
 </DashboardCard>
 ```
 
 #### Section Labels
+
 ```tsx
 <div className="flex items-center gap-2 mb-2">
   <Icon className="h-4 w-4 text-muted-foreground" />
@@ -240,11 +256,13 @@ className={cn(
 #### Content Backgrounds
 
 **Review Text**:
+
 ```css
 bg-muted/50 p-3 rounded-md
 ```
 
 **AI Reply**:
+
 ```css
 border border-primary/20 bg-primary/5 p-3 rounded-md
 ```
@@ -258,6 +276,7 @@ border border-primary/20 bg-primary/5 p-3 rounded-md
 ### Hierarchy
 
 #### Headings
+
 ```css
 /* Card Titles */
 text-lg font-semibold leading-none tracking-tight
@@ -267,6 +286,7 @@ text-xs font-medium text-muted-foreground uppercase tracking-wide
 ```
 
 #### Body Text
+
 ```css
 /* Standard text */
 text-sm leading-relaxed
@@ -279,6 +299,7 @@ text-sm text-muted-foreground
 ```
 
 #### Technical/Code
+
 ```css
 /* Code/IDs */
 text-sm font-mono text-muted-foreground/80
@@ -288,6 +309,7 @@ bg-muted/50 p-2 rounded-md
 ```
 
 ### Line Height
+
 - **Standard**: `leading-relaxed` - Better readability
 - **Tight**: `leading-none` - Compact headers
 - **Multi-line**: `whitespace-pre-wrap` - Preserve formatting
@@ -297,29 +319,32 @@ bg-muted/50 p-2 rounded-md
 ## Icon System
 
 ### Usage Pattern
+
 ```tsx
 <Icon className="h-4 w-4 text-muted-foreground" />
 ```
 
 ### Icon Sizes
+
 - **h-4 w-4** (16px): Standard icons in forms, labels, small buttons
 - **h-5 w-5** (20px): Card headers, navigation items
 - **h-6 w-6** (24px): Mobile menu button
 
 ### Semantic Icons
 
-| Icon | Usage | Meaning |
-|------|-------|---------|
-| `User` | Reviewer identity | Person/account |
-| `Building2` | Business identity | Organization |
-| `MessageSquare` | Content/replies | Communication |
-| `Star` | Ratings/reviews | Quality/feedback |
-| `Bell` | Notifications | Alerts/updates |
-| `Sparkles` | AI features | Intelligence/automation |
-| `Code` | Templates/technical | Development/code |
-| `Settings` | Configuration | Adjustments/options |
+| Icon            | Usage               | Meaning                 |
+| --------------- | ------------------- | ----------------------- |
+| `User`          | Reviewer identity   | Person/account          |
+| `Building2`     | Business identity   | Organization            |
+| `MessageSquare` | Content/replies     | Communication           |
+| `Star`          | Ratings/reviews     | Quality/feedback        |
+| `Bell`          | Notifications       | Alerts/updates          |
+| `Sparkles`      | AI features         | Intelligence/automation |
+| `Code`          | Templates/technical | Development/code        |
+| `Settings`      | Configuration       | Adjustments/options     |
 
 ### Icon Color
+
 - **Default**: `text-muted-foreground` - Subtle, supporting role
 - **Primary context**: `text-primary` - Important/active state
 - **Active states**: Inherit from parent text color
@@ -329,6 +354,7 @@ bg-muted/50 p-2 rounded-md
 ## Spacing System
 
 ### Card Spacing
+
 ```css
 /* Header */
 p-6 pb-4
@@ -341,6 +367,7 @@ p-6 pt-4 border-t border-border/40
 ```
 
 ### Content Spacing
+
 ```css
 /* Major sections */
 space-y-6
@@ -356,6 +383,7 @@ space-y-3
 ```
 
 ### Gap Spacing (Flexbox)
+
 ```css
 /* Navigation items */
 gap-2
@@ -372,6 +400,7 @@ gap-2
 ## Interactive States
 
 ### Button States
+
 ```css
 /* Default state */
 transition-all
@@ -384,6 +413,7 @@ bg-accent text-accent-foreground shadow-sm
 ```
 
 ### Link States
+
 ```css
 /* Navigation links */
 transition-all rounded-lg px-3 py-2
@@ -396,6 +426,7 @@ bg-accent text-accent-foreground shadow-sm
 ```
 
 ### Mobile Interactions
+
 ```css
 /* Touch targets */
 p-2 rounded-lg
@@ -409,6 +440,7 @@ hover:bg-accent/50 active:bg-accent transition-all
 ## Rounded Corners
 
 ### Border Radius Scale
+
 ```css
 /* Cards and major containers */
 rounded-lg (8px)
@@ -430,19 +462,24 @@ rounded-xl (avoid - use rounded-lg instead)
 ## Transitions
 
 ### Standard Transition
+
 ```css
 transition-all
 ```
+
 **Use for**: Most interactive elements (buttons, links, cards)
 
 ### Specific Transitions
+
 ```css
 transition-colors /* Color-only changes */
 transition-shadow /* Shadow-only changes */
 ```
+
 **Use when**: Performance optimization needed
 
 ### Duration
+
 - Default Tailwind duration (150ms) - Fast, responsive
 - No custom durations needed - maintain consistency
 
@@ -451,15 +488,17 @@ transition-shadow /* Shadow-only changes */
 ## RTL (Right-to-Left) Support
 
 ### Text Direction
+
 ```tsx
 /* Forms and inputs in Hebrew */
-dir="rtl"
+dir = "rtl";
 
 /* Text alignment */
-text-right
+text - right;
 ```
 
 ### Layout Considerations
+
 - Flexbox reverses naturally with RTL
 - Icons typically stay on the left (visual, not textual)
 - Explicit `text-right` for mobile menu items
@@ -469,6 +508,7 @@ text-right
 ## Dark Mode Considerations
 
 All components use theme-aware colors:
+
 - `bg-background` - Adapts to theme
 - `bg-card` - Card background
 - `text-foreground` - Primary text
@@ -476,6 +516,7 @@ All components use theme-aware colors:
 - `border-border` - Border color
 
 **Opacity modifiers work in both modes**:
+
 - `border-border/40` - Consistent across themes
 - `bg-muted/50` - Theme-aware opacity
 
@@ -491,9 +532,7 @@ All components use theme-aware colors:
     <DashboardCardTitle icon={<User className="h-5 w-5" />}>
       Account Information
     </DashboardCardTitle>
-    <DashboardCardDescription>
-      Your account details
-    </DashboardCardDescription>
+    <DashboardCardDescription>Your account details</DashboardCardDescription>
   </DashboardCardHeader>
 
   <DashboardCardContent className="space-y-4">
@@ -536,8 +575,12 @@ All components use theme-aware colors:
   </DashboardCardContent>
 
   <DashboardCardFooter>
-    <Button variant="outline" size="sm">Edit</Button>
-    <Button variant="default" size="sm">Publish</Button>
+    <Button variant="outline" size="sm">
+      Edit
+    </Button>
+    <Button variant="default" size="sm">
+      Publish
+    </Button>
   </DashboardCardFooter>
 </DashboardCard>
 ```
@@ -587,6 +630,7 @@ When creating new components, ensure:
 ### From Old Card to DashboardCard
 
 **Before**:
+
 ```tsx
 <Card>
   <CardHeader>
@@ -606,15 +650,14 @@ When creating new components, ensure:
 ```
 
 **After**:
+
 ```tsx
 <DashboardCard>
   <DashboardCardHeader>
     <DashboardCardTitle icon={<Icon className="h-5 w-5" />}>
       Title
     </DashboardCardTitle>
-    <DashboardCardDescription>
-      Description
-    </DashboardCardDescription>
+    <DashboardCardDescription>Description</DashboardCardDescription>
   </DashboardCardHeader>
   <DashboardCardContent className="space-y-4">
     <DashboardCardField label="Field" value={value} />
@@ -647,18 +690,22 @@ When creating new components, ensure:
 ## Accessibility Notes
 
 ### Color Contrast
+
 - Muted foreground colors maintain WCAG AA contrast ratios
 - Opacity values (`/40`, `/50`) tested for readability
 
 ### Touch Targets
+
 - Minimum touch target: `44x44px` (achieved with `px-3 py-2` on `text-sm`)
 - Mobile menu items: Even larger with `px-3 py-2` on `text-sm` with icons
 
 ### Focus States
+
 - All interactive elements inherit Tailwind's focus-visible styles
 - No custom focus styles needed - browser defaults are accessible
 
 ### Screen Readers
+
 - Icons are decorative (paired with text)
 - Semantic HTML structure maintained
 - ARIA labels on icon-only buttons
@@ -668,15 +715,18 @@ When creating new components, ensure:
 ## Performance Considerations
 
 ### Shadow Optimization
+
 - Use `shadow-sm` instead of custom shadows
 - Avoid `shadow-2xl` and heavy shadows
 - Limit shadow transitions to hover states only
 
 ### Opacity Performance
+
 - Opacity values are GPU-accelerated
 - Border/background opacity preferred over multiple overlays
 
 ### Transition Performance
+
 - `transition-all` is optimized by Tailwind
 - Avoid custom cubic-bezier unless necessary
 
@@ -723,6 +773,7 @@ border-t border-border/40 pt-4 mt-4
 ## Contact & Contributions
 
 For questions or suggestions about the design language, please refer to the component implementations in:
+
 - `/components/ui/dashboard-card.tsx`
 - `/components/dashboard/ReviewCard.tsx`
 - `/components/layout/navbar/`
