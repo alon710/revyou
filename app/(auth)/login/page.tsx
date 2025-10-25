@@ -4,17 +4,16 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithGoogle } from "@/lib/firebase/auth";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  DashboardCard,
+  DashboardCardContent,
+  DashboardCardDescription,
+  DashboardCardHeader,
+  DashboardCardTitle,
+} from "@/components/ui/dashboard-card";
 import { Logo } from "@/components/ui/Logo";
 import { Loading } from "@/components/ui/loading";
-import { Chrome } from "lucide-react";
+import { GoogleSsoButton } from "@/components/ui/google-sso-button";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -64,46 +63,45 @@ export default function LoginPage() {
         </div>
 
         {/* Login Card */}
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle>התחברות</CardTitle>
-            <CardDescription>התחבר עם חשבון Google שלך להמשך</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <DashboardCard>
+          <DashboardCardHeader className="text-center">
+            <DashboardCardTitle className="justify-center">
+              התחברות
+            </DashboardCardTitle>
+            <DashboardCardDescription>
+              התחבר עם חשבון Google שלך להמשך
+            </DashboardCardDescription>
+          </DashboardCardHeader>
+          <DashboardCardContent className="space-y-4">
             {/* Error Message */}
             {error && (
-              <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg text-sm">
+              <div className="bg-destructive/10 border border-destructive/40 text-destructive px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
             {/* Google Sign In Button */}
-            <Button
+            <GoogleSsoButton
               onClick={handleGoogleSignIn}
-              disabled={isLoading}
-              className="w-full gap-2"
-              size="lg"
-            >
-              {isLoading ? (
-                <>מתחבר...</>
-              ) : (
-                <>
-                  <Chrome className="h-5 w-5" />
-                  התחבר עם Google
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
+              isLoading={isLoading}
+            />
+          </DashboardCardContent>
+        </DashboardCard>
 
         {/* Terms & Privacy */}
         <p className="text-center text-sm text-muted-foreground mt-6">
-          על ידי התחברות, אתה מסכים ל
-          <Link href="/terms" className="text-primary hover:underline mx-1">
+          בהתחברות, אתה מסכים ל
+          <Link
+            href="/terms"
+            className="text-primary hover:underline transition-all"
+          >
             תנאי השימוש
-          </Link>
+          </Link>{" "}
           ול
-          <Link href="/privacy" className="text-primary hover:underline mx-1">
+          <Link
+            href="/privacy"
+            className="text-primary hover:underline transition-all"
+          >
             מדיניות הפרטיות
           </Link>
         </p>
