@@ -30,7 +30,7 @@ export function DashboardNavbar() {
 
   return (
     <>
-      <NavbarContainer>
+      <NavbarContainer scrollSelector="main">
         <Logo href="/businesses" />
 
         <nav className="hidden md:flex items-center gap-2">

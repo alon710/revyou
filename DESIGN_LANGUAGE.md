@@ -135,12 +135,52 @@ hover:shadow-md
 
 ### Navigation (Navbar)
 
-#### Container
+#### Container - Floating Design
 
-- **Border**: `border-b border-border/40` - Soft bottom border
-- **Shadow**: `shadow-sm` - Subtle depth
-- **Background**: `bg-background/95 backdrop-blur` - Frosted glass effect
-- **Transition**: `transition-shadow` - Smooth shadow changes
+The navbar uses a modern floating design that sits above the content with breathing space on all sides.
+
+**Positioning & Width**:
+
+```css
+/* Outer wrapper - fixed positioning with margins */
+fixed left-0 right-0 px-4 md:px-8
+
+/* Inner container - width constraint matching PageContainer */
+max-w-full lg:max-w-7xl mx-auto
+```
+
+**Visual Properties**:
+
+- **Border**: `border border-border/40` - Soft full border (not just bottom)
+- **Corners**: `rounded-lg` - Fully rounded for floating effect
+- **Shadow**: `shadow-sm` - Subtle elevation
+- **Background**: `bg-card/95 backdrop-blur-md` - Frosted glass with card color
+- **Fallback**: `supports-[backdrop-filter]:bg-card/60` - Enhanced transparency with backdrop support
+- **Transition**: `transition-shadow` - Smooth shadow changes on interaction
+
+**Layout Spacing**:
+
+- **Top margin**: `top-4` (16px from viewport top when visible)
+- **Horizontal padding**: `px-4 md:px-8` (outer wrapper margins)
+- **Internal padding**: `px-4 sm:px-6 lg:px-8` (content padding)
+- **Height**: `h-16` (64px navbar height)
+- **Required page padding**: `pt-24 md:pt-28` (accounts for navbar + breathing space)
+
+**Auto-Hide Behavior**:
+
+The navbar automatically hides when scrolling down and reappears when scrolling up for a cleaner reading experience.
+
+```tsx
+// Scroll threshold
+currentScrollY > 100 // Only hide after scrolling past 100px
+
+// Animation
+transition-all duration-300 // Smooth 300ms transition
+top-4 // Visible state
+-top-24 // Hidden state (slides up)
+```
+
+**Implementation Note**: Scroll logic is centralized in `NavbarContainer`. Use `scrollSelector` prop to specify custom scroll containers (e.g., `scrollSelector="main"` for dashboard layout). Defaults to `window` scroll for landing pages.
 
 #### Navigation Items
 
@@ -171,6 +211,29 @@ className={cn(
 - **Container gap**: `gap-2` - Tight, efficient spacing
 - **Border separators**: `border-border/40` - Consistent with theme
 - **Section padding**: `pt-3 mt-3` - Clear separation
+
+#### Design Rationale
+
+**Why floating instead of full-width?**
+
+- Creates modern, elevated appearance
+- Provides breathing space around navigation
+- Aligns width with page content for visual consistency
+- Allows background to show through on edges
+
+**Why auto-hide on scroll?**
+
+- Maximizes screen real estate when reading
+- Remains easily accessible (scroll up to reveal)
+- Smooth transitions maintain polish
+- Common modern UX pattern
+
+**Why card background instead of background color?**
+
+- Provides subtle differentiation from page background
+- Prevents white-on-white appearance
+- Maintains theme consistency (uses card color palette)
+- Works in both light and dark modes
 
 ---
 
@@ -394,6 +457,28 @@ gap-2 or gap-3
 /* Button groups */
 gap-2
 ```
+
+### Navbar Clearance
+
+When using the floating navbar, ensure proper top padding on page content:
+
+```css
+/* Dashboard layout - element scroll container */
+pt-24 md:pt-28
+
+/* Landing layout - window scroll */
+pt-24 md:pt-28
+
+/* Calculation: top margin (16px) + navbar height (64px) + breathing space (16px) = 96px (pt-24) */
+/* Desktop gets extra space: 112px (pt-28) */
+```
+
+**Why this spacing?**
+
+- Prevents navbar from overlapping content
+- Provides visual breathing room
+- Accounts for navbar margins and height
+- Consistent across all layouts
 
 ---
 
@@ -734,6 +819,14 @@ When creating new components, ensure:
 
 ## Version History
 
+- **v1.1** (2025-01-25): Floating navbar pattern
+  - Modern floating navbar with auto-hide on scroll
+  - Centralized scroll logic in NavbarContainer
+  - Width constraint matching PageContainer
+  - Card background for better differentiation
+  - Navbar clearance spacing guidelines
+  - Design rationale documentation
+
 - **v1.0** (2025-01-25): Initial design language established
   - DashboardCard component system
   - Navbar modernization
@@ -782,4 +875,4 @@ For questions or suggestions about the design language, please refer to the comp
 ---
 
 **Last Updated**: January 25, 2025
-**Design System Version**: 1.0
+**Design System Version**: 1.1
