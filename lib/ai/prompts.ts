@@ -4,6 +4,7 @@ import {
   LanguageMode,
   DEFAULT_PROMPT_TEMPLATE,
 } from "@/types/database";
+import Mustache from "mustache";
 
 /**
  * Prompt Template Builder
@@ -36,7 +37,6 @@ export function buildReplyPrompt(
     "auto-detect": "זיהוי אוטומטי",
     "match-reviewer": "התאמה למבקר",
   };
-  const language = languageLabels[businessConfig.languageMode];
 
   // Get tone label (Hebrew name)
   const toneLabels: Record<ToneOfVoice, string> = {
@@ -45,50 +45,37 @@ export function buildReplyPrompt(
     humorous: "הומוריסטי",
     professional: "מקצועי",
   };
-  const tone = toneLabels[businessConfig.toneOfVoice];
 
-  // Safe defaults for all optional values
-  const allowedEmojis = businessConfig.allowedEmojis?.join(" ") || "";
-  const maxSentences = businessConfig.maxSentences || 2;
-  const signature = businessConfig.signature || `צוות ${businessName}`;
-  const phone = businessPhone || businessConfig.businessPhone || "";
-  const businessDescription = businessConfig.businessDescription || "";
-
-  // Get star-specific custom instructions with safe defaults
-  const customInstructions1 =
-    businessConfig.starConfigs?.[1]?.customInstructions || "";
-  const customInstructions2 =
-    businessConfig.starConfigs?.[2]?.customInstructions || "";
-  const customInstructions3 =
-    businessConfig.starConfigs?.[3]?.customInstructions || "";
-  const customInstructions4 =
-    businessConfig.starConfigs?.[4]?.customInstructions || "";
-  const customInstructions5 =
-    businessConfig.starConfigs?.[5]?.customInstructions || "";
+  // Build template data object
+  const templateData = {
+    BUSINESS_NAME: businessName || "",
+    BUSINESS_DESCRIPTION: businessConfig.businessDescription || "",
+    BUSINESS_PHONE: businessPhone || businessConfig.businessPhone || "",
+    LANGUAGE: languageLabels[businessConfig.languageMode],
+    TONE: toneLabels[businessConfig.toneOfVoice],
+    ALLOWED_EMOJIS: businessConfig.allowedEmojis?.join(" ") || "",
+    MAX_SENTENCES: businessConfig.maxSentences || 2,
+    SIGNATURE: businessConfig.signature || `צוות ${businessName}`,
+    CUSTOM_INSTRUCTIONS_1:
+      businessConfig.starConfigs?.[1]?.customInstructions || "",
+    CUSTOM_INSTRUCTIONS_2:
+      businessConfig.starConfigs?.[2]?.customInstructions || "",
+    CUSTOM_INSTRUCTIONS_3:
+      businessConfig.starConfigs?.[3]?.customInstructions || "",
+    CUSTOM_INSTRUCTIONS_4:
+      businessConfig.starConfigs?.[4]?.customInstructions || "",
+    CUSTOM_INSTRUCTIONS_5:
+      businessConfig.starConfigs?.[5]?.customInstructions || "",
+    RATING: review.rating,
+    REVIEWER_NAME: review.reviewerName || "",
+    REVIEW_TEXT: review.reviewText || "(אין טקסט)",
+  };
 
   // Use the prompt template from business config, fallback to default
   const template = businessConfig.promptTemplate || DEFAULT_PROMPT_TEMPLATE;
 
-  // Replace all variables with actual data
-  const prompt = template
-    .replace(/\{\{BUSINESS_NAME\}\}/g, businessName || "")
-    .replace(/\{\{BUSINESS_DESCRIPTION\}\}/g, businessDescription)
-    .replace(/\{\{BUSINESS_PHONE\}\}/g, phone)
-    .replace(/\{\{LANGUAGE\}\}/g, language)
-    .replace(/\{\{TONE\}\}/g, tone)
-    .replace(/\{\{ALLOWED_EMOJIS\}\}/g, allowedEmojis)
-    .replace(/\{\{MAX_SENTENCES\}\}/g, maxSentences.toString())
-    .replace(/\{\{SIGNATURE\}\}/g, signature)
-    .replace(/\{\{CUSTOM_INSTRUCTIONS_1\}\}/g, customInstructions1)
-    .replace(/\{\{CUSTOM_INSTRUCTIONS_2\}\}/g, customInstructions2)
-    .replace(/\{\{CUSTOM_INSTRUCTIONS_3\}\}/g, customInstructions3)
-    .replace(/\{\{CUSTOM_INSTRUCTIONS_4\}\}/g, customInstructions4)
-    .replace(/\{\{CUSTOM_INSTRUCTIONS_5\}\}/g, customInstructions5)
-    .replace(/\{\{RATING\}\}/g, review.rating.toString())
-    .replace(/\{\{REVIEWER_NAME\}\}/g, review.reviewerName || "")
-    .replace(/\{\{REVIEW_TEXT\}\}/g, review.reviewText || "(אין טקסט)");
-
-  return prompt;
+  // Render template with Mustache
+  return Mustache.render(template, templateData);
 }
 
 /**
@@ -105,14 +92,14 @@ export function buildSimplePrompt(
   rating: number,
   reviewText: string
 ): string {
-  return `אתה עוזר לבעל עסק לענות על ביקורת גוגל.
+  const template = `אתה עוזר לבעל עסק לענות על ביקורת גוגל.
 
-שם העסק: ${businessName}
-דירוג: ${rating}/5
-שם המבקר: ${reviewerName}
-ביקורת: ${reviewText}
+שם העסק: {{businessName}}
+דירוג: {{rating}}/5
+שם המבקר: {{reviewerName}}
+ביקורת: {{reviewText}}
 
-צור תגובה קצרה (1-2 משפטים) בעברית שמתחילה בפנייה אישית לשם המבקר (תרגם את השם לעברית באופן פונטי אם נדרש) ומסתיימת בחתימה: "צוות ${businessName}".
+צור תגובה קצרה (1-2 משפטים) בעברית שמתחילה בפנייה אישית לשם המבקר (תרגם את השם לעברית באופן פונטי אם נדרש) ומסתיימת בחתימה: "צוות {{businessName}}".
 
 הנחיות:
 - דירוג 4-5: תודה חמה וכללית
@@ -120,6 +107,13 @@ export function buildSimplePrompt(
 - דירוג 1-2: התנצלות והזמנה ליצור קשר
 
 תגובה:`;
+
+  return Mustache.render(template, {
+    businessName,
+    reviewerName,
+    rating,
+    reviewText,
+  });
 }
 
 /**

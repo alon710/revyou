@@ -16,10 +16,6 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
 
-/**
- * Settings Page
- * User account settings and notification preferences
- */
 export default function SettingsPage() {
   const { user: authUser, loading: authLoading } = useAuth();
   const { toast } = useToast();
@@ -129,14 +125,12 @@ export default function SettingsPage() {
         description="נהל את הגדרות החשבון והתראות האימייל שלך"
       />
 
-      {/* Account Information */}
       <AccountInfo
         displayName={authUser.displayName}
         email={authUser.email}
         uid={authUser.uid}
       />
 
-      {/* Notification Preferences */}
       <NotificationPreferences
         emailOnNewReview={emailOnNewReview}
         emailOnFailedPost={emailOnFailedPost}
@@ -146,7 +140,6 @@ export default function SettingsPage() {
         saving={saving}
       />
 
-      {/* Danger Zone */}
       <DangerZone
         userEmail={authUser.email || ""}
         onDeleteAccount={handleDeleteAccount}

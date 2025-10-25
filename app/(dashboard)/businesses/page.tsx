@@ -38,7 +38,6 @@ export default function BusinessesPage() {
   const [editMode, setEditMode] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // Debug: Log editMode changes
   useEffect(() => {
     console.log("🔍 EditMode changed:", editMode);
   }, [editMode]);
@@ -105,8 +104,7 @@ export default function BusinessesPage() {
     );
   }
 
-  // Show empty state if no businesses
-  if (businesses.length === 0) {
+  if (businesses.length === 0 || !currentBusiness) {
     return (
       <PageContainer>
         <PageHeader
@@ -114,21 +112,6 @@ export default function BusinessesPage() {
           description="נהל את חשבונות Google Business Profile המחוברים שלך"
         />
         <EmptyState />
-      </PageContainer>
-    );
-  }
-
-  // No business selected - just show empty content
-  if (!currentBusiness) {
-    return (
-      <PageContainer>
-        <PageHeader
-          title="העסקים שלי"
-          description="נהל את חשבונות Google Business Profile המחוברים שלך"
-        />
-        <div className="text-center text-muted-foreground py-12">
-          בחר עסק מהתפריט למעלה כדי לראות את הפרטים
-        </div>
       </PageContainer>
     );
   }
