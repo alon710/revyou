@@ -21,7 +21,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { ReplyEditor } from "./ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import { MessageSquare, User } from "lucide-react";
+import { AIPromptModal } from "./AIPromptModal";
+import { MessageSquare, User, FileText } from "lucide-react";
 
 interface ReviewCardProps {
   review: Review;
@@ -34,6 +35,7 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [showPublishDialog, setShowPublishDialog] = useState(false);
+  const [showPromptModal, setShowPromptModal] = useState(false);
 
   const getStatusBadge = (status: ReplyStatus) => {
     const statusMap = {
@@ -192,6 +194,14 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
               ערוך
             </Button>
             <Button
+              onClick={() => setShowPromptModal(true)}
+              disabled={isLoading}
+              size="sm"
+              variant="outline"
+            >
+              צפה בהנחיה
+            </Button>
+            <Button
               onClick={() => setShowPublishDialog(true)}
               disabled={isLoading}
               size="sm"
@@ -212,6 +222,13 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
           setShowEditor(false);
           onUpdate?.();
         }}
+      />
+
+      {/* AI Prompt Modal */}
+      <AIPromptModal
+        review={review}
+        open={showPromptModal}
+        onClose={() => setShowPromptModal(false)}
       />
 
       {/* Publish Confirmation Dialog */}

@@ -35,7 +35,6 @@ export function DashboardNavbar() {
 
         <nav className="hidden md:flex items-center gap-2">
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive =
               pathname === item.href || pathname.startsWith(item.href);
 
@@ -50,7 +49,6 @@ export function DashboardNavbar() {
                     : "text-foreground/80 hover:text-foreground hover:bg-accent/50"
                 )}
               >
-                <Icon className="h-4 w-4" />
                 <span>{item.title}</span>
               </Link>
             );
@@ -76,7 +74,6 @@ export function DashboardNavbar() {
         </div>
 
         {navItems.map((item) => {
-          const Icon = item.icon;
           const isActive =
             pathname === item.href || pathname.startsWith(item.href);
 
@@ -92,7 +89,6 @@ export function DashboardNavbar() {
                   : "text-foreground/80 hover:bg-accent/50 hover:text-foreground"
               )}
             >
-              <Icon className="h-5 w-5" />
               <span>{item.title}</span>
             </Link>
           );
