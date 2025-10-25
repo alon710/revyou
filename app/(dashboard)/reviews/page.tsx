@@ -103,7 +103,8 @@ export default function ReviewsPage() {
           <Loading text="טוען ביקורות..." />
         ) : reviews.length === 0 ? (
           <div className="text-center text-muted-foreground py-12">
-            אין ביקורות עדיין. הביקורות של {currentBusiness.name} יופיעו כאן ברגע שהן יגיעו מגוגל
+            אין ביקורות עדיין. הביקורות של {currentBusiness.name} יופיעו כאן
+            ברגע שהן יגיעו מגוגל
           </div>
         ) : (
           reviews.map((review) => (

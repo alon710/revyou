@@ -1,10 +1,10 @@
-import {
-  BusinessConfig,
-  ToneOfVoice,
-  LanguageMode,
-  DEFAULT_PROMPT_TEMPLATE,
-} from "@/types/database";
+import { BusinessConfig, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
 import Mustache from "mustache";
+import {
+  TONE_LABELS,
+  LANGUAGE_LABELS,
+} from "@/components/dashboard/business-config/types";
+import { SIMPLE_TEST_PROMPT_TEMPLATE } from "./prompt-templates";
 
 /**
  * Prompt Template Builder
@@ -30,29 +30,13 @@ export function buildReplyPrompt(
   businessName: string,
   businessPhone?: string
 ): string {
-  // Get language label (Hebrew or English name)
-  const languageLabels: Record<LanguageMode, string> = {
-    hebrew: "עברית",
-    english: "אנגלית",
-    "auto-detect": "זיהוי אוטומטי",
-    "match-reviewer": "התאמה למבקר",
-  };
-
-  // Get tone label (Hebrew name)
-  const toneLabels: Record<ToneOfVoice, string> = {
-    friendly: "ידידותי",
-    formal: "פורמלי",
-    humorous: "הומוריסטי",
-    professional: "מקצועי",
-  };
-
   // Build template data object
   const templateData = {
     BUSINESS_NAME: businessName || "",
     BUSINESS_DESCRIPTION: businessConfig.businessDescription || "",
     BUSINESS_PHONE: businessPhone || businessConfig.businessPhone || "",
-    LANGUAGE: languageLabels[businessConfig.languageMode],
-    TONE: toneLabels[businessConfig.toneOfVoice],
+    LANGUAGE: LANGUAGE_LABELS[businessConfig.languageMode],
+    TONE: TONE_LABELS[businessConfig.toneOfVoice],
     ALLOWED_EMOJIS: businessConfig.allowedEmojis?.join(" ") || "",
     MAX_SENTENCES: businessConfig.maxSentences || 2,
     SIGNATURE: businessConfig.signature || `צוות ${businessName}`,
@@ -92,23 +76,7 @@ export function buildSimplePrompt(
   rating: number,
   reviewText: string
 ): string {
-  const template = `אתה עוזר לבעל עסק לענות על ביקורת גוגל.
-
-שם העסק: {{businessName}}
-דירוג: {{rating}}/5
-שם המבקר: {{reviewerName}}
-ביקורת: {{reviewText}}
-
-צור תגובה קצרה (1-2 משפטים) בעברית שמתחילה בפנייה אישית לשם המבקר (תרגם את השם לעברית באופן פונטי אם נדרש) ומסתיימת בחתימה: "צוות {{businessName}}".
-
-הנחיות:
-- דירוג 4-5: תודה חמה וכללית
-- דירוג 3: בקש פרטים לשיפור
-- דירוג 1-2: התנצלות והזמנה ליצור קשר
-
-תגובה:`;
-
-  return Mustache.render(template, {
+  return Mustache.render(SIMPLE_TEST_PROMPT_TEMPLATE, {
     businessName,
     reviewerName,
     rating,
