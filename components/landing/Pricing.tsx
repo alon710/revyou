@@ -15,14 +15,20 @@ import {
 import {
   type BillingPeriod,
   type EnrichedProduct,
-  enrichProduct,
-  sortProductsByPlan,
-  FEATURE_CONFIGS,
-  formatFeatureValue,
-  getMonthlyPrice,
-  getYearlyPrice,
   getPriceId,
 } from "@/lib/stripe/entitlements";
+import {
+  enrichProduct,
+  sortProductsByPlan,
+} from "@/lib/stripe/product-parser";
+import {
+  FEATURE_CONFIGS,
+  formatFeatureValue,
+} from "@/lib/stripe/feature-config";
+import {
+  getMonthlyPrice,
+  getYearlyPrice,
+} from "@/lib/stripe/pricing";
 
 const YEARLY_DISCOUNT = 0.2;
 

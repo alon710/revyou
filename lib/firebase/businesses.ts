@@ -8,21 +8,10 @@ import {
   deleteDoc,
   query,
   orderBy,
-  where,
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./config";
-import {
-  Business,
-  BusinessConfig,
-  ToneOfVoice,
-  LanguageMode,
-} from "@/types/database";
-import {
-  enrichProduct,
-  getPlanLimits,
-  type PlanLimits,
-} from "@/lib/stripe/entitlements";
+import { Business, BusinessConfig } from "@/types/database";
 import {
   businessSchema,
   businessCreateSchema,
@@ -30,85 +19,8 @@ import {
   BusinessCreateInput,
   BusinessUpdateInput,
 } from "@/lib/validation/database";
-
-async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
-  if (!db) {
-    console.error("Firestore not initialized");
-    return {
-      businesses: 1,
-      reviewsPerMonth: 5,
-      autoPost: false,
-      requireApproval: true,
-    };
-  }
-
-  try {
-    const subscriptionsRef = collection(db, "users", userId, "subscriptions");
-    const activeSubQuery = query(
-      subscriptionsRef,
-      where("status", "in", ["active", "trialing"])
-    );
-    const subSnapshot = await getDocs(activeSubQuery);
-
-    if (subSnapshot.empty) {
-      const productsRef = collection(db, "products");
-      const freeProductQuery = query(
-        productsRef,
-        where("active", "==", true),
-        where("metadata.plan_id", "==", "free")
-      );
-      const freeProductSnapshot = await getDocs(freeProductQuery);
-
-      if (!freeProductSnapshot.empty) {
-        const productData = freeProductSnapshot.docs[0].data();
-        const enriched = enrichProduct({
-          ...productData,
-          id: freeProductSnapshot.docs[0].id,
-        } as any);
-        return getPlanLimits(enriched);
-      }
-
-      return {
-        businesses: 1,
-        reviewsPerMonth: 5,
-        autoPost: false,
-        requireApproval: true,
-      };
-    }
-
-    const subData = subSnapshot.docs[0].data();
-    const productId = subData.product;
-
-    const productRef = doc(db, "products", productId);
-    const productSnapshot = await getDoc(productRef);
-
-    if (!productSnapshot.exists()) {
-      console.error("Product not found:", productId);
-      return {
-        businesses: 1,
-        reviewsPerMonth: 5,
-        autoPost: false,
-        requireApproval: true,
-      };
-    }
-
-    const productData = productSnapshot.data();
-    const enriched = enrichProduct({
-      ...productData,
-      id: productSnapshot.id,
-    } as any);
-
-    return getPlanLimits(enriched);
-  } catch (error) {
-    console.error("Error fetching user plan limits:", error);
-    return {
-      businesses: 1,
-      reviewsPerMonth: 5,
-      autoPost: false,
-      requireApproval: true,
-    };
-  }
-}
+import { checkBusinessLimit } from "./business-limits";
+import { getDefaultBusinessConfig } from "./business-config";
 
 export async function getUserBusinesses(userId: string): Promise<Business[]> {
   if (!db) {
@@ -166,22 +78,6 @@ export async function getBusiness(
   }
 }
 
-export function getDefaultBusinessConfig(): BusinessConfig {
-  return {
-    businessDescription: "",
-    toneOfVoice: "professional" as ToneOfVoice,
-    useEmojis: false,
-    languageMode: "hebrew" as LanguageMode,
-    starConfigs: {
-      1: { customInstructions: "", autoReply: true },
-      2: { customInstructions: "", autoReply: true },
-      3: { customInstructions: "", autoReply: true },
-      4: { customInstructions: "", autoReply: true },
-      5: { customInstructions: "", autoReply: true },
-    },
-  };
-}
-
 export async function createBusiness(
   data: Omit<BusinessCreateInput, "config" | "connectedAt" | "connected"> & {
     userId: string;
@@ -225,33 +121,6 @@ export async function createBusiness(
   }
 }
 
-export async function updateBusinessConfig(
-  userId: string,
-  businessId: string,
-  config: Partial<BusinessConfig>
-): Promise<Business> {
-  if (!db) {
-    throw new Error("Firestore not initialized");
-  }
-
-  try {
-    const business = await getBusiness(userId, businessId);
-    if (!business) {
-      throw new Error("העסק לא נמצא");
-    }
-
-    const updatedConfig = { ...business.config, ...config };
-
-    const businessRef = doc(db, "users", userId, "businesses", businessId);
-    await updateDoc(businessRef, { config: updatedConfig });
-
-    return (await getBusiness(userId, businessId)) as Business;
-  } catch (error) {
-    console.error("Error updating business config:", error);
-    throw new Error("לא ניתן לעדכן את הגדרות העסק");
-  }
-}
-
 export async function updateBusiness(
   userId: string,
   businessId: string,
@@ -291,70 +160,7 @@ export async function deleteBusiness(
   }
 }
 
-export async function checkBusinessLimit(userId: string): Promise<boolean> {
-  try {
-    const limits = await getUserPlanLimits(userId);
-    const businesses = await getUserBusinesses(userId);
-    return businesses.length < limits.businesses;
-  } catch (error) {
-    console.error("Error checking business limit:", error);
-    return false;
-  }
-}
-
-export async function getRemainingBusinessSlots(
-  userId: string
-): Promise<number> {
-  try {
-    const limits = await getUserPlanLimits(userId);
-    const businesses = await getUserBusinesses(userId);
-    return Math.max(0, limits.businesses - businesses.length);
-  } catch (error) {
-    console.error("Error getting remaining business slots:", error);
-    return 0;
-  }
-}
-
-export async function disconnectBusiness(
-  userId: string,
-  businessId: string
-): Promise<void> {
-  if (!db) {
-    throw new Error("Firestore not initialized");
-  }
-
-  try {
-    const businessRef = doc(db, "users", userId, "businesses", businessId);
-    await updateDoc(businessRef, { connected: false });
-  } catch (error) {
-    console.error("Error disconnecting business:", error);
-    throw new Error("לא ניתן לנתק את העסק");
-  }
-}
-
-export async function reconnectBusiness(
-  userId: string,
-  businessId: string
-): Promise<void> {
-  if (!db) {
-    throw new Error("Firestore not initialized");
-  }
-
-  try {
-    const businessRef = doc(db, "users", userId, "businesses", businessId);
-    await updateDoc(businessRef, {
-      connected: true,
-      connectedAt: serverTimestamp(),
-    });
-  } catch (error) {
-    console.error("Error reconnecting business:", error);
-    throw new Error("לא ניתן לחבר מחדש את העסק");
-  }
-}
-
-export async function getConnectedBusinesses(
-  userId: string
-): Promise<Business[]> {
+export async function getConnectedBusinesses(userId: string): Promise<Business[]> {
   const businesses = await getUserBusinesses(userId);
   return businesses.filter((b) => b.connected);
 }

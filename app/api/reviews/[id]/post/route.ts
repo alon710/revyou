@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { postReviewReply } from "@/lib/google/business-profile";
-import {
-  getReviewAdmin,
-  markAsPostedAdmin,
-} from "@/lib/firebase/reviews.admin";
+import { getReviewAdmin } from "@/lib/firebase/reviews.admin";
+import { markAsPostedAdmin } from "@/lib/firebase/reviews.admin";
 import { getBusinessAdmin } from "@/lib/firebase/businesses.admin";
-import { getUserAdmin } from "@/lib/firebase/users.admin";
+import { getUserAdmin } from "@/lib/firebase/admin-users";
 import { adminAuth } from "@/lib/firebase/admin";
 import { decryptToken } from "@/lib/google/oauth";
 

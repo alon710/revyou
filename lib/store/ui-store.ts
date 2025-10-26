@@ -7,7 +7,6 @@ interface UIState {
   upgradeBannerDismissedAt: number | null;
   dismissUpgradeBanner: () => void;
   shouldShowUpgradeBanner: () => boolean;
-
   selectedBusinessId: string | null;
   setSelectedBusinessId: (id: string | null) => void;
   clearSelectedBusinessId: () => void;

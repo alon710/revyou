@@ -106,7 +106,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-muted p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Logo className="justify-center mb-4" textClassName="text-3xl" />
+          <Logo className="justify-center mb-4" />
           <p className="text-muted-foreground">
             היכנס כדי להתחיל לנהל את הביקורות שלך
           </p>

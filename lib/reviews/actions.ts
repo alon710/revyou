@@ -2,7 +2,7 @@ import {
   approveReply as approveReplyFb,
   rejectReply as rejectReplyFb,
   updateReviewReply,
-} from "@/lib/firebase/reviews";
+} from "@/lib/firebase/review-replies";
 
 /**
  * Client-side review actions

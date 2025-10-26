@@ -8,7 +8,6 @@ import {
 import { db } from "./config";
 import { User } from "@/types/database";
 import {
-  userSchema,
   userUpdateSchema,
   UserUpdateInput,
 } from "@/lib/validation/database";

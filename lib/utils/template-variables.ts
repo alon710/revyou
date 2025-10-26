@@ -4,14 +4,8 @@ import {
   LANGUAGE_LABELS,
 } from "@/components/dashboard/business-config/types";
 
-/**
- * Variable types for styling
- */
 export type VariableType = "known" | "unknown";
 
-/**
- * Parsed template segment
- */
 export interface TemplateSegment {
   type: "text" | "variable";
   content: string;
@@ -19,9 +13,33 @@ export interface TemplateSegment {
   originalVariable?: string;
 }
 
-/**
- * Get the actual value for a variable based on business config
- */
+type VariableResolver = (
+  business: Business,
+  config: BusinessConfig
+) => string;
+
+const VARIABLE_RESOLVERS: Record<string, VariableResolver> = {
+  BUSINESS_NAME: (b, c) => c.businessName || b.name,
+  BUSINESS_DESCRIPTION: (b, c) => c.businessDescription || "",
+  BUSINESS_PHONE: (b, c) => c.businessPhone || "",
+  TONE: (b, c) => TONE_LABELS[c.toneOfVoice] || c.toneOfVoice,
+  LANGUAGE: (b, c) => LANGUAGE_LABELS[c.languageMode] || c.languageMode,
+  MAX_SENTENCES: (b, c) => (c.maxSentences || 2).toString(),
+  SIGNATURE: (b, c) => c.signature || "",
+  ALLOWED_EMOJIS: (b, c) => (c.allowedEmojis || []).join(" "),
+  CUSTOM_INSTRUCTIONS_1: (b, c) => c.starConfigs[1]?.customInstructions || "",
+  CUSTOM_INSTRUCTIONS_2: (b, c) => c.starConfigs[2]?.customInstructions || "",
+  CUSTOM_INSTRUCTIONS_3: (b, c) => c.starConfigs[3]?.customInstructions || "",
+  CUSTOM_INSTRUCTIONS_4: (b, c) => c.starConfigs[4]?.customInstructions || "",
+  CUSTOM_INSTRUCTIONS_5: (b, c) => c.starConfigs[5]?.customInstructions || "",
+};
+
+const UNKNOWN_VARIABLES = new Set([
+  "REVIEWER_NAME",
+  "RATING",
+  "REVIEW_TEXT",
+]);
+
 export function getVariableValue(
   variable: string,
   business: Business,
@@ -29,82 +47,20 @@ export function getVariableValue(
 ): { value: string; type: VariableType } {
   const varName = variable.replace(/[{}]/g, "");
 
-  // Known variables (business/config data)
-  switch (varName) {
-    case "BUSINESS_NAME":
-      return { value: config.businessName || business.name, type: "known" };
-
-    case "BUSINESS_DESCRIPTION":
-      return { value: config.businessDescription || "", type: "known" };
-
-    case "BUSINESS_PHONE":
-      return { value: config.businessPhone || "", type: "known" };
-
-    case "TONE":
-      return {
-        value: TONE_LABELS[config.toneOfVoice] || config.toneOfVoice,
-        type: "known",
-      };
-
-    case "LANGUAGE":
-      return {
-        value: LANGUAGE_LABELS[config.languageMode] || config.languageMode,
-        type: "known",
-      };
-
-    case "MAX_SENTENCES":
-      return { value: (config.maxSentences || 2).toString(), type: "known" };
-
-    case "SIGNATURE":
-      return { value: config.signature || "", type: "known" };
-
-    case "ALLOWED_EMOJIS":
-      return { value: (config.allowedEmojis || []).join(" "), type: "known" };
-
-    case "CUSTOM_INSTRUCTIONS_1":
-      return {
-        value: config.starConfigs[1]?.customInstructions || "",
-        type: "known",
-      };
-
-    case "CUSTOM_INSTRUCTIONS_2":
-      return {
-        value: config.starConfigs[2]?.customInstructions || "",
-        type: "known",
-      };
-
-    case "CUSTOM_INSTRUCTIONS_3":
-      return {
-        value: config.starConfigs[3]?.customInstructions || "",
-        type: "known",
-      };
-
-    case "CUSTOM_INSTRUCTIONS_4":
-      return {
-        value: config.starConfigs[4]?.customInstructions || "",
-        type: "known",
-      };
-
-    case "CUSTOM_INSTRUCTIONS_5":
-      return {
-        value: config.starConfigs[5]?.customInstructions || "",
-        type: "known",
-      };
-
-    // Unknown variables (review-specific data)
-    case "REVIEWER_NAME":
-    case "RATING":
-    case "REVIEW_TEXT":
-      return { value: variable, type: "unknown" };
-
-    default:
-      return { value: variable, type: "unknown" };
+  if (varName in VARIABLE_RESOLVERS) {
+    return {
+      value: VARIABLE_RESOLVERS[varName](business, config),
+      type: "known",
+    };
   }
+
+  if (UNKNOWN_VARIABLES.has(varName)) {
+    return { value: variable, type: "unknown" };
+  }
+
+  return { value: variable, type: "unknown" };
 }
 
-/**
- * Parse a template string into segments for rendering
- */
 export function parseTemplate(
   template: string,
   business: Business,
@@ -117,7 +73,6 @@ export function parseTemplate(
   let match;
 
   while ((match = regex.exec(template)) !== null) {
-    // Add text before the variable
     if (match.index > lastIndex) {
       segments.push({
         type: "text",
@@ -125,7 +80,6 @@ export function parseTemplate(
       });
     }
 
-    // Add the variable
     const variable = match[1];
     const { value, type } = getVariableValue(variable, business, config);
 
@@ -139,7 +93,6 @@ export function parseTemplate(
     lastIndex = match.index + match[1].length;
   }
 
-  // Add remaining text
   if (lastIndex < template.length) {
     segments.push({
       type: "text",
@@ -150,9 +103,6 @@ export function parseTemplate(
   return segments;
 }
 
-/**
- * Replace variables in template with actual values (plain text version)
- */
 export function replaceTemplateVariables(
   template: string,
   business: Business,

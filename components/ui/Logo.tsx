@@ -4,10 +4,9 @@ import Image from "next/image";
 interface LogoProps {
   href?: string;
   className?: string;
-  textClassName?: string;
 }
 
-export function Logo({ href = "/", className, textClassName }: LogoProps) {
+export function Logo({ href = "/", className }: LogoProps) {
   return (
     <Link
       href={href}

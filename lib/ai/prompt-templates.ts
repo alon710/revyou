@@ -1,12 +1,3 @@
-/**
- * Mustache Template Definitions for AI Prompts
- * All templates use {{VARIABLE}} syntax for Mustache.js rendering
- */
-
-/**
- * Default prompt template for business review responses
- * Uses Mustache conditional sections to hide empty fields
- */
 export const DEFAULT_BUSINESS_PROMPT_TEMPLATE = `אתה עוזר AI שכותב תגובות לביקורות עסקיות ב-Google Business Profile.
 
 מידע על העסק:
@@ -34,23 +25,3 @@ export const DEFAULT_BUSINESS_PROMPT_TEMPLATE = `אתה עוזר AI שכותב �
 {{/CUSTOM_INSTRUCTIONS_4}}{{#CUSTOM_INSTRUCTIONS_5}}עבור דירוג 5 כוכבים {{CUSTOM_INSTRUCTIONS_5}}
 {{/CUSTOM_INSTRUCTIONS_5}}
 כתוב תגובה מקצועית, אמפתית ומותאמת אישית לביקורת.`;
-
-/**
- * Simple prompt template for testing/demo purposes
- * Shorter, more basic template without business configuration
- */
-export const SIMPLE_TEST_PROMPT_TEMPLATE = `אתה עוזר לבעל עסק לענות על ביקורת גוגל.
-
-שם העסק: {{businessName}}
-דירוג: {{rating}}/5
-שם המבקר: {{reviewerName}}
-ביקורת: {{reviewText}}
-
-צור תגובה קצרה (1-2 משפטים) בעברית שמתחילה בפנייה אישית לשם המבקר (תרגם את השם לעברית באופן פונטי אם נדרש) ומסתיימת בחתימה: "צוות {{businessName}}".
-
-הנחיות:
-- דירוג 4-5: תודה חמה וכללית
-- דירוג 3: בקש פרטים לשיפור
-- דירוג 1-2: התנצלות והזמנה ליצור קשר
-
-תגובה:`;

@@ -7,7 +7,7 @@ import { useBusiness } from "@/contexts/BusinessContext";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { getUser, updateNotificationPreferences } from "@/lib/firebase/users";
 import { signOut } from "@/lib/firebase/auth";
-import { getReviewCountThisMonth } from "@/lib/subscription/usage";
+import { getReviewCountThisMonth } from "@/lib/subscription/usage-stats";
 import { User } from "@/types/database";
 import { NotificationPreferences } from "@/components/dashboard/settings/NotificationPreferences";
 import { AccountInfo } from "@/components/dashboard/settings/AccountInfo";

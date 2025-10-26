@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUser } from "@/lib/firebase/admin-users";
+import { getUserAdmin } from "@/lib/firebase/admin-users";
 import { decryptToken } from "@/lib/google/oauth";
 import {
   getAllLocations,
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "חסר מזהה משתמש" }, { status: 400 });
     }
 
-    const user = await getUser(userId);
+    const user = await getUserAdmin(userId);
     if (!user) {
       return NextResponse.json({ error: "משתמש לא נמצא" }, { status: 404 });
     }

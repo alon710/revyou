@@ -21,7 +21,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { ReplyEditor } from "./ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import { MessageSquare, User } from "lucide-react";
+import { User } from "lucide-react";
 
 interface ReviewCardProps {
   review: Review;

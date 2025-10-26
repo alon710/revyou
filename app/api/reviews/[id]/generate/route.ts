@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateReplyWithRetry } from "@/lib/ai/gemini";
 import { buildReplyPrompt } from "@/lib/ai/prompts";
-import {
-  getReviewAdmin,
-  updateReviewReplyAdmin,
-} from "@/lib/firebase/reviews.admin";
+import { getReviewAdmin } from "@/lib/firebase/reviews.admin";
+import { updateReviewReplyAdmin } from "@/lib/firebase/reviews.admin";
 import { getBusinessAdmin } from "@/lib/firebase/businesses.admin";
 import { adminAuth } from "@/lib/firebase/admin";
 

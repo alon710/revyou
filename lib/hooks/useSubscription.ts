@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/firebase/auth";
 import { onSubscriptionChange, getAvailableProducts } from "@/lib/stripe/client";
 import {
-  enrichProduct,
   getPlanLimits,
   type PlanType,
   type PlanLimits,
   type EnrichedProduct,
 } from "@/lib/stripe/entitlements";
+import { enrichProduct } from "@/lib/stripe/product-parser";
 
 export interface Subscription {
   id: string;

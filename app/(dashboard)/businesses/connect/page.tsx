@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { createBusiness, checkBusinessLimit } from "@/lib/firebase/businesses";
+import { createBusiness } from "@/lib/firebase/businesses";
+import { checkBusinessLimit } from "@/lib/firebase/business-limits";
 import { Button } from "@/components/ui/button";
 import {
   DashboardCard,

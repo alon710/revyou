@@ -7,7 +7,7 @@ import {
   getBusinessAdmin,
   updateBusinessAdmin,
 } from "@/lib/firebase/businesses.admin";
-import { getUserAdmin } from "@/lib/firebase/users.admin";
+import { getUserAdmin } from "@/lib/firebase/admin-users";
 import { adminAuth } from "@/lib/firebase/admin";
 import { decryptToken } from "@/lib/google/oauth";
 

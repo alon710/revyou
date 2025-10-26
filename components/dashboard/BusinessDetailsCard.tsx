@@ -6,7 +6,7 @@ import {
   AIResponseSettingsSection,
   StarRatingConfigSection,
 } from "./business-config";
-import { updateBusinessConfig } from "@/lib/firebase/businesses";
+import { updateBusinessConfig } from "@/lib/firebase/business-config";
 
 interface BusinessDetailsCardProps {
   business: Business;

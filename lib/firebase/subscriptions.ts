@@ -21,16 +21,6 @@ import {
   SubscriptionUpdateInput,
 } from "@/lib/validation/database";
 
-/**
- * Subscription Database Operations
- * All CRUD operations for the subscriptions collection
- */
-
-/**
- * Get active subscription for a user
- * @param userId - User ID
- * @returns Active subscription or null if none found
- */
 export async function getUserSubscription(
   userId: string
 ): Promise<Subscription | null> {
@@ -65,11 +55,6 @@ export async function getUserSubscription(
   }
 }
 
-/**
- * Get subscription by ID
- * @param subscriptionId - Subscription ID
- * @returns Subscription data or null if not found
- */
 export async function getSubscription(
   subscriptionId: string
 ): Promise<Subscription | null> {
@@ -98,11 +83,6 @@ export async function getSubscription(
   }
 }
 
-/**
- * Get subscription by Stripe subscription ID
- * @param stripeSubscriptionId - Stripe subscription ID
- * @returns Subscription data or null if not found
- */
 export async function getSubscriptionByStripeId(
   stripeSubscriptionId: string
 ): Promise<Subscription | null> {
@@ -135,11 +115,6 @@ export async function getSubscriptionByStripeId(
   }
 }
 
-/**
- * Create a new subscription
- * @param data - Subscription data (without id)
- * @returns Created subscription with ID
- */
 export async function createSubscription(
   data: Omit<SubscriptionCreateInput, "cancelAtPeriodEnd"> & {
     currentPeriodEnd: Date;
@@ -156,13 +131,11 @@ export async function createSubscription(
       cancelAtPeriodEnd: false,
     };
 
-    // Validate before creating
     subscriptionCreateSchema.parse(subscriptionData);
 
     const subscriptionsRef = collection(db, "subscriptions");
     const docRef = await addDoc(subscriptionsRef, subscriptionData);
 
-    // Return the created subscription
     return (await getSubscription(docRef.id)) as Subscription;
   } catch (error) {
     console.error("Error creating subscription:", error);
@@ -170,12 +143,6 @@ export async function createSubscription(
   }
 }
 
-/**
- * Update subscription status
- * @param subscriptionId - Subscription ID
- * @param status - New subscription status
- * @returns Updated subscription
- */
 export async function updateSubscriptionStatus(
   subscriptionId: string,
   status: SubscriptionStatus
@@ -188,7 +155,6 @@ export async function updateSubscriptionStatus(
     const subscriptionRef = doc(db, "subscriptions", subscriptionId);
     await updateDoc(subscriptionRef, { status });
 
-    // Return the updated subscription
     return (await getSubscription(subscriptionId)) as Subscription;
   } catch (error) {
     console.error("Error updating subscription status:", error);
@@ -196,12 +162,6 @@ export async function updateSubscriptionStatus(
   }
 }
 
-/**
- * Update subscription data
- * @param subscriptionId - Subscription ID
- * @param data - Partial subscription data to update
- * @returns Updated subscription
- */
 export async function updateSubscription(
   subscriptionId: string,
   data: Omit<SubscriptionUpdateInput, "currentPeriodEnd"> & {
@@ -215,18 +175,15 @@ export async function updateSubscription(
   try {
     const updateData: Record<string, unknown> = { ...data };
 
-    // Convert Date to Timestamp if provided
     if (data.currentPeriodEnd) {
       updateData.currentPeriodEnd = Timestamp.fromDate(data.currentPeriodEnd);
     }
 
-    // Validate update data
     subscriptionUpdateSchema.parse(updateData);
 
     const subscriptionRef = doc(db, "subscriptions", subscriptionId);
     await updateDoc(subscriptionRef, updateData);
 
-    // Return the updated subscription
     return (await getSubscription(subscriptionId)) as Subscription;
   } catch (error) {
     console.error("Error updating subscription:", error);
@@ -234,11 +191,6 @@ export async function updateSubscription(
   }
 }
 
-/**
- * Cancel subscription (mark to cancel at period end)
- * @param subscriptionId - Subscription ID
- * @returns Updated subscription
- */
 export async function cancelSubscription(
   subscriptionId: string
 ): Promise<Subscription> {
@@ -250,7 +202,6 @@ export async function cancelSubscription(
     const subscriptionRef = doc(db, "subscriptions", subscriptionId);
     await updateDoc(subscriptionRef, { cancelAtPeriodEnd: true });
 
-    // Return the updated subscription
     return (await getSubscription(subscriptionId)) as Subscription;
   } catch (error) {
     console.error("Error canceling subscription:", error);
@@ -258,35 +209,6 @@ export async function cancelSubscription(
   }
 }
 
-/**
- * Reactivate a canceled subscription
- * @param subscriptionId - Subscription ID
- * @returns Updated subscription
- */
-export async function reactivateSubscription(
-  subscriptionId: string
-): Promise<Subscription> {
-  if (!db) {
-    throw new Error("Firestore not initialized");
-  }
-
-  try {
-    const subscriptionRef = doc(db, "subscriptions", subscriptionId);
-    await updateDoc(subscriptionRef, { cancelAtPeriodEnd: false });
-
-    // Return the updated subscription
-    return (await getSubscription(subscriptionId)) as Subscription;
-  } catch (error) {
-    console.error("Error reactivating subscription:", error);
-    throw new Error("לא ניתן להפעיל מחדש את המינוי");
-  }
-}
-
-/**
- * Check if user has an active subscription
- * @param userId - User ID
- * @returns True if user has active subscription
- */
 export async function hasActiveSubscription(userId: string): Promise<boolean> {
   try {
     const subscription = await getUserSubscription(userId);
@@ -297,11 +219,6 @@ export async function hasActiveSubscription(userId: string): Promise<boolean> {
   }
 }
 
-/**
- * Get all subscriptions for a user (including inactive)
- * @param userId - User ID
- * @returns Array of subscriptions
- */
 export async function getUserSubscriptions(
   userId: string
 ): Promise<Subscription[]> {
@@ -338,11 +255,6 @@ export async function getUserSubscriptions(
   }
 }
 
-/**
- * Check if subscription is expiring soon (within 7 days)
- * @param subscription - Subscription object
- * @returns True if expiring soon
- */
 export function isSubscriptionExpiringSoon(
   subscription: Subscription
 ): boolean {
@@ -355,11 +267,6 @@ export function isSubscriptionExpiringSoon(
   return daysUntilExpiry <= 7 && daysUntilExpiry > 0;
 }
 
-/**
- * Check if subscription has expired
- * @param subscription - Subscription object
- * @returns True if expired
- */
 export function isSubscriptionExpired(subscription: Subscription): boolean {
   const now = new Date();
   const periodEnd = subscription.currentPeriodEnd.toDate();
@@ -367,11 +274,6 @@ export function isSubscriptionExpired(subscription: Subscription): boolean {
   return periodEnd < now;
 }
 
-/**
- * Get days remaining in subscription period
- * @param subscription - Subscription object
- * @returns Number of days remaining (negative if expired)
- */
 export function getDaysRemaining(subscription: Subscription): number {
   const now = new Date();
   const periodEnd = subscription.currentPeriodEnd.toDate();
