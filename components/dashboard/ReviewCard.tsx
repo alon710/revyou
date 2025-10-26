@@ -141,7 +141,6 @@ export function ReviewCard({
           {review.reviewText && (
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <MessageSquare className="h-4 w-4 text-muted-foreground" />
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   ביקורת
                 </span>
@@ -156,7 +155,6 @@ export function ReviewCard({
           {(review.aiReply || review.editedReply) && (
             <DashboardCardSection withBorder={!!review.reviewText}>
               <div className="flex items-center gap-2 mb-2">
-                <MessageSquare className="h-4 w-4 text-primary" />
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   תגובה AI
                 </span>
@@ -210,7 +208,6 @@ export function ReviewCard({
         )}
       </DashboardCard>
 
-      {/* Reply Editor Modal */}
       <ReplyEditor
         review={review}
         userId={userId}
@@ -223,7 +220,6 @@ export function ReviewCard({
         }}
       />
 
-      {/* Publish Confirmation Dialog */}
       <ConfirmationDialog
         open={showPublishDialog}
         onOpenChange={setShowPublishDialog}

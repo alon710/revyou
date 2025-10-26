@@ -23,7 +23,6 @@ export default function SettingsPage() {
   const { businesses } = useBusiness();
   const {
     subscription,
-    planType,
     limits,
     loading: subscriptionLoading,
   } = useSubscription();
@@ -40,8 +39,6 @@ export default function SettingsPage() {
       setLoading(true);
       const data = await getUser(authUser.uid);
       setUserData(data);
-
-      // Load review count for usage stats
       const count = await getReviewCountThisMonth();
       setReviewCount(count);
     } catch (error) {
@@ -60,7 +57,6 @@ export default function SettingsPage() {
     if (!authLoading && authUser) {
       loadUserData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser, authLoading]);
 
   const handleUpdateNotifications = async (preferences: {

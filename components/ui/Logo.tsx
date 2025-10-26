@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-
+import Image from "next/image";
 interface LogoProps {
   href?: string;
   className?: string;
@@ -13,9 +13,7 @@ export function Logo({ href = "/", className, textClassName }: LogoProps) {
       href={href}
       className={cn("flex items-center space-x-2 space-x-reverse", className)}
     >
-      <span className={cn("text-xl font-bold text-primary", textClassName)}>
-        LOGO PLACEHOLDER
-      </span>
+      <Image src="/logo-512x512.png" alt="Logo" width={40} height={40} />
     </Link>
   );
 }

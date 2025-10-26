@@ -62,11 +62,6 @@ export function Pricing() {
     try {
       const isFree = product.planId === "free";
 
-      if (!user && !isFree) {
-        router.push(`/login?returnTo=/businesses`);
-        return;
-      }
-
       if (!user) {
         router.push(
           `/login?returnTo=/&plan=${product.planId}&period=${billingPeriod}`
