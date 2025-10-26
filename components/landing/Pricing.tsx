@@ -3,121 +3,176 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Check, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/firebase/auth";
-import type { PlanType, BillingPeriod } from "@/lib/stripe/config";
-import { getStripePriceId } from "@/lib/stripe/config";
-import { createSubscriptionCheckout } from "@/lib/stripe/client";
-
-interface Feature {
-  name: string;
-  values: {
-    free: string | boolean;
-    basic: string | boolean;
-    professional: string | boolean;
-  };
-}
-
-interface Plan {
-  id: PlanType;
-  name: string;
-  monthlyPrice: number;
-  description: string;
-  cta: string;
-  recommended: boolean;
-}
-
-const features: Feature[] = [
-  {
-    name: "מספר עסקים",
-    values: { free: "1", basic: "3", professional: "10" },
-  },
-  {
-    name: "ביקורות בחודש",
-    values: { free: "5", basic: "250", professional: "1,000" },
-  },
-  {
-    name: "אישור ידני",
-    values: { free: "חובה", basic: "אופציונלי", professional: "אופציונלי" },
-  },
-  {
-    name: "פרסום אוטומטי",
-    values: { free: false, basic: true, professional: true },
-  },
-  {
-    name: "תמיכה בוואטסאפ",
-    values: { free: false, basic: false, professional: true },
-  },
-];
+import {
+  createSubscriptionCheckout,
+  getAvailableProducts,
+} from "@/lib/stripe/client";
+import {
+  type BillingPeriod,
+  type EnrichedProduct,
+  enrichProduct,
+  sortProductsByPlan,
+  FEATURE_CONFIGS,
+  formatFeatureValue,
+  getMonthlyPrice,
+  getYearlyPrice,
+  getPriceId,
+} from "@/lib/stripe/entitlements";
 
 const YEARLY_DISCOUNT = 0.2;
 
-const plans: Plan[] = [
-  {
-    id: "free",
-    name: "חינם",
-    monthlyPrice: 0,
-    description: "מושלם להתחלה ולעסקים קטנים",
-    cta: "התחל בחינם",
-    recommended: false,
-  },
-  {
-    id: "basic",
-    name: "בסיסי",
-    monthlyPrice: 99,
-    description: "לעסקים קטנים ובינוניים",
-    cta: "התחל עכשיו",
-    recommended: true,
-  },
-  {
-    id: "professional",
-    name: "מקצועי",
-    monthlyPrice: 349,
-    description: "לעסקים גדולים עם צרכים מתקדמים",
-    cta: "התחל עכשיו",
-    recommended: false,
-  },
-];
-
 export function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly");
+  const [products, setProducts] = useState<EnrichedProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingProductId, setLoadingProductId] = useState<string | null>(null);
   const router = useRouter();
   const { user } = useAuth();
 
-  const handleCheckout = async (planType: PlanType) => {
-    if (!user && planType !== "free") {
-      router.push(`/login?returnTo=/businesses`);
-      return;
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        setLoading(true);
+        const fetchedProducts = await getAvailableProducts();
+
+        const enrichedProducts = fetchedProducts
+          .map(enrichProduct)
+          .filter((p) => p.active);
+
+        const sortedProducts = sortProductsByPlan(enrichedProducts);
+        setProducts(sortedProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
     }
 
-    if (!user) {
-      router.push(`/login?returnTo=/&plan=${planType}&period=${billingPeriod}`);
-      return;
-    }
+    fetchProducts();
+  }, []);
+
+  const handleCheckout = async (product: EnrichedProduct) => {
+    setLoadingProductId(product.id);
 
     try {
-      const priceId = getStripePriceId(planType, billingPeriod);
+      const isFree = product.planId === "free";
+
+      if (!user && !isFree) {
+        router.push(`/login?returnTo=/businesses`);
+        return;
+      }
+
+      if (!user) {
+        router.push(
+          `/login?returnTo=/&plan=${product.planId}&period=${billingPeriod}`
+        );
+        return;
+      }
+
+      if (isFree) {
+        router.push("/businesses");
+        return;
+      }
+
+      const priceId = getPriceId(product, billingPeriod);
+      if (!priceId) {
+        console.error("No price ID found for product:", product.name);
+        return;
+      }
+
       const session = await createSubscriptionCheckout(priceId);
       window.location.assign(session.url);
     } catch (error) {
       console.error("Error creating checkout session:", error);
+    } finally {
+      setLoadingProductId(null);
     }
   };
 
-  const calculateMonthlyPrice = (monthlyPrice: number) => {
-    if (monthlyPrice === 0) return 0;
+  const getProductPrice = (product: EnrichedProduct) => {
     if (billingPeriod === "yearly") {
-      return Math.round(monthlyPrice * (1 - YEARLY_DISCOUNT));
+      const yearlyPrice = getYearlyPrice(product);
+      return yearlyPrice > 0 ? yearlyPrice : getMonthlyPrice(product);
     }
-    return monthlyPrice;
+    return getMonthlyPrice(product);
   };
 
-  const formatPrice = (monthlyPrice: number) => {
-    const price = calculateMonthlyPrice(monthlyPrice);
+  const formatPrice = (product: EnrichedProduct) => {
+    const price = Math.round(getProductPrice(product));
     return `₪${price}`;
   };
+
+  const getOriginalMonthlyPrice = (product: EnrichedProduct) => {
+    return Math.round(getMonthlyPrice(product));
+  };
+
+  const getSavingsAmount = (product: EnrichedProduct) => {
+    const monthlyPrice = getMonthlyPrice(product);
+    const yearlyPrice = getYearlyPrice(product);
+    if (yearlyPrice > 0 && monthlyPrice > 0) {
+      return Math.round(monthlyPrice - yearlyPrice);
+    }
+    return Math.round(monthlyPrice * YEARLY_DISCOUNT);
+  };
+
+  if (loading) {
+    return (
+      <section id="pricing" className="bg-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header skeleton */}
+          <div className="text-center mb-16">
+            <Skeleton className="h-12 w-96 mx-auto mb-4" />
+            <Skeleton className="h-6 w-80 mx-auto mb-8" />
+            <Skeleton className="h-10 w-48 mx-auto" />
+          </div>
+
+          {/* 3 pricing cards skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[1, 2, 3].map((i) => (
+              <Card
+                key={i}
+                className="relative p-8 flex flex-col rounded-lg border border-border/40 shadow-sm"
+              >
+                {/* Badge placeholder */}
+                <Skeleton className="h-6 w-16 mb-4" />
+
+                {/* Plan info */}
+                <div className="mb-6">
+                  <Skeleton className="h-8 w-24 mb-2" />
+                  <Skeleton className="h-4 w-full mb-4" />
+
+                  {/* Price section */}
+                  <div className="flex flex-col gap-2">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-12 w-32" />
+                    <Skeleton className="h-3 w-28" />
+                  </div>
+                </div>
+
+                {/* Features list */}
+                <div className="space-y-3 mb-8 flex-grow">
+                  {[1, 2, 3, 4, 5].map((j) => (
+                    <div key={j} className="flex items-start gap-2">
+                      <Skeleton className="h-5 w-5 rounded-full flex-shrink-0" />
+                      <Skeleton className="h-4 flex-1" />
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA Button */}
+                <Skeleton className="h-10 w-full rounded-md" />
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="pricing" className="bg-background">
@@ -146,89 +201,110 @@ export function Pricing() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {plans.map((plan) => (
-            <Card
-              key={plan.id}
-              className={`relative p-8 flex flex-col rounded-lg ${
-                plan.recommended
-                  ? "border border-primary/40 shadow-md"
-                  : "border border-border/40 shadow-sm"
-              }`}
-            >
-              {plan.recommended && (
-                <div className="absolute -top-4 right-1/2 translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
-                  מומלץ
-                </div>
-              )}
+          {products.map((product) => {
+            const monthlyPrice = getOriginalMonthlyPrice(product);
+            const showYearlyDiscount =
+              billingPeriod === "yearly" && monthlyPrice > 0;
 
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold text-foreground mb-2">
-                  {plan.name}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {plan.description}
-                </p>
-                <div className="flex flex-col">
-                  {billingPeriod === "yearly" && plan.monthlyPrice > 0 && (
-                    <span className="text-sm text-muted-foreground line-through mb-1">
-                      ₪{plan.monthlyPrice}
-                    </span>
-                  )}
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-bold text-foreground">
-                      {formatPrice(plan.monthlyPrice)}
-                    </span>
-                    <span className="text-muted-foreground">/חודש</span>
-                  </div>
-                  {billingPeriod === "yearly" && plan.monthlyPrice > 0 && (
-                    <span className="text-xs text-primary mt-1">
-                      חסכון של ₪
-                      {Math.round(plan.monthlyPrice * YEARLY_DISCOUNT)} לחודש
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <ul className="space-y-3 mb-8 flex-grow">
-                {features.map((feature, index) => {
-                  const value = feature.values[plan.id];
-                  const isBoolean = typeof value === "boolean";
-                  const isEnabled = isBoolean ? value : true;
-
-                  return (
-                    <li key={index} className="flex items-start gap-2">
-                      {isBoolean ? (
-                        isEnabled ? (
-                          <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                        ) : (
-                          <X className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                        )
-                      ) : (
-                        <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                      )}
-                      <span
-                        className={`text-sm ${
-                          isEnabled
-                            ? "text-foreground"
-                            : "text-muted-foreground"
-                        }`}
-                      >
-                        {isBoolean ? feature.name : `${feature.name}: ${value}`}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-
-              <Button
-                className="w-full"
-                variant={plan.recommended ? "default" : "outline"}
-                onClick={() => handleCheckout(plan.id)}
+            return (
+              <Card
+                key={product.id}
+                className={`relative p-8 flex flex-col rounded-lg ${
+                  product.recommended
+                    ? "border border-primary/40 shadow-md"
+                    : "border border-border/40 shadow-sm"
+                }`}
               >
-                {plan.cta}
-              </Button>
-            </Card>
-          ))}
+                {product.recommended && (
+                  <div className="absolute -top-4 right-1/2 translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
+                    מומלץ
+                  </div>
+                )}
+
+                <div className="mb-6">
+                  <h3 className="text-2xl font-bold text-foreground mb-2">
+                    {product.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {product.description}
+                  </p>
+                  <div className="flex flex-col">
+                    {showYearlyDiscount && (
+                      <span className="text-sm text-muted-foreground line-through mb-1">
+                        ₪{monthlyPrice}
+                      </span>
+                    )}
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-4xl font-bold text-foreground">
+                        {formatPrice(product)}
+                      </span>
+                      <span className="text-muted-foreground">/חודש</span>
+                    </div>
+                    {showYearlyDiscount && (
+                      <span className="text-xs text-primary mt-1">
+                        חסכון של ₪{getSavingsAmount(product)} לחודש
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <ul className="space-y-3 mb-8 flex-grow">
+                  {FEATURE_CONFIGS.map((featureConfig) => {
+                    const value = product.features[featureConfig.key];
+                    const formattedValue = formatFeatureValue(
+                      value,
+                      featureConfig.type
+                    );
+                    const isBoolean = featureConfig.type === "boolean";
+                    const isEnabled =
+                      isBoolean && typeof formattedValue === "boolean"
+                        ? formattedValue
+                        : value !== undefined && value !== null;
+
+                    return (
+                      <li
+                        key={featureConfig.key}
+                        className="flex items-start gap-2"
+                      >
+                        {isBoolean ? (
+                          isEnabled ? (
+                            <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                          ) : (
+                            <X className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                          )
+                        ) : (
+                          <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                        )}
+                        <span
+                          className={`text-sm ${
+                            isEnabled
+                              ? "text-foreground"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {isBoolean
+                            ? featureConfig.displayName
+                            : `${featureConfig.displayName}: ${formattedValue}`}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                <Button
+                  className="w-full"
+                  variant={product.recommended ? "default" : "outline"}
+                  onClick={() => handleCheckout(product)}
+                  disabled={loadingProductId === product.id}
+                >
+                  {loadingProductId === product.id
+                    ? "טוען..."
+                    : product.metadata?.cta ||
+                      (product.planId === "free" ? "התחל בחינם" : "התחל עכשיו")}
+                </Button>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </section>

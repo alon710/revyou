@@ -1,10 +1,5 @@
-/**
- * Shared types and constants for business configuration components
- */
-
 import { BusinessConfig, StarConfig } from "@/types/database";
 
-// Tone of Voice labels (Hebrew)
 export const TONE_LABELS: Record<string, string> = {
   friendly: "ידידותי",
   formal: "פורמלי",
@@ -12,7 +7,6 @@ export const TONE_LABELS: Record<string, string> = {
   professional: "מקצועי",
 };
 
-// Language labels (Hebrew)
 export const LANGUAGE_LABELS: Record<string, string> = {
   hebrew: "עברית",
   english: "אנגלית",
@@ -20,7 +14,6 @@ export const LANGUAGE_LABELS: Record<string, string> = {
   "match-reviewer": "התאמה למבקר",
 };
 
-// Available template variables
 export const AVAILABLE_VARIABLES = [
   { name: "{{BUSINESS_NAME}}", description: "שם העסק" },
   { name: "{{BUSINESS_DESCRIPTION}}", description: "תיאור העסק" },
@@ -55,16 +48,13 @@ export const AVAILABLE_VARIABLES = [
   },
 ];
 
-// Common props for section components
 export interface SectionBaseProps {
   variant: "display" | "edit";
   loading?: boolean;
 }
 
-// Callback type for config updates
 export type ConfigUpdateCallback = (updates: Partial<BusinessConfig>) => void;
 
-// Callback type for star config updates
 export type StarConfigUpdateCallback = (
   rating: 1 | 2 | 3 | 4 | 5,
   field: keyof StarConfig,

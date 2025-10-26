@@ -5,7 +5,7 @@ const timestampSchema = z.custom<Timestamp>((val) => val instanceof Timestamp, {
   message: "Must be a Firestore Timestamp",
 });
 
-export const subscriptionTierSchema = z.enum(["free", "basic", "professional"]);
+export const subscriptionTierSchema = z.enum(["free", "basic", "pro"]);
 export type SubscriptionTier = z.infer<typeof subscriptionTierSchema>;
 export const toneOfVoiceSchema = z.enum([
   "friendly",
@@ -69,10 +69,7 @@ export const notificationPreferencesSchema = z.object({
 export const userSchema = z.object({
   uid: z.string().min(1),
   email: z.string().email(),
-  displayName: z.string().min(1),
-  photoURL: z.string().url(),
   createdAt: timestampSchema,
-  subscriptionTier: subscriptionTierSchema,
   stripeCustomerId: z.string().nullish(),
   googleRefreshToken: z.string().nullish(),
   selectedBusinessId: z.string().optional(),

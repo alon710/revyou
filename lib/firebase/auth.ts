@@ -34,8 +34,6 @@ export async function signInWithGoogle() {
       await setDoc(userDocRef, {
         uid: user.uid,
         email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
         createdAt: serverTimestamp(),
       });
     }

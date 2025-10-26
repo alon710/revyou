@@ -4,7 +4,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
 import { deleteBusiness } from "@/lib/firebase/businesses";
 import { useSubscription } from "@/lib/hooks/useSubscription";
-import { SUBSCRIPTION_LIMITS } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -23,7 +22,7 @@ export default function BusinessesPage() {
     loading: businessLoading,
     refreshBusinesses,
   } = useBusiness();
-  const { planType } = useSubscription();
+  const { limits } = useSubscription();
 
   const handleDelete = async () => {
     if (!currentBusiness || !user) return;
@@ -36,9 +35,8 @@ export default function BusinessesPage() {
     }
   };
 
-  const maxBusinesses = SUBSCRIPTION_LIMITS[planType].businesses;
-  const canAddMore =
-    maxBusinesses === Infinity || businesses.length < maxBusinesses;
+  const maxBusinesses = limits.businesses;
+  const canAddMore = businesses.length < maxBusinesses;
 
   if (authLoading || businessLoading) {
     return (

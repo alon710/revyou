@@ -24,6 +24,7 @@ export default function SettingsPage() {
   const {
     subscription,
     planType,
+    limits,
     loading: subscriptionLoading,
   } = useSubscription();
   const router = useRouter();
@@ -121,7 +122,7 @@ export default function SettingsPage() {
       />
 
       <SubscriptionInfo
-        planType={planType}
+        limits={limits}
         subscription={subscription}
         currentBusinesses={businesses.length}
         currentReviews={reviewCount}

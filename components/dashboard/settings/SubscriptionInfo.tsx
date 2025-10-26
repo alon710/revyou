@@ -9,8 +9,7 @@ import {
   DashboardCardField,
 } from "@/components/ui/dashboard-card";
 import { Progress } from "@/components/ui/progress";
-import { SUBSCRIPTION_LIMITS } from "@/types/database";
-import type { PlanType } from "@/lib/stripe/config";
+import type { PlanLimits } from "@/lib/stripe/entitlements";
 import type { Subscription } from "@/lib/hooks/useSubscription";
 import {
   getUsagePercentages,
@@ -19,22 +18,21 @@ import {
 } from "@/lib/subscription/usage";
 
 interface SubscriptionInfoProps {
-  planType: PlanType;
+  limits: PlanLimits;
   subscription: Subscription | null;
   currentBusinesses: number;
   currentReviews: number;
 }
 
 export function SubscriptionInfo({
-  planType,
+  limits,
   currentBusinesses,
   currentReviews,
 }: SubscriptionInfoProps) {
-  const limits = SUBSCRIPTION_LIMITS[planType];
   const { businessesPercent, reviewsPercent } = getUsagePercentages(
     currentBusinesses,
     currentReviews,
-    planType
+    limits
   );
   const { resetDate } = getCurrentBillingPeriod();
 

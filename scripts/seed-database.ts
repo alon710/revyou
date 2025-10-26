@@ -61,11 +61,7 @@ async function seedDatabase() {
       .set({
         uid: USER_ID,
         email: "test@example.com",
-        displayName: "Test User",
-        photoURL: "https://ui-avatars.com/api/?name=Test+User",
         createdAt: Timestamp.fromDate(new Date("2024-01-01")),
-        subscriptionTier: "professional",
-        stripeCustomerId: "cus_test123",
         notificationPreferences: {
           emailOnNewReview: true,
         },
@@ -376,11 +372,11 @@ async function seedDatabase() {
 
     console.log("✨ Database seeding completed successfully!\n");
     console.log("📊 Summary:");
-    console.log("  - 1 User");
+    console.log("  - 1 User (Free Tier)");
     console.log("  - 2 Businesses");
     console.log("  - 8 Reviews (various states)");
-    console.log("  - 1 Subscription");
-    console.log("\n🎉 You can now test all pages in your application!");
+    console.log("\n💡 Note: User is on FREE tier. Subscribe via Stripe to upgrade to Basic/Pro.");
+    console.log("🎉 You can now test all pages in your application!");
   } catch (error) {
     console.error("❌ Error seeding database:", error);
     process.exit(1);

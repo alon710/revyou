@@ -2,9 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/firebase/auth";
-import { onSubscriptionChange } from "@/lib/stripe/client";
-import { getPlanFromPriceId } from "@/lib/stripe/config";
-import type { PlanType } from "@/lib/stripe/config";
+import { onSubscriptionChange, getAvailableProducts } from "@/lib/stripe/client";
+import {
+  enrichProduct,
+  getPlanLimits,
+  type PlanType,
+  type PlanLimits,
+  type EnrichedProduct,
+} from "@/lib/stripe/entitlements";
 
 export interface Subscription {
   id: string;
@@ -27,6 +32,7 @@ interface UseSubscriptionReturn {
   isActive: boolean;
   isTrial: boolean;
   planType: PlanType;
+  limits: PlanLimits;
 }
 
 export function useSubscription(): UseSubscriptionReturn {
@@ -34,70 +40,111 @@ export function useSubscription(): UseSubscriptionReturn {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [planType, setPlanType] = useState<PlanType>("free");
+  const [limits, setLimits] = useState<PlanLimits>({
+    businesses: 1,
+    reviewsPerMonth: 5,
+    autoPost: false,
+    requireApproval: true,
+  });
 
   useEffect(() => {
     if (!user) {
       setLoading(false);
       setSubscription(null);
+      setPlanType("free");
       return;
     }
 
-    try {
-      // Listen to subscription changes using the extension SDK
-      const unsubscribe = onSubscriptionChange((snapshot) => {
-        // Get active or trialing subscriptions
-        const activeSubs = snapshot.subscriptions.filter(
-          (sub: { status: string }) =>
-            sub.status === "active" || sub.status === "trialing"
+    let unsubscribe: (() => void) | undefined;
+
+    const setupSubscription = async () => {
+      try {
+        // Fetch products to map product IDs to plan types and limits
+        const products = await getAvailableProducts();
+        const enrichedProducts = products.map(enrichProduct);
+
+        const productMap = new Map<string, { planId: PlanType; product: EnrichedProduct }>(
+          enrichedProducts.map((enriched) => [
+            enriched.id,
+            { planId: enriched.planId as PlanType, product: enriched },
+          ])
         );
 
-        if (activeSubs.length === 0) {
-          setSubscription(null);
+        // Find free tier product for default limits
+        const freeProduct = enrichedProducts.find((p) => p.planId === "free");
+        const defaultLimits = freeProduct ? getPlanLimits(freeProduct) : {
+          businesses: 1,
+          reviewsPerMonth: 5,
+          autoPost: false,
+          requireApproval: true,
+        };
+
+        unsubscribe = onSubscriptionChange((snapshot) => {
+          const activeSubs = snapshot.subscriptions.filter(
+            (sub: { status: string }) =>
+              sub.status === "active" || sub.status === "trialing"
+          );
+
+          if (activeSubs.length === 0) {
+            setSubscription(null);
+            setPlanType("free");
+            setLimits(defaultLimits);
+            setLoading(false);
+            return;
+          }
+
+          // Get the first active subscription (users should only have one)
+          const sub = activeSubs[0];
+
+          setSubscription({
+            id: sub.id,
+            status: sub.status as Subscription["status"],
+            // Convert UTC string timestamps to Unix epoch seconds
+            current_period_end: new Date(sub.current_period_end).getTime() / 1000,
+            current_period_start:
+              new Date(sub.current_period_start).getTime() / 1000,
+            cancel_at_period_end: sub.cancel_at_period_end,
+            price: {
+              id: sub.price, // SDK provides price ID directly as string
+              product: sub.product, // SDK provides product ID directly
+            },
+            // Parse trial timestamps if present
+            trial_end: sub.trial_end
+              ? new Date(sub.trial_end).getTime() / 1000
+              : undefined,
+            trial_start: sub.trial_start
+              ? new Date(sub.trial_start).getTime() / 1000
+              : undefined,
+          });
+
+          // Determine plan type and limits from product
+          const productData = productMap.get(sub.product);
+          if (productData) {
+            setPlanType(productData.planId);
+            setLimits(getPlanLimits(productData.product));
+          } else {
+            // Fallback to free if product not found
+            setPlanType("free");
+            setLimits(defaultLimits);
+          }
+
           setLoading(false);
-          return;
-        }
-
-        // Get the first active subscription (users should only have one)
-        const sub = activeSubs[0];
-
-        setSubscription({
-          id: sub.id,
-          status: sub.status as Subscription["status"],
-          // Convert UTC string timestamps to Unix epoch seconds
-          current_period_end: new Date(sub.current_period_end).getTime() / 1000,
-          current_period_start:
-            new Date(sub.current_period_start).getTime() / 1000,
-          cancel_at_period_end: sub.cancel_at_period_end,
-          price: {
-            id: sub.price, // SDK provides price ID directly as string
-            product: sub.product, // SDK provides product ID directly
-          },
-          // Parse trial timestamps if present
-          trial_end: sub.trial_end
-            ? new Date(sub.trial_end).getTime() / 1000
-            : undefined,
-          trial_start: sub.trial_start
-            ? new Date(sub.trial_start).getTime() / 1000
-            : undefined,
+          setError(null);
         });
+      } catch (err) {
+        console.error("Error setting up subscription listener:", err);
+        setError("אירעה שגיאה בהגדרת מעקב מנוי");
         setLoading(false);
-        setError(null);
-      });
+      }
+    };
 
-      return () => {
-        if (unsubscribe) unsubscribe();
-      };
-    } catch (err) {
-      console.error("Error setting up subscription listener:", err);
-      setError("אירעה שגיאה בהגדרת מעקב מנוי");
-      setLoading(false);
-    }
+    setupSubscription();
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [user]);
-
-  // Determine plan type based on price ID
-  const planType = subscription
-    ? getPlanFromPriceId(subscription.price.id)
-    : "free";
 
   const isActive =
     subscription?.status === "active" || subscription?.status === "trialing";
@@ -110,5 +157,6 @@ export function useSubscription(): UseSubscriptionReturn {
     isActive,
     isTrial,
     planType,
+    limits,
   };
 }

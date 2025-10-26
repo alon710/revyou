@@ -11,7 +11,6 @@ import {
 import app from "@/lib/firebase/config";
 import type { StripePayments } from "@invertase/firestore-stripe-payments";
 
-// Initialize Stripe Payments SDK
 let paymentsInstance: StripePayments | null = null;
 
 export function getPayments(): StripePayments {
@@ -29,26 +28,17 @@ export function getPayments(): StripePayments {
   return paymentsInstance;
 }
 
-/**
- * Create a Stripe Checkout session for a subscription
- * @param priceId - The Stripe price ID for the subscription
- * @returns Promise resolving to the checkout session
- */
 export async function createSubscriptionCheckout(priceId: string) {
   const payments = getPayments();
 
   return createCheckoutSession(payments, {
     price: priceId,
-    success_url: `${window.location.origin}/payment/success`,
-    cancel_url: `${window.location.origin}/payment/cancel`,
+    success_url: `${window.location.origin}/businesses`,
+    cancel_url: `${window.location.origin}/`,
     allow_promotion_codes: true,
   });
 }
 
-/**
- * Get all active subscriptions for the current user
- * @returns Promise resolving to array of subscriptions
- */
 export async function getActiveSubscriptions() {
   const payments = getPayments();
 
@@ -57,11 +47,6 @@ export async function getActiveSubscriptions() {
   });
 }
 
-/**
- * Listen to real-time subscription changes for the current user
- * @param callback - Function called when subscriptions change
- * @returns Unsubscribe function
- */
 export function onSubscriptionChange(
   callback: (snapshot: SubscriptionSnapshot) => void
 ) {
@@ -70,10 +55,6 @@ export function onSubscriptionChange(
   return onCurrentUserSubscriptionUpdate(payments, callback);
 }
 
-/**
- * Get all available products with prices from Firestore
- * @returns Promise resolving to array of products with prices
- */
 export async function getAvailableProducts() {
   const payments = getPayments();
 
@@ -83,11 +64,6 @@ export async function getAvailableProducts() {
   });
 }
 
-/**
- * Get Stripe Customer Portal URL
- * This requires a Cloud Function since portal sessions must be created server-side
- * @returns Promise resolving to the portal URL
- */
 export async function getCustomerPortalUrl(): Promise<string> {
   const response = await fetch("/api/stripe/create-portal-session", {
     method: "POST",

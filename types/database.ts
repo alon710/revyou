@@ -1,7 +1,4 @@
 import { Timestamp } from "firebase/firestore";
-import type { SubscriptionTier } from "@/lib/validation/database";
-
-export type { SubscriptionTier };
 
 export type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";
 
@@ -23,10 +20,7 @@ export type SubscriptionStatus = "active" | "canceled" | "past_due";
 export interface User {
   uid: string;
   email: string;
-  displayName: string;
-  photoURL: string;
   createdAt: Timestamp;
-  subscriptionTier: SubscriptionTier;
   stripeCustomerId?: string;
   googleRefreshToken?: string;
   selectedBusinessId?: string;
@@ -108,24 +102,3 @@ export interface Subscription {
 }
 
 export { DEFAULT_BUSINESS_PROMPT_TEMPLATE as DEFAULT_PROMPT_TEMPLATE } from "@/lib/ai/prompt-templates";
-
-export const SUBSCRIPTION_LIMITS = {
-  free: {
-    businesses: 1,
-    reviewsPerMonth: 5,
-    autoPost: false,
-    requireApproval: true,
-  },
-  basic: {
-    businesses: 3,
-    reviewsPerMonth: 250,
-    autoPost: true,
-    requireApproval: false,
-  },
-  professional: {
-    businesses: 10,
-    reviewsPerMonth: 1000,
-    autoPost: true,
-    requireApproval: false,
-  },
-} as const;

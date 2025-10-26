@@ -6,23 +6,13 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./config";
-import { User, SubscriptionTier } from "@/types/database";
+import { User } from "@/types/database";
 import {
   userSchema,
   userUpdateSchema,
   UserUpdateInput,
 } from "@/lib/validation/database";
 
-/**
- * User Database Operations
- * All CRUD operations for the users collection
- */
-
-/**
- * Get a user by their UID
- * @param uid - User ID
- * @returns User data or null if not found
- */
 export async function getUser(uid: string): Promise<User | null> {
   if (!db) {
     console.error("Firestore not initialized");
@@ -35,9 +25,7 @@ export async function getUser(uid: string): Promise<User | null> {
 
     if (userSnap.exists()) {
       const data = userSnap.data();
-      // Validate data before returning
-      const validated = userSchema.parse({ uid, ...data });
-      return validated as User;
+      return { uid, ...data } as User;
     }
 
     return null;
@@ -47,19 +35,9 @@ export async function getUser(uid: string): Promise<User | null> {
   }
 }
 
-/**
- * Create a new user document
- * @param uid - User ID
- * @param email - User email
- * @param displayName - User display name
- * @param photoURL - User photo URL
- * @returns Created user data
- */
 export async function createUser(
   uid: string,
-  email: string,
-  displayName: string,
-  photoURL: string
+  email: string
 ): Promise<User> {
   if (!db) {
     throw new Error("Firestore not initialized");
@@ -71,10 +49,7 @@ export async function createUser(
     } = {
       uid,
       email,
-      displayName,
-      photoURL,
       createdAt: serverTimestamp(),
-      subscriptionTier: "free",
     };
 
     const userRef = doc(db, "users", uid);
@@ -88,12 +63,6 @@ export async function createUser(
   }
 }
 
-/**
- * Update user data
- * @param uid - User ID
- * @param data - Partial user data to update
- * @returns Updated user data
- */
 export async function updateUser(
   uid: string,
   data: UserUpdateInput
@@ -117,50 +86,6 @@ export async function updateUser(
   }
 }
 
-/**
- * Get user's subscription tier
- * @param uid - User ID
- * @returns Subscription tier or 'free' as default
- */
-export async function getUserSubscriptionTier(
-  uid: string
-): Promise<SubscriptionTier> {
-  try {
-    const user = await getUser(uid);
-    return user?.subscriptionTier || "free";
-  } catch (error) {
-    console.error("Error fetching subscription tier:", error);
-    return "free";
-  }
-}
-
-/**
- * Update user's subscription tier
- * @param uid - User ID
- * @param tier - New subscription tier
- */
-export async function updateUserSubscriptionTier(
-  uid: string,
-  tier: SubscriptionTier
-): Promise<void> {
-  if (!db) {
-    throw new Error("Firestore not initialized");
-  }
-
-  try {
-    const userRef = doc(db, "users", uid);
-    await updateDoc(userRef, { subscriptionTier: tier });
-  } catch (error) {
-    console.error("Error updating subscription tier:", error);
-    throw new Error("לא ניתן לעדכן את חבילת המינוי");
-  }
-}
-
-/**
- * Update user's Stripe customer ID
- * @param uid - User ID
- * @param stripeCustomerId - Stripe customer ID
- */
 export async function updateUserStripeCustomerId(
   uid: string,
   stripeCustomerId: string
@@ -178,11 +103,6 @@ export async function updateUserStripeCustomerId(
   }
 }
 
-/**
- * Update user's Google refresh token (encrypted)
- * @param uid - User ID
- * @param googleRefreshToken - Encrypted Google refresh token
- */
 export async function updateUserGoogleRefreshToken(
   uid: string,
   googleRefreshToken: string
@@ -200,11 +120,6 @@ export async function updateUserGoogleRefreshToken(
   }
 }
 
-/**
- * Check if a user exists
- * @param uid - User ID
- * @returns True if user exists, false otherwise
- */
 export async function userExists(uid: string): Promise<boolean> {
   if (!db) {
     return false;
@@ -220,11 +135,6 @@ export async function userExists(uid: string): Promise<boolean> {
   }
 }
 
-/**
- * Update user's notification preferences
- * @param uid - User ID
- * @param preferences - Notification preferences
- */
 export async function updateNotificationPreferences(
   uid: string,
   preferences: { emailOnNewReview: boolean }
