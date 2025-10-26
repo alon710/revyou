@@ -8,16 +8,11 @@ import {
 import { getBusinessAdmin } from "@/lib/firebase/businesses.admin";
 import { adminAuth } from "@/lib/firebase/admin";
 
-/**
- * POST /api/reviews/[id]/generate
- * Manually trigger AI reply generation for a review
- */
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Verify authentication
     const authHeader = req.headers.get("authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -27,18 +22,14 @@ export async function POST(
     const decodedToken = await adminAuth.verifyIdToken(token);
     const authenticatedUserId = decodedToken.uid;
 
-    // Get review ID from URL params
     const { id: reviewId } = await params;
 
-    // Get userId and businessId from request body
     const { userId: requestUserId, businessId } = await req.json();
 
-    // Verify ownership
     if (requestUserId !== authenticatedUserId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Get review using Admin SDK with direct path access
     const review = await getReviewAdmin(
       authenticatedUserId,
       businessId,
@@ -49,7 +40,6 @@ export async function POST(
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    // Get business and verify ownership using Admin SDK
     const business = await getBusinessAdmin(authenticatedUserId, businessId);
 
     if (!business) {
@@ -59,7 +49,6 @@ export async function POST(
       );
     }
 
-    // Build prompt
     const prompt = buildReplyPrompt(
       business.config,
       {
@@ -71,10 +60,8 @@ export async function POST(
       business.config.businessPhone
     );
 
-    // Generate reply with Gemini
     const aiReply = await generateReplyWithRetry(prompt);
 
-    // Update review using Admin SDK
     await updateReviewReplyAdmin(
       authenticatedUserId,
       businessId,

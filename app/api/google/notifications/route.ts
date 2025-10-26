@@ -11,13 +11,8 @@ import { getUserAdmin } from "@/lib/firebase/users.admin";
 import { adminAuth } from "@/lib/firebase/admin";
 import { decryptToken } from "@/lib/google/oauth";
 
-/**
- * POST /api/google/notifications
- * Enable Pub/Sub notifications for a business
- */
 export async function POST(req: NextRequest) {
   try {
-    // Verify authentication
     const authHeader = req.headers.get("authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -27,7 +22,6 @@ export async function POST(req: NextRequest) {
     const decodedToken = await adminAuth.verifyIdToken(token);
     const userId = decodedToken.uid;
 
-    // Get business ID from request
     const { businessId } = await req.json();
 
     if (!businessId) {
@@ -37,7 +31,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get business and verify ownership using Admin SDK
     const business = await getBusinessAdmin(userId, businessId);
 
     if (!business) {
@@ -47,7 +40,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get user's Google refresh token using Admin SDK
     const user = await getUserAdmin(userId);
 
     if (!user || !user.googleRefreshToken) {
@@ -57,20 +49,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Decrypt refresh token
     const refreshToken = decryptToken(user.googleRefreshToken);
 
-    // Get Pub/Sub topic name
     const topicName = getPubSubTopicName();
 
-    // Enable notifications
     await enableNotifications(
       refreshToken,
       `accounts/${business.googleAccountId}`,
       topicName
     );
 
-    // Update business record using Admin SDK
     await updateBusinessAdmin(userId, businessId, {
       notificationsEnabled: true,
     });
