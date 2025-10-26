@@ -3,8 +3,23 @@ import { getFirestore, Timestamp } from "firebase-admin/firestore";
 import * as dotenv from "dotenv";
 import * as path from "path";
 
-// Load environment variables
 dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
+
+function getDaysAgo(days: number): Date {
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return date;
+}
+
+function getHoursAgo(hours: number): Date {
+  const date = new Date();
+  date.setHours(date.getHours() - hours);
+  return date;
+}
+
+function addMinutes(date: Date, minutes: number): Date {
+  return new Date(date.getTime() + minutes * 60000);
+}
 
 // Initialize Firebase Admin
 if (getApps().length === 0) {
@@ -178,11 +193,11 @@ async function seedDatabase() {
         rating: 5,
         reviewText:
           "חוויה מדהימה! הפיצה הכי טעימה שאכלתי בחיי. השירות מעולה והאווירה נעימה מאוד. בהחלט נחזור!",
-        reviewDate: Timestamp.fromDate(new Date("2024-01-20T12:00:00")),
-        receivedAt: Timestamp.fromDate(new Date("2024-01-20T12:05:00")),
+        reviewDate: Timestamp.fromDate(getDaysAgo(20)),
+        receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(20), 5)),
         aiReply:
           "תודה רבה שרה על המילים החמות! ❤️ אנחנו שמחים מאוד שנהניתם מהפיצה ומהשירות. נשמח לארח אתכם שוב בקרוב! 🥂\n\nבברכה,\nצוות חמישים ושמונה",
-        aiReplyGeneratedAt: Timestamp.fromDate(new Date("2024-01-20T12:06:00")),
+        aiReplyGeneratedAt: Timestamp.fromDate(addMinutes(getDaysAgo(20), 6)),
         replyStatus: "pending",
         wasEdited: false,
         postedReply: null,
@@ -197,11 +212,11 @@ async function seedDatabase() {
         rating: 1,
         reviewText:
           "חוויה איומה. הפסטה הגיעה קרה והשירות היה איטי מאוד. לא ממליץ.",
-        reviewDate: Timestamp.fromDate(new Date("2024-01-21T18:30:00")),
-        receivedAt: Timestamp.fromDate(new Date("2024-01-21T18:35:00")),
+        reviewDate: Timestamp.fromDate(getDaysAgo(18)),
+        receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(18), 5)),
         aiReply:
           "היי דוד, אנחנו מצטערים מאוד לשמוע על החוויה הלא נעימה. 🙏 זה לא מייצג את הסטנדרטים שלנו. נשמח אם תיצור איתנו קשר בטלפון 03-1234567 כדי שנוכל לפצות על כך עם ארוחה חינם בפעם הבאה.\n\nבברכה,\nצוות חמישים ושמונה",
-        aiReplyGeneratedAt: Timestamp.fromDate(new Date("2024-01-21T18:36:00")),
+        aiReplyGeneratedAt: Timestamp.fromDate(addMinutes(getDaysAgo(18), 6)),
         replyStatus: "pending",
         wasEdited: false,
         postedReply: null,
@@ -215,16 +230,16 @@ async function seedDatabase() {
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Michal+Abraham",
         rating: 4,
         reviewText: "אוכל טוב מאוד, אבל היה קצת רועש. בסך הכל נהננו.",
-        reviewDate: Timestamp.fromDate(new Date("2024-01-19T20:00:00")),
-        receivedAt: Timestamp.fromDate(new Date("2024-01-19T20:05:00")),
+        reviewDate: Timestamp.fromDate(getDaysAgo(22)),
+        receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(22), 5)),
         aiReply:
           "תודה רבה מיכל על המשוב! ✨ אנחנו שמחים שנהניתם מהאוכל. נקח בחשבון את ההערה לגבי הרעש ונשתדל לשפר.\n\nבברכה,\nצוות חמישים ושמונה",
-        aiReplyGeneratedAt: Timestamp.fromDate(new Date("2024-01-19T20:06:00")),
+        aiReplyGeneratedAt: Timestamp.fromDate(addMinutes(getDaysAgo(22), 6)),
         replyStatus: "posted",
         wasEdited: false,
         postedReply:
           "תודה רבה מיכל על המשוב! ✨ אנחנו שמחים שנהניתם מהאוכל. נקח בחשבון את ההערה לגבי הרעש ונשתדל לשפר.\n\nבברכה,\nצוות חמישים ושמונה",
-        postedAt: Timestamp.fromDate(new Date("2024-01-19T21:00:00")),
+        postedAt: Timestamp.fromDate(addMinutes(getDaysAgo(22), 60)),
         postedBy: USER_ID,
       },
       {
@@ -234,18 +249,18 @@ async function seedDatabase() {
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Yossi+Mizrahi",
         rating: 3,
         reviewText: "בסדר, לא מיוחד. הציפיתי ליותר בהתחשב בביקורות.",
-        reviewDate: Timestamp.fromDate(new Date("2024-01-18T13:00:00")),
-        receivedAt: Timestamp.fromDate(new Date("2024-01-18T13:05:00")),
+        reviewDate: Timestamp.fromDate(getDaysAgo(15)),
+        receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(15), 5)),
         aiReply:
           "היי יוסי, תודה על המשוב! נשמח לשמוע מה היה אפשר לעשות טוב יותר.\n\nבברכה,\nצוות חמישים ושמונה",
-        aiReplyGeneratedAt: Timestamp.fromDate(new Date("2024-01-18T13:06:00")),
+        aiReplyGeneratedAt: Timestamp.fromDate(addMinutes(getDaysAgo(15), 6)),
         replyStatus: "posted",
         wasEdited: true,
         editedReply:
           "היי יוסי, תודה על המשוב הכן! אנחנו תמיד משתדלים להשתפר. נשמח מאוד אם תיתן לנו הזדמנות נוספת להרשים אותך בפעם הבאה. 🙏\n\nבברכה,\nצוות חמישים ושמונה",
         postedReply:
           "היי יוסי, תודה על המשוב הכן! אנחנו תמיד משתדלים להשתפר. נשמח מאוד אם תיתן לנו הזדמנות נוספת להרשים אותך בפעם הבאה. 🙏\n\nבברכה,\nצוות חמישים ושמונה",
-        postedAt: Timestamp.fromDate(new Date("2024-01-18T14:00:00")),
+        postedAt: Timestamp.fromDate(addMinutes(getDaysAgo(15), 60)),
         postedBy: USER_ID,
       },
       {
@@ -255,16 +270,17 @@ async function seedDatabase() {
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Rachel+Goldstein",
         rating: 5,
         reviewText: "מקום נפלא עם אוכל מצוין!",
-        reviewDate: Timestamp.fromDate(new Date("2024-01-17T15:00:00")),
-        receivedAt: Timestamp.fromDate(new Date("2024-01-17T15:05:00")),
+        reviewDate: Timestamp.fromDate(getDaysAgo(10)),
+        receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(10), 5)),
         aiReply:
           "תודה רבה רחל! ❤️ נשמח לראותך שוב בקרוב!\n\nבברכה,\nצוות חמישים ושמונה",
-        aiReplyGeneratedAt: Timestamp.fromDate(new Date("2024-01-17T15:06:00")),
-        replyStatus: "failed",
+        aiReplyGeneratedAt: Timestamp.fromDate(addMinutes(getDaysAgo(10), 6)),
+        replyStatus: "posted",
         wasEdited: false,
-        postedReply: null,
-        postedAt: null,
-        postedBy: null,
+        postedReply:
+          "תודה רבה רחל! ❤️ נשמח לראותך שוב בקרוב!\n\nבברכה,\nצוות חמישים ושמונה",
+        postedAt: Timestamp.fromDate(addMinutes(getDaysAgo(10), 30)),
+        postedBy: USER_ID,
       },
       {
         id: "google_review_201",
@@ -273,11 +289,11 @@ async function seedDatabase() {
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Avi+Shimon",
         rating: 5,
         reviewText: "הקפה הכי טוב בעיר!",
-        reviewDate: Timestamp.fromDate(new Date("2024-02-05T10:00:00")),
-        receivedAt: Timestamp.fromDate(new Date("2024-02-05T10:05:00")),
+        reviewDate: Timestamp.fromDate(getDaysAgo(7)),
+        receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(7), 5)),
         aiReply:
           "תודה רבה על המילים החמות. נשמח לארח אותך שוב בקרוב.\n\nבברכה, צוות בית הקפה",
-        aiReplyGeneratedAt: Timestamp.fromDate(new Date("2024-02-05T10:06:00")),
+        aiReplyGeneratedAt: Timestamp.fromDate(addMinutes(getDaysAgo(7), 6)),
         replyStatus: "pending",
         wasEdited: false,
         postedReply: null,
@@ -291,11 +307,11 @@ async function seedDatabase() {
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Dana+Katz",
         rating: 4,
         reviewText: "קפה טעים מאוד, אבל הייתה המתנה ארוכה.",
-        reviewDate: Timestamp.fromDate(new Date("2024-02-04T14:00:00")),
-        receivedAt: Timestamp.fromDate(new Date("2024-02-04T14:05:00")),
+        reviewDate: Timestamp.fromDate(getDaysAgo(3)),
+        receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(3), 5)),
         aiReply:
           "תודה רבה על המשוב. אנחנו שמחים שנהנית מהקפה ומתנצלים על ההמתנה. נעבוד על שיפור זמני ההמתנה.\n\nבברכה, צוות בית הקפה",
-        aiReplyGeneratedAt: Timestamp.fromDate(new Date("2024-02-04T14:06:00")),
+        aiReplyGeneratedAt: Timestamp.fromDate(addMinutes(getDaysAgo(3), 6)),
         replyStatus: "pending",
         wasEdited: false,
         postedReply: null,
@@ -309,12 +325,12 @@ async function seedDatabase() {
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Alon+Barzily",
         rating: 5,
         reviewText: "פיצה מדהימה! אחלה של מקום",
-        reviewDate: Timestamp.fromDate(new Date("2024-01-22T19:00:00")),
-        receivedAt: Timestamp.fromDate(new Date("2024-01-22T19:05:00")),
+        reviewDate: Timestamp.fromDate(getDaysAgo(1)),
+        receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(1), 5)),
         aiReply:
           "תודה רבה אלון! 🥂 נשמח לראותך שוב!\n\nבברכה,\nצוות חמישים ושמונה",
-        aiReplyGeneratedAt: Timestamp.fromDate(new Date("2024-01-22T19:06:00")),
-        replyStatus: "rejected",
+        aiReplyGeneratedAt: Timestamp.fromDate(addMinutes(getDaysAgo(1), 6)),
+        replyStatus: "pending",
         wasEdited: false,
         postedReply: null,
         postedAt: null,
