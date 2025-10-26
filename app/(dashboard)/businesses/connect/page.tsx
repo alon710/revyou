@@ -82,7 +82,7 @@ export default function ConnectBusinessPage() {
     if (errorParam) {
       setError(decodeURIComponent(errorParam));
     }
-  }, [searchParams]);
+  }, [searchParams, loadLocations]);
 
   const handleStartOAuth = async () => {
     if (!user) return;
