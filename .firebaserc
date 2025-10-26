@@ -1,5 +1,13 @@
 {
   "projects": {
     "default": "review-ai-reply"
+  },
+  "targets": {},
+  "etags": {
+    "review-ai-reply": {
+      "extensionInstances": {
+        "firestore-stripe-payments": "04626154de8967a06f9c34eedbc29c8803a67cf8aeeb94421dbad878f5b0d1a5"
+      }
+    }
   }
 }

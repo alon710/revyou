@@ -3,11 +3,15 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBusiness } from "@/contexts/BusinessContext";
+import { useSubscription } from "@/lib/hooks/useSubscription";
 import { getUser, updateNotificationPreferences } from "@/lib/firebase/users";
 import { signOut } from "@/lib/firebase/auth";
+import { getReviewCountThisMonth } from "@/lib/subscription/usage";
 import { User } from "@/types/database";
 import { NotificationPreferences } from "@/components/dashboard/settings/NotificationPreferences";
 import { AccountInfo } from "@/components/dashboard/settings/AccountInfo";
+import { SubscriptionInfo } from "@/components/dashboard/settings/SubscriptionInfo";
 import { useToast } from "@/hooks/use-toast";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -16,10 +20,17 @@ import { Button } from "@/components/ui/button";
 
 export default function SettingsPage() {
   const { user: authUser, loading: authLoading } = useAuth();
+  const { businesses } = useBusiness();
+  const {
+    subscription,
+    planType,
+    loading: subscriptionLoading,
+  } = useSubscription();
   const router = useRouter();
   const { toast } = useToast();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [reviewCount, setReviewCount] = useState(0);
 
   const loadUserData = async () => {
     if (!authUser) return;
@@ -28,6 +39,10 @@ export default function SettingsPage() {
       setLoading(true);
       const data = await getUser(authUser.uid);
       setUserData(data);
+
+      // Load review count for usage stats
+      const count = await getReviewCountThisMonth();
+      setReviewCount(count);
     } catch (error) {
       console.error("Error loading user data:", error);
       toast({
@@ -75,7 +90,7 @@ export default function SettingsPage() {
     router.push("/");
   };
 
-  if (authLoading || loading) {
+  if (authLoading || loading || subscriptionLoading) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loading size="md" />
@@ -103,6 +118,13 @@ export default function SettingsPage() {
         displayName={authUser.displayName}
         email={authUser.email}
         uid={authUser.uid}
+      />
+
+      <SubscriptionInfo
+        planType={planType}
+        subscription={subscription}
+        currentBusinesses={businesses.length}
+        currentReviews={reviewCount}
       />
 
       <NotificationPreferences

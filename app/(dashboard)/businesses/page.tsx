@@ -1,19 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
 import { deleteBusiness } from "@/lib/firebase/businesses";
-import { getUserSubscriptionTier } from "@/lib/firebase/users";
-import { SubscriptionTier, SUBSCRIPTION_LIMITS } from "@/types/database";
+import { useSubscription } from "@/lib/hooks/useSubscription";
+import { SUBSCRIPTION_LIMITS } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus } from "lucide-react";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { toast } from "sonner";
 import { Loading } from "@/components/ui/loading";
 import BusinessDetailsCard from "@/components/dashboard/BusinessDetailsCard";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
@@ -26,38 +23,20 @@ export default function BusinessesPage() {
     loading: businessLoading,
     refreshBusinesses,
   } = useBusiness();
-  const [subscriptionTier, setSubscriptionTier] =
-    useState<SubscriptionTier>("free");
-
-  useEffect(() => {
-    if (!user || authLoading) return;
-
-    const loadSubscription = async () => {
-      try {
-        const tier = await getUserSubscriptionTier(user.uid);
-        setSubscriptionTier(tier);
-      } catch (error) {
-        console.error("Error loading subscription:", error);
-      }
-    };
-
-    loadSubscription();
-  }, [user, authLoading]);
+  const { planType } = useSubscription();
 
   const handleDelete = async () => {
-    if (!currentBusiness) return;
+    if (!currentBusiness || !user) return;
 
     try {
-      await deleteBusiness(currentBusiness.id);
-      toast.success("העסק נמחק בהצלחה");
+      await deleteBusiness(user.uid, currentBusiness.id);
       await refreshBusinesses();
     } catch (error) {
       console.error("Error deleting business:", error);
-      toast.error("לא ניתן למחוק את העסק");
     }
   };
 
-  const maxBusinesses = SUBSCRIPTION_LIMITS[subscriptionTier].businesses;
+  const maxBusinesses = SUBSCRIPTION_LIMITS[planType].businesses;
   const canAddMore =
     maxBusinesses === Infinity || businesses.length < maxBusinesses;
 
@@ -110,6 +89,7 @@ export default function BusinessesPage() {
 
       <BusinessDetailsCard
         business={currentBusiness}
+        userId={user!.uid}
         loading={businessLoading}
         onUpdate={refreshBusinesses}
       />

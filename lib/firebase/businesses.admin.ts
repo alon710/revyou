@@ -10,14 +10,20 @@ import { businessSchemaAdmin } from "@/lib/validation/database.admin";
 
 /**
  * Get a single business by ID (Admin SDK version)
+ * @param userId - User ID
  * @param businessId - Business ID
  * @returns Business data or null if not found
  */
 export async function getBusinessAdmin(
+  userId: string,
   businessId: string
 ): Promise<Business | null> {
   try {
-    const businessRef = adminDb.collection("businesses").doc(businessId);
+    const businessRef = adminDb
+      .collection("users")
+      .doc(userId)
+      .collection("businesses")
+      .doc(businessId);
     const businessSnap = await businessRef.get();
 
     if (businessSnap.exists) {
@@ -38,20 +44,26 @@ export async function getBusinessAdmin(
 
 /**
  * Update business fields (Admin SDK version)
+ * @param userId - User ID
  * @param businessId - Business ID
  * @param data - Partial business data to update
  * @returns Updated business
  */
 export async function updateBusinessAdmin(
+  userId: string,
   businessId: string,
   data: Record<string, unknown>
 ): Promise<Business> {
   try {
-    const businessRef = adminDb.collection("businesses").doc(businessId);
+    const businessRef = adminDb
+      .collection("users")
+      .doc(userId)
+      .collection("businesses")
+      .doc(businessId);
     await businessRef.update(data);
 
     // Return the updated business
-    return (await getBusinessAdmin(businessId)) as Business;
+    return (await getBusinessAdmin(userId, businessId)) as Business;
   } catch (error) {
     console.error("Error updating business (admin):", error);
     throw new Error("לא ניתן לעדכן את העסק");

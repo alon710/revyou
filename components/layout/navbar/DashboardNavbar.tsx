@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/Logo";
@@ -50,7 +50,7 @@ export function DashboardNavbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <BusinessToggler />
-          <Button size="sm" variant="outline" asChild>
+          <Button size="sm" variant="ghost" asChild>
             <Link href="/settings">
               <Settings className="h-4 w-4" />
             </Link>
@@ -90,12 +90,7 @@ export function DashboardNavbar() {
         })}
 
         <div className="pt-3 border-t border-border/40 mt-3">
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full"
-            asChild
-          >
+          <Button variant="outline" size="sm" className="w-full" asChild>
             <Link href="/settings" onClick={handleNavClick}>
               <Settings className="h-4 w-4 mr-2" />
               הגדרות חשבון

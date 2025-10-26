@@ -38,17 +38,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Get business and verify ownership using Admin SDK
-    const business = await getBusinessAdmin(businessId);
+    const business = await getBusinessAdmin(userId, businessId);
 
     if (!business) {
       return NextResponse.json(
         { error: "Business not found" },
         { status: 404 }
       );
-    }
-
-    if (business.userId !== userId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Get user's Google refresh token using Admin SDK
@@ -75,7 +71,7 @@ export async function POST(req: NextRequest) {
     );
 
     // Update business record using Admin SDK
-    await updateBusinessAdmin(businessId, {
+    await updateBusinessAdmin(userId, businessId, {
       notificationsEnabled: true,
     });
 

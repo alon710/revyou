@@ -12,8 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Loading } from "@/components/ui/loading";
-import { Bell, Save, X } from "lucide-react";
+import { Bell } from "lucide-react";
 
 interface NotificationPreferencesEditModalProps {
   emailOnNewReview: boolean;

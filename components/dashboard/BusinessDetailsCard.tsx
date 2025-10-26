@@ -6,28 +6,27 @@ import {
   AIResponseSettingsSection,
   StarRatingConfigSection,
 } from "./business-config";
-import { toast } from "sonner";
 import { updateBusinessConfig } from "@/lib/firebase/businesses";
 
 interface BusinessDetailsCardProps {
   business: Business;
+  userId: string;
   loading?: boolean;
   onUpdate: () => Promise<void>;
 }
 
 export default function BusinessDetailsCard({
   business,
+  userId,
   loading = false,
   onUpdate,
 }: BusinessDetailsCardProps) {
   const handleSaveSection = async (partialConfig: Partial<BusinessConfig>) => {
     try {
-      await updateBusinessConfig(business.id, partialConfig);
-      toast.success("ההגדרות נשמרו בהצלחה");
+      await updateBusinessConfig(userId, business.id, partialConfig);
       await onUpdate();
     } catch (error) {
       console.error("Error saving config:", error);
-      toast.error("לא ניתן לשמור את ההגדרות");
       throw error;
     }
   };

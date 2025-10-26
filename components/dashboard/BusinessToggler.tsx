@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/select";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Building2 } from "lucide-react";
 
 export function BusinessToggler() {
   const {

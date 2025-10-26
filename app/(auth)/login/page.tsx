@@ -26,7 +26,32 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      router.push("/businesses");
+      // Check if there's a return URL (for payment flow)
+      const searchParams = new URLSearchParams(window.location.search);
+      const returnTo = searchParams.get("returnTo");
+      const plan = searchParams.get("plan");
+      const period = searchParams.get("period");
+
+      if (returnTo && plan && period) {
+        // Build complete payment URL with user info
+        try {
+          const url = new URL(returnTo);
+          if (user.email) {
+            url.searchParams.set("prefilled_email", user.email);
+          }
+          url.searchParams.set("client_reference_id", user.uid);
+
+          // Redirect to Stripe payment
+          window.location.href = url.toString();
+        } catch (error) {
+          console.error("Error parsing return URL:", error);
+          // Fallback to normal flow
+          router.push("/businesses");
+        }
+      } else {
+        // Normal flow - go to dashboard
+        router.push("/businesses");
+      }
     }
   }, [user, authLoading, router]);
 
@@ -40,7 +65,32 @@ export default function LoginPage() {
       setError(error);
       setIsLoading(false);
     } else if (user) {
-      router.push("/businesses");
+      // Check if there's a return URL (for payment flow)
+      const searchParams = new URLSearchParams(window.location.search);
+      const returnTo = searchParams.get("returnTo");
+      const plan = searchParams.get("plan");
+      const period = searchParams.get("period");
+
+      if (returnTo && plan && period) {
+        // Build complete payment URL with user info
+        try {
+          const url = new URL(returnTo);
+          if (user.email) {
+            url.searchParams.set("prefilled_email", user.email);
+          }
+          url.searchParams.set("client_reference_id", user.uid);
+
+          // Redirect to Stripe payment
+          window.location.href = url.toString();
+        } catch (error) {
+          console.error("Error parsing return URL:", error);
+          // Fallback to normal flow
+          router.push("/businesses");
+        }
+      } else {
+        // Normal flow - go to dashboard
+        router.push("/businesses");
+      }
     }
   };
 

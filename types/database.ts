@@ -28,8 +28,8 @@ export interface User {
   createdAt: Timestamp;
   subscriptionTier: SubscriptionTier;
   stripeCustomerId?: string;
-  googleRefreshToken?: string; // encrypted
-  selectedBusinessId?: string; // Currently selected business (persisted in Firestore)
+  googleRefreshToken?: string;
+  selectedBusinessId?: string;
   notificationPreferences?: {
     emailOnNewReview: boolean;
   };
@@ -41,21 +41,18 @@ export interface StarConfig {
 }
 
 export interface BusinessConfig {
-  // Business Identity (can override Google Business data)
-  businessName?: string; // Optional override for business name
-  businessDescription: string; // Description of the business
-  businessPhone?: string; // Contact phone for negative reviews
+  businessName?: string;
+  businessDescription: string;
+  businessPhone?: string;
 
-  // AI Response Configuration
-  toneOfVoice: ToneOfVoice; // Tone of AI responses
-  useEmojis: boolean; // Whether to use emojis
-  languageMode: LanguageMode; // Language mode for responses
-  languageInstructions?: string; // Custom language selection (overrides languageMode)
-  maxSentences?: number; // Max sentences in reply (default: 2)
-  allowedEmojis?: string[]; // List of allowed emojis (e.g., ["🥂", "✨", "🙏"])
-  signature?: string; // Business signature line (e.g., "צוות חמישים ושמונה")
+  toneOfVoice: ToneOfVoice;
+  useEmojis: boolean;
+  languageMode: LanguageMode;
+  languageInstructions?: string;
+  maxSentences?: number;
+  allowedEmojis?: string[];
+  signature?: string;
 
-  // Star-specific Configuration
   starConfigs: {
     1: StarConfig;
     2: StarConfig;
@@ -67,7 +64,6 @@ export interface BusinessConfig {
 
 export interface Business {
   id: string;
-  userId: string;
   googleAccountId: string;
   googleLocationId: string;
   name: string;
@@ -76,31 +72,27 @@ export interface Business {
   connected: boolean;
   connectedAt: Timestamp;
   config: BusinessConfig;
-  notificationsEnabled?: boolean; // Pub/Sub notifications status
+  notificationsEnabled?: boolean;
 }
 
 export interface Review {
   id: string;
-  businessId: string;
   googleReviewId: string;
   reviewerName: string;
   reviewerPhotoUrl?: string;
-  rating: number; // 1-5
+  rating: number;
   reviewText: string;
   reviewDate: Timestamp;
   receivedAt: Timestamp;
 
-  // AI Reply
   aiReply?: string;
   aiReplyGeneratedAt?: Timestamp;
   replyStatus: ReplyStatus;
 
-  // Posted reply
   postedReply?: string | null;
   postedAt?: Timestamp | null;
   postedBy?: string | null;
 
-  // If user edited the AI reply
   wasEdited: boolean;
   editedReply?: string | null;
 }
@@ -115,10 +107,8 @@ export interface Subscription {
   cancelAtPeriodEnd: boolean;
 }
 
-// Re-export default prompt template from centralized location
 export { DEFAULT_BUSINESS_PROMPT_TEMPLATE as DEFAULT_PROMPT_TEMPLATE } from "@/lib/ai/prompt-templates";
 
-// Subscription limits by tier
 export const SUBSCRIPTION_LIMITS = {
   free: {
     businesses: 1,

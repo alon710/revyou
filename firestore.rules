@@ -14,13 +14,6 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    // Check if user owns a business
-    function ownsBusinessDoc(businessId) {
-      return isAuthenticated() &&
-        exists(/databases/$(database)/documents/businesses/$(businessId)) &&
-        get(/databases/$(database)/documents/businesses/$(businessId)).data.userId == request.auth.uid;
-    }
-
     // Validate string length
     function validStringLength(str, min, max) {
       return str is string && str.size() >= min && str.size() <= max;
@@ -46,11 +39,6 @@ service cloud.firestore {
       return status in ['pending', 'approved', 'rejected', 'posted', 'failed'];
     }
 
-    // Validate subscription status
-    function isValidSubscriptionStatus(status) {
-      return status in ['active', 'canceled', 'past_due'];
-    }
-
     // Validate rating (1-5)
     function isValidRating(rating) {
       return rating is int && rating >= 1 && rating <= 5;
@@ -62,32 +50,55 @@ service cloud.firestore {
       allow read: if isOwner(userId);
 
       allow create: if isOwner(userId) &&
-        request.resource.data.keys().hasAll(['uid', 'email', 'displayName', 'photoURL', 'createdAt', 'subscriptionTier']) &&
-        request.resource.data.uid == userId &&
-        request.resource.data.email is string &&
-        validStringLength(request.resource.data.displayName, 1, 200) &&
-        request.resource.data.photoURL is string &&
-        isValidTier(request.resource.data.subscriptionTier);
+      request.resource.data.keys().hasAll(['uid', 'email', 'displayName', 'photoURL', 'createdAt', 'subscriptionTier']) &&
+      request.resource.data.uid == userId &&
+      request.resource.data.email is string &&
+      validStringLength(request.resource.data.displayName, 1, 200) &&
+      request.resource.data.photoURL is string &&
+      isValidTier(request.resource.data.subscriptionTier);
 
       allow update: if isOwner(userId) &&
-        // Cannot change uid or createdAt
-        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['uid', 'createdAt'])) &&
-        // Validate subscription tier if changed
-        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['subscriptionTier']) ||
-          isValidTier(request.resource.data.subscriptionTier));
+      // Cannot change uid or createdAt
+      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['uid', 'createdAt'])) &&
+      // Validate subscription tier if changed
+      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['subscriptionTier']) ||
+      isValidTier(request.resource.data.subscriptionTier));
 
       allow delete: if false; // Users should not be deleted via Firestore
-    }
 
-    // ====== BUSINESSES COLLECTION ======
-    match /businesses/{businessId} {
-      // Users can read their own businesses
-      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      // ====== STRIPE SUBSCRIPTIONS (Firestore Stripe Extension) ======
+      // Subscriptions subcollection managed by Stripe extension
+      match /subscriptions/{subscriptionId} {
+        // Users can read their own subscriptions
+        allow read: if isOwner(userId);
 
-      // Users can create businesses they own
-      allow create: if isAuthenticated() &&
-        request.resource.data.userId == request.auth.uid &&
-        request.resource.data.keys().hasAll(['userId', 'googleAccountId', 'googleLocationId', 'name', 'address', 'connected', 'connectedAt', 'config']) &&
+        // Only the Stripe extension and admin can write
+        allow write: if false;
+      }
+
+      // Checkout sessions subcollection managed by Stripe extension
+      match /checkout_sessions/{sessionId} {
+        // Users can read and create their own checkout sessions
+        allow read, write: if isOwner(userId);
+      }
+
+      // Payments subcollection managed by Stripe extension
+      match /payments/{paymentId} {
+        // Users can read their own payments
+        allow read: if isOwner(userId);
+
+        // Only the Stripe extension and admin can write
+        allow write: if false;
+      }
+
+      // ====== BUSINESSES SUBCOLLECTION ======
+      match /businesses/{businessId} {
+        // Users can read their own businesses (ownership implicit via path)
+        allow read: if isOwner(userId);
+
+        // Users can create businesses in their own subcollection
+        allow create: if isOwner(userId) &&
+        request.resource.data.keys().hasAll(['googleAccountId', 'googleLocationId', 'name', 'address', 'connected', 'connectedAt', 'config']) &&
         validStringLength(request.resource.data.name, 1, 200) &&
         validStringLength(request.resource.data.address, 1, 500) &&
         request.resource.data.connected is bool &&
@@ -100,70 +111,57 @@ service cloud.firestore {
         request.resource.data.config.autoPost is bool &&
         request.resource.data.config.requireApproval is bool;
 
-      // Users can update their own businesses
-      allow update: if isAuthenticated() &&
-        resource.data.userId == request.auth.uid &&
-        // Cannot change userId or connectedAt
-        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId']));
+        // Users can update their own businesses
+        allow update: if isOwner(userId);
 
-      // Users can delete their own businesses
-      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
-    }
+        // Users can delete their own businesses
+        allow delete: if isOwner(userId);
 
-    // ====== REVIEWS COLLECTION ======
-    match /reviews/{reviewId} {
-      // Users can read reviews for their businesses
-      allow read: if isAuthenticated() &&
-        ownsBusinessDoc(resource.data.businessId);
+        // ====== REVIEWS SUBCOLLECTION ======
+        match /reviews/{reviewId} {
+          // Users can read reviews in their own businesses (ownership implicit via path)
+          allow read: if isOwner(userId);
 
-      // Cloud Functions can create reviews
-      allow create: if isAuthenticated() &&
-        request.resource.data.keys().hasAll(['businessId', 'googleReviewId', 'reviewerName', 'rating', 'reviewText', 'reviewDate', 'receivedAt', 'replyStatus', 'wasEdited']) &&
-        ownsBusinessDoc(request.resource.data.businessId) &&
-        validStringLength(request.resource.data.reviewerName, 1, 200) &&
-        isValidRating(request.resource.data.rating) &&
-        validStringLength(request.resource.data.reviewText, 0, 5000) &&
-        isValidReplyStatus(request.resource.data.replyStatus) &&
-        request.resource.data.wasEdited is bool;
+          // Cloud Functions and users can create reviews
+          allow create: if isOwner(userId) &&
+          request.resource.data.keys().hasAll(['googleReviewId', 'reviewerName', 'rating', 'reviewText', 'reviewDate', 'receivedAt', 'replyStatus', 'wasEdited']) &&
+          validStringLength(request.resource.data.reviewerName, 1, 200) &&
+          isValidRating(request.resource.data.rating) &&
+          validStringLength(request.resource.data.reviewText, 0, 5000) &&
+          isValidReplyStatus(request.resource.data.replyStatus) &&
+          request.resource.data.wasEdited is bool;
 
-      // Users and Cloud Functions can update reviews for their businesses
-      allow update: if isAuthenticated() &&
-        resource.data.businessId == request.resource.data.businessId && // Cannot change businessId
-        ownsBusinessDoc(resource.data.businessId) &&
-        // Validate reply status if changed
-        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['replyStatus']) ||
+          // Users and Cloud Functions can update reviews
+          allow update: if isOwner(userId) &&
+          // Validate reply status if changed
+          (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['replyStatus']) ||
           isValidReplyStatus(request.resource.data.replyStatus)) &&
-        // Validate aiReply length if provided
-        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['aiReply']) ||
+          // Validate aiReply length if provided
+          (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['aiReply']) ||
           (request.resource.data.aiReply == null || validStringLength(request.resource.data.aiReply, 0, 2000)));
 
-      // Reviews should not be deleted directly (keep for history)
-      allow delete: if false;
+          // Reviews should not be deleted directly (keep for history)
+          allow delete: if false;
+        }
+      }
     }
 
-    // ====== SUBSCRIPTIONS COLLECTION ======
-    match /subscriptions/{subscriptionId} {
-      // Users can read their own subscriptions
-      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    // ====== PRODUCTS COLLECTION (Stripe Extension) ======
+    match /products/{productId} {
+      // Anyone can read products (for pricing page)
+      allow read: if true;
 
-      // Only Cloud Functions/Admin can create subscriptions (via Stripe webhooks)
-      allow create: if isAuthenticated() &&
-        request.resource.data.userId == request.auth.uid &&
-        request.resource.data.keys().hasAll(['userId', 'stripeSubscriptionId', 'stripePriceId', 'status', 'currentPeriodEnd', 'cancelAtPeriodEnd']) &&
-        isValidSubscriptionStatus(request.resource.data.status) &&
-        request.resource.data.cancelAtPeriodEnd is bool;
+      // Only admin can write (synced from Stripe)
+      allow write: if false;
 
-      // Users and Cloud Functions can update subscriptions (for cancellation, status changes)
-      allow update: if isAuthenticated() &&
-        resource.data.userId == request.auth.uid &&
-        // Cannot change userId or stripeSubscriptionId
-        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'stripeSubscriptionId'])) &&
-        // Validate status if changed
-        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['status']) ||
-          isValidSubscriptionStatus(request.resource.data.status));
+      // Prices subcollection
+      match /prices/{priceId} {
+        // Anyone can read prices
+        allow read: if true;
 
-      // Subscriptions should not be deleted directly
-      allow delete: if false;
+        // Only admin can write
+        allow write: if false;
+      }
     }
   }
 }

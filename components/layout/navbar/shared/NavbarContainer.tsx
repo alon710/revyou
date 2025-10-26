@@ -6,7 +6,10 @@ interface NavbarContainerProps {
   scrollSelector?: string; // CSS selector for scroll container, defaults to window
 }
 
-export function NavbarContainer({ children, scrollSelector }: NavbarContainerProps) {
+export function NavbarContainer({
+  children,
+  scrollSelector,
+}: NavbarContainerProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 

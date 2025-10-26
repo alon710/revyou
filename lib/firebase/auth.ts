@@ -11,15 +11,10 @@ import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "./config";
 import { useState, useEffect } from "react";
 
-// Initialize Google Auth Provider
 const googleProvider = new GoogleAuthProvider();
 googleProvider.addScope("https://www.googleapis.com/auth/userinfo.email");
 googleProvider.addScope("https://www.googleapis.com/auth/userinfo.profile");
 
-/**
- * Sign in with Google OAuth
- * Creates user document in Firestore if it doesn't exist
- */
 export async function signInWithGoogle() {
   if (!auth || !db) {
     return {
@@ -32,11 +27,9 @@ export async function signInWithGoogle() {
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
 
-    // Check if user document exists in Firestore
     const userDocRef = doc(db, "users", user.uid);
     const userDoc = await getDoc(userDocRef);
 
-    // Create user document if it doesn't exist
     if (!userDoc.exists()) {
       await setDoc(userDocRef, {
         uid: user.uid,
@@ -44,37 +37,16 @@ export async function signInWithGoogle() {
         displayName: user.displayName,
         photoURL: user.photoURL,
         createdAt: serverTimestamp(),
-        subscriptionTier: "free",
-        stripeCustomerId: null,
-        googleRefreshToken: null,
       });
     }
 
     return { user, error: null };
   } catch (error) {
     console.error("Error signing in with Google:", error);
-
-    // Hebrew error messages
-    let message = "אירעה שגיאה בהתחברות";
-
-    if (error && typeof error === "object" && "code" in error) {
-      const errorCode = error.code;
-      if (errorCode === "auth/popup-closed-by-user") {
-        message = "חלון ההתחברות נסגר";
-      } else if (errorCode === "auth/cancelled-popup-request") {
-        message = "בקשת ההתחברות בוטלה";
-      } else if (errorCode === "auth/network-request-failed") {
-        message = "בעיית רשת - נסה שוב";
-      }
-    }
-
-    return { user: null, error: message };
+    return { user: null, error: "אירעה שגיאה בהתחברות עם גוגל" };
   }
 }
 
-/**
- * Sign out the current user
- */
 export async function signOut() {
   if (!auth) {
     return { error: "Firebase לא מוגדר" };
@@ -89,24 +61,18 @@ export async function signOut() {
   }
 }
 
-/**
- * Custom hook to get the current auth state
- * Returns the current user, loading state, and error
- */
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if auth is available
     if (!auth) {
       setLoading(false);
       setError("Firebase לא מוגדר");
       return;
     }
 
-    // Subscribe to auth state changes
     const unsubscribe = onAuthStateChanged(
       auth,
       (user) => {
@@ -121,7 +87,6 @@ export function useAuth() {
       }
     );
 
-    // Cleanup subscription
     return () => unsubscribe();
   }, []);
 

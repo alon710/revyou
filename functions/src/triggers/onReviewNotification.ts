@@ -66,9 +66,9 @@ export const onReviewNotification = functions.onRequest(
 
       logger.info(`Processing review ${reviewId} for location ${locationId}`);
 
-      // Find the business in Firestore by googleLocationId
+      // Find the business in Firestore by googleLocationId using collectionGroup
       const businessQuery = await db
-        .collection("businesses")
+        .collectionGroup("businesses")
         .where("googleLocationId", "==", locationId)
         .limit(1)
         .get();
@@ -82,9 +82,21 @@ export const onReviewNotification = functions.onRequest(
       const businessDoc = businessQuery.docs[0];
       const businessId = businessDoc.id;
 
-      // Check if review already exists
+      // Extract userId from the document path
+      // Path is: users/{userId}/businesses/{businessId}
+      const userId = businessDoc.ref.parent.parent?.id;
+
+      if (!userId) {
+        logger.error("Could not extract userId from business document path");
+        res.status(500).send("Internal Server Error");
+        return;
+      }
+
+      logger.info(`Found business ${businessId} for user ${userId}`);
+
+      // Check if review already exists using collectionGroup
       const existingReview = await db
-        .collection("reviews")
+        .collectionGroup("reviews")
         .where("googleReviewId", "==", reviewId)
         .limit(1)
         .get();
@@ -112,9 +124,8 @@ export const onReviewNotification = functions.onRequest(
         rating = ratingMap[attrs.starRating] || 0;
       }
 
-      // Create review document in Firestore
+      // Create review document in Firestore (no longer need businessId field as it's in the path)
       const reviewData = {
-        businessId,
         googleReviewId: reviewId,
         reviewerName: attrs.reviewerDisplayName || "לקוח אנונימי",
         reviewerPhotoUrl: attrs.reviewerProfilePhotoUrl || null,
@@ -126,9 +137,18 @@ export const onReviewNotification = functions.onRequest(
         wasEdited: false,
       };
 
-      await db.collection("reviews").add(reviewData);
+      await db
+        .collection("users")
+        .doc(userId)
+        .collection("businesses")
+        .doc(businessId)
+        .collection("reviews")
+        .doc(reviewId)
+        .set(reviewData);
 
-      logger.info(`Created review document for ${reviewId}`);
+      logger.info(
+        `Created review document for ${reviewId} in user ${userId} business ${businessId}`
+      );
 
       // The Firestore trigger will now handle AI generation
       res.status(200).send("OK");

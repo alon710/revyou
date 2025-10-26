@@ -1,87 +1,290 @@
-[debug] [2025-10-22T08:32:13.377Z] ----------------------------------------------------------------------
-[debug] [2025-10-22T08:32:13.379Z] Command:       /Users/alonb/.nvm/versions/node/v22.2.0/bin/node /Users/alonb/.nvm/versions/node/v22.2.0/bin/firebase deploy --only firestore --project review-ai-reply
-[debug] [2025-10-22T08:32:13.379Z] CLI Version:   14.20.0
-[debug] [2025-10-22T08:32:13.379Z] Platform:      darwin
-[debug] [2025-10-22T08:32:13.379Z] Node Version:  v22.2.0
-[debug] [2025-10-22T08:32:13.380Z] Time:          Wed Oct 22 2025 11:32:13 GMT+0300 (Israel Daylight Time)
-[debug] [2025-10-22T08:32:13.380Z] ----------------------------------------------------------------------
+[debug] [2025-10-25T23:29:18.224Z] ----------------------------------------------------------------------
+[debug] [2025-10-25T23:29:18.226Z] Command:       /Users/alonb/.nvm/versions/node/v22.2.0/bin/node /Users/alonb/.nvm/versions/node/v22.2.0/bin/firebase deploy
+[debug] [2025-10-25T23:29:18.226Z] CLI Version:   14.22.0
+[debug] [2025-10-25T23:29:18.226Z] Platform:      darwin
+[debug] [2025-10-25T23:29:18.226Z] Node Version:  v22.2.0
+[debug] [2025-10-25T23:29:18.226Z] Time:          Sun Oct 26 2025 01:29:18 GMT+0200 (Israel Standard Time)
+[debug] [2025-10-25T23:29:18.226Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2025-10-22T08:32:13.459Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2025-10-22T08:32:13.459Z] > authorizing via signed-in user (alon710@gmail.com)
-[debug] [2025-10-22T08:32:13.459Z] [iam] checking project review-ai-reply for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]
-[debug] [2025-10-22T08:32:13.460Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:13.460Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:13.460Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/review-ai-reply:testIamPermissions [none]
-[debug] [2025-10-22T08:32:13.460Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/review-ai-reply:testIamPermissions x-goog-quota-user=projects/review-ai-reply
-[debug] [2025-10-22T08:32:13.460Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/review-ai-reply:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
-[debug] [2025-10-22T08:32:14.608Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/review-ai-reply:testIamPermissions 200
-[debug] [2025-10-22T08:32:14.608Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/review-ai-reply:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
-[info] 
-[info] === Deploying to 'review-ai-reply'...
-[info] 
-[info] i  deploying firestore 
-[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
-[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
-[debug] [2025-10-22T08:32:14.610Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:14.610Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:14.610Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/review-ai-reply/databases/(default) [none]
-[debug] [2025-10-22T08:32:15.697Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/review-ai-reply/databases/(default) 200
-[debug] [2025-10-22T08:32:15.698Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/review-ai-reply/databases/(default) {"name":"projects/review-ai-reply/databases/(default)","uid":"3a10924e-c0f1-4f32-a2cf-73f92521ab62","createTime":"2025-10-22T07:39:12.218718Z","updateTime":"2025-10-22T07:39:12.218718Z","locationId":"nam5","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2025-10-22T07:39:12.218718Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"s","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IN24jbuyt5ADMO24u/iot5AD"}
-[info] i  firestore: reading indexes from firestore.indexes.json... 
-[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
-[debug] [2025-10-22T08:32:15.701Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:15.701Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:15.702Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/review-ai-reply:test [none]
-[debug] [2025-10-22T08:32:15.702Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/review-ai-reply:test [omitted]
-[debug] [2025-10-22T08:32:16.658Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/review-ai-reply:test 200
-[debug] [2025-10-22T08:32:16.658Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/review-ai-reply:test {}
-[info] ✔  cloud.firestore: rules file firestore.rules compiled successfully 
-[debug] [2025-10-22T08:32:16.660Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:16.660Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:16.661Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/review-ai-reply/releases pageSize=10&pageToken=
-[debug] [2025-10-22T08:32:17.333Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/review-ai-reply/releases 200
-[debug] [2025-10-22T08:32:17.333Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/review-ai-reply/releases {"releases":[{"name":"projects/review-ai-reply/releases/cloud.firestore","rulesetName":"projects/review-ai-reply/rulesets/62435066-f7de-416d-b562-e5c11e31cdc3","createTime":"2025-10-22T07:41:44.295670Z","updateTime":"2025-10-22T07:41:44.295670Z"}]}
-[debug] [2025-10-22T08:32:17.334Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:17.334Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:17.335Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/review-ai-reply/rulesets/62435066-f7de-416d-b562-e5c11e31cdc3 [none]
-[debug] [2025-10-22T08:32:18.071Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/review-ai-reply/rulesets/62435066-f7de-416d-b562-e5c11e31cdc3 200
-[debug] [2025-10-22T08:32:18.072Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/review-ai-reply/rulesets/62435066-f7de-416d-b562-e5c11e31cdc3 [omitted]
-[info] i  firestore: uploading rules firestore.rules... 
-[debug] [2025-10-22T08:32:18.073Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:18.073Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:18.073Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/review-ai-reply/rulesets [none]
-[debug] [2025-10-22T08:32:18.074Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/review-ai-reply/rulesets [omitted]
-[debug] [2025-10-22T08:32:18.928Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/review-ai-reply/rulesets 200
-[debug] [2025-10-22T08:32:18.928Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/review-ai-reply/rulesets {"name":"projects/review-ai-reply/rulesets/58540cb4-a0cc-4720-bb87-2fd404f8b015","source":{"files":[{"content":"rules_version = '2';\n\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    // ====== HELPER FUNCTIONS ======\n\n    // Check if user is authenticated\n    function isAuthenticated() {\n      return request.auth != null;\n    }\n\n    // Check if user owns the document\n    function isOwner(userId) {\n      return isAuthenticated() && request.auth.uid == userId;\n    }\n\n    // Check if user owns a business\n    function ownsBusinessDoc(businessId) {\n      return isAuthenticated() &&\n        exists(/databases/$(database)/documents/businesses/$(businessId)) &&\n        get(/databases/$(database)/documents/businesses/$(businessId)).data.userId == request.auth.uid;\n    }\n\n    // Validate string length\n    function validStringLength(str, min, max) {\n      return str is string && str.size() >= min && str.size() <= max;\n    }\n\n    // Validate subscription tier\n    function isValidTier(tier) {\n      return tier in ['free', 'basic', 'pro', 'enterprise'];\n    }\n\n    // Validate tone of voice\n    function isValidTone(tone) {\n      return tone in ['friendly', 'formal', 'humorous', 'professional'];\n    }\n\n    // Validate language mode\n    function isValidLanguageMode(mode) {\n      return mode in ['hebrew', 'english', 'auto-detect', 'match-reviewer'];\n    }\n\n    // Validate reply status\n    function isValidReplyStatus(status) {\n      return status in ['pending', 'approved', 'rejected', 'posted', 'failed'];\n    }\n\n    // Validate subscription status\n    function isValidSubscriptionStatus(status) {\n      return status in ['active', 'canceled', 'past_due'];\n    }\n\n    // Validate rating (1-5)\n    function isValidRating(rating) {\n      return rating is int && rating >= 1 && rating <= 5;\n    }\n\n    // ====== USERS COLLECTION ======\n    match /users/{userId} {\n      // Users can read and write their own data\n      allow read: if isOwner(userId);\n\n      allow create: if isOwner(userId) &&\n        request.resource.data.keys().hasAll(['uid', 'email', 'displayName', 'photoURL', 'createdAt', 'subscriptionTier']) &&\n        request.resource.data.uid == userId &&\n        request.resource.data.email is string &&\n        validStringLength(request.resource.data.displayName, 1, 200) &&\n        request.resource.data.photoURL is string &&\n        isValidTier(request.resource.data.subscriptionTier);\n\n      allow update: if isOwner(userId) &&\n        // Cannot change uid or createdAt\n        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['uid', 'createdAt'])) &&\n        // Validate subscription tier if changed\n        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['subscriptionTier']) ||\n          isValidTier(request.resource.data.subscriptionTier));\n\n      allow delete: if false; // Users should not be deleted via Firestore\n    }\n\n    // ====== BUSINESSES COLLECTION ======\n    match /businesses/{businessId} {\n      // Users can read their own businesses\n      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;\n\n      // Users can create businesses they own\n      allow create: if isAuthenticated() &&\n        request.resource.data.userId == request.auth.uid &&\n        request.resource.data.keys().hasAll(['userId', 'googleAccountId', 'googleLocationId', 'name', 'address', 'connected', 'connectedAt', 'config']) &&\n        validStringLength(request.resource.data.name, 1, 200) &&\n        validStringLength(request.resource.data.address, 1, 500) &&\n        request.resource.data.connected is bool &&\n        // Validate config structure\n        request.resource.data.config.keys().hasAll(['businessDescription', 'toneOfVoice', 'useEmojis', 'languageMode', 'autoPost', 'requireApproval', 'starConfigs']) &&\n        validStringLength(request.resource.data.config.businessDescription, 0, 2000) &&\n        isValidTone(request.resource.data.config.toneOfVoice) &&\n        isValidLanguageMode(request.resource.data.config.languageMode) &&\n        request.resource.data.config.useEmojis is bool &&\n        request.resource.data.config.autoPost is bool &&\n        request.resource.data.config.requireApproval is bool;\n\n      // Users can update their own businesses\n      allow update: if isAuthenticated() &&\n        resource.data.userId == request.auth.uid &&\n        // Cannot change userId or connectedAt\n        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId']));\n\n      // Users can delete their own businesses\n      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;\n    }\n\n    // ====== REVIEWS COLLECTION ======\n    match /reviews/{reviewId} {\n      // Users can read reviews for their businesses\n      allow read: if isAuthenticated() &&\n        ownsBusinessDoc(resource.data.businessId);\n\n      // Cloud Functions can create reviews\n      allow create: if isAuthenticated() &&\n        request.resource.data.keys().hasAll(['businessId', 'googleReviewId', 'reviewerName', 'rating', 'reviewText', 'reviewDate', 'receivedAt', 'replyStatus', 'wasEdited']) &&\n        ownsBusinessDoc(request.resource.data.businessId) &&\n        validStringLength(request.resource.data.reviewerName, 1, 200) &&\n        isValidRating(request.resource.data.rating) &&\n        validStringLength(request.resource.data.reviewText, 0, 5000) &&\n        isValidReplyStatus(request.resource.data.replyStatus) &&\n        request.resource.data.wasEdited is bool;\n\n      // Users and Cloud Functions can update reviews for their businesses\n      allow update: if isAuthenticated() &&\n        resource.data.businessId == request.resource.data.businessId && // Cannot change businessId\n        ownsBusinessDoc(resource.data.businessId) &&\n        // Validate reply status if changed\n        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['replyStatus']) ||\n          isValidReplyStatus(request.resource.data.replyStatus)) &&\n        // Validate aiReply length if provided\n        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['aiReply']) ||\n          (request.resource.data.aiReply == null || validStringLength(request.resource.data.aiReply, 0, 2000)));\n\n      // Reviews should not be deleted directly (keep for history)\n      allow delete: if false;\n    }\n\n    // ====== SUBSCRIPTIONS COLLECTION ======\n    match /subscriptions/{subscriptionId} {\n      // Users can read their own subscriptions\n      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;\n\n      // Only Cloud Functions/Admin can create subscriptions (via Stripe webhooks)\n      allow create: if isAuthenticated() &&\n        request.resource.data.userId == request.auth.uid &&\n        request.resource.data.keys().hasAll(['userId', 'stripeSubscriptionId', 'stripePriceId', 'status', 'currentPeriodEnd', 'cancelAtPeriodEnd']) &&\n        isValidSubscriptionStatus(request.resource.data.status) &&\n        request.resource.data.cancelAtPeriodEnd is bool;\n\n      // Users and Cloud Functions can update subscriptions (for cancellation, status changes)\n      allow update: if isAuthenticated() &&\n        resource.data.userId == request.auth.uid &&\n        // Cannot change userId or stripeSubscriptionId\n        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'stripeSubscriptionId'])) &&\n        // Validate status if changed\n        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['status']) ||\n          isValidSubscriptionStatus(request.resource.data.status));\n\n      // Subscriptions should not be deleted directly\n      allow delete: if false;\n    }\n  }\n}\n","name":"firestore.rules"}]},"createTime":"2025-10-22T08:32:19.007503Z","metadata":{"services":["cloud.firestore"]}}
-[debug] [2025-10-22T08:32:18.928Z] [rules] created ruleset projects/review-ai-reply/rulesets/58540cb4-a0cc-4720-bb87-2fd404f8b015
-[info] i  firestore: deploying indexes... 
-[debug] [2025-10-22T08:32:18.930Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:18.930Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:18.931Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/review-ai-reply/databases/(default)/collectionGroups/-/indexes [none]
-[debug] [2025-10-22T08:32:19.152Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/review-ai-reply/databases/(default)/collectionGroups/-/indexes 200
-[debug] [2025-10-22T08:32:19.153Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/review-ai-reply/databases/(default)/collectionGroups/-/indexes {"indexes":[{"name":"projects/review-ai-reply/databases/(default)/collectionGroups/reviews/indexes/CICAgJim14AK","queryScope":"COLLECTION","fields":[{"fieldPath":"businessId","order":"ASCENDING"},{"fieldPath":"rating","order":"ASCENDING"},{"fieldPath":"receivedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"READY","density":"SPARSE_ALL"},{"name":"projects/review-ai-reply/databases/(default)/collectionGroups/reviews/indexes/CICAgOjXh4EK","queryScope":"COLLECTION","fields":[{"fieldPath":"businessId","order":"ASCENDING"},{"fieldPath":"receivedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"READY","density":"SPARSE_ALL"},{"name":"projects/review-ai-reply/databases/(default)/collectionGroups/businesses/indexes/CICAgJj7z4EK","queryScope":"COLLECTION","fields":[{"fieldPath":"userId","order":"ASCENDING"},{"fieldPath":"connectedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"CREATING","density":"SPARSE_ALL"},{"name":"projects/review-ai-reply/databases/(default)/collectionGroups/reviews/indexes/CICAgJjF9oIK","queryScope":"COLLECTION","fields":[{"fieldPath":"businessId","order":"ASCENDING"},{"fieldPath":"rating","order":"ASCENDING"},{"fieldPath":"replyStatus","order":"ASCENDING"},{"fieldPath":"receivedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"READY","density":"SPARSE_ALL"},{"name":"projects/review-ai-reply/databases/(default)/collectionGroups/reviews/indexes/CICAgJiUpoMK","queryScope":"COLLECTION","fields":[{"fieldPath":"businessId","order":"ASCENDING"},{"fieldPath":"replyStatus","order":"ASCENDING"},{"fieldPath":"receivedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"READY","density":"SPARSE_ALL"},{"name":"projects/review-ai-reply/databases/(default)/collectionGroups/subscriptions/indexes/CICAgNi47oMK","queryScope":"COLLECTION","fields":[{"fieldPath":"userId","order":"ASCENDING"},{"fieldPath":"currentPeriodEnd","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"CREATING","density":"SPARSE_ALL"},{"name":"projects/review-ai-reply/databases/(default)/collectionGroups/subscriptions/indexes/CICAgOi3kJAK","queryScope":"COLLECTION","fields":[{"fieldPath":"userId","order":"ASCENDING"},{"fieldPath":"status","order":"ASCENDING"},{"fieldPath":"currentPeriodEnd","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"CREATING","density":"SPARSE_ALL"},{"name":"projects/review-ai-reply/databases/(default)/collectionGroups/businesses/indexes/CICAgJiH2JAK","queryScope":"COLLECTION","fields":[{"fieldPath":"userId","order":"ASCENDING"},{"fieldPath":"connected","order":"ASCENDING"},{"fieldPath":"connectedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"CREATING","density":"SPARSE_ALL"}]}
-[debug] [2025-10-22T08:32:19.153Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:19.153Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:19.153Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/review-ai-reply/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* [none]
-[debug] [2025-10-22T08:32:19.358Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/review-ai-reply/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* 200
-[debug] [2025-10-22T08:32:19.359Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/review-ai-reply/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* {"fields":[{"name":"projects/review-ai-reply/databases/(default)/collectionGroups/__default__/fields/*","indexConfig":{"indexes":[{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","order":"ASCENDING"}],"state":"READY"},{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","order":"DESCENDING"}],"state":"READY"},{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","arrayConfig":"CONTAINS"}],"state":"READY"}]}}]}
-[debug] [2025-10-22T08:32:19.359Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:19.359Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:19.359Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/review-ai-reply/databases/(default) [none]
-[debug] [2025-10-22T08:32:19.568Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/review-ai-reply/databases/(default) 200
-[debug] [2025-10-22T08:32:19.568Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/review-ai-reply/databases/(default) {"name":"projects/review-ai-reply/databases/(default)","uid":"3a10924e-c0f1-4f32-a2cf-73f92521ab62","createTime":"2025-10-22T07:39:12.218718Z","updateTime":"2025-10-22T07:39:12.218718Z","locationId":"nam5","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2025-10-22T07:39:12.218718Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"s","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IP2g+7yyt5ADMO24u/iot5AD"}
-[debug] [2025-10-22T08:32:19.570Z] Skipping existing index: {"collectionGroup":"reviews","queryScope":"COLLECTION","fields":[{"fieldPath":"businessId","order":"ASCENDING"},{"fieldPath":"receivedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}]}
-[debug] [2025-10-22T08:32:19.570Z] Skipping existing index: {"collectionGroup":"reviews","queryScope":"COLLECTION","fields":[{"fieldPath":"businessId","order":"ASCENDING"},{"fieldPath":"replyStatus","order":"ASCENDING"},{"fieldPath":"receivedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}]}
-[debug] [2025-10-22T08:32:19.570Z] Skipping existing index: {"collectionGroup":"reviews","queryScope":"COLLECTION","fields":[{"fieldPath":"businessId","order":"ASCENDING"},{"fieldPath":"rating","order":"ASCENDING"},{"fieldPath":"receivedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}]}
-[debug] [2025-10-22T08:32:19.571Z] Skipping existing index: {"collectionGroup":"reviews","queryScope":"COLLECTION","fields":[{"fieldPath":"businessId","order":"ASCENDING"},{"fieldPath":"rating","order":"ASCENDING"},{"fieldPath":"replyStatus","order":"ASCENDING"},{"fieldPath":"receivedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}]}
-[debug] [2025-10-22T08:32:19.571Z] Skipping existing index: {"collectionGroup":"businesses","queryScope":"COLLECTION","fields":[{"fieldPath":"userId","order":"ASCENDING"},{"fieldPath":"connectedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}]}
-[debug] [2025-10-22T08:32:19.571Z] Skipping existing index: {"collectionGroup":"businesses","queryScope":"COLLECTION","fields":[{"fieldPath":"userId","order":"ASCENDING"},{"fieldPath":"connected","order":"ASCENDING"},{"fieldPath":"connectedAt","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}]}
-[debug] [2025-10-22T08:32:19.571Z] Skipping existing index: {"collectionGroup":"subscriptions","queryScope":"COLLECTION","fields":[{"fieldPath":"userId","order":"ASCENDING"},{"fieldPath":"status","order":"ASCENDING"},{"fieldPath":"currentPeriodEnd","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}]}
-[debug] [2025-10-22T08:32:19.571Z] Skipping existing index: {"collectionGroup":"subscriptions","queryScope":"COLLECTION","fields":[{"fieldPath":"userId","order":"ASCENDING"},{"fieldPath":"currentPeriodEnd","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}]}
-[info] ✔  firestore: deployed indexes in firestore.indexes.json successfully for (default) database 
-[debug] [2025-10-22T08:32:19.572Z] [rules] releasing cloud.firestore/(default) with ruleset projects/review-ai-reply/rulesets/58540cb4-a0cc-4720-bb87-2fd404f8b015
-[debug] [2025-10-22T08:32:19.572Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:19.572Z] Checked if tokens are valid: true, expires at: 1761125139860
-[debug] [2025-10-22T08:32:19.572Z] >>> [apiv2][query] PATCH https://firebaserules.googleapis.com/v1/projects/review-ai-reply/releases/cloud.firestore/(default) [none]
-[debug] [2025-10-22T08:32:19.572Z] >>> [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/review-ai-reply/releases/cloud.firestore/(default) {"release":{"name":"projects/review-ai-reply/releases/cloud.firestore/(default)","rulesetName":"projects/review-ai-reply/rulesets/58540cb4-a0cc-4720-bb87-2fd404f8b015"}}
-[debug] [2025-10-22T08:32:20.082Z] <<< [apiv2][status] PATCH https://firebaserules.googleapis.com/v1/projects/review-ai-reply/releases/cloud.firestore/(default) 200
+[debug] [2025-10-25T23:29:18.314Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-25T23:29:18.320Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-25T23:29:18.320Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-25T23:29:18.320Z] [iam] checking project review-ai-reply for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get",null]
+[debug] [2025-10-25T23:29:18.320Z] Checked if tokens are valid: true, expires at: 1761438429009
+[debug] [2025-10-25T23:29:18.321Z] Checked if tokens are valid: true, expires at: 1761438429009
+[debug] [2025-10-25T23:29:18.321Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/review-ai-reply:testIamPermissions [none]
+[debug] [2025-10-25T23:29:18.321Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/review-ai-reply:testIamPermissions x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-25T23:29:18.321Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/review-ai-reply:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get",null]}
+[debug] [2025-10-25T23:29:19.354Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/review-ai-reply:testIamPermissions 200
+[debug] [2025-10-25T23:29:19.354Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/review-ai-reply:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[debug] [2025-10-25T23:29:19.354Z] [iam] error while checking permissions, command may fail: Authorization failed. This account is missing the following required permissions on project review-ai-reply:
+
+  
+[debug] [2025-10-25T23:29:19.354Z] Checked if tokens are valid: true, expires at: 1761438429009
+[debug] [2025-10-25T23:29:19.354Z] Checked if tokens are valid: true, expires at: 1761438429009
+[debug] [2025-10-25T23:29:19.354Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/review-ai-reply/serviceAccounts/review-ai-reply@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-10-25T23:29:19.354Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/review-ai-reply/serviceAccounts/review-ai-reply@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-10-26T00:21:56.474Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.477Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.477Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.478Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.479Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.480Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.481Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.482Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:56.482Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:56.482Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:56.482Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:56.482Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.486Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.486Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.486Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.487Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.487Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.510Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.510Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.510Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.511Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.511Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.511Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.511Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.512Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.512Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.512Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.512Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.512Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.512Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.512Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.513Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.513Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.514Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.514Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.514Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.514Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.514Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.515Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.515Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.515Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.515Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.515Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.515Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:56.515Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:56.516Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.516Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.516Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.516Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.516Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.516Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.518Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.518Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.518Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.518Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.518Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.518Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.518Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.518Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.518Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.519Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.480Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.482Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.482Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.483Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.484Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.484Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:56.485Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:56.485Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:56.485Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:56.486Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.489Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.489Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.489Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.490Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.490Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.513Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.513Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.513Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.513Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.513Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.514Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.514Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.514Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.514Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.514Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.515Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.516Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.516Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.516Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.516Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.516Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.517Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.518Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.518Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.518Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.518Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.518Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.518Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.518Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.518Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.519Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.519Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:56.519Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:56.519Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:56.520Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.520Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.520Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.520Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.520Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.521Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.521Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.521Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.522Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.522Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.522Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.522Z] Checked if tokens are valid: false, expires at: 1761438429009
+[debug] [2025-10-26T00:21:56.522Z] > refreshing access token with scopes: []
+[debug] [2025-10-26T00:21:56.522Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-26T00:21:56.522Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.750Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.752Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.750Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.771Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-26T00:21:56.771Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.752Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.774Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-26T00:21:56.774Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.776Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.772Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.772Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.786Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-26T00:21:56.786Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.789Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.776Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.789Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-26T00:21:56.789Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.789Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.789Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.800Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-26T00:21:56.800Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.801Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.790Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.802Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com [none]
+[debug] [2025-10-26T00:21:56.802Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.801Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.814Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-26T00:21:56.814Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.815Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.803Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.803Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.816Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-26T00:21:56.816Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.817Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.815Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.828Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com [none]
+[debug] [2025-10-26T00:21:56.828Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.829Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.829Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.846Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-26T00:21:56.846Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.847Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.817Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.835Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-26T00:21:56.835Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.836Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.836Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.854Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com [none]
+[debug] [2025-10-26T00:21:56.854Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.854Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.854Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.873Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com [none]
+[debug] [2025-10-26T00:21:56.873Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.847Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.863Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com [none]
+[debug] [2025-10-26T00:21:56.863Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.864Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.864Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.881Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-26T00:21:56.881Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.882Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.882Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.900Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com [none]
+[debug] [2025-10-26T00:21:56.900Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.874Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.874Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.890Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-26T00:21:56.890Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:56.891Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-26T00:21:56.891Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-26T00:21:56.908Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-26T00:21:56.908Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/review-ai-reply
+[debug] [2025-10-26T00:21:57.823Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com 403
+[debug] [2025-10-26T00:21:57.823Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com [omitted]
+[debug] [2025-10-26T00:21:57.855Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com 403
+[debug] [2025-10-26T00:21:57.855Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com [omitted]
+[debug] [2025-10-26T00:21:57.857Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com 403
+[debug] [2025-10-26T00:21:57.857Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com [omitted]
+[debug] [2025-10-26T00:21:57.858Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com 403
+[debug] [2025-10-26T00:21:57.858Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com [omitted]
+[debug] [2025-10-26T00:21:57.860Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com 403
+[debug] [2025-10-26T00:21:57.860Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com [omitted]
+[debug] [2025-10-26T00:21:57.881Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com 403
+[debug] [2025-10-26T00:21:57.881Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseio.com [omitted]
+[debug] [2025-10-26T00:21:57.972Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-26T00:21:57.972Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-26T00:21:57.976Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-26T00:21:57.977Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-26T00:21:57.979Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-26T00:21:57.979Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-26T00:21:57.985Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-26T00:21:57.985Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-26T00:21:57.986Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:57.987Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:57.987Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:57.988Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:57.988Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:57.988Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:57.989Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:57.989Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:57.989Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:57.990Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-26T00:21:57.990Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-26T00:21:57.990Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:57.991Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:57.992Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:57.992Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:57.992Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:57.992Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:57.993Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:57.993Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:57.993Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:57.994Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-26T00:21:57.994Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-26T00:21:57.995Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-26T00:21:57.995Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-26T00:21:57.998Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-26T00:21:57.998Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-26T00:21:57.999Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-26T00:21:57.999Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-26T00:21:58.006Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-26T00:21:58.006Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-26T00:21:58.012Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-26T00:21:58.012Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-26T00:21:58.013Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:58.014Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:58.015Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:58.015Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:58.015Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:58.016Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:58.016Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:58.017Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:58.017Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:58.113Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-26T00:21:58.113Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/review-ai-reply/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-26T00:21:58.113Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:58.114Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:58.115Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:58.115Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:58.115Z] > authorizing via signed-in user (alon710@gmail.com)
+[debug] [2025-10-26T00:21:58.115Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:58.116Z] Object "/extensions" in "firebase.json" has unknown property: {"additionalProperty":"firestore-stripe-payments"}
+[debug] [2025-10-26T00:21:58.116Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-26T00:21:58.116Z] > authorizing via signed-in user (alon710@gmail.com)

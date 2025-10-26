@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, X } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
-
-type PlanType = "free" | "basic" | "professional";
-type BillingPeriod = "monthly" | "yearly";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/firebase/auth";
+import type { PlanType, BillingPeriod } from "@/lib/stripe/config";
+import { getStripePriceId } from "@/lib/stripe/config";
+import { createSubscriptionCheckout } from "@/lib/stripe/client";
 
 interface Feature {
   name: string;
@@ -82,6 +83,28 @@ const plans: Plan[] = [
 
 export function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly");
+  const router = useRouter();
+  const { user } = useAuth();
+
+  const handleCheckout = async (planType: PlanType) => {
+    if (!user && planType !== "free") {
+      router.push(`/login?returnTo=/businesses`);
+      return;
+    }
+
+    if (!user) {
+      router.push(`/login?returnTo=/&plan=${planType}&period=${billingPeriod}`);
+      return;
+    }
+
+    try {
+      const priceId = getStripePriceId(planType, billingPeriod);
+      const session = await createSubscriptionCheckout(priceId);
+      window.location.assign(session.url);
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+    }
+  };
 
   const calculateMonthlyPrice = (monthlyPrice: number) => {
     if (monthlyPrice === 0) return 0;
@@ -197,14 +220,13 @@ export function Pricing() {
                 })}
               </ul>
 
-              <Link href="/login" className="w-full">
-                <Button
-                  className="w-full"
-                  variant={plan.recommended ? "default" : "outline"}
-                >
-                  {plan.cta}
-                </Button>
-              </Link>
+              <Button
+                className="w-full"
+                variant={plan.recommended ? "default" : "outline"}
+                onClick={() => handleCheckout(plan.id)}
+              >
+                {plan.cta}
+              </Button>
             </Card>
           ))}
         </div>

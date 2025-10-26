@@ -18,15 +18,10 @@ import { Building2, AlertCircle } from "lucide-react";
 import BusinessSelector, {
   GoogleLocationData,
 } from "@/components/dashboard/BusinessSelector";
-import { toast } from "sonner";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
 
-/**
- * Connect Business Page
- * Handles OAuth flow and business location selection
- */
 export default function ConnectBusinessPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -41,7 +36,6 @@ export default function ConnectBusinessPage() {
   const [error, setError] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
 
-  // Load user's Google Business locations
   const loadLocations = async () => {
     if (!user) return;
 
@@ -53,7 +47,6 @@ export default function ConnectBusinessPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        // Handle rate limit errors specifically
         if (response.status === 429) {
           throw new Error(
             data.error ||
@@ -73,17 +66,14 @@ export default function ConnectBusinessPage() {
       const errorMessage =
         err instanceof Error ? err.message : "לא ניתן לטעון מיקומים";
       setError(errorMessage);
-      toast.error(errorMessage);
     } finally {
       setLoadingLocations(false);
     }
   };
 
-  // Check if user returned from OAuth callback
   useEffect(() => {
     const success = searchParams.get("success");
     if (success === "true") {
-      // OAuth successful, load locations
       setStep("select");
       loadLocations();
     }
@@ -92,10 +82,8 @@ export default function ConnectBusinessPage() {
     if (errorParam) {
       setError(decodeURIComponent(errorParam));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  // Start OAuth flow
   const handleStartOAuth = async () => {
     if (!user) return;
 
@@ -103,7 +91,6 @@ export default function ConnectBusinessPage() {
       setLoading(true);
       setError(null);
 
-      // Check if user can add more businesses
       const canAdd = await checkBusinessLimit(user.uid);
       if (!canAdd) {
         setError(
@@ -112,7 +99,6 @@ export default function ConnectBusinessPage() {
         return;
       }
 
-      // Redirect to OAuth flow
       window.location.href = `/api/google/auth?userId=${user.uid}`;
     } catch (err) {
       console.error("Error starting OAuth:", err);
@@ -122,7 +108,6 @@ export default function ConnectBusinessPage() {
     }
   };
 
-  // Connect selected business
   const handleConnect = async () => {
     if (!selectedLocation || !user) return;
 
@@ -130,14 +115,12 @@ export default function ConnectBusinessPage() {
       setConnecting(true);
       setError(null);
 
-      // Check business limit again
       const canAdd = await checkBusinessLimit(user.uid);
       if (!canAdd) {
         setError("הגעת למגבלת העסקים בחבילת המינוי שלך");
         return;
       }
 
-      // Create business in Firestore
       await createBusiness({
         userId: user.uid,
         googleAccountId: selectedLocation.accountId,
@@ -146,14 +129,12 @@ export default function ConnectBusinessPage() {
         address: selectedLocation.address,
       });
 
-      toast.success("העסק חובר בהצלחה!");
       router.push("/businesses");
     } catch (err) {
       console.error("Error connecting business:", err);
       const errorMessage =
         err instanceof Error ? err.message : "לא ניתן לחבר את העסק";
       setError(errorMessage);
-      toast.error(errorMessage);
     } finally {
       setConnecting(false);
     }

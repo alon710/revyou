@@ -3,7 +3,6 @@ import { postReviewReply } from "@/lib/google/business-profile";
 import {
   getReviewAdmin,
   markAsPostedAdmin,
-  markAsFailedAdmin,
 } from "@/lib/firebase/reviews.admin";
 import { getBusinessAdmin } from "@/lib/firebase/businesses.admin";
 import { getUserAdmin } from "@/lib/firebase/users.admin";
@@ -27,18 +26,32 @@ export async function POST(
 
     const token = authHeader.split("Bearer ")[1];
     const decodedToken = await adminAuth.verifyIdToken(token);
-    const userId = decodedToken.uid;
+    const authenticatedUserId = decodedToken.uid;
 
-    // Get review using Admin SDK
-    const { id } = await params;
-    const review = await getReviewAdmin(id);
+    // Get review ID from URL params
+    const { id: reviewId } = await params;
 
-    if (!review) {
+    // Get userId and businessId from request body
+    const { userId: requestUserId, businessId } = await req.json();
+
+    // Verify ownership
+    if (requestUserId !== authenticatedUserId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // Get review using Admin SDK with direct path access
+    const fullReview = await getReviewAdmin(
+      authenticatedUserId,
+      businessId,
+      reviewId
+    );
+
+    if (!fullReview) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
     // Get business and verify ownership using Admin SDK
-    const business = await getBusinessAdmin(review.businessId);
+    const business = await getBusinessAdmin(authenticatedUserId, businessId);
 
     if (!business) {
       return NextResponse.json(
@@ -47,12 +60,8 @@ export async function POST(
       );
     }
 
-    if (business.userId !== userId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
     // Get user to access Google refresh token using Admin SDK
-    const user = await getUserAdmin(userId);
+    const user = await getUserAdmin(authenticatedUserId);
 
     if (!user || !user.googleRefreshToken) {
       return NextResponse.json(
@@ -65,7 +74,7 @@ export async function POST(
     const refreshToken = decryptToken(user.googleRefreshToken);
 
     // Determine which reply to post (edited takes precedence)
-    const replyText = review.editedReply || review.aiReply;
+    const replyText = fullReview.editedReply || fullReview.aiReply;
 
     if (!replyText) {
       return NextResponse.json({ error: "No reply to post" }, { status: 400 });
@@ -73,26 +82,26 @@ export async function POST(
 
     // Construct review resource name
     // Format: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
-    const reviewName = `accounts/${business.googleAccountId}/locations/${business.googleLocationId}/reviews/${review.googleReviewId}`;
+    const reviewName = `accounts/${business.googleAccountId}/locations/${business.googleLocationId}/reviews/${fullReview.googleReviewId}`;
 
     // Post to Google
     await postReviewReply(refreshToken, reviewName, replyText);
 
     // Update review status using Admin SDK
-    await markAsPostedAdmin(id, replyText, userId);
+    await markAsPostedAdmin(
+      authenticatedUserId,
+      businessId,
+      reviewId,
+      replyText,
+      authenticatedUserId
+    );
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error posting reply:", error);
 
-    // Mark as failed using Admin SDK
-    const { id: failedId } = await params;
-    try {
-      await markAsFailedAdmin(failedId);
-    } catch (updateError) {
-      console.error("Error marking review as failed:", updateError);
-    }
-
+    // We cannot mark as failed without userId and businessId
+    // The error is logged and returned to the client
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Failed to post reply",

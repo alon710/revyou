@@ -20,8 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Loading } from "@/components/ui/loading";
-import { Sparkles, Save, X } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 interface AIResponseSettingsEditModalProps {
   config: BusinessConfig;

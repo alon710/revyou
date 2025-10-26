@@ -1,5 +1,33 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Setup
+
+Before running the application, you need to configure your environment variables in `.env.local`:
+
+### Required Stripe Configuration
+
+The application uses [Firestore Stripe Payments Extension](https://github.com/invertase/stripe-firebase-extensions/tree/next/firestore-stripe-payments) for subscription management. You need to set up the following Stripe price IDs:
+
+1. **Create Products in Stripe Dashboard**: Create two subscription products (Basic and Professional)
+2. **Create Prices**: For each product, create both monthly and yearly prices
+3. **Update `.env.local`** with your actual price IDs:
+
+```bash
+# Replace these placeholder values with your actual Stripe price IDs
+NEXT_PUBLIC_STRIPE_PRICE_BASIC_MONTHLY=price_xxxxxxxxxxxxx
+NEXT_PUBLIC_STRIPE_PRICE_BASIC_YEARLY=price_xxxxxxxxxxxxx
+NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY=price_xxxxxxxxxxxxx
+NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY=price_xxxxxxxxxxxxx
+```
+
+**Important**: The current `.env.local` has placeholder price IDs that will cause checkout to fail. You must replace them with real price IDs from your Stripe account.
+
+### Other Required Environment Variables
+
+- Firebase configuration (already set up)
+- Google OAuth credentials
+- Gemini API key for AI features
+
 ## Getting Started
 
 First, run the development server:

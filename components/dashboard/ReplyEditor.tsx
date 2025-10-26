@@ -12,13 +12,14 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loading } from "@/components/ui/loading";
 import { editReply } from "@/lib/reviews/actions";
 import { useToast } from "@/hooks/use-toast";
 import { Edit } from "lucide-react";
 
 interface ReplyEditorProps {
   review: Review;
+  userId: string;
+  businessId: string;
   open: boolean;
   onClose: () => void;
   onSave: () => void;
@@ -33,6 +34,8 @@ interface ReplyEditorProps {
  */
 export function ReplyEditor({
   review,
+  userId,
+  businessId,
   open,
   onClose,
   onSave,
@@ -57,7 +60,7 @@ export function ReplyEditor({
 
     try {
       setIsLoading(true);
-      await editReply(review.id, replyText);
+      await editReply(userId, businessId, review.id, replyText);
       toast({
         title: "התגובה נשמרה",
         description: "התגובה המערוכת נשמרה בהצלחה",

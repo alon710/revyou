@@ -25,10 +25,17 @@ import { MessageSquare, User } from "lucide-react";
 
 interface ReviewCardProps {
   review: Review;
+  userId: string;
+  businessId: string;
   onUpdate?: () => void;
 }
 
-export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
+export function ReviewCard({
+  review,
+  userId,
+  businessId,
+  onUpdate,
+}: ReviewCardProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -51,7 +58,7 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
   const handleReject = async () => {
     try {
       setIsLoading(true);
-      await rejectReply(review.id);
+      await rejectReply(userId, businessId, review.id);
       toast({
         title: "התגובה נדחתה",
       });
@@ -73,7 +80,7 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
 
     try {
       const token = await user.getIdToken();
-      await postReplyToGoogle(review.id, token);
+      await postReplyToGoogle(userId, businessId, review.id, token);
       toast({
         title: "התגובה פורסמה",
         description: "התגובה פורסמה בהצלחה לגוגל",
@@ -96,7 +103,7 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
     try {
       setIsLoading(true);
       const token = await user.getIdToken();
-      await regenerateReply(review.id, token);
+      await regenerateReply(userId, businessId, review.id, token);
       toast({
         title: "תגובה חדשה נוצרה",
         description: "התגובה האוטומטית עודכנה",
@@ -206,6 +213,8 @@ export function ReviewCard({ review, onUpdate }: ReviewCardProps) {
       {/* Reply Editor Modal */}
       <ReplyEditor
         review={review}
+        userId={userId}
+        businessId={businessId}
         open={showEditor}
         onClose={() => setShowEditor(false)}
         onSave={() => {

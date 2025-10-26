@@ -68,7 +68,10 @@ export function FAQ() {
 
         <div className="max-w-3xl mx-auto space-y-4">
           {faqs.map((faq, index) => (
-            <Card key={index} className="overflow-hidden border border-border/40 shadow-sm hover:shadow-md rounded-lg">
+            <Card
+              key={index}
+              className="overflow-hidden border border-border/40 shadow-sm hover:shadow-md rounded-lg"
+            >
               <button
                 onClick={() => toggleFAQ(index)}
                 className="w-full text-right p-6 flex items-center justify-between hover:bg-secondary/50 transition-all"

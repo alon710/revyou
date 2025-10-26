@@ -17,9 +17,7 @@ import { NotificationPreferencesEditModal } from "./NotificationPreferencesEditM
 interface NotificationPreferencesProps {
   emailOnNewReview: boolean;
   loading?: boolean;
-  onUpdate: (preferences: {
-    emailOnNewReview: boolean;
-  }) => Promise<void>;
+  onUpdate: (preferences: { emailOnNewReview: boolean }) => Promise<void>;
 }
 
 export function NotificationPreferences({

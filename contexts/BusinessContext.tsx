@@ -11,6 +11,7 @@ import React, {
 import { Business } from "@/types/database";
 import { getBusiness, getUserBusinesses } from "@/lib/firebase/businesses";
 import { useAuth } from "./AuthContext";
+import { useUIStore } from "@/lib/store/ui-store";
 
 interface BusinessContextType {
   currentBusiness: Business | null;
@@ -26,33 +27,20 @@ const BusinessContext = createContext<BusinessContextType | undefined>(
   undefined
 );
 
-const STORAGE_KEY = "selectedBusinessId";
-
 export function BusinessProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
+  const { selectedBusinessId, setSelectedBusinessId, clearSelectedBusinessId } =
+    useUIStore();
   const [currentBusiness, setCurrentBusiness] = useState<Business | null>(null);
   const [businesses, setBusinesses] = useState<Business[]>([]);
-  const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(
-    null
-  );
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setSelectedBusinessId(stored);
-      }
-    }
-  }, []);
-
-  const selectBusiness = useCallback((businessId: string) => {
-    setSelectedBusinessId(businessId);
-
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, businessId);
-    }
-  }, []);
+  const selectBusiness = useCallback(
+    (businessId: string) => {
+      setSelectedBusinessId(businessId);
+    },
+    [setSelectedBusinessId]
+  );
 
   const loadBusinesses = useCallback(async () => {
     if (!user) return;
@@ -70,10 +58,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
         if (!stillExists && connected.length > 0) {
           selectBusiness(connected[0].id);
         } else if (!stillExists) {
-          if (typeof window !== "undefined") {
-            localStorage.removeItem(STORAGE_KEY);
-          }
-          setSelectedBusinessId(null);
+          clearSelectedBusinessId();
           setCurrentBusiness(null);
         }
       }
@@ -83,26 +68,26 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [user, selectedBusinessId, selectBusiness]);
+  }, [user, selectedBusinessId, selectBusiness, clearSelectedBusinessId]);
 
-  const loadCurrentBusiness = useCallback(async (businessId: string) => {
-    try {
-      const business = await getBusiness(businessId);
-      setCurrentBusiness(business);
-    } catch (_error) {
-      console.error("Failed to load current business:", _error);
-      setCurrentBusiness(null);
-    }
-  }, []);
+  const loadCurrentBusiness = useCallback(
+    async (businessId: string) => {
+      if (!user) return;
+      try {
+        const business = await getBusiness(user.uid, businessId);
+        setCurrentBusiness(business);
+      } catch (_error) {
+        console.error("Failed to load current business:", _error);
+        setCurrentBusiness(null);
+      }
+    },
+    [user]
+  );
 
-  const clearBusiness = () => {
-    setSelectedBusinessId(null);
+  const clearBusiness = useCallback(() => {
+    clearSelectedBusinessId();
     setCurrentBusiness(null);
-
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(STORAGE_KEY);
-    }
-  };
+  }, [clearSelectedBusinessId]);
 
   useEffect(() => {
     if (user) {
@@ -110,10 +95,10 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     } else {
       setBusinesses([]);
       setCurrentBusiness(null);
-      setSelectedBusinessId(null);
+      clearSelectedBusinessId();
       setLoading(false);
     }
-  }, [user, loadBusinesses]);
+  }, [user, loadBusinesses, clearSelectedBusinessId]);
 
   useEffect(() => {
     if (selectedBusinessId && user) {
@@ -125,7 +110,6 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
 
   const refreshBusinesses = useCallback(async () => {
     await loadBusinesses();
-    // Also reload the current business to get fresh data
     if (selectedBusinessId) {
       await loadCurrentBusiness(selectedBusinessId);
     }

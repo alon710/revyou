@@ -49,34 +49,6 @@ if (USER_ID === "YOUR_USER_UID") {
   process.exit(1);
 }
 
-const DEFAULT_PROMPT_TEMPLATE = `אתה עוזר AI שכותב תגובות לביקורות עסקיות ב-Google Business Profile.
-
-מידע על העסק:
-- שם העסק: {{BUSINESS_NAME}}
-- תיאור העסק: {{BUSINESS_DESCRIPTION}}
-- טלפון העסק: {{BUSINESS_PHONE}}
-
-מידע על הביקורת:
-- שם המבקר: {{REVIEWER_NAME}}
-- דירוג: {{RATING}} כוכבים
-- טקסט הביקורת: {{REVIEW_TEXT}}
-
-הנחיות לתגובה:
-כשאתה כותב תגובה חדשה, השתמש בטון {{TONE}}.
-השתמש בשפה {{LANGUAGE}} כאשר אתה מנסח תגובה. אם צריך, תרגם את שם המבקר או טקסט הביקורת לשפה זו כדי לענות לו בשפה טבעית.
-הגבל את התגובה ל-{{MAX_SENTENCES}} משפטים בלבד.
-כאשר אתה מנסח את התגובה תרגיש חופשי להשתמש באמוג'י הבאים בהנחה והם מתאימים ללשון התגובה {{ALLOWED_EMOJIS}}
-סיים את התגובה עם החתימה: {{SIGNATURE}}
-
-הנחיות מיוחדות לפי דירוג:
-עבור דירוג 1 כוכב {{CUSTOM_INSTRUCTIONS_1}}
-עבור דירוג 2 כוכבים {{CUSTOM_INSTRUCTIONS_2}}
-עבור דירוג 3 כוכבים {{CUSTOM_INSTRUCTIONS_3}}
-עבור דירוג 4 כוכבים {{CUSTOM_INSTRUCTIONS_4}}
-עבור דירוג 5 כוכבים {{CUSTOM_INSTRUCTIONS_5}}
-
-כתוב תגובה מקצועית, אמפתית ומותאמת אישית לביקורת.`;
-
 async function seedDatabase() {
   console.log("🌱 Starting database seeding...\n");
 
@@ -94,7 +66,6 @@ async function seedDatabase() {
         createdAt: Timestamp.fromDate(new Date("2024-01-01")),
         subscriptionTier: "professional",
         stripeCustomerId: "cus_test123",
-        selectedBusinessId: "business_test_001",
         notificationPreferences: {
           emailOnNewReview: true,
         },
@@ -105,8 +76,6 @@ async function seedDatabase() {
     console.log("🏢 Creating business documents...");
 
     const business1 = {
-      id: "business_test_001",
-      userId: USER_ID,
       googleAccountId: "google_account_123",
       googleLocationId: "location_123",
       name: "מסעדת חמישים ושמונה",
@@ -116,15 +85,10 @@ async function seedDatabase() {
       connectedAt: Timestamp.fromDate(new Date("2024-01-15")),
       notificationsEnabled: true,
       config: {
-        businessName: "מסעדת חמישים ושמונה",
         businessDescription: "מסעדה איטלקית משפחתית המגישה פיצות ופסטות טריות",
-        businessPhone: "03-1234567",
         toneOfVoice: "friendly",
         useEmojis: true,
         languageMode: "hebrew",
-        maxSentences: 2,
-        allowedEmojis: ["🥂", "✨", "🙏", "❤️", "👨‍🍳"],
-        signature: "צוות חמישים ושמונה",
         starConfigs: {
           1: {
             autoReply: true,
@@ -152,8 +116,6 @@ async function seedDatabase() {
     };
 
     const business2 = {
-      id: "business_test_002",
-      userId: USER_ID,
       googleAccountId: "google_account_456",
       googleLocationId: "location_456",
       name: "בית קפה המלך ג'ורג'",
@@ -163,15 +125,10 @@ async function seedDatabase() {
       connectedAt: Timestamp.fromDate(new Date("2024-02-01")),
       notificationsEnabled: true,
       config: {
-        businessName: "בית קפה המלך ג'ורג'",
         businessDescription: "בית קפה בוטיק עם קפה איכותי ועוגות תוצרת בית",
-        businessPhone: "02-9876543",
         toneOfVoice: "professional",
         useEmojis: false,
         languageMode: "hebrew",
-        maxSentences: 3,
-        allowedEmojis: ["☕"],
-        signature: "בברכה, צוות בית הקפה",
         starConfigs: {
           1: {
             autoReply: true,
@@ -197,10 +154,20 @@ async function seedDatabase() {
       },
     };
 
-    await db.collection("businesses").doc("business_test_001").set(business1);
+    await db
+      .collection("users")
+      .doc(USER_ID)
+      .collection("businesses")
+      .doc("business_test_001")
+      .set(business1);
     console.log("✅ Business 1 created: מסעדת חמישים ושמונה");
 
-    await db.collection("businesses").doc("business_test_002").set(business2);
+    await db
+      .collection("users")
+      .doc(USER_ID)
+      .collection("businesses")
+      .doc("business_test_002")
+      .set(business2);
     console.log("✅ Business 2 created: בית קפה המלך ג'ורג'\n");
 
     // 3. Seed Reviews
@@ -208,8 +175,7 @@ async function seedDatabase() {
 
     const reviews = [
       {
-        id: "review_001",
-        businessId: "business_test_001",
+        id: "google_review_123",
         googleReviewId: "google_review_123",
         reviewerName: "שרה כהן",
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Sarah+Cohen",
@@ -228,8 +194,7 @@ async function seedDatabase() {
         postedBy: null,
       },
       {
-        id: "review_002",
-        businessId: "business_test_001",
+        id: "google_review_124",
         googleReviewId: "google_review_124",
         reviewerName: "דוד לוי",
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=David+Levi",
@@ -248,8 +213,7 @@ async function seedDatabase() {
         postedBy: null,
       },
       {
-        id: "review_003",
-        businessId: "business_test_001",
+        id: "google_review_125",
         googleReviewId: "google_review_125",
         reviewerName: "מיכל אברהם",
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Michal+Abraham",
@@ -268,8 +232,7 @@ async function seedDatabase() {
         postedBy: USER_ID,
       },
       {
-        id: "review_004",
-        businessId: "business_test_001",
+        id: "google_review_126",
         googleReviewId: "google_review_126",
         reviewerName: "יוסי מזרחי",
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Yossi+Mizrahi",
@@ -290,8 +253,7 @@ async function seedDatabase() {
         postedBy: USER_ID,
       },
       {
-        id: "review_005",
-        businessId: "business_test_001",
+        id: "google_review_127",
         googleReviewId: "google_review_127",
         reviewerName: "רחל גולדשטיין",
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Rachel+Goldstein",
@@ -309,8 +271,7 @@ async function seedDatabase() {
         postedBy: null,
       },
       {
-        id: "review_006",
-        businessId: "business_test_002",
+        id: "google_review_201",
         googleReviewId: "google_review_201",
         reviewerName: "אבי שמעון",
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Avi+Shimon",
@@ -328,8 +289,7 @@ async function seedDatabase() {
         postedBy: null,
       },
       {
-        id: "review_007",
-        businessId: "business_test_002",
+        id: "google_review_202",
         googleReviewId: "google_review_202",
         reviewerName: "דנה כץ",
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Dana+Katz",
@@ -347,8 +307,7 @@ async function seedDatabase() {
         postedBy: null,
       },
       {
-        id: "review_008",
-        businessId: "business_test_001",
+        id: "google_review_128",
         googleReviewId: "google_review_128",
         reviewerName: "אלון ברזילי",
         reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Alon+Barzily",
@@ -367,27 +326,53 @@ async function seedDatabase() {
       },
     ];
 
-    for (const review of reviews) {
-      await db.collection("reviews").doc(review.id).set(review);
-      console.log(`✅ Review created: ${review.id} (${review.rating}⭐)`);
+    // Reviews for business_test_001
+    const business1Reviews = reviews.filter((r) =>
+      [
+        "google_review_123",
+        "google_review_124",
+        "google_review_125",
+        "google_review_126",
+        "google_review_127",
+        "google_review_128",
+      ].includes(r.id)
+    );
+
+    for (const review of business1Reviews) {
+      const { id, ...reviewData } = review;
+      await db
+        .collection("users")
+        .doc(USER_ID)
+        .collection("businesses")
+        .doc("business_test_001")
+        .collection("reviews")
+        .doc(id)
+        .set(reviewData);
+      console.log(
+        `✅ Review created: ${id} (${review.rating}⭐) - מסעדת חמישים ושמונה`
+      );
+    }
+
+    // Reviews for business_test_002
+    const business2Reviews = reviews.filter((r) =>
+      ["google_review_201", "google_review_202"].includes(r.id)
+    );
+
+    for (const review of business2Reviews) {
+      const { id, ...reviewData } = review;
+      await db
+        .collection("users")
+        .doc(USER_ID)
+        .collection("businesses")
+        .doc("business_test_002")
+        .collection("reviews")
+        .doc(id)
+        .set(reviewData);
+      console.log(
+        `✅ Review created: ${id} (${review.rating}⭐) - בית קפה המלך ג'ורג'`
+      );
     }
     console.log("\n");
-
-    // 4. Seed Subscription
-    console.log("💳 Creating subscription document...");
-    await db
-      .collection("subscriptions")
-      .doc("sub_test_001")
-      .set({
-        id: "sub_test_001",
-        userId: USER_ID,
-        stripeSubscriptionId: "sub_test123",
-        stripePriceId: "price_professional_monthly",
-        status: "active",
-        currentPeriodEnd: Timestamp.fromDate(new Date("2024-12-31T23:59:59")),
-        cancelAtPeriodEnd: false,
-      });
-    console.log("✅ Subscription created\n");
 
     console.log("✨ Database seeding completed successfully!\n");
     console.log("📊 Summary:");

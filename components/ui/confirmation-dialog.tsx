@@ -13,7 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertTriangle } from "lucide-react";
-import { Loading } from "@/components/ui/loading";
 
 export interface ConfirmationDialogProps {
   open: boolean;

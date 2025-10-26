@@ -14,8 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Loading } from "@/components/ui/loading";
-import { Star, Save, X } from "lucide-react";
+import { Star } from "lucide-react";
 import { StarRating } from "@/components/ui/StarRating";
 
 interface StarRatingConfigEditModalProps {

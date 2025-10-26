@@ -85,7 +85,6 @@ export const userUpdateSchema = userSchema
 
 export const businessSchema = z.object({
   id: z.string().min(1),
-  userId: z.string().min(1),
   googleAccountId: z.string().min(1),
   googleLocationId: z.string().min(1),
   name: z.string().min(1).max(200),
@@ -100,11 +99,10 @@ export const businessCreateSchema = businessSchema.omit({ id: true });
 
 export const businessUpdateSchema = businessSchema
   .partial()
-  .omit({ id: true, userId: true, connectedAt: true });
+  .omit({ id: true, connectedAt: true });
 
 export const reviewSchema = z.object({
   id: z.string().min(1),
-  businessId: z.string().min(1),
   googleReviewId: z.string().min(1),
   reviewerName: z.string().min(1).max(200),
   reviewerPhotoUrl: z.string().url().optional(),
@@ -126,7 +124,7 @@ export const reviewCreateSchema = reviewSchema.omit({ id: true });
 
 export const reviewUpdateSchema = reviewSchema
   .partial()
-  .omit({ id: true, businessId: true, googleReviewId: true, receivedAt: true });
+  .omit({ id: true, googleReviewId: true, receivedAt: true });
 
 export const subscriptionSchema = z.object({
   id: z.string().min(1),

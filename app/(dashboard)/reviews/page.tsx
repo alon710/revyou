@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
-import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
+import { collection, query, orderBy, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { Review } from "@/types/database";
 import { ReviewCard } from "@/components/dashboard/ReviewCard";
@@ -12,6 +13,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 
 export default function ReviewsPage() {
+  const { user } = useAuth();
   const {
     currentBusiness,
     businesses,
@@ -21,7 +23,7 @@ export default function ReviewsPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const loadReviews = useCallback(async () => {
-    if (!db || !currentBusiness) {
+    if (!db || !currentBusiness || !user) {
       setIsLoading(false);
       return;
     }
@@ -30,8 +32,14 @@ export default function ReviewsPage() {
       setIsLoading(true);
 
       const q = query(
-        collection(db, "reviews"),
-        where("businessId", "==", currentBusiness.id),
+        collection(
+          db,
+          "users",
+          user.uid,
+          "businesses",
+          currentBusiness.id,
+          "reviews"
+        ),
         orderBy("receivedAt", "desc")
       );
 
@@ -48,7 +56,7 @@ export default function ReviewsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentBusiness]);
+  }, [currentBusiness, user]);
 
   useEffect(() => {
     if (!businessLoading) {
@@ -108,6 +116,8 @@ export default function ReviewsPage() {
             <ReviewCard
               key={review.id}
               review={review}
+              userId={user!.uid}
+              businessId={currentBusiness.id}
               onUpdate={handleUpdate}
             />
           ))

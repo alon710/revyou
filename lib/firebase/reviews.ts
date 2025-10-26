@@ -45,6 +45,7 @@ export interface ReviewsResult {
 
 /**
  * Get reviews for a business with optional filters and pagination
+ * @param userId - User ID
  * @param businessId - Business ID
  * @param filters - Optional filters (status, rating, date range)
  * @param limit - Number of reviews to fetch (default: 20)
@@ -52,6 +53,7 @@ export interface ReviewsResult {
  * @returns Reviews and pagination info
  */
 export async function getReviewsByBusiness(
+  userId: string,
   businessId: string,
   filters?: ReviewFilters,
   limit: number = 20,
@@ -63,10 +65,15 @@ export async function getReviewsByBusiness(
   }
 
   try {
-    const reviewsRef = collection(db, "reviews");
-    const constraints: QueryConstraint[] = [
-      where("businessId", "==", businessId),
-    ];
+    const reviewsRef = collection(
+      db,
+      "users",
+      userId,
+      "businesses",
+      businessId,
+      "reviews"
+    );
+    const constraints: QueryConstraint[] = [];
 
     // Add filters
     if (filters?.status) {
@@ -130,17 +137,31 @@ export async function getReviewsByBusiness(
 
 /**
  * Get a single review by ID
+ * @param userId - User ID
+ * @param businessId - Business ID
  * @param reviewId - Review ID
  * @returns Review data or null if not found
  */
-export async function getReview(reviewId: string): Promise<Review | null> {
+export async function getReview(
+  userId: string,
+  businessId: string,
+  reviewId: string
+): Promise<Review | null> {
   if (!db) {
     console.error("Firestore not initialized");
     return null;
   }
 
   try {
-    const reviewRef = doc(db, "reviews", reviewId);
+    const reviewRef = doc(
+      db,
+      "users",
+      userId,
+      "businesses",
+      businessId,
+      "reviews",
+      reviewId
+    );
     const reviewSnap = await getDoc(reviewRef);
 
     if (reviewSnap.exists()) {
@@ -158,11 +179,18 @@ export async function getReview(reviewId: string): Promise<Review | null> {
 
 /**
  * Create a new review
- * @param data - Review data (without id)
+ * @param userId - User ID
+ * @param businessId - Business ID
+ * @param data - Review data (without id, businessId removed from data as it's in path)
  * @returns Created review with ID
  */
 export async function createReview(
-  data: Omit<ReviewCreateInput, "receivedAt" | "wasEdited" | "replyStatus">
+  userId: string,
+  businessId: string,
+  data: Omit<
+    ReviewCreateInput,
+    "receivedAt" | "wasEdited" | "replyStatus" | "businessId"
+  >
 ): Promise<Review> {
   if (!db) {
     throw new Error("Firestore not initialized");
@@ -176,14 +204,21 @@ export async function createReview(
       wasEdited: false,
     };
 
-    // Validate before creating
-    reviewCreateSchema.parse(reviewData);
+    // Validate before creating (add businessId for validation only)
+    reviewCreateSchema.parse({ ...reviewData, businessId });
 
-    const reviewsRef = collection(db, "reviews");
+    const reviewsRef = collection(
+      db,
+      "users",
+      userId,
+      "businesses",
+      businessId,
+      "reviews"
+    );
     const docRef = await addDoc(reviewsRef, reviewData);
 
     // Return the created review
-    return (await getReview(docRef.id)) as Review;
+    return (await getReview(userId, businessId, docRef.id)) as Review;
   } catch (error) {
     console.error("Error creating review:", error);
     throw new Error("לא ניתן ליצור ביקורת חדשה");
@@ -192,12 +227,16 @@ export async function createReview(
 
 /**
  * Update review reply (AI generated or edited)
+ * @param userId - User ID
+ * @param businessId - Business ID
  * @param reviewId - Review ID
  * @param reply - Reply text
  * @param isEdited - Whether this is a user edit
  * @returns Updated review
  */
 export async function updateReviewReply(
+  userId: string,
+  businessId: string,
   reviewId: string,
   reply: string,
   isEdited: boolean = false
@@ -207,7 +246,15 @@ export async function updateReviewReply(
   }
 
   try {
-    const reviewRef = doc(db, "reviews", reviewId);
+    const reviewRef = doc(
+      db,
+      "users",
+      userId,
+      "businesses",
+      businessId,
+      "reviews",
+      reviewId
+    );
     const updateData: Record<string, unknown> = {
       aiReply: reply,
       aiReplyGeneratedAt: serverTimestamp(),
@@ -221,7 +268,7 @@ export async function updateReviewReply(
     await updateDoc(reviewRef, updateData);
 
     // Return the updated review
-    return (await getReview(reviewId)) as Review;
+    return (await getReview(userId, businessId, reviewId)) as Review;
   } catch (error) {
     console.error("Error updating review reply:", error);
     throw new Error("לא ניתן לעדכן את התגובה");
@@ -230,20 +277,34 @@ export async function updateReviewReply(
 
 /**
  * Approve a reply for posting
+ * @param userId - User ID
+ * @param businessId - Business ID
  * @param reviewId - Review ID
  * @returns Updated review
  */
-export async function approveReply(reviewId: string): Promise<Review> {
+export async function approveReply(
+  userId: string,
+  businessId: string,
+  reviewId: string
+): Promise<Review> {
   if (!db) {
     throw new Error("Firestore not initialized");
   }
 
   try {
-    const reviewRef = doc(db, "reviews", reviewId);
+    const reviewRef = doc(
+      db,
+      "users",
+      userId,
+      "businesses",
+      businessId,
+      "reviews",
+      reviewId
+    );
     await updateDoc(reviewRef, { replyStatus: "approved" });
 
     // Return the updated review
-    return (await getReview(reviewId)) as Review;
+    return (await getReview(userId, businessId, reviewId)) as Review;
   } catch (error) {
     console.error("Error approving reply:", error);
     throw new Error("לא ניתן לאשר את התגובה");
@@ -252,20 +313,34 @@ export async function approveReply(reviewId: string): Promise<Review> {
 
 /**
  * Reject a reply
+ * @param userId - User ID
+ * @param businessId - Business ID
  * @param reviewId - Review ID
  * @returns Updated review
  */
-export async function rejectReply(reviewId: string): Promise<Review> {
+export async function rejectReply(
+  userId: string,
+  businessId: string,
+  reviewId: string
+): Promise<Review> {
   if (!db) {
     throw new Error("Firestore not initialized");
   }
 
   try {
-    const reviewRef = doc(db, "reviews", reviewId);
+    const reviewRef = doc(
+      db,
+      "users",
+      userId,
+      "businesses",
+      businessId,
+      "reviews",
+      reviewId
+    );
     await updateDoc(reviewRef, { replyStatus: "rejected" });
 
     // Return the updated review
-    return (await getReview(reviewId)) as Review;
+    return (await getReview(userId, businessId, reviewId)) as Review;
   } catch (error) {
     console.error("Error rejecting reply:", error);
     throw new Error("לא ניתן לדחות את התגובה");
@@ -274,12 +349,16 @@ export async function rejectReply(reviewId: string): Promise<Review> {
 
 /**
  * Mark a review as posted with the reply that was posted
+ * @param userId - User ID
+ * @param businessId - Business ID
  * @param reviewId - Review ID
  * @param postedReply - The actual reply that was posted
  * @param postedBy - User ID who posted
  * @returns Updated review
  */
 export async function markAsPosted(
+  userId: string,
+  businessId: string,
   reviewId: string,
   postedReply: string,
   postedBy: string
@@ -289,7 +368,15 @@ export async function markAsPosted(
   }
 
   try {
-    const reviewRef = doc(db, "reviews", reviewId);
+    const reviewRef = doc(
+      db,
+      "users",
+      userId,
+      "businesses",
+      businessId,
+      "reviews",
+      reviewId
+    );
     await updateDoc(reviewRef, {
       replyStatus: "posted",
       postedReply,
@@ -298,7 +385,7 @@ export async function markAsPosted(
     });
 
     // Return the updated review
-    return (await getReview(reviewId)) as Review;
+    return (await getReview(userId, businessId, reviewId)) as Review;
   } catch (error) {
     console.error("Error marking as posted:", error);
     throw new Error("לא ניתן לסמן את התגובה כפורסמה");
@@ -307,20 +394,34 @@ export async function markAsPosted(
 
 /**
  * Mark a review reply as failed
+ * @param userId - User ID
+ * @param businessId - Business ID
  * @param reviewId - Review ID
  * @returns Updated review
  */
-export async function markAsFailed(reviewId: string): Promise<Review> {
+export async function markAsFailed(
+  userId: string,
+  businessId: string,
+  reviewId: string
+): Promise<Review> {
   if (!db) {
     throw new Error("Firestore not initialized");
   }
 
   try {
-    const reviewRef = doc(db, "reviews", reviewId);
+    const reviewRef = doc(
+      db,
+      "users",
+      userId,
+      "businesses",
+      businessId,
+      "reviews",
+      reviewId
+    );
     await updateDoc(reviewRef, { replyStatus: "failed" });
 
     // Return the updated review
-    return (await getReview(reviewId)) as Review;
+    return (await getReview(userId, businessId, reviewId)) as Review;
   } catch (error) {
     console.error("Error marking as failed:", error);
     throw new Error("לא ניתן לעדכן את סטטוס התגובה");
@@ -329,11 +430,15 @@ export async function markAsFailed(reviewId: string): Promise<Review> {
 
 /**
  * Update review data
+ * @param userId - User ID
+ * @param businessId - Business ID
  * @param reviewId - Review ID
  * @param data - Partial review data to update
  * @returns Updated review
  */
 export async function updateReview(
+  userId: string,
+  businessId: string,
   reviewId: string,
   data: ReviewUpdateInput
 ): Promise<Review> {
@@ -345,11 +450,19 @@ export async function updateReview(
     // Validate update data
     const validatedData = reviewUpdateSchema.parse(data);
 
-    const reviewRef = doc(db, "reviews", reviewId);
+    const reviewRef = doc(
+      db,
+      "users",
+      userId,
+      "businesses",
+      businessId,
+      "reviews",
+      reviewId
+    );
     await updateDoc(reviewRef, validatedData);
 
     // Return the updated review
-    return (await getReview(reviewId)) as Review;
+    return (await getReview(userId, businessId, reviewId)) as Review;
   } catch (error) {
     console.error("Error updating review:", error);
     throw new Error("לא ניתן לעדכן את הביקורת");
@@ -358,10 +471,14 @@ export async function updateReview(
 
 /**
  * Get review statistics for a business
+ * @param userId - User ID
  * @param businessId - Business ID
  * @returns Statistics object
  */
-export async function getReviewStats(businessId: string): Promise<{
+export async function getReviewStats(
+  userId: string,
+  businessId: string
+): Promise<{
   total: number;
   pending: number;
   approved: number;
@@ -383,9 +500,15 @@ export async function getReviewStats(businessId: string): Promise<{
   }
 
   try {
-    const reviewsRef = collection(db, "reviews");
-    const q = query(reviewsRef, where("businessId", "==", businessId));
-    const querySnapshot = await getDocs(q);
+    const reviewsRef = collection(
+      db,
+      "users",
+      userId,
+      "businesses",
+      businessId,
+      "reviews"
+    );
+    const querySnapshot = await getDocs(reviewsRef);
 
     let total = 0;
     let pending = 0;
@@ -438,54 +561,40 @@ export async function getReviewStats(businessId: string): Promise<{
 
 /**
  * Get recent reviews for a business
+ * @param userId - User ID
  * @param businessId - Business ID
  * @param limit - Number of reviews to fetch (default: 5)
  * @returns Array of recent reviews
  */
 export async function getRecentReviews(
+  userId: string,
   businessId: string,
   limit: number = 5
 ): Promise<Review[]> {
-  const result = await getReviewsByBusiness(businessId, undefined, limit);
-  return result.reviews;
-}
-
-/**
- * Get pending reviews for a business (require approval)
- * @param businessId - Business ID
- * @returns Array of pending reviews
- */
-export async function getPendingReviews(businessId: string): Promise<Review[]> {
   const result = await getReviewsByBusiness(
+    userId,
     businessId,
-    { status: "pending" },
-    100 // Get all pending
+    undefined,
+    limit
   );
   return result.reviews;
 }
 
 /**
- * Check if a review with a specific Google Review ID already exists
- * @param googleReviewId - Google Review ID
- * @returns True if exists, false otherwise
+ * Get pending reviews for a business (require approval)
+ * @param userId - User ID
+ * @param businessId - Business ID
+ * @returns Array of pending reviews
  */
-export async function reviewExists(googleReviewId: string): Promise<boolean> {
-  if (!db) {
-    return false;
-  }
-
-  try {
-    const reviewsRef = collection(db, "reviews");
-    const q = query(
-      reviewsRef,
-      where("googleReviewId", "==", googleReviewId),
-      firestoreLimit(1)
-    );
-    const querySnapshot = await getDocs(q);
-
-    return !querySnapshot.empty;
-  } catch (error) {
-    console.error("Error checking review existence:", error);
-    return false;
-  }
+export async function getPendingReviews(
+  userId: string,
+  businessId: string
+): Promise<Review[]> {
+  const result = await getReviewsByBusiness(
+    userId,
+    businessId,
+    { status: "pending" },
+    100 // Get all pending
+  );
+  return result.reviews;
 }

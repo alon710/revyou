@@ -25,28 +25,38 @@ export async function POST(
 
     const token = authHeader.split("Bearer ")[1];
     const decodedToken = await adminAuth.verifyIdToken(token);
-    const userId = decodedToken.uid;
+    const authenticatedUserId = decodedToken.uid;
 
-    // Get review using Admin SDK
-    const { id } = await params;
-    const review = await getReviewAdmin(id);
+    // Get review ID from URL params
+    const { id: reviewId } = await params;
+
+    // Get userId and businessId from request body
+    const { userId: requestUserId, businessId } = await req.json();
+
+    // Verify ownership
+    if (requestUserId !== authenticatedUserId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // Get review using Admin SDK with direct path access
+    const review = await getReviewAdmin(
+      authenticatedUserId,
+      businessId,
+      reviewId
+    );
 
     if (!review) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
     // Get business and verify ownership using Admin SDK
-    const business = await getBusinessAdmin(review.businessId);
+    const business = await getBusinessAdmin(authenticatedUserId, businessId);
 
     if (!business) {
       return NextResponse.json(
         { error: "Business not found" },
         { status: 404 }
       );
-    }
-
-    if (business.userId !== userId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Build prompt
@@ -65,7 +75,13 @@ export async function POST(
     const aiReply = await generateReplyWithRetry(prompt);
 
     // Update review using Admin SDK
-    await updateReviewReplyAdmin(id, aiReply, false);
+    await updateReviewReplyAdmin(
+      authenticatedUserId,
+      businessId,
+      reviewId,
+      aiReply,
+      false
+    );
 
     return NextResponse.json({ aiReply, success: true });
   } catch (error) {

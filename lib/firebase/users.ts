@@ -241,4 +241,3 @@ export async function updateNotificationPreferences(
     throw new Error("לא ניתן לעדכן את הגדרות ההתראות");
   }
 }
-

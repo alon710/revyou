@@ -88,7 +88,6 @@ export const userSchemaAdmin = z.object({
 
 export const businessSchemaAdmin = z.object({
   id: z.string().min(1),
-  userId: z.string().min(1),
   googleAccountId: z.string().min(1),
   googleLocationId: z.string().min(1),
   name: z.string().min(1).max(200),
@@ -102,7 +101,6 @@ export const businessSchemaAdmin = z.object({
 
 export const reviewSchemaAdmin = z.object({
   id: z.string().min(1),
-  businessId: z.string().min(1),
   googleReviewId: z.string().min(1),
   reviewerName: z.string().min(1).max(200),
   reviewerPhotoUrl: z.string().url().optional(),

@@ -79,26 +79,32 @@ ${customInstructions ? `הנחיות נוספות לדירוג ${rating}:\n${cus
  * Firestore trigger: Generate AI reply when new review is created
  */
 export const onReviewCreated = functions.onDocumentCreated(
-  "reviews/{reviewId}",
+  "users/{userId}/businesses/{businessId}/reviews/{reviewId}",
   async (event) => {
     try {
       const reviewData = event.data?.data();
       const reviewId = event.params.reviewId;
+      const businessId = event.params.businessId;
+      const userId = event.params.userId;
 
       if (!reviewData) {
         logger.warn("No review data");
         return;
       }
 
-      logger.info(`Processing new review: ${reviewId}`);
+      logger.info(
+        `Processing new review: ${reviewId} for business ${businessId} user ${userId}`
+      );
 
       const businessDoc = await db
+        .collection("users")
+        .doc(userId)
         .collection("businesses")
-        .doc(reviewData.businessId)
+        .doc(businessId)
         .get();
 
       if (!businessDoc.exists) {
-        logger.error(`Business ${reviewData.businessId} not found`);
+        logger.error(`Business ${businessId} not found for user ${userId}`);
         return;
       }
 
@@ -113,9 +119,16 @@ export const onReviewCreated = functions.onDocumentCreated(
       const starConfig = config.starConfigs?.[reviewData.rating];
       if (!starConfig || !starConfig.autoReply) {
         logger.info(`Auto-reply disabled for ${reviewData.rating} stars`);
-        await db.collection("reviews").doc(reviewId).update({
-          replyStatus: "skipped",
-        });
+        await db
+          .collection("users")
+          .doc(userId)
+          .collection("businesses")
+          .doc(businessId)
+          .collection("reviews")
+          .doc(reviewId)
+          .update({
+            replyStatus: "skipped",
+          });
         return;
       }
 
@@ -160,20 +173,34 @@ export const onReviewCreated = functions.onDocumentCreated(
         `Auto-reply enabled for ${reviewData.rating} stars, marking as approved`
       );
 
-      await db.collection("reviews").doc(reviewId).update({
-        aiReply,
-        aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
-        replyStatus,
-      });
+      await db
+        .collection("users")
+        .doc(userId)
+        .collection("businesses")
+        .doc(businessId)
+        .collection("reviews")
+        .doc(reviewId)
+        .update({
+          aiReply,
+          aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
+          replyStatus,
+        });
 
       logger.info(`Updated review ${reviewId} with AI reply`);
     } catch (error) {
       logger.error("Error generating AI reply:", error);
 
       try {
-        await db.collection("reviews").doc(event.params.reviewId).update({
-          replyStatus: "failed",
-        });
+        await db
+          .collection("users")
+          .doc(event.params.userId)
+          .collection("businesses")
+          .doc(event.params.businessId)
+          .collection("reviews")
+          .doc(event.params.reviewId)
+          .update({
+            replyStatus: "failed",
+          });
       } catch (updateError) {
         logger.error("Error updating review status to failed:", updateError);
       }

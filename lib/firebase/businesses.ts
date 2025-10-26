@@ -7,7 +7,6 @@ import {
   updateDoc,
   deleteDoc,
   query,
-  where,
   orderBy,
   serverTimestamp,
 } from "firebase/firestore";
@@ -45,12 +44,8 @@ export async function getUserBusinesses(userId: string): Promise<Business[]> {
   }
 
   try {
-    const businessesRef = collection(db, "businesses");
-    const q = query(
-      businessesRef,
-      where("userId", "==", userId),
-      orderBy("connectedAt", "desc")
-    );
+    const businessesRef = collection(db, "users", userId, "businesses");
+    const q = query(businessesRef, orderBy("connectedAt", "desc"));
 
     const querySnapshot = await getDocs(q);
     const businesses: Business[] = [];
@@ -75,10 +70,12 @@ export async function getUserBusinesses(userId: string): Promise<Business[]> {
 
 /**
  * Get a single business by ID
+ * @param userId - User ID
  * @param businessId - Business ID
  * @returns Business data or null if not found
  */
 export async function getBusiness(
+  userId: string,
   businessId: string
 ): Promise<Business | null> {
   if (!db) {
@@ -87,7 +84,7 @@ export async function getBusiness(
   }
 
   try {
-    const businessRef = doc(db, "businesses", businessId);
+    const businessRef = doc(db, "users", userId, "businesses", businessId);
     const businessSnap = await getDoc(businessRef);
 
     if (businessSnap.exists()) {
@@ -125,11 +122,12 @@ export function getDefaultBusinessConfig(): BusinessConfig {
 
 /**
  * Create a new business
- * @param data - Business data (without id)
+ * @param data - Business data (without id, must include userId)
  * @returns Created business with ID
  */
 export async function createBusiness(
   data: Omit<BusinessCreateInput, "config" | "connectedAt" | "connected"> & {
+    userId: string;
     config?: Partial<BusinessConfig>;
   }
 ): Promise<Business> {
@@ -148,8 +146,11 @@ export async function createBusiness(
     const defaultConfig = getDefaultBusinessConfig();
     const businessConfig = { ...defaultConfig, ...data.config };
 
+    // Remove userId from data as it's now part of the path
+    const { userId, ...businessDataWithoutUserId } = data;
+
     const businessData = {
-      ...data,
+      ...businessDataWithoutUserId,
       config: businessConfig,
       connected: true,
       connectedAt: serverTimestamp(),
@@ -158,11 +159,11 @@ export async function createBusiness(
     // Validate before creating
     businessCreateSchema.parse(businessData);
 
-    const businessesRef = collection(db, "businesses");
+    const businessesRef = collection(db, "users", userId, "businesses");
     const docRef = await addDoc(businessesRef, businessData);
 
     // Return the created business
-    return (await getBusiness(docRef.id)) as Business;
+    return (await getBusiness(userId, docRef.id)) as Business;
   } catch (error) {
     console.error("Error creating business:", error);
     if (error instanceof Error && error.message.includes("מגבלת")) {
@@ -174,11 +175,13 @@ export async function createBusiness(
 
 /**
  * Update business configuration
+ * @param userId - User ID
  * @param businessId - Business ID
  * @param config - Partial business config to update
  * @returns Updated business
  */
 export async function updateBusinessConfig(
+  userId: string,
   businessId: string,
   config: Partial<BusinessConfig>
 ): Promise<Business> {
@@ -187,7 +190,7 @@ export async function updateBusinessConfig(
   }
 
   try {
-    const business = await getBusiness(businessId);
+    const business = await getBusiness(userId, businessId);
     if (!business) {
       throw new Error("העסק לא נמצא");
     }
@@ -195,11 +198,11 @@ export async function updateBusinessConfig(
     // Merge with existing config
     const updatedConfig = { ...business.config, ...config };
 
-    const businessRef = doc(db, "businesses", businessId);
+    const businessRef = doc(db, "users", userId, "businesses", businessId);
     await updateDoc(businessRef, { config: updatedConfig });
 
     // Return the updated business
-    return (await getBusiness(businessId)) as Business;
+    return (await getBusiness(userId, businessId)) as Business;
   } catch (error) {
     console.error("Error updating business config:", error);
     throw new Error("לא ניתן לעדכן את הגדרות העסק");
@@ -208,11 +211,13 @@ export async function updateBusinessConfig(
 
 /**
  * Update business data
+ * @param userId - User ID
  * @param businessId - Business ID
  * @param data - Partial business data to update
  * @returns Updated business
  */
 export async function updateBusiness(
+  userId: string,
   businessId: string,
   data: BusinessUpdateInput
 ): Promise<Business> {
@@ -224,11 +229,11 @@ export async function updateBusiness(
     // Validate update data
     const validatedData = businessUpdateSchema.parse(data);
 
-    const businessRef = doc(db, "businesses", businessId);
+    const businessRef = doc(db, "users", userId, "businesses", businessId);
     await updateDoc(businessRef, validatedData);
 
     // Return the updated business
-    return (await getBusiness(businessId)) as Business;
+    return (await getBusiness(userId, businessId)) as Business;
   } catch (error) {
     console.error("Error updating business:", error);
     throw new Error("לא ניתן לעדכן את העסק");
@@ -237,15 +242,19 @@ export async function updateBusiness(
 
 /**
  * Delete a business
+ * @param userId - User ID
  * @param businessId - Business ID
  */
-export async function deleteBusiness(businessId: string): Promise<void> {
+export async function deleteBusiness(
+  userId: string,
+  businessId: string
+): Promise<void> {
   if (!db) {
     throw new Error("Firestore not initialized");
   }
 
   try {
-    const businessRef = doc(db, "businesses", businessId);
+    const businessRef = doc(db, "users", userId, "businesses", businessId);
     await deleteDoc(businessRef);
   } catch (error) {
     console.error("Error deleting business:", error);
@@ -301,15 +310,19 @@ export async function getRemainingBusinessSlots(
 
 /**
  * Disconnect a business (mark as disconnected without deleting)
+ * @param userId - User ID
  * @param businessId - Business ID
  */
-export async function disconnectBusiness(businessId: string): Promise<void> {
+export async function disconnectBusiness(
+  userId: string,
+  businessId: string
+): Promise<void> {
   if (!db) {
     throw new Error("Firestore not initialized");
   }
 
   try {
-    const businessRef = doc(db, "businesses", businessId);
+    const businessRef = doc(db, "users", userId, "businesses", businessId);
     await updateDoc(businessRef, { connected: false });
   } catch (error) {
     console.error("Error disconnecting business:", error);
@@ -319,15 +332,19 @@ export async function disconnectBusiness(businessId: string): Promise<void> {
 
 /**
  * Reconnect a business (mark as connected)
+ * @param userId - User ID
  * @param businessId - Business ID
  */
-export async function reconnectBusiness(businessId: string): Promise<void> {
+export async function reconnectBusiness(
+  userId: string,
+  businessId: string
+): Promise<void> {
   if (!db) {
     throw new Error("Firestore not initialized");
   }
 
   try {
-    const businessRef = doc(db, "businesses", businessId);
+    const businessRef = doc(db, "users", userId, "businesses", businessId);
     await updateDoc(businessRef, {
       connected: true,
       connectedAt: serverTimestamp(),

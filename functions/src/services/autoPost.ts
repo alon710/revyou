@@ -20,18 +20,29 @@ function decryptToken(encryptedToken: string): string {
 
 /**
  * Auto-post reply to Google Business Profile
- * @param reviewId - Firestore review document ID
  * @param userId - User who owns the business
+ * @param businessId - Business ID
+ * @param reviewId - Firestore review document ID
  */
 export async function autoPostReply(
-  reviewId: string,
-  userId: string
+  userId: string,
+  businessId: string,
+  reviewId: string
 ): Promise<void> {
   try {
-    logger.info(`Starting auto-post for review ${reviewId}`);
+    logger.info(
+      `Starting auto-post for review ${reviewId} in business ${businessId} for user ${userId}`
+    );
 
     // Get review data
-    const reviewDoc = await db.collection("reviews").doc(reviewId).get();
+    const reviewDoc = await db
+      .collection("users")
+      .doc(userId)
+      .collection("businesses")
+      .doc(businessId)
+      .collection("reviews")
+      .doc(reviewId)
+      .get();
 
     if (!reviewDoc.exists) {
       throw new Error("Review not found");
@@ -44,8 +55,10 @@ export async function autoPostReply(
 
     // Get business data
     const businessDoc = await db
+      .collection("users")
+      .doc(userId)
       .collection("businesses")
-      .doc(review.businessId)
+      .doc(businessId)
       .get();
 
     if (!businessDoc.exists) {
@@ -111,20 +124,34 @@ export async function autoPostReply(
     logger.info(`Successfully posted reply for review ${reviewId}`);
 
     // Update review as posted
-    await db.collection("reviews").doc(reviewId).update({
-      replyStatus: "posted",
-      postedReply: replyText,
-      postedAt: admin.firestore.FieldValue.serverTimestamp(),
-      postedBy: userId,
-    });
+    await db
+      .collection("users")
+      .doc(userId)
+      .collection("businesses")
+      .doc(businessId)
+      .collection("reviews")
+      .doc(reviewId)
+      .update({
+        replyStatus: "posted",
+        postedReply: replyText,
+        postedAt: admin.firestore.FieldValue.serverTimestamp(),
+        postedBy: userId,
+      });
   } catch (error) {
     logger.error("Error auto-posting reply:", error);
 
     // Mark as failed
     try {
-      await db.collection("reviews").doc(reviewId).update({
-        replyStatus: "failed",
-      });
+      await db
+        .collection("users")
+        .doc(userId)
+        .collection("businesses")
+        .doc(businessId)
+        .collection("reviews")
+        .doc(reviewId)
+        .update({
+          replyStatus: "failed",
+        });
     } catch (updateError) {
       logger.error("Error updating review status to failed:", updateError);
     }
