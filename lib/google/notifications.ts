@@ -1,26 +1,14 @@
 import { google } from "googleapis";
 import { getAuthenticatedClient } from "./oauth";
 
-/**
- * Google Business Profile Notifications API
- * Manages Pub/Sub notification settings for review notifications
- */
-
 const mybusinessnotifications = google.mybusinessnotifications("v1");
 
 export interface NotificationSetting {
-  name: string; // Resource name
-  notificationTypes: string[]; // e.g., ["NEW_REVIEW", "UPDATED_REVIEW"]
-  pubsubTopic: string; // Pub/Sub topic name
+  name: string;
+  notificationTypes: string[];
+  pubsubTopic: string;
 }
 
-/**
- * Enable Pub/Sub notifications for a business account
- * @param refreshToken - User's Google refresh token
- * @param accountName - Account resource name (e.g., "accounts/12345")
- * @param pubsubTopicName - Full Pub/Sub topic name (e.g., "projects/project-id/topics/topic-name")
- * @returns Notification settings
- */
 export async function enableNotifications(
   refreshToken: string,
   accountName: string,
@@ -47,12 +35,6 @@ export async function enableNotifications(
   }
 }
 
-/**
- * Disable Pub/Sub notifications for a business account
- * @param refreshToken - User's Google refresh token
- * @param accountName - Account resource name
- * @returns Success status
- */
 export async function disableNotifications(
   refreshToken: string,
   accountName: string
@@ -60,7 +42,6 @@ export async function disableNotifications(
   try {
     const auth = await getAuthenticatedClient(refreshToken);
 
-    // Setting empty pubsubTopic disables notifications
     await mybusinessnotifications.accounts.updateNotificationSetting({
       name: `${accountName}/notificationSetting`,
       updateMask: "pubsubTopic",
@@ -75,12 +56,6 @@ export async function disableNotifications(
   }
 }
 
-/**
- * Get current notification settings for an account
- * @param refreshToken - User's Google refresh token
- * @param accountName - Account resource name
- * @returns Current notification settings
- */
 export async function getNotificationSettings(
   refreshToken: string,
   accountName: string
@@ -101,10 +76,6 @@ export async function getNotificationSettings(
   }
 }
 
-/**
- * Get Pub/Sub topic name from environment
- * @returns Full topic name
- */
 export function getPubSubTopicName(): string {
   const projectId =
     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
