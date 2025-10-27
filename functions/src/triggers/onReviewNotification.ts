@@ -2,7 +2,6 @@ import * as functions from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
 
-// Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
   admin.initializeApp();
 }
@@ -10,7 +9,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 interface PubSubMessage {
-  data: string; // Base64 encoded
+  data: string;
   attributes?: Record<string, string>;
 }
 
@@ -20,21 +19,15 @@ interface ReviewNotification {
   notificationType: "NEW_REVIEW" | "UPDATED_REVIEW";
 }
 
-/**
- * Cloud Function to receive Pub/Sub notifications about new reviews
- * Triggered by push subscription from Google Location Profile
- */
 export const onReviewNotification = functions.onRequest(
   { cors: true },
   async (req, res) => {
     try {
-      // Verify it's a POST request
       if (req.method !== "POST") {
         res.status(405).send("Method Not Allowed");
         return;
       }
 
-      // Parse Pub/Sub message
       const pubsubMessage: PubSubMessage = req.body.message;
 
       if (!pubsubMessage || !pubsubMessage.data) {
@@ -43,13 +36,11 @@ export const onReviewNotification = functions.onRequest(
         return;
       }
 
-      // Decode message data
       const decodedData = Buffer.from(pubsubMessage.data, "base64").toString();
       const notification: ReviewNotification = JSON.parse(decodedData);
 
       logger.info("Received review notification:", notification);
 
-      // Extract location and review IDs from resource names
       const locationMatch =
         notification.locationResourceName.match(/locations\/([^/]+)/);
       const reviewMatch =
@@ -66,7 +57,6 @@ export const onReviewNotification = functions.onRequest(
 
       logger.info(`Processing review ${reviewId} for location ${locationId}`);
 
-      // Find the location in Firestore by googleLocationId using collectionGroup
       const businessQuery = await db
         .collectionGroup("locations")
         .where("googleLocationId", "==", locationId)
@@ -75,15 +65,13 @@ export const onReviewNotification = functions.onRequest(
 
       if (businessQuery.empty) {
         logger.warn(`No location found for location ${locationId}`);
-        res.status(200).send("OK"); // Return 200 to avoid retry
+        res.status(200).send("OK");
         return;
       }
 
       const businessDoc = businessQuery.docs[0];
-      const businessId = businessDoc.id;
+      const firestoreLocationId = businessDoc.id;
 
-      // Extract userId from the document path
-      // Path is: users/{userId}/locations/{businessId}
       const userId = businessDoc.ref.parent.parent?.id;
 
       if (!userId) {
@@ -92,9 +80,8 @@ export const onReviewNotification = functions.onRequest(
         return;
       }
 
-      logger.info(`Found location ${businessId} for user ${userId}`);
+      logger.info(`Found location ${firestoreLocationId} for user ${userId}`);
 
-      // Check if review already exists using collectionGroup
       const existingReview = await db
         .collectionGroup("reviews")
         .where("googleReviewId", "==", reviewId)
@@ -107,13 +94,10 @@ export const onReviewNotification = functions.onRequest(
         return;
       }
 
-      // Extract review details from notification attributes
       const attrs = pubsubMessage.attributes || {};
 
-      // Parse star rating from notification
       let rating = 0;
       if (attrs.starRating) {
-        // Google sends star rating as "FIVE", "FOUR", etc.
         const ratingMap: Record<string, number> = {
           ONE: 1,
           TWO: 2,
@@ -124,7 +108,6 @@ export const onReviewNotification = functions.onRequest(
         rating = ratingMap[attrs.starRating] || 0;
       }
 
-      // Create review document in Firestore (no longer need businessId field as it's in the path)
       const reviewData = {
         googleReviewId: reviewId,
         reviewerName: attrs.reviewerDisplayName || "לקוח אנונימי",
@@ -141,16 +124,15 @@ export const onReviewNotification = functions.onRequest(
         .collection("users")
         .doc(userId)
         .collection("locations")
-        .doc(businessId)
+        .doc(firestoreLocationId)
         .collection("reviews")
         .doc(reviewId)
         .set(reviewData);
 
       logger.info(
-        `Created review document for ${reviewId} in user ${userId} location ${businessId}`
+        `Created review document for ${reviewId} in user ${userId} location ${firestoreLocationId}`
       );
 
-      // The Firestore trigger will now handle AI generation
       res.status(200).send("OK");
     } catch (error) {
       logger.error("Error processing review notification:", error);
