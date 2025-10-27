@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { createBusiness } from "@/lib/firebase/businesses";
@@ -37,7 +37,7 @@ export default function ConnectBusinessPage() {
   const [error, setError] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
 
-  const loadLocations = async () => {
+  const loadLocations = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -70,7 +70,7 @@ export default function ConnectBusinessPage() {
     } finally {
       setLoadingLocations(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     const success = searchParams.get("success");

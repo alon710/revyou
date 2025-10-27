@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
@@ -31,7 +31,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [reviewCount, setReviewCount] = useState(0);
 
-  const loadUserData = async () => {
+  const loadUserData = useCallback(async () => {
     if (!authUser) return;
 
     try {
@@ -50,13 +50,13 @@ export default function SettingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [authUser, toast]);
 
   useEffect(() => {
     if (!authLoading && authUser) {
       loadUserData();
     }
-  }, [authUser, authLoading]);
+  }, [authUser, authLoading, loadUserData]);
 
   const handleSignOut = async () => {
     await signOut();
