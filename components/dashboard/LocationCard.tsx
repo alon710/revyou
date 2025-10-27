@@ -197,7 +197,6 @@ function getLanguageLabel(mode: string): string {
     hebrew: "עברית",
     english: "אנגלית",
     "auto-detect": "זיהוי אוטומטי",
-    "match-reviewer": "התאם למבקר",
   };
   return labels[mode] || mode;
 }

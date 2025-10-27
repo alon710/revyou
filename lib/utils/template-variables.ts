@@ -1,8 +1,5 @@
 import { Location, LocationConfig } from "@/types/database";
-import {
-  TONE_LABELS,
-  LANGUAGE_LABELS,
-} from "@/components/dashboard/location-config/types";
+import { TONE_LABELS } from "@/components/dashboard/location-config/types";
 
 export type VariableType = "known" | "unknown";
 
@@ -20,7 +17,8 @@ const VARIABLE_RESOLVERS: Record<string, VariableResolver> = {
   BUSINESS_DESCRIPTION: (l, c) => c.businessDescription || "",
   BUSINESS_PHONE: (l, c) => c.businessPhone || "",
   TONE: (b, c) => TONE_LABELS[c.toneOfVoice] || c.toneOfVoice,
-  LANGUAGE: (b, c) => LANGUAGE_LABELS[c.languageMode] || c.languageMode,
+  IS_AUTO_DETECT: (b, c) => (c.languageMode === "auto-detect" ? "true" : ""),
+  TARGET_LANGUAGE: (b, c) => (c.languageMode === "auto-detect" ? "" : c.languageMode),
   MAX_SENTENCES: (b, c) => (c.maxSentences || 2).toString(),
   SIGNATURE: (b, c) => c.signature || "",
   ALLOWED_EMOJIS: (b, c) => (c.allowedEmojis || []).join(" "),

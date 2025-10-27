@@ -130,7 +130,6 @@ export function AIResponseSettingsEditModal({
                 <SelectItem value="auto-detect">זיהוי אוטומטי</SelectItem>
                 <SelectItem value="hebrew">עברית</SelectItem>
                 <SelectItem value="english">English</SelectItem>
-                <SelectItem value="match-reviewer">התאמה למבקר</SelectItem>
               </SelectContent>
             </Select>
           </div>

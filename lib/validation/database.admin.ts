@@ -26,7 +26,6 @@ export const languageModeSchema = z.enum([
   "hebrew",
   "english",
   "auto-detect",
-  "match-reviewer",
 ]);
 
 export const replyStatusSchema = z.enum([

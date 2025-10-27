@@ -11,7 +11,6 @@ export const LANGUAGE_LABELS: Record<string, string> = {
   hebrew: "עברית",
   english: "אנגלית",
   "auto-detect": "זיהוי אוטומטי",
-  "match-reviewer": "התאמה למבקר",
 };
 
 export const AVAILABLE_VARIABLES = [

@@ -5,8 +5,7 @@ export type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";
 export type LanguageMode =
   | "hebrew"
   | "english"
-  | "auto-detect"
-  | "match-reviewer";
+  | "auto-detect";
 
 export type ReplyStatus =
   | "pending"

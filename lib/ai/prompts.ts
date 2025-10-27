@@ -1,9 +1,6 @@
 import { LocationConfig, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
 import Mustache from "mustache";
-import {
-  TONE_LABELS,
-  LANGUAGE_LABELS,
-} from "@/components/dashboard/location-config/types";
+import { TONE_LABELS } from "@/components/dashboard/location-config/types";
 
 export interface ReviewData {
   rating: number;
@@ -17,11 +14,17 @@ export function buildReplyPrompt(
   businessName: string,
   businessPhone?: string
 ): string {
+  // Determine language mode flags
+  const languageMode = locationConfig.languageMode;
+  const isAutoDetect = languageMode === "auto-detect";
+  const targetLanguage = isAutoDetect ? undefined : languageMode;
+
   const templateData = {
     BUSINESS_NAME: businessName || "",
     BUSINESS_DESCRIPTION: locationConfig.businessDescription || "",
     BUSINESS_PHONE: businessPhone || locationConfig.businessPhone || "",
-    LANGUAGE: LANGUAGE_LABELS[locationConfig.languageMode],
+    IS_AUTO_DETECT: isAutoDetect,
+    TARGET_LANGUAGE: targetLanguage,
     TONE: TONE_LABELS[locationConfig.toneOfVoice],
     ALLOWED_EMOJIS: locationConfig.allowedEmojis?.join(" ") || "",
     MAX_SENTENCES: locationConfig.maxSentences || 2,

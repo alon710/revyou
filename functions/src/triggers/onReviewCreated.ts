@@ -15,7 +15,6 @@ function getLanguageInstruction(languageMode: string): string {
     hebrew: "עברית בלבד. אין לשלב שפות אחרות בתשובה.",
     english: "English only. Do not mix other languages in the response.",
     "auto-detect": "זהה אוטומטית את שפת הביקורת והשב באותה שפה.",
-    "match-reviewer": "התאם את שפת התגובה לשפה שבה כתב המבקר.",
   };
   return instructions[languageMode] || instructions.hebrew;
 }

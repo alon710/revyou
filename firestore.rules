@@ -31,7 +31,7 @@ service cloud.firestore {
 
     // Validate language mode
     function isValidLanguageMode(mode) {
-      return mode in ['hebrew', 'english', 'auto-detect', 'match-reviewer'];
+      return mode in ['hebrew', 'english', 'auto-detect'];
     }
 
     // Validate reply status
