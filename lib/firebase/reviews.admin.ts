@@ -1,4 +1,4 @@
-import { adminDb } from "./admin";
+import { adminDb } from "@/lib/firebase/admin";
 import { Review } from "@/types/database";
 import { reviewSchemaAdmin } from "@/lib/validation/database.admin";
 

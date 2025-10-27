@@ -12,7 +12,7 @@ import {
   DashboardCardField,
 } from "@/components/ui/dashboard-card";
 import { Bell, Settings } from "lucide-react";
-import { NotificationPreferencesEditModal } from "./NotificationPreferencesEditModal";
+import { NotificationPreferencesEditModal } from "@/components/dashboard/settings/NotificationPreferencesEditModal";
 
 interface NotificationPreferencesProps {
   emailOnNewReview: boolean;

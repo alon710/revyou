@@ -6,11 +6,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/Logo";
 import { cn } from "@/lib/utils";
-import { navItems } from "../nav-items";
+import { navItems } from "@/components/layout/nav-items";
 import { BusinessToggler } from "@/components/dashboard/BusinessToggler";
-import { NavbarContainer } from "./shared/NavbarContainer";
-import { MobileMenuButton } from "./shared/MobileMenuButton";
-import { MobileMenuSheet } from "./shared/MobileMenuSheet";
+import { NavbarContainer } from "@/components/layout/navbar/shared/NavbarContainer";
+import { MobileMenuButton } from "@/components/layout/navbar/shared/MobileMenuButton";
+import { MobileMenuSheet } from "@/components/layout/navbar/shared/MobileMenuSheet";
 import { Settings } from "lucide-react";
 
 export function DashboardNavbar() {

@@ -12,7 +12,10 @@ import { Progress } from "@/components/ui/progress";
 import type { PlanLimits } from "@/lib/stripe/entitlements";
 import type { Subscription } from "@/lib/hooks/useSubscription";
 import { getUsagePercentages } from "@/lib/subscription/usage-stats";
-import { formatHebrewDate, getCurrentBillingPeriod } from "@/lib/subscription/billing-period";
+import {
+  formatHebrewDate,
+  getCurrentBillingPeriod,
+} from "@/lib/subscription/billing-period";
 
 interface SubscriptionInfoProps {
   limits: PlanLimits;

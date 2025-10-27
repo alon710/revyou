@@ -1,7 +1,12 @@
 import { doc, updateDoc } from "firebase/firestore";
-import { db } from "./config";
-import { Business, BusinessConfig, ToneOfVoice, LanguageMode } from "@/types/database";
-import { getBusiness } from "./businesses";
+import { db } from "@/lib/firebase/config";
+import {
+  Business,
+  BusinessConfig,
+  ToneOfVoice,
+  LanguageMode,
+} from "@/types/database";
+import { getBusiness } from "@/lib/firebase/businesses";
 
 export function getDefaultBusinessConfig(): BusinessConfig {
   return {

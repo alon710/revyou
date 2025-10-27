@@ -1,6 +1,6 @@
-export { onReviewNotification } from "./triggers/onReviewNotification";
-export { onReviewCreated } from "./triggers/onReviewCreated";
-export { getReviewUsageStats } from "./callable/getReviewUsageStats";
-export { createPortalSession } from "./callable/createPortalSession";
+export { onReviewNotification } from "@/functions/src/triggers/onReviewNotification";
+export { onReviewCreated } from "@/functions/src/triggers/onReviewCreated";
+export { getReviewUsageStats } from "@/functions/src/callable/getReviewUsageStats";
+export { createPortalSession } from "@/functions/src/callable/createPortalSession";
 
-export { autoPostReply } from "./services/autoPost";
+export { autoPostReply } from "@/functions/src/services/autoPost";

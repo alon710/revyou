@@ -1,5 +1,5 @@
 import type { Product, Price } from "@invertase/firestore-stripe-payments";
-import { extractFeatures } from "./feature-config";
+import { extractFeatures } from "@/lib/stripe/feature-config";
 
 export interface EnrichedProduct extends Omit<Product, "prices"> {
   prices?: Price[];

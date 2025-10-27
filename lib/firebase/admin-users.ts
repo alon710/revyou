@@ -1,4 +1,4 @@
-import { adminDb } from "./admin";
+import { adminDb } from "@/lib/firebase/admin";
 import { User } from "@/types/database";
 
 export async function getUserAdmin(uid: string): Promise<User | null> {

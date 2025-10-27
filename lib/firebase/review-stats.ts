@@ -1,5 +1,5 @@
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "./config";
+import { db } from "@/lib/firebase/config";
 
 export async function getReviewStats(
   userId: string,

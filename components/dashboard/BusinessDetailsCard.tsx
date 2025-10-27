@@ -6,7 +6,7 @@ import {
   AIResponseSettingsSection,
   StarRatingConfigSection,
   NotificationPreferencesSection,
-} from "./business-config";
+} from "@/components/dashboard/business-config";
 import { updateBusinessConfig } from "@/lib/firebase/business-config";
 import { updateBusiness } from "@/lib/firebase/businesses";
 

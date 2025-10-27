@@ -8,7 +8,7 @@ import {
   User,
 } from "firebase/auth";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
-import { auth, db } from "./config";
+import { auth, db } from "@/lib/firebase/config";
 import { useState, useEffect } from "react";
 
 const googleProvider = new GoogleAuthProvider();

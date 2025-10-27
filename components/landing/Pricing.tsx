@@ -17,18 +17,12 @@ import {
   type EnrichedProduct,
   getPriceId,
 } from "@/lib/stripe/entitlements";
-import {
-  enrichProduct,
-  sortProductsByPlan,
-} from "@/lib/stripe/product-parser";
+import { enrichProduct, sortProductsByPlan } from "@/lib/stripe/product-parser";
 import {
   FEATURE_CONFIGS,
   formatFeatureValue,
 } from "@/lib/stripe/feature-config";
-import {
-  getMonthlyPrice,
-  getYearlyPrice,
-} from "@/lib/stripe/pricing";
+import { getMonthlyPrice, getYearlyPrice } from "@/lib/stripe/pricing";
 
 const YEARLY_DISCOUNT = 0.2;
 

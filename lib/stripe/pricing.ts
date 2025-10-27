@@ -1,4 +1,4 @@
-import type { EnrichedProduct } from "./product-parser";
+import type { EnrichedProduct } from "@/lib/stripe/product-parser";
 
 export function getMonthlyPrice(product: EnrichedProduct): number {
   if (!product.prices || product.prices.length === 0) {

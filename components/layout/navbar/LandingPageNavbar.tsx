@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { Logo } from "@/components/ui/Logo";
-import { NavbarContainer } from "./shared/NavbarContainer";
-import { MobileMenuButton } from "./shared/MobileMenuButton";
-import { AuthButtons } from "./shared/AuthButtons";
-import { MobileMenuSheet } from "./shared/MobileMenuSheet";
+import { NavbarContainer } from "@/components/layout/navbar/shared/NavbarContainer";
+import { MobileMenuButton } from "@/components/layout/navbar/shared/MobileMenuButton";
+import { AuthButtons } from "@/components/layout/navbar/shared/AuthButtons";
+import { MobileMenuSheet } from "@/components/layout/navbar/shared/MobileMenuSheet";
 
 interface LandingSection {
   id: string;

@@ -1,8 +1,15 @@
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
-import { db } from "./config";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
 import { type PlanLimits, getPlanLimits } from "@/lib/stripe/entitlements";
 import { enrichProduct } from "@/lib/stripe/product-parser";
-import { getUserBusinesses } from "./businesses";
+import { getUserBusinesses } from "@/lib/firebase/businesses";
 
 export async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
   if (!db) {
@@ -33,7 +40,10 @@ export async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
       const freeProductSnapshot = await getDocs(freeProductQuery);
 
       if (!freeProductSnapshot.empty) {
-        const productData = freeProductSnapshot.docs[0].data() as Record<string, unknown>;
+        const productData = freeProductSnapshot.docs[0].data() as Record<
+          string,
+          unknown
+        >;
         const enriched = enrichProduct({
           ...productData,
           id: freeProductSnapshot.docs[0].id,
@@ -94,7 +104,9 @@ export async function checkBusinessLimit(userId: string): Promise<boolean> {
   }
 }
 
-export async function getRemainingBusinessSlots(userId: string): Promise<number> {
+export async function getRemainingBusinessSlots(
+  userId: string
+): Promise<number> {
   try {
     const limits = await getUserPlanLimits(userId);
     const businesses = await getUserBusinesses(userId);

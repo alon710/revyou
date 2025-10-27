@@ -11,12 +11,6 @@ function getDaysAgo(days: number): Date {
   return date;
 }
 
-function getHoursAgo(hours: number): Date {
-  const date = new Date();
-  date.setHours(date.getHours() - hours);
-  return date;
-}
-
 function addMinutes(date: Date, minutes: number): Date {
   return new Date(date.getTime() + minutes * 60000);
 }

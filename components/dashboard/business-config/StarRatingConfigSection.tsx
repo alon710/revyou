@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star, Settings } from "lucide-react";
 import { StarRating } from "@/components/ui/StarRating";
-import { StarRatingConfigEditModal } from "./StarRatingConfigEditModal";
+import { StarRatingConfigEditModal } from "@/components/dashboard/business-config/StarRatingConfigEditModal";
 
 interface StarRatingConfigSectionProps {
   starConfigs: BusinessConfig["starConfigs"];

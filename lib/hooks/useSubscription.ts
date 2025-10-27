@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/firebase/auth";
-import { onSubscriptionChange, getAvailableProducts } from "@/lib/stripe/client";
+import {
+  onSubscriptionChange,
+  getAvailableProducts,
+} from "@/lib/stripe/client";
 import {
   getPlanLimits,
   type PlanType,
@@ -64,7 +67,10 @@ export function useSubscription(): UseSubscriptionReturn {
         const products = await getAvailableProducts();
         const enrichedProducts = products.map(enrichProduct);
 
-        const productMap = new Map<string, { planId: PlanType; product: EnrichedProduct }>(
+        const productMap = new Map<
+          string,
+          { planId: PlanType; product: EnrichedProduct }
+        >(
           enrichedProducts.map((enriched) => [
             enriched.id,
             { planId: enriched.planId as PlanType, product: enriched },
@@ -73,12 +79,14 @@ export function useSubscription(): UseSubscriptionReturn {
 
         // Find free tier product for default limits
         const freeProduct = enrichedProducts.find((p) => p.planId === "free");
-        const defaultLimits = freeProduct ? getPlanLimits(freeProduct) : {
-          businesses: 1,
-          reviewsPerMonth: 5,
-          autoPost: false,
-          requireApproval: true,
-        };
+        const defaultLimits = freeProduct
+          ? getPlanLimits(freeProduct)
+          : {
+              businesses: 1,
+              reviewsPerMonth: 5,
+              autoPost: false,
+              requireApproval: true,
+            };
 
         unsubscribe = onSubscriptionChange((snapshot) => {
           const activeSubs = snapshot.subscriptions.filter(
@@ -101,7 +109,8 @@ export function useSubscription(): UseSubscriptionReturn {
             id: sub.id,
             status: sub.status as Subscription["status"],
             // Convert UTC string timestamps to Unix epoch seconds
-            current_period_end: new Date(sub.current_period_end).getTime() / 1000,
+            current_period_end:
+              new Date(sub.current_period_end).getTime() / 1000,
             current_period_start:
               new Date(sub.current_period_start).getTime() / 1000,
             cancel_at_period_end: sub.cancel_at_period_end,

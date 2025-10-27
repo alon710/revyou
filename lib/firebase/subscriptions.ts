@@ -11,7 +11,7 @@ import {
   limit as firestoreLimit,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "./config";
+import { db } from "@/lib/firebase/config";
 import { Subscription, SubscriptionStatus } from "@/types/database";
 import {
   subscriptionSchema,

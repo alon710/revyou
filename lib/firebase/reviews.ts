@@ -15,7 +15,7 @@ import {
   QueryConstraint,
   DocumentSnapshot,
 } from "firebase/firestore";
-import { db } from "./config";
+import { db } from "@/lib/firebase/config";
 import { Review, ReplyStatus } from "@/types/database";
 import {
   reviewSchema,

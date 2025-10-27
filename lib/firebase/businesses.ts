@@ -10,7 +10,7 @@ import {
   orderBy,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "./config";
+import { db } from "@/lib/firebase/config";
 import { Business, BusinessConfig } from "@/types/database";
 import {
   businessSchema,
@@ -19,8 +19,8 @@ import {
   BusinessCreateInput,
   BusinessUpdateInput,
 } from "@/lib/validation/database";
-import { checkBusinessLimit } from "./business-limits";
-import { getDefaultBusinessConfig } from "./business-config";
+import { checkBusinessLimit } from "@/lib/firebase/business-limits";
+import { getDefaultBusinessConfig } from "@/lib/firebase/business-config";
 
 export async function getUserBusinesses(userId: string): Promise<Business[]> {
   if (!db) {
@@ -79,7 +79,10 @@ export async function getBusiness(
 }
 
 export async function createBusiness(
-  data: Omit<BusinessCreateInput, "config" | "connectedAt" | "connected" | "emailOnNewReview"> & {
+  data: Omit<
+    BusinessCreateInput,
+    "config" | "connectedAt" | "connected" | "emailOnNewReview"
+  > & {
     userId: string;
     config?: Partial<BusinessConfig>;
     emailOnNewReview?: boolean;
@@ -162,7 +165,9 @@ export async function deleteBusiness(
   }
 }
 
-export async function getConnectedBusinesses(userId: string): Promise<Business[]> {
+export async function getConnectedBusinesses(
+  userId: string
+): Promise<Business[]> {
   const businesses = await getUserBusinesses(userId);
   return businesses.filter((b) => b.connected);
 }

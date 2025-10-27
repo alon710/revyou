@@ -19,7 +19,7 @@ import {
 } from "@/lib/reviews/actions";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { ReplyEditor } from "./ReplyEditor";
+import { ReplyEditor } from "@/components/dashboard/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { User } from "lucide-react";
 

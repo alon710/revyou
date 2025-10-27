@@ -1,5 +1,5 @@
 import { google } from "googleapis";
-import { getAuthenticatedClient } from "./oauth";
+import { getAuthenticatedClient } from "@/lib/google/oauth";
 
 const mybusinessnotifications = google.mybusinessnotifications("v1");
 

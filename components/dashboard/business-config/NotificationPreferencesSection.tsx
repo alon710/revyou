@@ -58,7 +58,9 @@ export default function NotificationPreferencesSection({
               <p className="text-sm text-foreground">
                 קבל התראה באימייל כאשר מתקבלת ביקורת חדשה
               </p>
-              <Badge variant={business.emailOnNewReview ? "default" : "secondary"}>
+              <Badge
+                variant={business.emailOnNewReview ? "default" : "secondary"}
+              >
                 {business.emailOnNewReview ? "מופעל" : "כבוי"}
               </Badge>
             </div>

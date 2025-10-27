@@ -13,10 +13,7 @@ export interface TemplateSegment {
   originalVariable?: string;
 }
 
-type VariableResolver = (
-  business: Business,
-  config: BusinessConfig
-) => string;
+type VariableResolver = (business: Business, config: BusinessConfig) => string;
 
 const VARIABLE_RESOLVERS: Record<string, VariableResolver> = {
   BUSINESS_NAME: (b, c) => c.businessName || b.name,
@@ -34,11 +31,7 @@ const VARIABLE_RESOLVERS: Record<string, VariableResolver> = {
   CUSTOM_INSTRUCTIONS_5: (b, c) => c.starConfigs[5]?.customInstructions || "",
 };
 
-const UNKNOWN_VARIABLES = new Set([
-  "REVIEWER_NAME",
-  "RATING",
-  "REVIEW_TEXT",
-]);
+const UNKNOWN_VARIABLES = new Set(["REVIEWER_NAME", "RATING", "REVIEW_TEXT"]);
 
 export function getVariableValue(
   variable: string,

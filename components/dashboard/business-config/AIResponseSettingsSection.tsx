@@ -12,8 +12,11 @@ import {
 } from "@/components/ui/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Settings } from "lucide-react";
-import { TONE_LABELS, LANGUAGE_LABELS } from "./types";
-import { AIResponseSettingsEditModal } from "./AIResponseSettingsEditModal";
+import {
+  TONE_LABELS,
+  LANGUAGE_LABELS,
+} from "@/components/dashboard/business-config/types";
+import { AIResponseSettingsEditModal } from "@/components/dashboard/business-config/AIResponseSettingsEditModal";
 
 interface AIResponseSettingsSectionProps {
   config: BusinessConfig;

@@ -5,7 +5,7 @@ import {
   updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "./config";
+import { db } from "@/lib/firebase/config";
 import { User } from "@/types/database";
 import { userUpdateSchema, UserUpdateInput } from "@/lib/validation/database";
 

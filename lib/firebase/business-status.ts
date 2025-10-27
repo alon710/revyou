@@ -1,5 +1,5 @@
 import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "./config";
+import { db } from "@/lib/firebase/config";
 
 export async function disconnectBusiness(
   userId: string,

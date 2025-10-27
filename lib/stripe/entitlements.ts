@@ -1,5 +1,5 @@
-import type { EnrichedProduct } from "./product-parser";
-import { FEATURE_KEYS } from "./feature-config";
+import type { EnrichedProduct } from "@/lib/stripe/product-parser";
+import { FEATURE_KEYS } from "@/lib/stripe/feature-config";
 
 export type PlanType = "free" | "basic" | "pro";
 export type BillingPeriod = "monthly" | "yearly";
@@ -34,15 +34,22 @@ export function getPlanLimits(product: EnrichedProduct): PlanLimits {
   };
 }
 
-export type { EnrichedProduct } from "./product-parser";
-export { FEATURE_KEYS } from "./feature-config";
-export type { FeatureConfig } from "./feature-config";
-export { FEATURE_CONFIGS } from "./feature-config";
-export { extractFeatures, formatFeatureValue } from "./feature-config";
+export type { EnrichedProduct } from "@/lib/stripe/product-parser";
+export { FEATURE_KEYS } from "@/lib/stripe/feature-config";
+export type { FeatureConfig } from "@/lib/stripe/feature-config";
+export { FEATURE_CONFIGS } from "@/lib/stripe/feature-config";
+export {
+  extractFeatures,
+  formatFeatureValue,
+} from "@/lib/stripe/feature-config";
 export {
   getPlanId,
   isRecommended,
   enrichProduct,
   sortProductsByPlan,
-} from "./product-parser";
-export { getMonthlyPrice, getYearlyPrice, getPriceId } from "./pricing";
+} from "@/lib/stripe/product-parser";
+export {
+  getMonthlyPrice,
+  getYearlyPrice,
+  getPriceId,
+} from "@/lib/stripe/pricing";

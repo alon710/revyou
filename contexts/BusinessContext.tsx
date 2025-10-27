@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { Business } from "@/types/database";
 import { getBusiness, getUserBusinesses } from "@/lib/firebase/businesses";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useUIStore } from "@/lib/store/ui-store";
 
 interface BusinessContextType {
