@@ -27,7 +27,7 @@ export default function PrivacyPage() {
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2 me-6">
               <li>מידע אישי: שם, כתובת דוא&quot;ל, מספר טלפון</li>
-              <li>מידע עסקי: פרטי עסק, Google Business Profile</li>
+              <li>מידע עסקי: פרטי עסק, Google Location Profile</li>
               <li>תוכן: ביקורות, תשובות, הגדרות מערכת</li>
               <li>מידע טכני: כתובת IP, סוג דפדפן, מערכת הפעלה</li>
             </ul>
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
               אנו לא משתפים את המידע האישי שלך עם צדדים שלישיים, למעט:
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2 me-6 mt-4">
-              <li>Google (עבור Google Business Profile API)</li>
+              <li>Google (עבור Google Location Profile API)</li>
               <li>Gemini AI (עבור יצירת תשובות)</li>
               <li>ספקי שירותי תשתית (Firebase, Cloud Storage)</li>
               <li>כאשר נדרש על פי חוק</li>

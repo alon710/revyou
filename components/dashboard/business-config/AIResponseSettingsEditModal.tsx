@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BusinessConfig, ToneOfVoice, LanguageMode } from "@/types/database";
+import { LocationConfig, ToneOfVoice, LanguageMode } from "@/types/database";
 import {
   Dialog,
   DialogContent,
@@ -23,10 +23,10 @@ import { Label } from "@/components/ui/label";
 import { Sparkles } from "lucide-react";
 
 interface AIResponseSettingsEditModalProps {
-  config: BusinessConfig;
+  config: LocationConfig;
   open: boolean;
   onClose: () => void;
-  onSave: (config: Partial<BusinessConfig>) => Promise<void>;
+  onSave: (config: Partial<LocationConfig>) => Promise<void>;
 }
 
 export function AIResponseSettingsEditModal({

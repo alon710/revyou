@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BusinessConfig } from "@/types/database";
+import { LocationConfig } from "@/types/database";
 import {
   DashboardCard,
   DashboardCardHeader,
@@ -19,9 +19,9 @@ import {
 import { AIResponseSettingsEditModal } from "@/components/dashboard/business-config/AIResponseSettingsEditModal";
 
 interface AIResponseSettingsSectionProps {
-  config: BusinessConfig;
+  config: LocationConfig;
   loading?: boolean;
-  onSave: (config: Partial<BusinessConfig>) => Promise<void>;
+  onSave: (config: Partial<LocationConfig>) => Promise<void>;
 }
 
 export default function AIResponseSettingsSection({

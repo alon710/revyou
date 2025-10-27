@@ -23,7 +23,7 @@ export interface User {
   createdAt: Timestamp;
   stripeCustomerId?: string;
   googleRefreshToken?: string;
-  selectedBusinessId?: string;
+  selectedLocationId?: string;
 }
 
 export interface StarConfig {
@@ -31,7 +31,7 @@ export interface StarConfig {
   autoReply: boolean;
 }
 
-export interface BusinessConfig {
+export interface LocationConfig {
   businessName?: string;
   businessDescription: string;
   businessPhone?: string;
@@ -53,7 +53,7 @@ export interface BusinessConfig {
   };
 }
 
-export interface Business {
+export interface Location {
   id: string;
   googleAccountId: string;
   googleLocationId: string;
@@ -62,7 +62,7 @@ export interface Business {
   photoUrl?: string;
   connected: boolean;
   connectedAt: Timestamp;
-  config: BusinessConfig;
+  config: LocationConfig;
   emailOnNewReview: boolean;
 }
 
@@ -98,4 +98,4 @@ export interface Subscription {
   cancelAtPeriodEnd: boolean;
 }
 
-export { DEFAULT_BUSINESS_PROMPT_TEMPLATE as DEFAULT_PROMPT_TEMPLATE } from "@/lib/ai/prompt-templates";
+export { DEFAULT_LOCATION_PROMPT_TEMPLATE as DEFAULT_PROMPT_TEMPLATE } from "@/lib/ai/prompt-templates";

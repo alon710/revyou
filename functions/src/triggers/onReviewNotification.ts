@@ -22,7 +22,7 @@ interface ReviewNotification {
 
 /**
  * Cloud Function to receive Pub/Sub notifications about new reviews
- * Triggered by push subscription from Google Business Profile
+ * Triggered by push subscription from Google Location Profile
  */
 export const onReviewNotification = functions.onRequest(
   { cors: true },
@@ -66,15 +66,15 @@ export const onReviewNotification = functions.onRequest(
 
       logger.info(`Processing review ${reviewId} for location ${locationId}`);
 
-      // Find the business in Firestore by googleLocationId using collectionGroup
+      // Find the location in Firestore by googleLocationId using collectionGroup
       const businessQuery = await db
-        .collectionGroup("businesses")
+        .collectionGroup("locations")
         .where("googleLocationId", "==", locationId)
         .limit(1)
         .get();
 
       if (businessQuery.empty) {
-        logger.warn(`No business found for location ${locationId}`);
+        logger.warn(`No location found for location ${locationId}`);
         res.status(200).send("OK"); // Return 200 to avoid retry
         return;
       }
@@ -83,16 +83,16 @@ export const onReviewNotification = functions.onRequest(
       const businessId = businessDoc.id;
 
       // Extract userId from the document path
-      // Path is: users/{userId}/businesses/{businessId}
+      // Path is: users/{userId}/locations/{businessId}
       const userId = businessDoc.ref.parent.parent?.id;
 
       if (!userId) {
-        logger.error("Could not extract userId from business document path");
+        logger.error("Could not extract userId from location document path");
         res.status(500).send("Internal Server Error");
         return;
       }
 
-      logger.info(`Found business ${businessId} for user ${userId}`);
+      logger.info(`Found location ${businessId} for user ${userId}`);
 
       // Check if review already exists using collectionGroup
       const existingReview = await db
@@ -140,14 +140,14 @@ export const onReviewNotification = functions.onRequest(
       await db
         .collection("users")
         .doc(userId)
-        .collection("businesses")
+        .collection("locations")
         .doc(businessId)
         .collection("reviews")
         .doc(reviewId)
         .set(reviewData);
 
       logger.info(
-        `Created review document for ${reviewId} in user ${userId} business ${businessId}`
+        `Created review document for ${reviewId} in user ${userId} location ${businessId}`
       );
 
       // The Firestore trigger will now handle AI generation

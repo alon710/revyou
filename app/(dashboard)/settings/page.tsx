@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { useBusiness } from "@/contexts/BusinessContext";
+import { useLocation } from "@/contexts/LocationContext";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { getUser } from "@/lib/firebase/users";
 import { signOut } from "@/lib/firebase/auth";
@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 
 export default function SettingsPage() {
   const { user: authUser, loading: authLoading } = useAuth();
-  const { businesses } = useBusiness();
+  const { locations } = useLocation();
   const {
     subscription,
     limits,
@@ -89,7 +89,7 @@ export default function SettingsPage() {
       <SubscriptionInfo
         limits={limits}
         subscription={subscription}
-        currentBusinesses={businesses.length}
+        currentLocations={locations.length}
         currentReviews={reviewCount}
       />
     </PageContainer>

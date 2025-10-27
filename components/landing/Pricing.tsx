@@ -70,7 +70,7 @@ export function Pricing() {
       }
 
       if (isFree) {
-        router.push("/businesses");
+        router.push("/locations");
         return;
       }
 

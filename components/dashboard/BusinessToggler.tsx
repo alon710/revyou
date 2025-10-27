@@ -1,6 +1,6 @@
 "use client";
 
-import { useBusiness } from "@/contexts/BusinessContext";
+import { useLocation } from "@/contexts/LocationContext";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -14,55 +14,55 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function BusinessToggler() {
   const {
-    currentBusiness,
-    businesses,
-    selectedBusinessId,
-    selectBusiness,
+    currentLocation,
+    locations,
+    selectedLocationId,
+    selectLocation,
     loading,
-  } = useBusiness();
+  } = useLocation();
 
   const handleBusinessChange = (businessId: string) => {
-    selectBusiness(businessId);
+    selectLocation(businessId);
   };
 
   if (loading) {
     return <Skeleton className="w-full h-10" />;
   }
 
-  if (businesses.length === 0) {
+  if (locations.length === 0) {
     return (
       <Button asChild className="w-full">
-        <Link href="/businesses/connect">חבר עסק ראשון</Link>
+        <Link href="/locations/connect">חבר עסק ראשון</Link>
       </Button>
     );
   }
 
-  if (businesses.length === 1) {
+  if (locations.length === 1) {
     return (
       <div className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-border/40 bg-background shadow-sm">
-        <span className="truncate text-sm">{currentBusiness?.name}</span>
+        <span className="truncate text-sm">{currentLocation?.name}</span>
       </div>
     );
   }
 
   return (
     <Select
-      value={selectedBusinessId || undefined}
+      value={selectedLocationId || undefined}
       onValueChange={handleBusinessChange}
     >
       <SelectTrigger dir="rtl">
         <SelectValue placeholder="בחר עסק">
-          {currentBusiness && (
+          {currentLocation && (
             <div className="flex items-center gap-2">
-              <span className="mx-2">{currentBusiness.name}</span>
+              <span className="mx-2">{currentLocation.name}</span>
             </div>
           )}
         </SelectValue>
       </SelectTrigger>
       <SelectContent dir="rtl">
-        {businesses.map((business) => (
-          <SelectItem key={business.id} value={business.id}>
-            <span>{business.name}</span>
+        {locations.map((location) => (
+          <SelectItem key={location.id} value={location.id}>
+            <span>{location.name}</span>
           </SelectItem>
         ))}
       </SelectContent>

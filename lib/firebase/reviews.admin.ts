@@ -11,7 +11,7 @@ import { reviewSchemaAdmin } from "@/lib/validation/database.admin";
 /**
  * Get a single review by ID (Admin SDK version)
  * @param userId - User ID
- * @param businessId - Business ID
+ * @param businessId - Location ID
  * @param reviewId - Review ID
  * @returns Review data or null if not found
  */
@@ -24,7 +24,7 @@ export async function getReviewAdmin(
     const reviewRef = adminDb
       .collection("users")
       .doc(userId)
-      .collection("businesses")
+      .collection("locations")
       .doc(businessId)
       .collection("reviews")
       .doc(reviewId);
@@ -46,7 +46,7 @@ export async function getReviewAdmin(
 /**
  * Update review reply (Admin SDK version)
  * @param userId - User ID
- * @param businessId - Business ID
+ * @param businessId - Location ID
  * @param reviewId - Review ID
  * @param reply - Reply text
  * @param isEdited - Whether this is a user edit
@@ -63,7 +63,7 @@ export async function updateReviewReplyAdmin(
     const reviewRef = adminDb
       .collection("users")
       .doc(userId)
-      .collection("businesses")
+      .collection("locations")
       .doc(businessId)
       .collection("reviews")
       .doc(reviewId);
@@ -90,7 +90,7 @@ export async function updateReviewReplyAdmin(
 /**
  * Mark a review as posted with the reply that was posted (Admin SDK version)
  * @param userId - User ID
- * @param businessId - Business ID
+ * @param businessId - Location ID
  * @param reviewId - Review ID
  * @param postedReply - The actual reply that was posted
  * @param postedBy - User ID who posted
@@ -107,7 +107,7 @@ export async function markAsPostedAdmin(
     const reviewRef = adminDb
       .collection("users")
       .doc(userId)
-      .collection("businesses")
+      .collection("locations")
       .doc(businessId)
       .collection("reviews")
       .doc(reviewId);
@@ -129,7 +129,7 @@ export async function markAsPostedAdmin(
 /**
  * Mark a review reply as failed (Admin SDK version)
  * @param userId - User ID
- * @param businessId - Business ID
+ * @param businessId - Location ID
  * @param reviewId - Review ID
  * @returns Updated review
  */
@@ -142,7 +142,7 @@ export async function markAsFailedAdmin(
     const reviewRef = adminDb
       .collection("users")
       .doc(userId)
-      .collection("businesses")
+      .collection("locations")
       .doc(businessId)
       .collection("reviews")
       .doc(reviewId);

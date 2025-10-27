@@ -4,9 +4,9 @@ import {
   getPubSubTopicName,
 } from "@/lib/google/notifications";
 import {
-  getBusinessAdmin,
-  updateBusinessAdmin,
-} from "@/lib/firebase/businesses.admin";
+  getLocationAdmin,
+  updateLocationAdmin,
+} from "@/lib/firebase/locations.admin";
 import { getUserAdmin } from "@/lib/firebase/admin-users";
 import { adminAuth } from "@/lib/firebase/admin";
 import { decryptToken } from "@/lib/google/oauth";
@@ -31,9 +31,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const business = await getBusinessAdmin(userId, businessId);
+    const location = await getLocationAdmin(userId, businessId);
 
-    if (!business) {
+    if (!location) {
       return NextResponse.json(
         { error: "Business not found" },
         { status: 404 }
@@ -55,11 +55,11 @@ export async function POST(req: NextRequest) {
 
     await enableNotifications(
       refreshToken,
-      `accounts/${business.googleAccountId}`,
+      `accounts/${location.googleAccountId}`,
       topicName
     );
 
-    await updateBusinessAdmin(userId, businessId, {
+    await updateLocationAdmin(userId, businessId, {
       emailOnNewReview: true,
     });
 

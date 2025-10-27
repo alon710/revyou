@@ -30,7 +30,7 @@ export async function getReviewStats(
       db,
       "users",
       userId,
-      "businesses",
+      "locations",
       businessId,
       "reviews"
     );

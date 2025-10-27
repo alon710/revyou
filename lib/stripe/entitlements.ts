@@ -5,7 +5,7 @@ export type PlanType = "free" | "basic" | "pro";
 export type BillingPeriod = "monthly" | "yearly";
 
 export interface PlanLimits {
-  businesses: number;
+  locations: number;
   reviewsPerMonth: number;
   autoPost: boolean;
   requireApproval: boolean;
@@ -14,7 +14,7 @@ export interface PlanLimits {
 export function getPlanLimits(product: EnrichedProduct): PlanLimits {
   const features = product.features;
 
-  const businesses = (features[FEATURE_KEYS.MAX_BUSINESSES] as number) || 1;
+  const locations = (features[FEATURE_KEYS.MAX_LOCATIONS] as number) || 1;
   const reviewsPerMonth =
     (features[FEATURE_KEYS.MONTHLY_REVIEWS] as number) || 5;
   const autoPost = (features[FEATURE_KEYS.AUTO_PUBLISH] as boolean) || false;
@@ -27,7 +27,7 @@ export function getPlanLimits(product: EnrichedProduct): PlanLimits {
     manualApproval === true;
 
   return {
-    businesses,
+    locations,
     reviewsPerMonth,
     autoPost,
     requireApproval,

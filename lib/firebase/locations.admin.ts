@@ -1,0 +1,71 @@
+import { adminDb } from "@/lib/firebase/admin";
+import { Location } from "@/types/database";
+import { locationSchemaAdmin } from "@/lib/validation/database.admin";
+
+/**
+ * ADMIN SDK FUNCTIONS FOR LOCATIONS
+ * These functions use Firebase Admin SDK and should ONLY be called from server-side code (API routes, server actions)
+ * They bypass Firestore security rules and have elevated privileges
+ */
+
+/**
+ * Get a single location by ID (Admin SDK version)
+ * @param userId - User ID
+ * @param locationId - Location ID
+ * @returns Location data or null if not found
+ */
+export async function getLocationAdmin(
+  userId: string,
+  locationId: string
+): Promise<Location | null> {
+  try {
+    const locationRef = adminDb
+      .collection("users")
+      .doc(userId)
+      .collection("locations")
+      .doc(locationId);
+    const locationSnap = await locationRef.get();
+
+    if (locationSnap.exists) {
+      const data = locationSnap.data();
+      const validated = locationSchemaAdmin.parse({
+        id: locationSnap.id,
+        ...data,
+      });
+      return validated as Location;
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error fetching location (admin):", error);
+    throw new Error("לא ניתן לטעון את פרטי המיקום");
+  }
+}
+
+/**
+ * Update location fields (Admin SDK version)
+ * @param userId - User ID
+ * @param locationId - Location ID
+ * @param data - Partial location data to update
+ * @returns Updated location
+ */
+export async function updateLocationAdmin(
+  userId: string,
+  locationId: string,
+  data: Record<string, unknown>
+): Promise<Location> {
+  try {
+    const locationRef = adminDb
+      .collection("users")
+      .doc(userId)
+      .collection("locations")
+      .doc(locationId);
+    await locationRef.update(data);
+
+    // Return the updated location
+    return (await getLocationAdmin(userId, locationId)) as Location;
+  } catch (error) {
+    console.error("Error updating location (admin):", error);
+    throw new Error("לא ניתן לעדכן את המיקום");
+  }
+}

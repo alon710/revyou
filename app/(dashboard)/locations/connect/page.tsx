@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { createBusiness } from "@/lib/firebase/businesses";
-import { checkBusinessLimit } from "@/lib/firebase/business-limits";
+import { createLocation } from "@/lib/firebase/locations";
+import { checkLocationLimit } from "@/lib/firebase/location-limits";
 import { Button } from "@/components/ui/button";
 import {
   DashboardCard,
@@ -60,7 +60,7 @@ export default function ConnectBusinessPage() {
       setLocations(data.locations);
 
       if (data.locations.length === 0) {
-        setError("לא נמצאו עסקים בחשבון Google Business Profile שלך");
+        setError("לא נמצאו עסקים בחשבון Google Location Profile שלך");
       }
     } catch (err) {
       console.error("Error loading locations:", err);
@@ -92,7 +92,7 @@ export default function ConnectBusinessPage() {
       setLoading(true);
       setError(null);
 
-      const canAdd = await checkBusinessLimit(user.uid);
+      const canAdd = await checkLocationLimit(user.uid);
       if (!canAdd) {
         setError(
           "הגעת למגבלת העסקים בחבילת המינוי שלך. שדרג כדי להוסיף עסקים נוספים."
@@ -116,13 +116,13 @@ export default function ConnectBusinessPage() {
       setConnecting(true);
       setError(null);
 
-      const canAdd = await checkBusinessLimit(user.uid);
+      const canAdd = await checkLocationLimit(user.uid);
       if (!canAdd) {
         setError("הגעת למגבלת העסקים בחבילת המינוי שלך");
         return;
       }
 
-      await createBusiness({
+      await createLocation({
         userId: user.uid,
         googleAccountId: selectedLocation.accountId,
         googleLocationId: selectedLocation.id,
@@ -130,9 +130,9 @@ export default function ConnectBusinessPage() {
         address: selectedLocation.address,
       });
 
-      router.push("/businesses");
+      router.push("/locations");
     } catch (err) {
-      console.error("Error connecting business:", err);
+      console.error("Error connecting location:", err);
       const errorMessage =
         err instanceof Error ? err.message : "לא ניתן לחבר את העסק";
       setError(errorMessage);
@@ -152,12 +152,12 @@ export default function ConnectBusinessPage() {
   return (
     <PageContainer>
       <div className="flex items-center gap-4 mb-6">
-        <BackButton href="/businesses" />
+        <BackButton href="/locations" />
       </div>
 
       <PageHeader
         title="חבר עסק חדש"
-        description="חבר את חשבון Google Business Profile שלך"
+        description="חבר את חשבון Google Location Profile שלך"
       />
 
       {/* Error Alert */}
@@ -173,10 +173,10 @@ export default function ConnectBusinessPage() {
         <DashboardCard>
           <DashboardCardHeader>
             <DashboardCardTitle>
-              התחבר ל-Google Business Profile
+              התחבר ל-Google Location Profile
             </DashboardCardTitle>
             <DashboardCardDescription>
-              אנחנו צריכים הרשאה כדי לגשת לחשבון Google Business Profile שלך
+              אנחנו צריכים הרשאה כדי לגשת לחשבון Google Location Profile שלך
               ולנהל תשובות לביקורות
             </DashboardCardDescription>
           </DashboardCardHeader>
@@ -186,7 +186,7 @@ export default function ConnectBusinessPage() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <Building2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <span>רשימת העסקים שלך ב-Google Business Profile</span>
+                  <span>רשימת העסקים שלך ב-Google Location Profile</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Building2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
@@ -211,7 +211,7 @@ export default function ConnectBusinessPage() {
         </DashboardCard>
       )}
 
-      {/* Step 2: Business Selection */}
+      {/* Step 2: Location Selection */}
       {step === "select" && (
         <DashboardCard>
           <DashboardCardHeader>

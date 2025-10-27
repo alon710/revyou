@@ -28,8 +28,8 @@ interface BusinessSelectorProps {
 }
 
 /**
- * Business Selector Component
- * Allows user to select a business location from their Google account
+ * Location Selector Component
+ * Allows user to select a location location from their Google account
  */
 export default function BusinessSelector({
   locations,
@@ -52,7 +52,7 @@ export default function BusinessSelector({
           <Building2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
           <h3 className="text-lg font-semibold mb-2">לא נמצאו עסקים</h3>
           <p className="text-muted-foreground">
-            לא נמצאו עסקים בחשבון Google Business Profile שלך
+            לא נמצאו עסקים בחשבון Google Location Profile שלך
           </p>
         </DashboardCardContent>
       </DashboardCard>
@@ -64,7 +64,7 @@ export default function BusinessSelector({
       <div className="mb-4">
         <h3 className="text-lg font-semibold mb-2">בחר עסק לחיבור</h3>
         <p className="text-muted-foreground">
-          נמצאו {locations.length} עסקים בחשבון Google Business Profile שלך
+          נמצאו {locations.length} עסקים בחשבון Google Location Profile שלך
         </p>
       </div>
 

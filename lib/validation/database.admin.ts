@@ -48,7 +48,7 @@ export const starConfigSchema = z.object({
   autoReply: z.boolean(),
 });
 
-export const businessConfigSchema = z.object({
+export const locationConfigSchema = z.object({
   businessDescription: z.string().min(10).max(2000),
   toneOfVoice: toneOfVoiceSchema,
   useEmojis: z.boolean(),
@@ -71,10 +71,10 @@ export const userSchemaAdmin = z.object({
   subscriptionTier: subscriptionTierSchema,
   stripeCustomerId: z.string().nullish(),
   googleRefreshToken: z.string().nullish(),
-  selectedBusinessId: z.string().optional(),
+  selectedLocationId: z.string().optional(),
 });
 
-export const businessSchemaAdmin = z.object({
+export const locationSchemaAdmin = z.object({
   id: z.string().min(1),
   googleAccountId: z.string().min(1),
   googleLocationId: z.string().min(1),
@@ -83,7 +83,7 @@ export const businessSchemaAdmin = z.object({
   photoUrl: z.string().url().optional(),
   connected: z.boolean(),
   connectedAt: timestampSchemaAdmin,
-  config: businessConfigSchema,
+  config: locationConfigSchema,
   emailOnNewReview: z.boolean(),
 });
 

@@ -19,9 +19,9 @@ function decryptToken(encryptedToken: string): string {
 }
 
 /**
- * Auto-post reply to Google Business Profile
- * @param userId - User who owns the business
- * @param businessId - Business ID
+ * Auto-post reply to Google Location Profile
+ * @param userId - User who owns the location
+ * @param businessId - Location ID
  * @param reviewId - Firestore review document ID
  */
 export async function autoPostReply(
@@ -31,14 +31,14 @@ export async function autoPostReply(
 ): Promise<void> {
   try {
     logger.info(
-      `Starting auto-post for review ${reviewId} in business ${businessId} for user ${userId}`
+      `Starting auto-post for review ${reviewId} in location ${businessId} for user ${userId}`
     );
 
     // Get review data
     const reviewDoc = await db
       .collection("users")
       .doc(userId)
-      .collection("businesses")
+      .collection("locations")
       .doc(businessId)
       .collection("reviews")
       .doc(reviewId)
@@ -53,11 +53,11 @@ export async function autoPostReply(
       throw new Error("Review data is empty");
     }
 
-    // Get business data
+    // Get location data
     const businessDoc = await db
       .collection("users")
       .doc(userId)
-      .collection("businesses")
+      .collection("locations")
       .doc(businessId)
       .get();
 
@@ -65,8 +65,8 @@ export async function autoPostReply(
       throw new Error("Business not found");
     }
 
-    const business = businessDoc.data();
-    if (!business) {
+    const location = businessDoc.data();
+    if (!location) {
       throw new Error("Business data is empty");
     }
 
@@ -107,11 +107,11 @@ export async function autoPostReply(
 
     // Construct review resource name
     // Format: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
-    const reviewName = `accounts/${business.googleAccountId}/locations/${business.googleLocationId}/reviews/${review.googleReviewId}`;
+    const reviewName = `accounts/${location.googleAccountId}/locations/${location.googleLocationId}/reviews/${review.googleReviewId}`;
 
     logger.info(`Posting reply to ${reviewName}`);
 
-    // Post reply using Google Business Profile API
+    // Post reply using Google Location Profile API
     // Note: Using direct API call as the googleapis library may not have the reviews endpoint
     await oauth2Client.request({
       url: `https://mybusiness.googleapis.com/v4/${reviewName}/reply`,
@@ -127,7 +127,7 @@ export async function autoPostReply(
     await db
       .collection("users")
       .doc(userId)
-      .collection("businesses")
+      .collection("locations")
       .doc(businessId)
       .collection("reviews")
       .doc(reviewId)
@@ -145,7 +145,7 @@ export async function autoPostReply(
       await db
         .collection("users")
         .doc(userId)
-        .collection("businesses")
+        .collection("locations")
         .doc(businessId)
         .collection("reviews")
         .doc(reviewId)

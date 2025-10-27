@@ -29,16 +29,16 @@ export async function getReviewCountThisMonth(): Promise<number> {
 }
 
 export function getUsagePercentages(
-  currentBusinesses: number,
+  currentLocations: number,
   currentReviews: number,
   limits: PlanLimits
 ): {
-  businessesPercent: number;
+  locationsPercent: number;
   reviewsPercent: number;
 } {
-  const businessesPercent = Math.min(
+  const locationsPercent = Math.min(
     100,
-    Math.round((currentBusinesses / limits.businesses) * 100)
+    Math.round((currentLocations / limits.locations) * 100)
   );
 
   const reviewsPercent = Math.min(
@@ -47,7 +47,7 @@ export function getUsagePercentages(
   );
 
   return {
-    businessesPercent,
+    locationsPercent,
     reviewsPercent,
   };
 }

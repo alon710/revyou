@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BusinessConfig } from "@/types/database";
+import { LocationConfig } from "@/types/database";
 import {
   DashboardCard,
   DashboardCardHeader,
@@ -16,9 +16,9 @@ import { StarRating } from "@/components/ui/StarRating";
 import { StarRatingConfigEditModal } from "@/components/dashboard/business-config/StarRatingConfigEditModal";
 
 interface StarRatingConfigSectionProps {
-  starConfigs: BusinessConfig["starConfigs"];
+  starConfigs: LocationConfig["starConfigs"];
   loading?: boolean;
-  onSave: (starConfigs: BusinessConfig["starConfigs"]) => Promise<void>;
+  onSave: (starConfigs: LocationConfig["starConfigs"]) => Promise<void>;
 }
 
 export default function StarRatingConfigSection({

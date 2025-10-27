@@ -1,31 +1,31 @@
 "use client";
 
-import { Business, BusinessConfig } from "@/types/database";
+import { Location, LocationConfig } from "@/types/database";
 import {
   BusinessIdentitySection,
   AIResponseSettingsSection,
   StarRatingConfigSection,
   NotificationPreferencesSection,
 } from "@/components/dashboard/business-config";
-import { updateBusinessConfig } from "@/lib/firebase/business-config";
-import { updateBusiness } from "@/lib/firebase/businesses";
+import { updateLocationConfig } from "@/lib/firebase/location-config";
+import { updateLocation } from "@/lib/firebase/locations";
 
-interface BusinessDetailsCardProps {
-  business: Business;
+interface LocationDetailsCardProps {
+  location: Location;
   userId: string;
   loading?: boolean;
   onUpdate: () => Promise<void>;
 }
 
 export default function BusinessDetailsCard({
-  business,
+  location,
   userId,
   loading = false,
   onUpdate,
-}: BusinessDetailsCardProps) {
-  const handleSaveSection = async (partialConfig: Partial<BusinessConfig>) => {
+}: LocationDetailsCardProps) {
+  const handleSaveSection = async (partialConfig: Partial<LocationConfig>) => {
     try {
-      await updateBusinessConfig(userId, business.id, partialConfig);
+      await updateLocationConfig(userId, location.id, partialConfig);
       await onUpdate();
     } catch (error) {
       console.error("Error saving config:", error);
@@ -34,7 +34,7 @@ export default function BusinessDetailsCard({
   };
 
   const handleSaveStarConfigs = async (
-    starConfigs: BusinessConfig["starConfigs"]
+    starConfigs: LocationConfig["starConfigs"]
   ) => {
     await handleSaveSection({ starConfigs });
   };
@@ -43,7 +43,7 @@ export default function BusinessDetailsCard({
     emailOnNewReview: boolean;
   }) => {
     try {
-      await updateBusiness(userId, business.id, data);
+      await updateLocation(userId, location.id, data);
       await onUpdate();
     } catch (error) {
       console.error("Error saving notification preferences:", error);
@@ -54,26 +54,26 @@ export default function BusinessDetailsCard({
   return (
     <div className="space-y-6">
       <BusinessIdentitySection
-        config={business.config}
-        business={business}
+        config={location.config}
+        location={location}
         loading={loading}
         onSave={handleSaveSection}
       />
 
       <AIResponseSettingsSection
-        config={business.config}
+        config={location.config}
         loading={loading}
         onSave={handleSaveSection}
       />
 
       <StarRatingConfigSection
-        starConfigs={business.config.starConfigs}
+        starConfigs={location.config.starConfigs}
         loading={loading}
         onSave={handleSaveStarConfigs}
       />
 
       <NotificationPreferencesSection
-        business={business}
+        location={location}
         loading={loading}
         onSave={handleSaveNotificationPreferences}
       />

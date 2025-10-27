@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Business, BusinessConfig } from "@/types/database";
+import { Location, LocationConfig } from "@/types/database";
 import {
   Dialog,
   DialogContent,
@@ -16,27 +16,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Building2 } from "lucide-react";
 
-interface BusinessIdentityEditModalProps {
-  business: Business;
+interface LocationIdentityEditModalProps {
+  location: Location;
   open: boolean;
   onClose: () => void;
-  onSave: (config: Partial<BusinessConfig>) => Promise<void>;
+  onSave: (config: Partial<LocationConfig>) => Promise<void>;
 }
 
 export function BusinessIdentityEditModal({
-  business,
+  location,
   open,
   onClose,
   onSave,
-}: BusinessIdentityEditModalProps) {
+}: LocationIdentityEditModalProps) {
   const [businessName, setBusinessName] = useState(
-    business.config.businessName || ""
+    location.config.businessName || ""
   );
   const [businessDescription, setBusinessDescription] = useState(
-    business.config.businessDescription || ""
+    location.config.businessDescription || ""
   );
   const [businessPhone, setBusinessPhone] = useState(
-    business.config.businessPhone || ""
+    location.config.businessPhone || ""
   );
   const [isLoading, setIsLoading] = useState(false);
 
@@ -50,7 +50,7 @@ export function BusinessIdentityEditModal({
       });
       onClose();
     } catch (error) {
-      console.error("Error saving business identity:", error);
+      console.error("Error saving location identity:", error);
     } finally {
       setIsLoading(false);
     }
@@ -58,9 +58,9 @@ export function BusinessIdentityEditModal({
 
   const handleCancel = () => {
     // Reset to original values
-    setBusinessName(business.config.businessName || "");
-    setBusinessDescription(business.config.businessDescription || "");
-    setBusinessPhone(business.config.businessPhone || "");
+    setBusinessName(location.config.businessName || "");
+    setBusinessDescription(location.config.businessDescription || "");
+    setBusinessPhone(location.config.businessPhone || "");
     onClose();
   };
 
@@ -78,7 +78,7 @@ export function BusinessIdentityEditModal({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Business Name */}
+          {/* Location Name */}
           <div className="space-y-2">
             <Label htmlFor="businessName" className="text-right block">
               שם העסק
@@ -88,15 +88,15 @@ export function BusinessIdentityEditModal({
               type="text"
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
-              placeholder={business.name}
+              placeholder={location.name}
               disabled={isLoading}
             />
             <p className="text-xs text-muted-foreground text-right">
-              השאר ריק כדי להשתמש בשם מ-Google: {business.name}
+              השאר ריק כדי להשתמש בשם מ-Google: {location.name}
             </p>
           </div>
 
-          {/* Business Description */}
+          {/* Location Description */}
           <div className="space-y-2">
             <Label htmlFor="businessDescription" className="text-right block">
               תיאור העסק
@@ -115,7 +115,7 @@ export function BusinessIdentityEditModal({
             </p>
           </div>
 
-          {/* Business Phone */}
+          {/* Location Phone */}
           <div className="space-y-2">
             <Label htmlFor="businessPhone" className="text-right block">
               טלפון ליצירת קשר (לביקורות שליליות)

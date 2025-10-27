@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Business } from "@/types/database";
+import { Location } from "@/types/database";
 import {
   Card,
   CardContent,
@@ -24,11 +24,11 @@ import {
 import Link from "next/link";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
-import { enableNotificationsForBusiness } from "@/lib/reviews/actions";
+import { enableNotificationsForLocation } from "@/lib/reviews/actions";
 import { useAuth } from "@/contexts/AuthContext";
 
-interface BusinessCardProps {
-  business: Business;
+interface LocationCardProps {
+  location: Location;
   onDelete?: (businessId: string) => void;
   onDisconnect?: (businessId: string) => void;
   onUpdate?: () => void;
@@ -36,21 +36,21 @@ interface BusinessCardProps {
 }
 
 /**
- * Business Card Component
- * Displays business information with actions
+ * Location Card Component
+ * Displays location information with actions
  */
 export default function BusinessCard({
-  business,
+  location,
   onDelete,
   onDisconnect,
   onUpdate,
   showActions = true,
-}: BusinessCardProps) {
+}: LocationCardProps) {
   const { user } = useAuth();
   const [isEnablingNotifications, setIsEnablingNotifications] = useState(false);
 
-  const connectedDate = business.connectedAt
-    ? format(business.connectedAt.toDate(), "d MMMM yyyy", { locale: he })
+  const connectedDate = location.connectedAt
+    ? format(location.connectedAt.toDate(), "d MMMM yyyy", { locale: he })
     : "";
 
   const handleEnableNotifications = async () => {
@@ -59,7 +59,7 @@ export default function BusinessCard({
     try {
       setIsEnablingNotifications(true);
       const token = await user.getIdToken();
-      await enableNotificationsForBusiness(business.id, token);
+      await enableNotificationsForLocation(location.id, token);
       onUpdate?.();
     } catch (error) {
       console.error("Error enabling notifications:", error);
@@ -69,15 +69,15 @@ export default function BusinessCard({
   };
 
   return (
-    <Card className={!business.connected ? "opacity-60" : ""}>
+    <Card className={!location.connected ? "opacity-60" : ""}>
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <Building2 className="h-5 w-5 text-primary" />
-              <CardTitle className="text-xl">{business.name}</CardTitle>
-              {!business.connected && <Badge variant="secondary">מנותק</Badge>}
-              {business.emailOnNewReview ? (
+              <CardTitle className="text-xl">{location.name}</CardTitle>
+              {!location.connected && <Badge variant="secondary">מנותק</Badge>}
+              {location.emailOnNewReview ? (
                 <Badge variant="outline" className="gap-1">
                   <Bell className="h-3 w-3" />
                   התראות פעילות
@@ -91,7 +91,7 @@ export default function BusinessCard({
             </div>
             <CardDescription className="flex items-center gap-1">
               <MapPin className="h-4 w-4" />
-              {business.address}
+              {location.address}
             </CardDescription>
           </div>
         </div>
@@ -99,18 +99,18 @@ export default function BusinessCard({
 
       <CardContent>
         <div className="space-y-4">
-          {/* Business Info */}
+          {/* Location Info */}
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <p className="text-muted-foreground">סגנון תשובה</p>
               <p className="font-medium">
-                {getToneLabel(business.config.toneOfVoice)}
+                {getToneLabel(location.config.toneOfVoice)}
               </p>
             </div>
             <div>
               <p className="text-muted-foreground">שפה</p>
               <p className="font-medium">
-                {getLanguageLabel(business.config.languageMode)}
+                {getLanguageLabel(location.config.languageMode)}
               </p>
             </div>
             <div>
@@ -119,7 +119,7 @@ export default function BusinessCard({
             </div>
           </div>
 
-          {business.connected && !business.emailOnNewReview && (
+          {location.connected && !location.emailOnNewReview && (
             <div className="rounded-md bg-accent/10 p-3 border border-accent">
               <p className="text-sm text-accent-foreground mb-2">
                 <strong>הפעל התראות</strong> כדי לקבל ביקורות חדשות אוטומטית
@@ -140,24 +140,24 @@ export default function BusinessCard({
           {showActions && (
             <div className="flex gap-2 pt-4 border-t">
               <Button asChild variant="default" size="sm" className="flex-1">
-                <Link href={`/businesses/${business.id}`}>
+                <Link href={`/locations/${location.id}`}>
                   <LinkIcon className="ml-2 h-4 w-4" />
                   צפה
                 </Link>
               </Button>
 
               <Button asChild variant="outline" size="sm">
-                <Link href={`/businesses/${business.id}/edit`}>
+                <Link href={`/locations/${location.id}/edit`}>
                   <Settings className="ml-2 h-4 w-4" />
                   הגדרות
                 </Link>
               </Button>
 
-              {onDisconnect && business.connected && (
+              {onDisconnect && location.connected && (
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => onDisconnect(business.id)}
+                  onClick={() => onDisconnect(location.id)}
                 >
                   <Power className="ml-2 h-4 w-4" />
                   נתק
@@ -168,7 +168,7 @@ export default function BusinessCard({
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={() => onDelete(business.id)}
+                  onClick={() => onDelete(location.id)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

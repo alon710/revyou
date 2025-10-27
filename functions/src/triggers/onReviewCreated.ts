@@ -79,7 +79,7 @@ ${customInstructions ? `הנחיות נוספות לדירוג ${rating}:\n${cus
  * Firestore trigger: Generate AI reply when new review is created
  */
 export const onReviewCreated = functions.onDocumentCreated(
-  "users/{userId}/businesses/{businessId}/reviews/{reviewId}",
+  "users/{userId}/locations/{businessId}/reviews/{reviewId}",
   async (event) => {
     try {
       const reviewData = event.data?.data();
@@ -93,13 +93,13 @@ export const onReviewCreated = functions.onDocumentCreated(
       }
 
       logger.info(
-        `Processing new review: ${reviewId} for business ${businessId} user ${userId}`
+        `Processing new review: ${reviewId} for location ${businessId} user ${userId}`
       );
 
       const businessDoc = await db
         .collection("users")
         .doc(userId)
-        .collection("businesses")
+        .collection("locations")
         .doc(businessId)
         .get();
 
@@ -108,8 +108,8 @@ export const onReviewCreated = functions.onDocumentCreated(
         return;
       }
 
-      const business = businessDoc.data();
-      const config = business?.config;
+      const location = businessDoc.data();
+      const config = location?.config;
 
       if (!config) {
         logger.error("Business config not found");
@@ -122,7 +122,7 @@ export const onReviewCreated = functions.onDocumentCreated(
         await db
           .collection("users")
           .doc(userId)
-          .collection("businesses")
+          .collection("locations")
           .doc(businessId)
           .collection("reviews")
           .doc(reviewId)
@@ -133,7 +133,7 @@ export const onReviewCreated = functions.onDocumentCreated(
       }
 
       const prompt = buildPrompt(
-        business.name,
+        location.name,
         config.businessDescription,
         reviewData.rating,
         reviewData.reviewerName,
@@ -141,7 +141,7 @@ export const onReviewCreated = functions.onDocumentCreated(
         config.toneOfVoice || "friendly",
         config.useEmojis || false,
         config.maxSentences || 2,
-        config.signature || `צוות ${business.name}`,
+        config.signature || `צוות ${location.name}`,
         config.languageMode || "hebrew",
         config.businessPhone,
         starConfig.customInstructions,
@@ -176,7 +176,7 @@ export const onReviewCreated = functions.onDocumentCreated(
       await db
         .collection("users")
         .doc(userId)
-        .collection("businesses")
+        .collection("locations")
         .doc(businessId)
         .collection("reviews")
         .doc(reviewId)
@@ -194,7 +194,7 @@ export const onReviewCreated = functions.onDocumentCreated(
         await db
           .collection("users")
           .doc(event.params.userId)
-          .collection("businesses")
+          .collection("locations")
           .doc(event.params.businessId)
           .collection("reviews")
           .doc(event.params.reviewId)

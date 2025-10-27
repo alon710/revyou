@@ -24,7 +24,7 @@ export function DashboardNavbar() {
   return (
     <>
       <NavbarContainer scrollSelector="main">
-        <Logo href="/businesses" />
+        <Logo href="/locations" />
 
         <nav className="hidden md:flex items-center gap-2">
           {navItems.map((item) => {

@@ -19,7 +19,7 @@ export async function updateReviewReply(
       db,
       "users",
       userId,
-      "businesses",
+      "locations",
       businessId,
       "reviews",
       reviewId
@@ -57,7 +57,7 @@ export async function approveReply(
       db,
       "users",
       userId,
-      "businesses",
+      "locations",
       businessId,
       "reviews",
       reviewId
@@ -85,7 +85,7 @@ export async function rejectReply(
       db,
       "users",
       userId,
-      "businesses",
+      "locations",
       businessId,
       "reviews",
       reviewId
@@ -115,7 +115,7 @@ export async function markAsPosted(
       db,
       "users",
       userId,
-      "businesses",
+      "locations",
       businessId,
       "reviews",
       reviewId
@@ -148,7 +148,7 @@ export async function markAsFailed(
       db,
       "users",
       userId,
-      "businesses",
+      "locations",
       businessId,
       "reviews",
       reviewId

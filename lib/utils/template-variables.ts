@@ -1,4 +1,4 @@
-import { Business, BusinessConfig } from "@/types/database";
+import { Location, LocationConfig } from "@/types/database";
 import {
   TONE_LABELS,
   LANGUAGE_LABELS,
@@ -13,12 +13,12 @@ export interface TemplateSegment {
   originalVariable?: string;
 }
 
-type VariableResolver = (business: Business, config: BusinessConfig) => string;
+type VariableResolver = (location: Location, config: LocationConfig) => string;
 
 const VARIABLE_RESOLVERS: Record<string, VariableResolver> = {
-  BUSINESS_NAME: (b, c) => c.businessName || b.name,
-  BUSINESS_DESCRIPTION: (b, c) => c.businessDescription || "",
-  BUSINESS_PHONE: (b, c) => c.businessPhone || "",
+  BUSINESS_NAME: (l, c) => c.businessName || l.name,
+  BUSINESS_DESCRIPTION: (l, c) => c.businessDescription || "",
+  BUSINESS_PHONE: (l, c) => c.businessPhone || "",
   TONE: (b, c) => TONE_LABELS[c.toneOfVoice] || c.toneOfVoice,
   LANGUAGE: (b, c) => LANGUAGE_LABELS[c.languageMode] || c.languageMode,
   MAX_SENTENCES: (b, c) => (c.maxSentences || 2).toString(),
@@ -35,14 +35,14 @@ const UNKNOWN_VARIABLES = new Set(["REVIEWER_NAME", "RATING", "REVIEW_TEXT"]);
 
 export function getVariableValue(
   variable: string,
-  business: Business,
-  config: BusinessConfig
+  location: Location,
+  config: LocationConfig
 ): { value: string; type: VariableType } {
   const varName = variable.replace(/[{}]/g, "");
 
   if (varName in VARIABLE_RESOLVERS) {
     return {
-      value: VARIABLE_RESOLVERS[varName](business, config),
+      value: VARIABLE_RESOLVERS[varName](location, config),
       type: "known",
     };
   }
@@ -56,8 +56,8 @@ export function getVariableValue(
 
 export function parseTemplate(
   template: string,
-  business: Business,
-  config: BusinessConfig
+  location: Location,
+  config: LocationConfig
 ): TemplateSegment[] {
   const segments: TemplateSegment[] = [];
   const regex = /(\{\{[A-Z_0-9]+\}\})/g;
@@ -74,7 +74,7 @@ export function parseTemplate(
     }
 
     const variable = match[1];
-    const { value, type } = getVariableValue(variable, business, config);
+    const { value, type } = getVariableValue(variable, location, config);
 
     segments.push({
       type: "variable",
@@ -98,9 +98,9 @@ export function parseTemplate(
 
 export function replaceTemplateVariables(
   template: string,
-  business: Business,
-  config: BusinessConfig
+  location: Location,
+  config: LocationConfig
 ): string {
-  const segments = parseTemplate(template, business, config);
+  const segments = parseTemplate(template, location, config);
   return segments.map((seg) => seg.content).join("");
 }

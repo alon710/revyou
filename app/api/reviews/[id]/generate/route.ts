@@ -3,7 +3,7 @@ import { generateReplyWithRetry } from "@/lib/ai/gemini";
 import { buildReplyPrompt } from "@/lib/ai/prompts";
 import { getReviewAdmin } from "@/lib/firebase/reviews.admin";
 import { updateReviewReplyAdmin } from "@/lib/firebase/reviews.admin";
-import { getBusinessAdmin } from "@/lib/firebase/businesses.admin";
+import { getLocationAdmin } from "@/lib/firebase/locations.admin";
 import { adminAuth } from "@/lib/firebase/admin";
 
 export async function POST(
@@ -38,9 +38,9 @@ export async function POST(
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    const business = await getBusinessAdmin(authenticatedUserId, businessId);
+    const location = await getLocationAdmin(authenticatedUserId, businessId);
 
-    if (!business) {
+    if (!location) {
       return NextResponse.json(
         { error: "Business not found" },
         { status: 404 }
@@ -48,14 +48,14 @@ export async function POST(
     }
 
     const prompt = buildReplyPrompt(
-      business.config,
+      location.config,
       {
         rating: review.rating,
         reviewerName: review.reviewerName,
         reviewText: review.reviewText,
       },
-      business.name,
-      business.config.businessPhone
+      location.name,
+      location.config.businessPhone
     );
 
     const aiReply = await generateReplyWithRetry(prompt);

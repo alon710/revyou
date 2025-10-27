@@ -9,13 +9,13 @@ import {
 import { db } from "@/lib/firebase/config";
 import { type PlanLimits, getPlanLimits } from "@/lib/stripe/entitlements";
 import { enrichProduct } from "@/lib/stripe/product-parser";
-import { getUserBusinesses } from "@/lib/firebase/businesses";
+import { getUserLocations } from "@/lib/firebase/locations";
 
 export async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
   if (!db) {
     console.error("Firestore not initialized");
     return {
-      businesses: 1,
+      locations: 1,
       reviewsPerMonth: 5,
       autoPost: false,
       requireApproval: true,
@@ -52,7 +52,7 @@ export async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
       }
 
       return {
-        businesses: 1,
+        locations: 1,
         reviewsPerMonth: 5,
         autoPost: false,
         requireApproval: true,
@@ -68,7 +68,7 @@ export async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
     if (!productSnapshot.exists()) {
       console.error("Product not found:", productId);
       return {
-        businesses: 1,
+        locations: 1,
         reviewsPerMonth: 5,
         autoPost: false,
         requireApproval: true,
@@ -85,7 +85,7 @@ export async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
   } catch (error) {
     console.error("Error fetching user plan limits:", error);
     return {
-      businesses: 1,
+      locations: 1,
       reviewsPerMonth: 5,
       autoPost: false,
       requireApproval: true,
@@ -93,26 +93,26 @@ export async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
   }
 }
 
-export async function checkBusinessLimit(userId: string): Promise<boolean> {
+export async function checkLocationLimit(userId: string): Promise<boolean> {
   try {
     const limits = await getUserPlanLimits(userId);
-    const businesses = await getUserBusinesses(userId);
-    return businesses.length < limits.businesses;
+    const locations = await getUserLocations(userId);
+    return locations.length < limits.locations;
   } catch (error) {
-    console.error("Error checking business limit:", error);
+    console.error("Error checking location limit:", error);
     return false;
   }
 }
 
-export async function getRemainingBusinessSlots(
+export async function getRemainingLocationSlots(
   userId: string
 ): Promise<number> {
   try {
     const limits = await getUserPlanLimits(userId);
-    const businesses = await getUserBusinesses(userId);
-    return Math.max(0, limits.businesses - businesses.length);
+    const locations = await getUserLocations(userId);
+    return Math.max(0, limits.locations - locations.length);
   } catch (error) {
-    console.error("Error getting remaining business slots:", error);
+    console.error("Error getting remaining location slots:", error);
     return 0;
   }
 }

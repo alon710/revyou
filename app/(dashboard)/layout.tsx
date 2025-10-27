@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { BusinessProvider } from "@/contexts/BusinessContext";
+import { LocationProvider } from "@/contexts/LocationContext";
 import { DashboardNavbar } from "@/components/layout/navbar/DashboardNavbar";
 import { UpgradeBanner } from "@/components/dashboard/UpgradeBanner";
 import { Loading } from "@/components/ui/loading";
@@ -31,7 +31,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <BusinessProvider>
+    <LocationProvider>
       <div className="flex flex-col h-screen overflow-hidden bg-background">
         {/* Top Navigation Bar */}
         <DashboardNavbar />
@@ -44,6 +44,6 @@ export default function DashboardLayout({
         {/* Upgrade Banner (only for free tier users) */}
         <UpgradeBanner />
       </div>
-    </BusinessProvider>
+    </LocationProvider>
   );
 }

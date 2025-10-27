@@ -37,7 +37,7 @@ export const starConfigSchema = z.object({
   autoReply: z.boolean(),
 });
 
-export const businessConfigSchema = z.object({
+export const locationConfigSchema = z.object({
   businessName: z.string().max(200).optional(),
   businessDescription: z.string().max(2000).default(""),
   businessPhone: z.string().max(50).optional(),
@@ -65,14 +65,14 @@ export const userSchema = z.object({
   createdAt: timestampSchema,
   stripeCustomerId: z.string().nullish(),
   googleRefreshToken: z.string().nullish(),
-  selectedBusinessId: z.string().optional(),
+  selectedLocationId: z.string().optional(),
 });
 
 export const userUpdateSchema = userSchema
   .partial()
   .omit({ uid: true, createdAt: true });
 
-export const businessSchema = z.object({
+export const locationSchema = z.object({
   id: z.string().min(1),
   googleAccountId: z.string().min(1),
   googleLocationId: z.string().min(1),
@@ -81,13 +81,13 @@ export const businessSchema = z.object({
   photoUrl: z.string().url().optional(),
   connected: z.boolean(),
   connectedAt: timestampSchema,
-  config: businessConfigSchema,
+  config: locationConfigSchema,
   emailOnNewReview: z.boolean(),
 });
 
-export const businessCreateSchema = businessSchema.omit({ id: true });
+export const locationCreateSchema = locationSchema.omit({ id: true });
 
-export const businessUpdateSchema = businessSchema
+export const locationUpdateSchema = locationSchema
   .partial()
   .omit({ id: true, connectedAt: true });
 
@@ -134,9 +134,9 @@ export const subscriptionUpdateSchema = subscriptionSchema
 
 export type UserInput = z.infer<typeof userSchema>;
 export type UserUpdateInput = z.infer<typeof userUpdateSchema>;
-export type BusinessInput = z.infer<typeof businessSchema>;
-export type BusinessCreateInput = z.infer<typeof businessCreateSchema>;
-export type BusinessUpdateInput = z.infer<typeof businessUpdateSchema>;
+export type LocationInput = z.infer<typeof locationSchema>;
+export type LocationCreateInput = z.infer<typeof locationCreateSchema>;
+export type LocationUpdateInput = z.infer<typeof locationUpdateSchema>;
 export type ReviewInput = z.infer<typeof reviewSchema>;
 export type ReviewCreateInput = z.infer<typeof reviewCreateSchema>;
 export type ReviewUpdateInput = z.infer<typeof reviewUpdateSchema>;

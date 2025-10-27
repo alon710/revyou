@@ -71,7 +71,7 @@ async function seedDatabase() {
       });
     console.log("✅ User created\n");
 
-    console.log("🏢 Creating business documents...");
+    console.log("🏢 Creating location documents...");
 
     const business1 = {
       googleAccountId: "google_account_123",
@@ -155,18 +155,18 @@ async function seedDatabase() {
     await db
       .collection("users")
       .doc(USER_ID)
-      .collection("businesses")
+      .collection("locations")
       .doc("business_test_001")
       .set(business1);
-    console.log("✅ Business 1 created: מסעדת חמישים ושמונה");
+    console.log("✅ Location 1 created: מסעדת חמישים ושמונה");
 
     await db
       .collection("users")
       .doc(USER_ID)
-      .collection("businesses")
+      .collection("locations")
       .doc("business_test_002")
       .set(business2);
-    console.log("✅ Business 2 created: בית קפה המלך ג'ורג'\n");
+    console.log("✅ Location 2 created: בית קפה המלך ג'ורג'\n");
 
     console.log("⭐ Creating review documents...");
 
@@ -348,7 +348,7 @@ async function seedDatabase() {
       await db
         .collection("users")
         .doc(USER_ID)
-        .collection("businesses")
+        .collection("locations")
         .doc("business_test_001")
         .collection("reviews")
         .doc(id)
@@ -367,7 +367,7 @@ async function seedDatabase() {
       await db
         .collection("users")
         .doc(USER_ID)
-        .collection("businesses")
+        .collection("locations")
         .doc("business_test_002")
         .collection("reviews")
         .doc(id)

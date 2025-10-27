@@ -1,4 +1,4 @@
-import { BusinessConfig, StarConfig } from "@/types/database";
+import { LocationConfig, StarConfig } from "@/types/database";
 
 export const TONE_LABELS: Record<string, string> = {
   friendly: "ידידותי",
@@ -53,7 +53,7 @@ export interface SectionBaseProps {
   loading?: boolean;
 }
 
-export type ConfigUpdateCallback = (updates: Partial<BusinessConfig>) => void;
+export type ConfigUpdateCallback = (updates: Partial<LocationConfig>) => void;
 
 export type StarConfigUpdateCallback = (
   rating: 1 | 2 | 3 | 4 | 5,

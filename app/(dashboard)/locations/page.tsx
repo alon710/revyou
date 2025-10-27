@@ -1,8 +1,8 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { useBusiness } from "@/contexts/BusinessContext";
-import { deleteBusiness } from "@/lib/firebase/businesses";
+import { useLocation } from "@/contexts/LocationContext";
+import { deleteLocation } from "@/lib/firebase/locations";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,26 +17,26 @@ import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
 export default function BusinessesPage() {
   const { user, loading: authLoading } = useAuth();
   const {
-    currentBusiness,
-    businesses,
+    currentLocation,
+    locations,
     loading: businessLoading,
-    refreshBusinesses,
-  } = useBusiness();
+    refreshLocations,
+  } = useLocation();
   const { limits } = useSubscription();
 
   const handleDelete = async () => {
-    if (!currentBusiness || !user) return;
+    if (!currentLocation || !user) return;
 
     try {
-      await deleteBusiness(user.uid, currentBusiness.id);
-      await refreshBusinesses();
+      await deleteLocation(user.uid, currentLocation.id);
+      await refreshLocations();
     } catch (error) {
-      console.error("Error deleting business:", error);
+      console.error("Error deleting location:", error);
     }
   };
 
-  const maxBusinesses = limits.businesses;
-  const canAddMore = businesses.length < maxBusinesses;
+  const maxLocations = limits.locations;
+  const canAddMore = locations.length < maxLocations;
 
   if (authLoading || businessLoading) {
     return (
@@ -46,12 +46,12 @@ export default function BusinessesPage() {
     );
   }
 
-  if (businesses.length === 0 || !currentBusiness) {
+  if (locations.length === 0 || !currentLocation) {
     return (
       <PageContainer>
         <PageHeader
           title="העסקים שלי"
-          description="נהל את חשבונות Google Business Profile המחוברים שלך"
+          description="נהל את חשבונות Google Location Profile המחוברים שלך"
         />
         <EmptyState />
       </PageContainer>
@@ -61,17 +61,17 @@ export default function BusinessesPage() {
   return (
     <PageContainer>
       <PageHeader
-        title={currentBusiness.name}
-        description={currentBusiness.address}
+        title={currentLocation.name}
+        description={currentLocation.address}
         icon={
-          !currentBusiness.connected && <Badge variant="secondary">מנותק</Badge>
+          !currentLocation.connected && <Badge variant="secondary">מנותק</Badge>
         }
         actions={
           <>
             <DeleteConfirmation
               title="מחיקת עסק"
-              description={`פעולה זו תמחק את העסק "${currentBusiness.name}" לצמיתות!`}
-              confirmationText={currentBusiness.name}
+              description={`פעולה זו תמחק את העסק "${currentLocation.name}" לצמיתות!`}
+              confirmationText={currentLocation.name}
               confirmationLabel="כדי לאשר, הקלד את שם העסק:"
               confirmationPlaceholder="שם העסק"
               onDelete={handleDelete}
@@ -79,17 +79,17 @@ export default function BusinessesPage() {
               variant="inline"
             />
             <Button asChild disabled={!canAddMore} variant="outline" size="sm">
-              <Link href="/businesses/connect">הוסף עסק</Link>
+              <Link href="/locations/connect">הוסף עסק</Link>
             </Button>
           </>
         }
       />
 
       <BusinessDetailsCard
-        business={currentBusiness}
+        location={currentLocation}
         userId={user!.uid}
         loading={businessLoading}
-        onUpdate={refreshBusinesses}
+        onUpdate={refreshLocations}
       />
     </PageContainer>
   );

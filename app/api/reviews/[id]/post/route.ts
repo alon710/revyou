@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { postReviewReply } from "@/lib/google/business-profile";
 import { getReviewAdmin } from "@/lib/firebase/reviews.admin";
 import { markAsPostedAdmin } from "@/lib/firebase/reviews.admin";
-import { getBusinessAdmin } from "@/lib/firebase/businesses.admin";
+import { getLocationAdmin } from "@/lib/firebase/locations.admin";
 import { getUserAdmin } from "@/lib/firebase/admin-users";
 import { adminAuth } from "@/lib/firebase/admin";
 import { decryptToken } from "@/lib/google/oauth";
@@ -39,9 +39,9 @@ export async function POST(
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    const business = await getBusinessAdmin(authenticatedUserId, businessId);
+    const location = await getLocationAdmin(authenticatedUserId, businessId);
 
-    if (!business) {
+    if (!location) {
       return NextResponse.json(
         { error: "Business not found" },
         { status: 404 }
@@ -65,7 +65,7 @@ export async function POST(
       return NextResponse.json({ error: "No reply to post" }, { status: 400 });
     }
 
-    const reviewName = `accounts/${business.googleAccountId}/locations/${business.googleLocationId}/reviews/${fullReview.googleReviewId}`;
+    const reviewName = `accounts/${location.googleAccountId}/locations/${location.googleLocationId}/reviews/${fullReview.googleReviewId}`;
 
     await postReviewReply(refreshToken, reviewName, replyText);
 

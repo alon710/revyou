@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Business } from "@/types/database";
+import { Location } from "@/types/database";
 import {
   DashboardCard,
   DashboardCardHeader,
@@ -16,13 +16,13 @@ import { Bell, Settings } from "lucide-react";
 import { NotificationPreferencesEditModal } from "@/components/dashboard/settings/NotificationPreferencesEditModal";
 
 interface NotificationPreferencesSectionProps {
-  business: Business;
+  location: Location;
   loading?: boolean;
   onSave: (data: { emailOnNewReview: boolean }) => Promise<void>;
 }
 
 export default function NotificationPreferencesSection({
-  business,
+  location,
   loading,
   onSave,
 }: NotificationPreferencesSectionProps) {
@@ -59,9 +59,9 @@ export default function NotificationPreferencesSection({
                 קבל התראה באימייל כאשר מתקבלת ביקורת חדשה
               </p>
               <Badge
-                variant={business.emailOnNewReview ? "default" : "secondary"}
+                variant={location.emailOnNewReview ? "default" : "secondary"}
               >
-                {business.emailOnNewReview ? "מופעל" : "כבוי"}
+                {location.emailOnNewReview ? "מופעל" : "כבוי"}
               </Badge>
             </div>
           </DashboardCardField>
@@ -69,7 +69,7 @@ export default function NotificationPreferencesSection({
       </DashboardCard>
 
       <NotificationPreferencesEditModal
-        emailOnNewReview={business.emailOnNewReview}
+        emailOnNewReview={location.emailOnNewReview}
         open={showEditModal}
         onClose={() => setShowEditModal(false)}
         onSave={onSave}

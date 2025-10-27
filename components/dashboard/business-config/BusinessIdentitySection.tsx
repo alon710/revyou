@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Business, BusinessConfig } from "@/types/database";
+import { Location, LocationConfig } from "@/types/database";
 import {
   DashboardCard,
   DashboardCardHeader,
@@ -14,19 +14,19 @@ import { Button } from "@/components/ui/button";
 import { Building2, Settings } from "lucide-react";
 import { BusinessIdentityEditModal } from "@/components/dashboard/business-config/BusinessIdentityEditModal";
 
-interface BusinessIdentitySectionProps {
-  config: BusinessConfig;
-  business: Business;
+interface LocationIdentitySectionProps {
+  config: LocationConfig;
+  location: Location;
   loading?: boolean;
-  onSave: (config: Partial<BusinessConfig>) => Promise<void>;
+  onSave: (config: Partial<LocationConfig>) => Promise<void>;
 }
 
 export default function BusinessIdentitySection({
   config,
-  business,
+  location,
   loading,
   onSave,
-}: BusinessIdentitySectionProps) {
+}: LocationIdentitySectionProps) {
   const [showEditModal, setShowEditModal] = useState(false);
 
   return (
@@ -54,21 +54,21 @@ export default function BusinessIdentitySection({
           </div>
         </DashboardCardHeader>
         <DashboardCardContent className="space-y-6">
-          {/* Business Name */}
+          {/* Location Name */}
           <DashboardCardField label="שם העסק">
             <p className="text-sm font-medium">
-              {config.businessName || business.name}
+              {config.businessName || location.name}
             </p>
           </DashboardCardField>
 
-          {/* Business Description */}
+          {/* Location Description */}
           <DashboardCardField label="תיאור העסק">
             <p className="text-sm bg-muted/50 p-3 rounded-md whitespace-pre-wrap leading-relaxed">
               {config.businessDescription || "אין תיאור"}
             </p>
           </DashboardCardField>
 
-          {/* Business Phone */}
+          {/* Location Phone */}
           <DashboardCardField label="טלפון ליצירת קשר (לביקורות שליליות)">
             <p className="text-sm font-medium">{config.businessPhone}</p>
           </DashboardCardField>
@@ -76,7 +76,7 @@ export default function BusinessIdentitySection({
       </DashboardCard>
 
       <BusinessIdentityEditModal
-        business={business}
+        location={location}
         open={showEditModal}
         onClose={() => setShowEditModal(false)}
         onSave={onSave}

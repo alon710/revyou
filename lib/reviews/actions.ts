@@ -12,7 +12,7 @@ import {
 /**
  * Approve a review reply
  * @param userId - User ID
- * @param businessId - Business ID
+ * @param businessId - Location ID
  * @param reviewId - Review document ID
  */
 export async function approveReply(
@@ -26,7 +26,7 @@ export async function approveReply(
 /**
  * Reject a review reply
  * @param userId - User ID
- * @param businessId - Business ID
+ * @param businessId - Location ID
  * @param reviewId - Review document ID
  */
 export async function rejectReply(
@@ -40,7 +40,7 @@ export async function rejectReply(
 /**
  * Edit a review reply
  * @param userId - User ID
- * @param businessId - Business ID
+ * @param businessId - Location ID
  * @param reviewId - Review document ID
  * @param newReply - New reply text
  */
@@ -56,7 +56,7 @@ export async function editReply(
 /**
  * Regenerate AI reply (calls API route)
  * @param userId - User ID
- * @param businessId - Business ID
+ * @param businessId - Location ID
  * @param reviewId - Review document ID
  * @param token - Firebase ID token
  * @returns Generated reply text
@@ -88,7 +88,7 @@ export async function regenerateReply(
 /**
  * Post reply to Google (calls API route)
  * @param userId - User ID
- * @param businessId - Business ID
+ * @param businessId - Location ID
  * @param reviewId - Review document ID
  * @param token - Firebase ID token
  */
@@ -114,11 +114,11 @@ export async function postReplyToGoogle(
 }
 
 /**
- * Enable notifications for a business (calls API route)
- * @param businessId - Business document ID
+ * Enable notifications for a location (calls API route)
+ * @param businessId - Location document ID
  * @param token - Firebase ID token
  */
-export async function enableNotificationsForBusiness(
+export async function enableNotificationsForLocation(
   businessId: string,
   token: string
 ): Promise<void> {

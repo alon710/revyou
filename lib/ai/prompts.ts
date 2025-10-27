@@ -1,4 +1,4 @@
-import { BusinessConfig, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
+import { LocationConfig, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
 import Mustache from "mustache";
 import {
   TONE_LABELS,
@@ -12,30 +12,30 @@ export interface ReviewData {
 }
 
 export function buildReplyPrompt(
-  businessConfig: BusinessConfig,
+  locationConfig: LocationConfig,
   review: ReviewData,
   businessName: string,
   businessPhone?: string
 ): string {
   const templateData = {
     BUSINESS_NAME: businessName || "",
-    BUSINESS_DESCRIPTION: businessConfig.businessDescription || "",
-    BUSINESS_PHONE: businessPhone || businessConfig.businessPhone || "",
-    LANGUAGE: LANGUAGE_LABELS[businessConfig.languageMode],
-    TONE: TONE_LABELS[businessConfig.toneOfVoice],
-    ALLOWED_EMOJIS: businessConfig.allowedEmojis?.join(" ") || "",
-    MAX_SENTENCES: businessConfig.maxSentences || 2,
-    SIGNATURE: businessConfig.signature || `צוות ${businessName}`,
+    BUSINESS_DESCRIPTION: locationConfig.businessDescription || "",
+    BUSINESS_PHONE: businessPhone || locationConfig.businessPhone || "",
+    LANGUAGE: LANGUAGE_LABELS[locationConfig.languageMode],
+    TONE: TONE_LABELS[locationConfig.toneOfVoice],
+    ALLOWED_EMOJIS: locationConfig.allowedEmojis?.join(" ") || "",
+    MAX_SENTENCES: locationConfig.maxSentences || 2,
+    SIGNATURE: locationConfig.signature || `צוות ${businessName}`,
     CUSTOM_INSTRUCTIONS_1:
-      businessConfig.starConfigs?.[1]?.customInstructions || "",
+      locationConfig.starConfigs?.[1]?.customInstructions || "",
     CUSTOM_INSTRUCTIONS_2:
-      businessConfig.starConfigs?.[2]?.customInstructions || "",
+      locationConfig.starConfigs?.[2]?.customInstructions || "",
     CUSTOM_INSTRUCTIONS_3:
-      businessConfig.starConfigs?.[3]?.customInstructions || "",
+      locationConfig.starConfigs?.[3]?.customInstructions || "",
     CUSTOM_INSTRUCTIONS_4:
-      businessConfig.starConfigs?.[4]?.customInstructions || "",
+      locationConfig.starConfigs?.[4]?.customInstructions || "",
     CUSTOM_INSTRUCTIONS_5:
-      businessConfig.starConfigs?.[5]?.customInstructions || "",
+      locationConfig.starConfigs?.[5]?.customInstructions || "",
     RATING: review.rating,
     REVIEWER_NAME: review.reviewerName || "",
     REVIEW_TEXT: review.reviewText || "(אין טקסט)",

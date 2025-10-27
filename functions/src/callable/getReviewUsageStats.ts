@@ -39,7 +39,7 @@ export const getReviewUsageStats = onCall<ReviewUsageStats>(async (request) => {
     const businessesSnapshot = await db
       .collection("users")
       .doc(userId)
-      .collection("businesses")
+      .collection("locations")
       .where("connected", "==", true)
       .get();
 
@@ -53,14 +53,14 @@ export const getReviewUsageStats = onCall<ReviewUsageStats>(async (request) => {
     }
 
     // Count reviews for all user's businesses in current period
-    // With the new structure, we iterate through each business subcollection
+    // With the new structure, we iterate through each location subcollection
     let totalReviews = 0;
 
     for (const businessId of businessIds) {
       const reviewsSnapshot = await db
         .collection("users")
         .doc(userId)
-        .collection("businesses")
+        .collection("locations")
         .doc(businessId)
         .collection("reviews")
         .where(

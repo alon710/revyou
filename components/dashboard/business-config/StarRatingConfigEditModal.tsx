@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BusinessConfig, StarConfig } from "@/types/database";
+import { LocationConfig, StarConfig } from "@/types/database";
 import {
   Dialog,
   DialogContent,
@@ -18,10 +18,10 @@ import { Star } from "lucide-react";
 import { StarRating } from "@/components/ui/StarRating";
 
 interface StarRatingConfigEditModalProps {
-  starConfigs: BusinessConfig["starConfigs"];
+  starConfigs: LocationConfig["starConfigs"];
   open: boolean;
   onClose: () => void;
-  onSave: (starConfigs: BusinessConfig["starConfigs"]) => Promise<void>;
+  onSave: (starConfigs: LocationConfig["starConfigs"]) => Promise<void>;
 }
 
 export function StarRatingConfigEditModal({
@@ -31,7 +31,7 @@ export function StarRatingConfigEditModal({
   onSave,
 }: StarRatingConfigEditModalProps) {
   const [localStarConfigs, setLocalStarConfigs] =
-    useState<BusinessConfig["starConfigs"]>(starConfigs);
+    useState<LocationConfig["starConfigs"]>(starConfigs);
   const [isLoading, setIsLoading] = useState(false);
 
   const updateStarConfig = (

@@ -55,7 +55,7 @@ export async function getReviewsByBusiness(
       db,
       "users",
       userId,
-      "businesses",
+      "locations",
       businessId,
       "reviews"
     );
@@ -132,7 +132,7 @@ export async function getReview(
       db,
       "users",
       userId,
-      "businesses",
+      "locations",
       businessId,
       "reviews",
       reviewId
@@ -178,7 +178,7 @@ export async function createReview(
       db,
       "users",
       userId,
-      "businesses",
+      "locations",
       businessId,
       "reviews"
     );
@@ -208,7 +208,7 @@ export async function updateReview(
       db,
       "users",
       userId,
-      "businesses",
+      "locations",
       businessId,
       "reviews",
       reviewId

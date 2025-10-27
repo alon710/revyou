@@ -5,8 +5,8 @@ export interface NavItem {
 
 export const navItems: NavItem[] = [
   {
-    title: "העסק שלי",
-    href: "/businesses",
+    title: "המיקום שלי",
+    href: "/locations",
   },
   {
     title: "ביקורות",
