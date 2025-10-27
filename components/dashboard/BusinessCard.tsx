@@ -26,7 +26,6 @@ import { format } from "date-fns";
 import { he } from "date-fns/locale";
 import { enableNotificationsForBusiness } from "@/lib/reviews/actions";
 import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
 
 interface BusinessCardProps {
   business: Business;
@@ -48,7 +47,6 @@ export default function BusinessCard({
   showActions = true,
 }: BusinessCardProps) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [isEnablingNotifications, setIsEnablingNotifications] = useState(false);
 
   const connectedDate = business.connectedAt
@@ -62,18 +60,9 @@ export default function BusinessCard({
       setIsEnablingNotifications(true);
       const token = await user.getIdToken();
       await enableNotificationsForBusiness(business.id, token);
-      toast({
-        title: "התראות הופעלו",
-        description: "ביקורות חדשות יופיעו אוטומטית במערכת",
-      });
       onUpdate?.();
     } catch (error) {
-      toast({
-        title: "שגיאה",
-        description:
-          error instanceof Error ? error.message : "לא ניתן להפעיל התראות",
-        variant: "destructive",
-      });
+      console.error("Error enabling notifications:", error);
     } finally {
       setIsEnablingNotifications(false);
     }
