@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
@@ -11,28 +11,27 @@ export function UpgradeBanner() {
   const { planType, loading } = useSubscription();
   const router = useRouter();
   const { dismissUpgradeBanner, shouldShowUpgradeBanner } = useUIStore();
-  const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  useEffect(() => {
+  const isVisible = useMemo(() => {
     if (loading || planType !== "free") {
-      setIsVisible(false);
-      return;
+      return false;
     }
+    return shouldShowUpgradeBanner();
+  }, [loading, planType, shouldShowUpgradeBanner]);
 
-    if (!shouldShowUpgradeBanner()) {
-      setIsVisible(false);
-      return;
+  useEffect(() => {
+    if (isVisible) {
+      const timer = setTimeout(() => setIsAnimating(true), 100);
+      return () => clearTimeout(timer);
     }
-
-    setIsVisible(true);
-    setTimeout(() => setIsAnimating(true), 100);
-  }, [planType, loading, shouldShowUpgradeBanner]);
+    const timer = setTimeout(() => setIsAnimating(false), 0);
+    return () => clearTimeout(timer);
+  }, [isVisible]);
 
   const handleDismiss = () => {
     setIsAnimating(false);
     setTimeout(() => {
-      setIsVisible(false);
       dismissUpgradeBanner();
     }, 300);
   };

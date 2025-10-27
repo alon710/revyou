@@ -51,14 +51,27 @@ export function useSubscription(): UseSubscriptionReturn {
     requireApproval: true,
   });
 
+  // Reset state when user changes to null
   useEffect(() => {
     if (!user) {
-      setLoading(false);
-      setSubscription(null);
-      setPlanType("free");
+      // Use setTimeout to defer state updates and avoid synchronous setState in effect
+      const timer = setTimeout(() => {
+        setLoading(false);
+        setSubscription(null);
+        setPlanType("free");
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [user]);
+
+  // Set up subscription listener when user is available
+  useEffect(() => {
+    if (!user) {
       return;
     }
 
+    // Use setTimeout to defer state update and avoid synchronous setState in effect
+    const loadingTimer = setTimeout(() => setLoading(true), 0);
     let unsubscribe: (() => void) | undefined;
 
     const setupSubscription = async () => {
@@ -146,6 +159,7 @@ export function useSubscription(): UseSubscriptionReturn {
     setupSubscription();
 
     return () => {
+      clearTimeout(loadingTimer);
       if (unsubscribe) unsubscribe();
     };
   }, [user]);

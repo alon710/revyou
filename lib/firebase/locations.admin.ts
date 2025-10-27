@@ -41,4 +41,3 @@ export async function getLocationAdmin(
     throw new Error("לא ניתן לטעון את פרטי המיקום");
   }
 }
-

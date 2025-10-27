@@ -164,4 +164,3 @@ export async function deleteLocation(
     throw new Error("לא ניתן למחוק את המיקום");
   }
 }
-

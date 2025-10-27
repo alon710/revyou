@@ -61,13 +61,13 @@ export async function signOut() {
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(() => !!auth);
+  const [error, setError] = useState<string | null>(() =>
+    !auth ? "Firebase לא מוגדר" : null
+  );
 
   useEffect(() => {
     if (!auth) {
-      setLoading(false);
-      setError("Firebase לא מוגדר");
       return;
     }
 
