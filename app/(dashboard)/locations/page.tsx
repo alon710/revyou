@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
-import BusinessDetailsCard from "@/components/dashboard/LocationDetailsCard";
+import LocationDetailsCard from "@/components/dashboard/LocationDetailsCard";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
 
 export default function BusinessesPage() {
@@ -85,7 +85,7 @@ export default function BusinessesPage() {
         }
       />
 
-      <BusinessDetailsCard
+      <LocationDetailsCard
         location={currentLocation}
         userId={user!.uid}
         loading={businessLoading}

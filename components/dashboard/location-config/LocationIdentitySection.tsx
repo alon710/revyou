@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { Building2, Settings } from "lucide-react";
-import { BusinessIdentityEditModal } from "@/components/dashboard/location-config/LocationIdentityEditModal";
+import { LocationIdentityEditModal } from "@/components/dashboard/location-config/LocationIdentityEditModal";
 
 interface LocationIdentitySectionProps {
   config: LocationConfig;
@@ -21,7 +21,7 @@ interface LocationIdentitySectionProps {
   onSave: (config: Partial<LocationConfig>) => Promise<void>;
 }
 
-export default function BusinessIdentitySection({
+export default function LocationIdentitySection({
   config,
   location,
   loading,
@@ -75,7 +75,7 @@ export default function BusinessIdentitySection({
         </DashboardCardContent>
       </DashboardCard>
 
-      <BusinessIdentityEditModal
+      <LocationIdentityEditModal
         location={location}
         open={showEditModal}
         onClose={() => setShowEditModal(false)}

@@ -17,7 +17,7 @@ interface LocationDetailsCardProps {
   onUpdate: () => Promise<void>;
 }
 
-export default function BusinessDetailsCard({
+export default function LocationDetailsCard({
   location,
   userId,
   loading = false,

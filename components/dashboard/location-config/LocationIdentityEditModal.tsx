@@ -23,7 +23,7 @@ interface LocationIdentityEditModalProps {
   onSave: (config: Partial<LocationConfig>) => Promise<void>;
 }
 
-export function BusinessIdentityEditModal({
+export function LocationIdentityEditModal({
   location,
   open,
   onClose,
