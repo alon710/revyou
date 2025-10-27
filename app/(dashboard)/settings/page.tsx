@@ -5,11 +5,10 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
 import { useSubscription } from "@/lib/hooks/useSubscription";
-import { getUser, updateNotificationPreferences } from "@/lib/firebase/users";
+import { getUser } from "@/lib/firebase/users";
 import { signOut } from "@/lib/firebase/auth";
 import { getReviewCountThisMonth } from "@/lib/subscription/usage-stats";
 import { User } from "@/types/database";
-import { NotificationPreferences } from "@/components/dashboard/settings/NotificationPreferences";
 import { AccountInfo } from "@/components/dashboard/settings/AccountInfo";
 import { SubscriptionInfo } from "@/components/dashboard/settings/SubscriptionInfo";
 import { useToast } from "@/hooks/use-toast";
@@ -59,29 +58,6 @@ export default function SettingsPage() {
     }
   }, [authUser, authLoading]);
 
-  const handleUpdateNotifications = async (preferences: {
-    emailOnNewReview: boolean;
-  }) => {
-    if (!authUser) return;
-
-    try {
-      await updateNotificationPreferences(authUser.uid, preferences);
-      toast({
-        title: "נשמר בהצלחה",
-        description: "העדפות ההתראות עודכנו",
-      });
-      await loadUserData();
-    } catch (error) {
-      console.error("Error saving notification preferences:", error);
-      toast({
-        title: "שגיאה",
-        description: "לא ניתן לשמור את העדפות ההתראות",
-        variant: "destructive",
-      });
-      throw error;
-    }
-  };
-
   const handleSignOut = async () => {
     await signOut();
     router.push("/");
@@ -122,14 +98,6 @@ export default function SettingsPage() {
         subscription={subscription}
         currentBusinesses={businesses.length}
         currentReviews={reviewCount}
-      />
-
-      <NotificationPreferences
-        emailOnNewReview={
-          userData.notificationPreferences?.emailOnNewReview || false
-        }
-        loading={loading}
-        onUpdate={handleUpdateNotifications}
       />
     </PageContainer>
   );

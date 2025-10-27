@@ -1,12 +1,6 @@
 import { z } from "zod";
 import { Timestamp } from "firebase-admin/firestore";
 
-/**
- * Admin SDK Validation Schemas
- * These schemas are compatible with Firebase Admin SDK which returns timestamps as Admin Timestamp objects
- */
-
-// Admin SDK returns timestamps as firebase-admin Timestamp objects
 const timestampSchemaAdmin = z.custom<Timestamp | Date>(
   (val) =>
     val instanceof Timestamp ||
@@ -68,11 +62,6 @@ export const businessConfigSchema = z.object({
   }),
 });
 
-export const notificationPreferencesSchema = z.object({
-  emailOnNewReview: z.boolean(),
-  emailOnFailedPost: z.boolean(),
-});
-
 export const userSchemaAdmin = z.object({
   uid: z.string().min(1),
   email: z.string().email(),
@@ -83,7 +72,6 @@ export const userSchemaAdmin = z.object({
   stripeCustomerId: z.string().nullish(),
   googleRefreshToken: z.string().nullish(),
   selectedBusinessId: z.string().optional(),
-  notificationPreferences: notificationPreferencesSchema.optional(),
 });
 
 export const businessSchemaAdmin = z.object({
@@ -96,7 +84,7 @@ export const businessSchemaAdmin = z.object({
   connected: z.boolean(),
   connectedAt: timestampSchemaAdmin,
   config: businessConfigSchema,
-  notificationsEnabled: z.boolean().optional(),
+  emailOnNewReview: z.boolean(),
 });
 
 export const reviewSchemaAdmin = z.object({

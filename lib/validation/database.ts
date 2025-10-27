@@ -38,21 +38,18 @@ export const starConfigSchema = z.object({
 });
 
 export const businessConfigSchema = z.object({
-  // Business Identity (optional overrides)
   businessName: z.string().max(200).optional(),
   businessDescription: z.string().max(2000).default(""),
   businessPhone: z.string().max(50).optional(),
 
-  // AI Response Configuration
   toneOfVoice: toneOfVoiceSchema,
-  useEmojis: z.boolean(), // Deprecated - use allowedEmojis array in template instead (kept for backend compatibility)
+  useEmojis: z.boolean(),
   languageMode: languageModeSchema,
-  languageInstructions: z.string().max(100).optional(), // Deprecated - use languageMode in template (kept for backward compatibility)
+  languageInstructions: z.string().max(100).optional(),
   maxSentences: z.number().min(1).max(5).optional().default(2),
   allowedEmojis: z.array(z.string()).optional().default([]),
   signature: z.string().max(100).optional().default(""),
 
-  // Star-specific Configuration
   starConfigs: z.object({
     1: starConfigSchema,
     2: starConfigSchema,
@@ -62,10 +59,6 @@ export const businessConfigSchema = z.object({
   }),
 });
 
-export const notificationPreferencesSchema = z.object({
-  emailOnNewReview: z.boolean(),
-});
-
 export const userSchema = z.object({
   uid: z.string().min(1),
   email: z.string().email(),
@@ -73,7 +66,6 @@ export const userSchema = z.object({
   stripeCustomerId: z.string().nullish(),
   googleRefreshToken: z.string().nullish(),
   selectedBusinessId: z.string().optional(),
-  notificationPreferences: notificationPreferencesSchema.optional(),
 });
 
 export const userUpdateSchema = userSchema
@@ -90,6 +82,7 @@ export const businessSchema = z.object({
   connected: z.boolean(),
   connectedAt: timestampSchema,
   config: businessConfigSchema,
+  emailOnNewReview: z.boolean(),
 });
 
 export const businessCreateSchema = businessSchema.omit({ id: true });

@@ -7,10 +7,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./config";
 import { User } from "@/types/database";
-import {
-  userUpdateSchema,
-  UserUpdateInput,
-} from "@/lib/validation/database";
+import { userUpdateSchema, UserUpdateInput } from "@/lib/validation/database";
 
 export async function getUser(uid: string): Promise<User | null> {
   if (!db) {
@@ -34,10 +31,7 @@ export async function getUser(uid: string): Promise<User | null> {
   }
 }
 
-export async function createUser(
-  uid: string,
-  email: string
-): Promise<User> {
+export async function createUser(uid: string, email: string): Promise<User> {
   if (!db) {
     throw new Error("Firestore not initialized");
   }
@@ -131,22 +125,5 @@ export async function userExists(uid: string): Promise<boolean> {
   } catch (error) {
     console.error("Error checking user existence:", error);
     return false;
-  }
-}
-
-export async function updateNotificationPreferences(
-  uid: string,
-  preferences: { emailOnNewReview: boolean }
-): Promise<void> {
-  if (!db) {
-    throw new Error("Firestore not initialized");
-  }
-
-  try {
-    const userRef = doc(db, "users", uid);
-    await updateDoc(userRef, { notificationPreferences: preferences });
-  } catch (error) {
-    console.error("Error updating notification preferences:", error);
-    throw new Error("לא ניתן לעדכן את הגדרות ההתראות");
   }
 }

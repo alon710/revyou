@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     );
 
     await updateBusinessAdmin(userId, businessId, {
-      notificationsEnabled: true,
+      emailOnNewReview: true,
     });
 
     return NextResponse.json({ success: true });

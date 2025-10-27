@@ -21,7 +21,6 @@ function addMinutes(date: Date, minutes: number): Date {
   return new Date(date.getTime() + minutes * 60000);
 }
 
-// Initialize Firebase Admin
 if (getApps().length === 0) {
   const privateKey =
     process.env.FIREBASE_ADMIN_PRIVATE_KEY || process.env.FIREBASE_PRIVATE_KEY;
@@ -51,7 +50,6 @@ if (getApps().length === 0) {
 
 const db = getFirestore();
 
-// Replace this with your actual Firebase Auth user ID
 const USER_ID = process.env.TEST_USER_ID || "YOUR_USER_UID";
 
 if (USER_ID === "YOUR_USER_UID") {
@@ -68,7 +66,6 @@ async function seedDatabase() {
   console.log("🌱 Starting database seeding...\n");
 
   try {
-    // 1. Seed User
     console.log("👤 Creating user document...");
     await db
       .collection("users")
@@ -77,13 +74,9 @@ async function seedDatabase() {
         uid: USER_ID,
         email: "test@example.com",
         createdAt: Timestamp.fromDate(new Date("2024-01-01")),
-        notificationPreferences: {
-          emailOnNewReview: true,
-        },
       });
     console.log("✅ User created\n");
 
-    // 2. Seed Businesses
     console.log("🏢 Creating business documents...");
 
     const business1 = {
@@ -91,10 +84,10 @@ async function seedDatabase() {
       googleLocationId: "location_123",
       name: "מסעדת חמישים ושמונה",
       address: "רחוב הרצל 58, תל אביב",
-      photoUrl: "https://lh3.googleusercontent.com/p/test",
+      photoUrl: "https://example.com/photos/restaurant_58.jpg",
       connected: true,
       connectedAt: Timestamp.fromDate(new Date("2024-01-15")),
-      notificationsEnabled: true,
+      emailOnNewReview: true,
       config: {
         businessDescription: "מסעדה איטלקית משפחתית המגישה פיצות ופסטות טריות",
         toneOfVoice: "friendly",
@@ -131,10 +124,10 @@ async function seedDatabase() {
       googleLocationId: "location_456",
       name: "בית קפה המלך ג'ורג'",
       address: "רחוב המלך ג'ורג' 25, ירושלים",
-      photoUrl: "https://lh3.googleusercontent.com/p/test2",
+      photoUrl: "https://example.com/photos/king_george_cafe.jpg",
       connected: true,
       connectedAt: Timestamp.fromDate(new Date("2024-02-01")),
-      notificationsEnabled: true,
+      emailOnNewReview: true,
       config: {
         businessDescription: "בית קפה בוטיק עם קפה איכותי ועוגות תוצרת בית",
         toneOfVoice: "professional",
@@ -181,7 +174,6 @@ async function seedDatabase() {
       .set(business2);
     console.log("✅ Business 2 created: בית קפה המלך ג'ורג'\n");
 
-    // 3. Seed Reviews
     console.log("⭐ Creating review documents...");
 
     const reviews = [
@@ -189,7 +181,8 @@ async function seedDatabase() {
         id: "google_review_123",
         googleReviewId: "google_review_123",
         reviewerName: "שרה כהן",
-        reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Sarah+Cohen",
+        reviewerPhotoUrl:
+          "https://example.com/photos/restaurant_58_reviewer_1.jpg",
         rating: 5,
         reviewText:
           "חוויה מדהימה! הפיצה הכי טעימה שאכלתי בחיי. השירות מעולה והאווירה נעימה מאוד. בהחלט נחזור!",
@@ -208,7 +201,8 @@ async function seedDatabase() {
         id: "google_review_124",
         googleReviewId: "google_review_124",
         reviewerName: "דוד לוי",
-        reviewerPhotoUrl: "https://ui-avatars.com/api/?name=David+Levi",
+        reviewerPhotoUrl:
+          "https://example.com/photos/restaurant_58_reviewer_2.jpg",
         rating: 1,
         reviewText:
           "חוויה איומה. הפסטה הגיעה קרה והשירות היה איטי מאוד. לא ממליץ.",
@@ -227,7 +221,8 @@ async function seedDatabase() {
         id: "google_review_125",
         googleReviewId: "google_review_125",
         reviewerName: "מיכל אברהם",
-        reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Michal+Abraham",
+        reviewerPhotoUrl:
+          "https://example.com/photos/restaurant_58_reviewer_3.jpg",
         rating: 4,
         reviewText: "אוכל טוב מאוד, אבל היה קצת רועש. בסך הכל נהננו.",
         reviewDate: Timestamp.fromDate(getDaysAgo(22)),
@@ -246,7 +241,8 @@ async function seedDatabase() {
         id: "google_review_126",
         googleReviewId: "google_review_126",
         reviewerName: "יוסי מזרחי",
-        reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Yossi+Mizrahi",
+        reviewerPhotoUrl:
+          "https://example.com/photos/restaurant_58_reviewer_4.jpg",
         rating: 3,
         reviewText: "בסדר, לא מיוחד. הציפיתי ליותר בהתחשב בביקורות.",
         reviewDate: Timestamp.fromDate(getDaysAgo(15)),
@@ -267,7 +263,8 @@ async function seedDatabase() {
         id: "google_review_127",
         googleReviewId: "google_review_127",
         reviewerName: "רחל גולדשטיין",
-        reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Rachel+Goldstein",
+        reviewerPhotoUrl:
+          "https://example.com/photos/restaurant_58_reviewer_5.jpg",
         rating: 5,
         reviewText: "מקום נפלא עם אוכל מצוין!",
         reviewDate: Timestamp.fromDate(getDaysAgo(10)),
@@ -286,7 +283,8 @@ async function seedDatabase() {
         id: "google_review_201",
         googleReviewId: "google_review_201",
         reviewerName: "אבי שמעון",
-        reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Avi+Shimon",
+        reviewerPhotoUrl:
+          "https://example.com/photos/king_george_cafe_reviewer_1.jpg",
         rating: 5,
         reviewText: "הקפה הכי טוב בעיר!",
         reviewDate: Timestamp.fromDate(getDaysAgo(7)),
@@ -304,7 +302,8 @@ async function seedDatabase() {
         id: "google_review_202",
         googleReviewId: "google_review_202",
         reviewerName: "דנה כץ",
-        reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Dana+Katz",
+        reviewerPhotoUrl:
+          "https://example.com/photos/king_george_cafe_reviewer_2.jpg",
         rating: 4,
         reviewText: "קפה טעים מאוד, אבל הייתה המתנה ארוכה.",
         reviewDate: Timestamp.fromDate(getDaysAgo(3)),
@@ -322,7 +321,8 @@ async function seedDatabase() {
         id: "google_review_128",
         googleReviewId: "google_review_128",
         reviewerName: "אלון ברזילי",
-        reviewerPhotoUrl: "https://ui-avatars.com/api/?name=Alon+Barzily",
+        reviewerPhotoUrl:
+          "https://example.com/photos/restaurant_58_reviewer_1.jpg",
         rating: 5,
         reviewText: "פיצה מדהימה! אחלה של מקום",
         reviewDate: Timestamp.fromDate(getDaysAgo(1)),
@@ -338,7 +338,6 @@ async function seedDatabase() {
       },
     ];
 
-    // Reviews for business_test_001
     const business1Reviews = reviews.filter((r) =>
       [
         "google_review_123",
@@ -365,7 +364,6 @@ async function seedDatabase() {
       );
     }
 
-    // Reviews for business_test_002
     const business2Reviews = reviews.filter((r) =>
       ["google_review_201", "google_review_202"].includes(r.id)
     );
@@ -391,7 +389,9 @@ async function seedDatabase() {
     console.log("  - 1 User (Free Tier)");
     console.log("  - 2 Businesses");
     console.log("  - 8 Reviews (various states)");
-    console.log("\n💡 Note: User is on FREE tier. Subscribe via Stripe to upgrade to Basic/Pro.");
+    console.log(
+      "\n💡 Note: User is on FREE tier. Subscribe via Stripe to upgrade to Basic/Pro."
+    );
     console.log("🎉 You can now test all pages in your application!");
   } catch (error) {
     console.error("❌ Error seeding database:", error);
@@ -399,7 +399,6 @@ async function seedDatabase() {
   }
 }
 
-// Run the seed function
 seedDatabase()
   .then(() => {
     console.log("\n✅ Seeding complete");

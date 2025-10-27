@@ -79,9 +79,10 @@ export async function getBusiness(
 }
 
 export async function createBusiness(
-  data: Omit<BusinessCreateInput, "config" | "connectedAt" | "connected"> & {
+  data: Omit<BusinessCreateInput, "config" | "connectedAt" | "connected" | "emailOnNewReview"> & {
     userId: string;
     config?: Partial<BusinessConfig>;
+    emailOnNewReview?: boolean;
   }
 ): Promise<Business> {
   if (!db) {
@@ -104,6 +105,7 @@ export async function createBusiness(
       config: businessConfig,
       connected: true,
       connectedAt: serverTimestamp(),
+      emailOnNewReview: data.emailOnNewReview ?? true,
     };
 
     businessCreateSchema.parse(businessData);

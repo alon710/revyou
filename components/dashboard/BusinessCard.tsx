@@ -88,7 +88,7 @@ export default function BusinessCard({
               <Building2 className="h-5 w-5 text-primary" />
               <CardTitle className="text-xl">{business.name}</CardTitle>
               {!business.connected && <Badge variant="secondary">מנותק</Badge>}
-              {business.notificationsEnabled ? (
+              {business.emailOnNewReview ? (
                 <Badge variant="outline" className="gap-1">
                   <Bell className="h-3 w-3" />
                   התראות פעילות
@@ -130,8 +130,7 @@ export default function BusinessCard({
             </div>
           </div>
 
-          {/* Enable Notifications */}
-          {business.connected && !business.notificationsEnabled && (
+          {business.connected && !business.emailOnNewReview && (
             <div className="rounded-md bg-accent/10 p-3 border border-accent">
               <p className="text-sm text-accent-foreground mb-2">
                 <strong>הפעל התראות</strong> כדי לקבל ביקורות חדשות אוטומטית

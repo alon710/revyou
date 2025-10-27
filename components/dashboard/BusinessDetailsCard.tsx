@@ -5,8 +5,10 @@ import {
   BusinessIdentitySection,
   AIResponseSettingsSection,
   StarRatingConfigSection,
+  NotificationPreferencesSection,
 } from "./business-config";
 import { updateBusinessConfig } from "@/lib/firebase/business-config";
+import { updateBusiness } from "@/lib/firebase/businesses";
 
 interface BusinessDetailsCardProps {
   business: Business;
@@ -37,6 +39,18 @@ export default function BusinessDetailsCard({
     await handleSaveSection({ starConfigs });
   };
 
+  const handleSaveNotificationPreferences = async (data: {
+    emailOnNewReview: boolean;
+  }) => {
+    try {
+      await updateBusiness(userId, business.id, data);
+      await onUpdate();
+    } catch (error) {
+      console.error("Error saving notification preferences:", error);
+      throw error;
+    }
+  };
+
   return (
     <div className="space-y-6">
       <BusinessIdentitySection
@@ -56,6 +70,12 @@ export default function BusinessDetailsCard({
         starConfigs={business.config.starConfigs}
         loading={loading}
         onSave={handleSaveStarConfigs}
+      />
+
+      <NotificationPreferencesSection
+        business={business}
+        loading={loading}
+        onSave={handleSaveNotificationPreferences}
       />
     </div>
   );

@@ -24,9 +24,6 @@ export interface User {
   stripeCustomerId?: string;
   googleRefreshToken?: string;
   selectedBusinessId?: string;
-  notificationPreferences?: {
-    emailOnNewReview: boolean;
-  };
 }
 
 export interface StarConfig {
@@ -66,7 +63,7 @@ export interface Business {
   connected: boolean;
   connectedAt: Timestamp;
   config: BusinessConfig;
-  notificationsEnabled?: boolean;
+  emailOnNewReview: boolean;
 }
 
 export interface Review {

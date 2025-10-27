@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Business } from "@/types/database";
 import {
   DashboardCard,
   DashboardCardHeader,
@@ -11,20 +10,22 @@ import {
   DashboardCardContent,
   DashboardCardField,
 } from "@/components/ui/dashboard-card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Bell, Settings } from "lucide-react";
-import { NotificationPreferencesEditModal } from "./NotificationPreferencesEditModal";
+import { NotificationPreferencesEditModal } from "@/components/dashboard/settings/NotificationPreferencesEditModal";
 
-interface NotificationPreferencesProps {
-  emailOnNewReview: boolean;
+interface NotificationPreferencesSectionProps {
+  business: Business;
   loading?: boolean;
-  onUpdate: (preferences: { emailOnNewReview: boolean }) => Promise<void>;
+  onSave: (data: { emailOnNewReview: boolean }) => Promise<void>;
 }
 
-export function NotificationPreferences({
-  emailOnNewReview,
+export default function NotificationPreferencesSection({
+  business,
   loading,
-  onUpdate,
-}: NotificationPreferencesProps) {
+  onSave,
+}: NotificationPreferencesSectionProps) {
   const [showEditModal, setShowEditModal] = useState(false);
 
   return (
@@ -37,7 +38,7 @@ export function NotificationPreferences({
                 התראות אימייל
               </DashboardCardTitle>
               <DashboardCardDescription>
-                בחר אילו התראות תרצה לקבל באימייל
+                בחר אילו התראות תרצה לקבל באימייל עבור עסק זה
               </DashboardCardDescription>
             </div>
             <Button
@@ -57,8 +58,8 @@ export function NotificationPreferences({
               <p className="text-sm text-foreground">
                 קבל התראה באימייל כאשר מתקבלת ביקורת חדשה
               </p>
-              <Badge variant={emailOnNewReview ? "default" : "secondary"}>
-                {emailOnNewReview ? "מופעל" : "כבוי"}
+              <Badge variant={business.emailOnNewReview ? "default" : "secondary"}>
+                {business.emailOnNewReview ? "מופעל" : "כבוי"}
               </Badge>
             </div>
           </DashboardCardField>
@@ -66,10 +67,10 @@ export function NotificationPreferences({
       </DashboardCard>
 
       <NotificationPreferencesEditModal
-        emailOnNewReview={emailOnNewReview}
+        emailOnNewReview={business.emailOnNewReview}
         open={showEditModal}
         onClose={() => setShowEditModal(false)}
-        onSave={onUpdate}
+        onSave={onSave}
       />
     </>
   );
