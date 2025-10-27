@@ -42,7 +42,7 @@ export async function POST(
 
     if (!location) {
       return NextResponse.json(
-        { error: "Business not found" },
+        { error: "Location not found" },
         { status: 404 }
       );
     }
