@@ -47,11 +47,6 @@ export function ReplyEditor({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
-    if (!replyText.trim()) {
-      console.error("Reply text is empty");
-      return;
-    }
-
     try {
       setIsLoading(true);
       await editReply(userId, businessId, review.id, replyText);
