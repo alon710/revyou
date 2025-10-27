@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { editReply } from "@/lib/reviews/actions";
-import { useToast } from "@/hooks/use-toast";
 import { Edit } from "lucide-react";
 
 interface ReplyEditorProps {
@@ -42,37 +41,18 @@ export function ReplyEditor({
   variant = "default",
   loadingText = "שומר...",
 }: ReplyEditorProps) {
-  const { toast } = useToast();
   const [replyText, setReplyText] = useState(
     review.editedReply || review.aiReply || ""
   );
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
-    if (!replyText.trim()) {
-      toast({
-        title: "שגיאה",
-        description: "נא להזין טקסט תגובה",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
       setIsLoading(true);
       await editReply(userId, businessId, review.id, replyText);
-      toast({
-        title: "התגובה נשמרה",
-        description: "התגובה המערוכת נשמרה בהצלחה",
-      });
       onSave();
     } catch (error) {
-      toast({
-        title: "שגיאה",
-        description:
-          error instanceof Error ? error.message : "לא ניתן לשמור את התגובה",
-        variant: "destructive",
-      });
+      console.error("Error saving reply:", error);
     } finally {
       setIsLoading(false);
     }

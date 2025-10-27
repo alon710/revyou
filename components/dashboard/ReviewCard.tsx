@@ -18,7 +18,6 @@ import {
   regenerateReply,
 } from "@/lib/reviews/actions";
 import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
 import { ReplyEditor } from "@/components/dashboard/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { User } from "lucide-react";
@@ -37,7 +36,6 @@ export function ReviewCard({
   onUpdate,
 }: ReviewCardProps) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [showPublishDialog, setShowPublishDialog] = useState(false);
@@ -59,17 +57,9 @@ export function ReviewCard({
     try {
       setIsLoading(true);
       await rejectReply(userId, businessId, review.id);
-      toast({
-        title: "התגובה נדחתה",
-      });
       onUpdate?.();
     } catch (error) {
-      toast({
-        title: "שגיאה",
-        description:
-          error instanceof Error ? error.message : "לא ניתן לדחות את התגובה",
-        variant: "destructive",
-      });
+      console.error("Error rejecting reply:", error);
     } finally {
       setIsLoading(false);
     }
@@ -81,18 +71,9 @@ export function ReviewCard({
     try {
       const token = await user.getIdToken();
       await postReplyToGoogle(userId, businessId, review.id, token);
-      toast({
-        title: "התגובה פורסמה",
-        description: "התגובה פורסמה בהצלחה לגוגל",
-      });
       onUpdate?.();
     } catch (error) {
-      toast({
-        title: "שגיאה בפרסום",
-        description:
-          error instanceof Error ? error.message : "לא ניתן לפרסם את התגובה",
-        variant: "destructive",
-      });
+      console.error("Error publishing reply:", error);
       throw error; // Re-throw to let dialog handle loading state
     }
   };
@@ -104,18 +85,9 @@ export function ReviewCard({
       setIsLoading(true);
       const token = await user.getIdToken();
       await regenerateReply(userId, businessId, review.id, token);
-      toast({
-        title: "תגובה חדשה נוצרה",
-        description: "התגובה האוטומטית עודכנה",
-      });
       onUpdate?.();
     } catch (error) {
-      toast({
-        title: "שגיאה",
-        description:
-          error instanceof Error ? error.message : "לא ניתן ליצור תגובה מחדש",
-        variant: "destructive",
-      });
+      console.error("Error regenerating reply:", error);
     } finally {
       setIsLoading(false);
     }

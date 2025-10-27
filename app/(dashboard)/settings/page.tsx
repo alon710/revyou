@@ -11,7 +11,6 @@ import { getReviewCountThisMonth } from "@/lib/subscription/usage-stats";
 import { User } from "@/types/database";
 import { AccountInfo } from "@/components/dashboard/settings/AccountInfo";
 import { SubscriptionInfo } from "@/components/dashboard/settings/SubscriptionInfo";
-import { useToast } from "@/hooks/use-toast";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
@@ -26,7 +25,6 @@ export default function SettingsPage() {
     loading: subscriptionLoading,
   } = useSubscription();
   const router = useRouter();
-  const { toast } = useToast();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [reviewCount, setReviewCount] = useState(0);
@@ -42,15 +40,10 @@ export default function SettingsPage() {
       setReviewCount(count);
     } catch (error) {
       console.error("Error loading user data:", error);
-      toast({
-        title: "שגיאה",
-        description: "לא ניתן לטעון את נתוני המשתמש",
-        variant: "destructive",
-      });
     } finally {
       setLoading(false);
     }
-  }, [authUser, toast]);
+  }, [authUser]);
 
   useEffect(() => {
     if (!authLoading && authUser) {
