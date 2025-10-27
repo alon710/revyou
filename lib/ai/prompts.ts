@@ -19,9 +19,9 @@ export function buildReplyPrompt(
   const targetLanguage = isAutoDetect ? undefined : languageMode;
 
   const templateData = {
-    BUSINESS_NAME: businessName || "",
-    BUSINESS_DESCRIPTION: locationConfig.businessDescription || "",
-    BUSINESS_PHONE: businessPhone || locationConfig.businessPhone || "",
+    LOCATION_NAME: businessName || "",
+    LOCATION_DESCRIPTION: locationConfig.businessDescription || "",
+    LOCATION_PHONE: businessPhone || locationConfig.businessPhone || "",
     IS_AUTO_DETECT: isAutoDetect,
     TARGET_LANGUAGE: targetLanguage,
     TONE: TONE_LABELS[locationConfig.toneOfVoice],

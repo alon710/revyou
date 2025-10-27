@@ -13,9 +13,9 @@ export interface TemplateSegment {
 type VariableResolver = (location: Location, config: LocationConfig) => string;
 
 const VARIABLE_RESOLVERS: Record<string, VariableResolver> = {
-  BUSINESS_NAME: (l, c) => c.businessName || l.name,
-  BUSINESS_DESCRIPTION: (l, c) => c.businessDescription || "",
-  BUSINESS_PHONE: (l, c) => c.businessPhone || "",
+  LOCATION_NAME: (l, c) => c.businessName || l.name,
+  LOCATION_DESCRIPTION: (l, c) => c.businessDescription || "",
+  LOCATION_PHONE: (l, c) => c.businessPhone || "",
   TONE: (b, c) => TONE_LABELS[c.toneOfVoice] || c.toneOfVoice,
   IS_AUTO_DETECT: (b, c) => (c.languageMode === "auto-detect" ? "true" : ""),
   TARGET_LANGUAGE: (b, c) => (c.languageMode === "auto-detect" ? "" : c.languageMode),

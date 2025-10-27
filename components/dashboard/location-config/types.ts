@@ -14,9 +14,9 @@ export const LANGUAGE_LABELS: Record<string, string> = {
 };
 
 export const AVAILABLE_VARIABLES = [
-  { name: "{{BUSINESS_NAME}}", description: "שם העסק" },
-  { name: "{{BUSINESS_DESCRIPTION}}", description: "תיאור העסק" },
-  { name: "{{BUSINESS_PHONE}}", description: "טלפון העסק" },
+  { name: "{{LOCATION_NAME}}", description: "שם העסק" },
+  { name: "{{LOCATION_DESCRIPTION}}", description: "תיאור העסק" },
+  { name: "{{LOCATION_PHONE}}", description: "טלפון העסק" },
   { name: "{{REVIEWER_NAME}}", description: "שם המבקר" },
   { name: "{{RATING}}", description: "דירוג (1-5)" },
   { name: "{{REVIEW_TEXT}}", description: "טקסט הביקורת" },

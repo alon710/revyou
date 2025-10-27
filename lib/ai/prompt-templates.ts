@@ -152,28 +152,28 @@ Example:
 {{CUSTOM_INSTRUCTIONS_1}}
 {{/CUSTOM_INSTRUCTIONS_1}}
 {{^CUSTOM_INSTRUCTIONS_1}}
-⭐ (1 star):  
-Default behavior: Offer a sincere apology, acknowledge the negative experience, and include the location phone number to encourage private follow-up.  
-Example:  
-- “We’re truly sorry, {{REVIEWER_NAME}}. This isn’t the experience we aim for — please reach us at {{BUSINESS_PHONE}} so we can resolve it. {{SIGNATURE}}”
+⭐ (1 star):
+Default behavior: Offer a sincere apology, acknowledge the negative experience, and include the location phone number to encourage private follow-up.
+Example:
+- "We're truly sorry, {{REVIEWER_NAME}}. This isn't the experience we aim for — please reach us at {{LOCATION_PHONE}} so we can resolve it. {{SIGNATURE}}"
 {{/CUSTOM_INSTRUCTIONS_1}}
 
 ---
 
 ## When Review Text is Missing:
-If {{REVIEW_TEXT}} is empty, generate a short generic response aligned with the rating.  
+If {{REVIEW_TEXT}} is empty, generate a short generic response aligned with the rating.
 Examples:
-- 5★ → “Thank you, {{REVIEWER_NAME}}! We’re so glad you enjoyed your experience 🙏 {{SIGNATURE}}”  
-- 3★ → “Thanks for rating us, {{REVIEWER_NAME}}. We’d love to hear how we can improve ✨ {{SIGNATURE}}”  
-- 1★ → “We’re sorry to hear that, {{REVIEWER_NAME}}. Please call {{BUSINESS_PHONE}} so we can help. {{SIGNATURE}}”
+- 5★ → "Thank you, {{REVIEWER_NAME}}! We're so glad you enjoyed your experience 🙏 {{SIGNATURE}}"
+- 3★ → "Thanks for rating us, {{REVIEWER_NAME}}. We'd love to hear how we can improve ✨ {{SIGNATURE}}"
+- 1★ → "We're sorry to hear that, {{REVIEWER_NAME}}. Please call {{LOCATION_PHONE}} so we can help. {{SIGNATURE}}"
 
 ---
 
 ## Additional Rules:
-- Never mention the numeric rating directly (“thanks for 5 stars”).  
-- Avoid identical phrasing across responses — vary your language naturally.  
-- Keep replies short, empathetic, and professional.  
-- Never argue or discuss details publicly. Redirect issues to private contact using {{BUSINESS_PHONE}}.
+- Never mention the numeric rating directly ("thanks for 5 stars").
+- Avoid identical phrasing across responses — vary your language naturally.
+- Keep replies short, empathetic, and professional.
+- Never argue or discuss details publicly. Redirect issues to private contact using {{LOCATION_PHONE}}.
 
 ---
 
@@ -218,5 +218,5 @@ Name: "John Smith"
 
 **1★ (no text, English mode)**
 Name: "Alex Johnson"
-> "We're sorry to hear that, Alex. Please contact us at {{BUSINESS_PHONE}} so we can help. Restaurant 58 Team"
+> "We're sorry to hear that, Alex. Please contact us at {{LOCATION_PHONE}} so we can help. Restaurant 58 Team"
 `;

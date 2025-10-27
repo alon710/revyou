@@ -12,7 +12,8 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:staged": "prettier --write",
-    "seed": "tsx scripts/seed-database.ts"
+    "seed": "tsx scripts/seed-database.ts",
+    "knip": "knip"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -58,7 +59,7 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/mustache": "^4.2.6",
-    "@types/node": "^20",
+    "@types/node": "^24.9.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
@@ -66,10 +67,11 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-unused-imports": "^4.3.0",
     "firebase-tools": "^14.20.0",
+    "knip": "^5.66.3",
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "tsx": "^4.20.6",
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
