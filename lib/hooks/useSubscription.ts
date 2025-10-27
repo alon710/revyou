@@ -63,7 +63,6 @@ export function useSubscription(): UseSubscriptionReturn {
 
     const setupSubscription = async () => {
       try {
-        // Fetch products to map product IDs to plan types and limits
         const products = await getAvailableProducts();
         const enrichedProducts = products.map(enrichProduct);
 
@@ -77,7 +76,6 @@ export function useSubscription(): UseSubscriptionReturn {
           ])
         );
 
-        // Find free tier product for default limits
         const freeProduct = enrichedProducts.find((p) => p.planId === "free");
         const defaultLimits = freeProduct
           ? getPlanLimits(freeProduct)
@@ -102,23 +100,22 @@ export function useSubscription(): UseSubscriptionReturn {
             return;
           }
 
-          // Get the first active subscription (users should only have one)
           const sub = activeSubs[0];
 
           setSubscription({
             id: sub.id,
             status: sub.status as Subscription["status"],
-            // Convert UTC string timestamps to Unix epoch seconds
+
             current_period_end:
               new Date(sub.current_period_end).getTime() / 1000,
             current_period_start:
               new Date(sub.current_period_start).getTime() / 1000,
             cancel_at_period_end: sub.cancel_at_period_end,
             price: {
-              id: sub.price, // SDK provides price ID directly as string
-              product: sub.product, // SDK provides product ID directly
+              id: sub.price,
+              product: sub.product,
             },
-            // Parse trial timestamps if present
+
             trial_end: sub.trial_end
               ? new Date(sub.trial_end).getTime() / 1000
               : undefined,
@@ -127,13 +124,11 @@ export function useSubscription(): UseSubscriptionReturn {
               : undefined,
           });
 
-          // Determine plan type and limits from product
           const productData = productMap.get(sub.product);
           if (productData) {
             setPlanType(productData.planId);
             setLimits(getPlanLimits(productData.product));
           } else {
-            // Fallback to free if product not found
             setPlanType("free");
             setLimits(defaultLimits);
           }

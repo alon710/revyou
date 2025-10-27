@@ -50,7 +50,7 @@ export function SubscriptionInfo({
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium">
-                  {currentLocations} / {limits.locations} עסקים
+                  {currentLocations} מתוך {limits.locations} עסקים
                 </span>
                 <span className="text-muted-foreground">
                   {locationsPercent}%
@@ -64,7 +64,7 @@ export function SubscriptionInfo({
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium">
-                  {currentReviews} / {limits.reviewsPerMonth} ביקורות
+                  {currentReviews} מתוך {limits.reviewsPerMonth} ביקורות
                 </span>
                 <span className="text-muted-foreground">{reviewsPercent}%</span>
               </div>

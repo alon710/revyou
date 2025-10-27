@@ -1,27 +1,42 @@
-import { httpsCallable } from "firebase/functions";
-import { functions } from "@/lib/firebase/config";
+import { db, auth } from "@/lib/firebase/config";
+import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
+import { startOfMonth } from "date-fns";
 import type { PlanLimits } from "@/lib/stripe/entitlements";
 
-interface ReviewUsageStats {
-  reviewsThisMonth: number;
-  resetDate: string;
-}
-
 export async function getReviewCountThisMonth(): Promise<number> {
-  if (!functions) {
-    console.error("Firebase Functions not initialized");
+  if (!auth?.currentUser || !db) {
+    console.error("User not authenticated or Firestore not initialized");
     return 0;
   }
 
   try {
-    const getReviewUsageStatsCallable = httpsCallable<
-      Record<string, never>,
-      ReviewUsageStats
-    >(functions, "getReviewUsageStats");
+    const userId = auth.currentUser.uid;
+    const startDate = startOfMonth(new Date());
 
-    const result = await getReviewUsageStatsCallable({});
+    // Get all connected locations
+    const locationsQuery = query(
+      collection(db, "users", userId, "locations"),
+      where("connected", "==", true)
+    );
+    const locationsSnapshot = await getDocs(locationsQuery);
+    const locationIds = locationsSnapshot.docs.map((doc) => doc.id);
 
-    return result.data.reviewsThisMonth;
+    if (locationIds.length === 0) {
+      return 0;
+    }
+
+    // Query all locations in parallel
+    const reviewCountPromises = locationIds.map(async (locationId) => {
+      const reviewsQuery = query(
+        collection(db!, "users", userId, "locations", locationId, "reviews"),
+        where("receivedAt", ">=", Timestamp.fromDate(startDate))
+      );
+      const snapshot = await getDocs(reviewsQuery);
+      return snapshot.size;
+    });
+
+    const reviewCounts = await Promise.all(reviewCountPromises);
+    return reviewCounts.reduce((sum, count) => sum + count, 0);
   } catch (error) {
     console.error("Error getting review count:", error);
     return 0;

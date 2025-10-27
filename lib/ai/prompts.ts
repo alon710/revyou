@@ -14,7 +14,6 @@ export function buildReplyPrompt(
   businessName: string,
   businessPhone?: string
 ): string {
-  // Determine language mode flags
   const languageMode = locationConfig.languageMode;
   const isAutoDetect = languageMode === "auto-detect";
   const targetLanguage = isAutoDetect ? undefined : languageMode;
