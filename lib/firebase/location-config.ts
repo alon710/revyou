@@ -7,6 +7,7 @@ import {
   LanguageMode,
 } from "@/types/database";
 import { getLocation } from "@/lib/firebase/locations";
+import { locationConfigSchema } from "@/lib/validation/database";
 
 export function getDefaultLocationConfig(): LocationConfig {
   return {
@@ -39,7 +40,18 @@ export async function updateLocationConfig(
       throw new Error("המיקום לא נמצא");
     }
 
-    const updatedConfig = { ...location.config, ...config };
+    const partialSchema = locationConfigSchema.partial();
+    const validationResult = partialSchema.safeParse(config);
+
+    if (!validationResult.success) {
+      const errorMessages = validationResult.error.issues
+        .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+        .join(", ");
+      console.error("Config validation failed:", errorMessages);
+      throw new Error(`נתונים לא תקינים: ${errorMessages}`);
+    }
+
+    const updatedConfig = { ...location.config, ...validationResult.data };
 
     const locationRef = doc(db, "users", userId, "locations", locationId);
     await updateDoc(locationRef, { config: updatedConfig });
