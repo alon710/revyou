@@ -6,7 +6,7 @@ import {
   formatAddress,
   extractLocationId,
   extractAccountId,
-} from "@/lib/google/business-profile";
+} from "@/lib/google/location-profile";
 
 export async function GET(request: NextRequest) {
   try {

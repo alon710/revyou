@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { Building2, Settings } from "lucide-react";
-import { BusinessIdentityEditModal } from "@/components/dashboard/business-config/BusinessIdentityEditModal";
+import { BusinessIdentityEditModal } from "@/components/dashboard/location-config/LocationIdentityEditModal";
 
 interface LocationIdentitySectionProps {
   config: LocationConfig;

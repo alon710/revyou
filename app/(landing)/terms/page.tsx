@@ -22,7 +22,7 @@ export default function TermsPage() {
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               השירות מספק פתרון AI לניהול ותשובות אוטומטיות לביקורות לקוחות
-              בפלטפורמת Google Location Profile. השירות כולל יצירת תשובות
+              בפלטפורמת Google Business Profile. השירות כולל יצירת תשובות
               מותאמות אישית, ניהול עסקים, ואפשרויות פרסום אוטומטי.
             </p>
           </section>

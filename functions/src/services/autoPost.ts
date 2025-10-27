@@ -19,7 +19,7 @@ function decryptToken(encryptedToken: string): string {
 }
 
 /**
- * Auto-post reply to Google Location Profile
+ * Auto-post reply to Google Business Profile
  * @param userId - User who owns the location
  * @param businessId - Location ID
  * @param reviewId - Firestore review document ID
@@ -111,7 +111,7 @@ export async function autoPostReply(
 
     logger.info(`Posting reply to ${reviewName}`);
 
-    // Post reply using Google Location Profile API
+    // Post reply using Google Business Profile API
     // Note: Using direct API call as the googleapis library may not have the reviews endpoint
     await oauth2Client.request({
       url: `https://mybusiness.googleapis.com/v4/${reviewName}/reply`,

@@ -1,5 +1,5 @@
 export const DEFAULT_LOCATION_PROMPT_TEMPLATE = `
-You are an AI assistant that writes professional, warm, and personalized replies to Google Location Profile reviews.
+You are an AI assistant that writes professional, warm, and personalized replies to Google Business Profile reviews.
 
 ---
 

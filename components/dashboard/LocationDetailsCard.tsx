@@ -2,11 +2,11 @@
 
 import { Location, LocationConfig } from "@/types/database";
 import {
-  BusinessIdentitySection,
+  LocationIdentitySection,
   AIResponseSettingsSection,
   StarRatingConfigSection,
   NotificationPreferencesSection,
-} from "@/components/dashboard/business-config";
+} from "@/components/dashboard/location-config";
 import { updateLocationConfig } from "@/lib/firebase/location-config";
 import { updateLocation } from "@/lib/firebase/locations";
 
@@ -53,7 +53,7 @@ export default function BusinessDetailsCard({
 
   return (
     <div className="space-y-6">
-      <BusinessIdentitySection
+      <LocationIdentitySection
         config={location.config}
         location={location}
         loading={loading}

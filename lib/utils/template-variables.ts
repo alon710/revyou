@@ -2,7 +2,7 @@ import { Location, LocationConfig } from "@/types/database";
 import {
   TONE_LABELS,
   LANGUAGE_LABELS,
-} from "@/components/dashboard/business-config/types";
+} from "@/components/dashboard/location-config/types";
 
 export type VariableType = "known" | "unknown";
 

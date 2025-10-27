@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
-import BusinessDetailsCard from "@/components/dashboard/BusinessDetailsCard";
+import BusinessDetailsCard from "@/components/dashboard/LocationDetailsCard";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
 
 export default function BusinessesPage() {
@@ -51,7 +51,7 @@ export default function BusinessesPage() {
       <PageContainer>
         <PageHeader
           title="העסקים שלי"
-          description="נהל את חשבונות Google Location Profile המחוברים שלך"
+          description="נהל את חשבונות Google Business Profile המחוברים שלך"
         />
         <EmptyState />
       </PageContainer>

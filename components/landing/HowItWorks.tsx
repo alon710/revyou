@@ -9,7 +9,7 @@ const steps = [
     icon: Link2,
     title: "חיבור חשבון Google Business",
     description:
-      "התחברו בקליק אחד לחשבון Google Location Profile שלכם ובחרו את העסק להפעלה",
+      "התחברו בקליק אחד לחשבון Google Business Profile שלכם ובחרו את העסק להפעלה",
   },
   {
     number: 2,

@@ -18,7 +18,7 @@ import { BackButton } from "@/components/ui/back-button";
 import { Building2, AlertCircle } from "lucide-react";
 import BusinessSelector, {
   GoogleLocationData,
-} from "@/components/dashboard/BusinessSelector";
+} from "@/components/dashboard/LocationSelector";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
@@ -60,7 +60,7 @@ export default function ConnectBusinessPage() {
       setLocations(data.locations);
 
       if (data.locations.length === 0) {
-        setError("לא נמצאו עסקים בחשבון Google Location Profile שלך");
+        setError("לא נמצאו עסקים בחשבון Google Business Profile שלך");
       }
     } catch (err) {
       console.error("Error loading locations:", err);
@@ -157,7 +157,7 @@ export default function ConnectBusinessPage() {
 
       <PageHeader
         title="חבר עסק חדש"
-        description="חבר את חשבון Google Location Profile שלך"
+        description="חבר את חשבון Google Business Profile שלך"
       />
 
       {/* Error Alert */}
@@ -173,10 +173,10 @@ export default function ConnectBusinessPage() {
         <DashboardCard>
           <DashboardCardHeader>
             <DashboardCardTitle>
-              התחבר ל-Google Location Profile
+              התחבר ל-Google Business Profile
             </DashboardCardTitle>
             <DashboardCardDescription>
-              אנחנו צריכים הרשאה כדי לגשת לחשבון Google Location Profile שלך
+              אנחנו צריכים הרשאה כדי לגשת לחשבון Google Business Profile שלך
               ולנהל תשובות לביקורות
             </DashboardCardDescription>
           </DashboardCardHeader>
@@ -186,7 +186,7 @@ export default function ConnectBusinessPage() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <Building2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <span>רשימת העסקים שלך ב-Google Location Profile</span>
+                  <span>רשימת העסקים שלך ב-Google Business Profile</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Building2 className="h-4 w-4 mt-0.5 flex-shrink-0" />

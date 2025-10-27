@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { postReviewReply } from "@/lib/google/business-profile";
+import { postReviewReply } from "@/lib/google/location-profile";
 import { getReviewAdmin } from "@/lib/firebase/reviews.admin";
 import { markAsPostedAdmin } from "@/lib/firebase/reviews.admin";
 import { getLocationAdmin } from "@/lib/firebase/locations.admin";

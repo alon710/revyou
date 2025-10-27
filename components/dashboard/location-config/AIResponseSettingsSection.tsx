@@ -15,8 +15,8 @@ import { Sparkles, Settings } from "lucide-react";
 import {
   TONE_LABELS,
   LANGUAGE_LABELS,
-} from "@/components/dashboard/business-config/types";
-import { AIResponseSettingsEditModal } from "@/components/dashboard/business-config/AIResponseSettingsEditModal";
+} from "@/components/dashboard/location-config/types";
+import { AIResponseSettingsEditModal } from "@/components/dashboard/location-config/AIResponseSettingsEditModal";
 
 interface AIResponseSettingsSectionProps {
   config: LocationConfig;
