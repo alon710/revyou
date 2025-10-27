@@ -1,13 +1,6 @@
-import {
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { User } from "@/types/database";
-import { userUpdateSchema, UserUpdateInput } from "@/lib/validation/database";
 
 export async function getUser(uid: string): Promise<User | null> {
   if (!db) {
@@ -28,102 +21,5 @@ export async function getUser(uid: string): Promise<User | null> {
   } catch (error) {
     console.error("Error fetching user:", error);
     throw new Error("לא ניתן לטעון את פרטי המשתמש");
-  }
-}
-
-export async function createUser(uid: string, email: string): Promise<User> {
-  if (!db) {
-    throw new Error("Firestore not initialized");
-  }
-
-  try {
-    const userData: Omit<User, "createdAt"> & {
-      createdAt: ReturnType<typeof serverTimestamp>;
-    } = {
-      uid,
-      email,
-      createdAt: serverTimestamp(),
-    };
-
-    const userRef = doc(db, "users", uid);
-    await setDoc(userRef, userData);
-
-    // Return the created user
-    return (await getUser(uid)) as User;
-  } catch (error) {
-    console.error("Error creating user:", error);
-    throw new Error("לא ניתן ליצור משתמש חדש");
-  }
-}
-
-export async function updateUser(
-  uid: string,
-  data: UserUpdateInput
-): Promise<User> {
-  if (!db) {
-    throw new Error("Firestore not initialized");
-  }
-
-  try {
-    // Validate update data
-    const validatedData = userUpdateSchema.parse(data);
-
-    const userRef = doc(db, "users", uid);
-    await updateDoc(userRef, validatedData);
-
-    // Return the updated user
-    return (await getUser(uid)) as User;
-  } catch (error) {
-    console.error("Error updating user:", error);
-    throw new Error("לא ניתן לעדכן את פרטי המשתמש");
-  }
-}
-
-export async function updateUserStripeCustomerId(
-  uid: string,
-  stripeCustomerId: string
-): Promise<void> {
-  if (!db) {
-    throw new Error("Firestore not initialized");
-  }
-
-  try {
-    const userRef = doc(db, "users", uid);
-    await updateDoc(userRef, { stripeCustomerId });
-  } catch (error) {
-    console.error("Error updating Stripe customer ID:", error);
-    throw new Error("לא ניתן לעדכן את פרטי התשלום");
-  }
-}
-
-export async function updateUserGoogleRefreshToken(
-  uid: string,
-  googleRefreshToken: string
-): Promise<void> {
-  if (!db) {
-    throw new Error("Firestore not initialized");
-  }
-
-  try {
-    const userRef = doc(db, "users", uid);
-    await updateDoc(userRef, { googleRefreshToken });
-  } catch (error) {
-    console.error("Error updating Google refresh token:", error);
-    throw new Error("לא ניתן לעדכן את חיבור Google");
-  }
-}
-
-export async function userExists(uid: string): Promise<boolean> {
-  if (!db) {
-    return false;
-  }
-
-  try {
-    const userRef = doc(db, "users", uid);
-    const userSnap = await getDoc(userRef);
-    return userSnap.exists();
-  } catch (error) {
-    console.error("Error checking user existence:", error);
-    return false;
   }
 }

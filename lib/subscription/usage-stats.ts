@@ -1,5 +1,11 @@
 import { db, auth } from "@/lib/firebase/config";
-import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  Timestamp,
+} from "firebase/firestore";
 import { startOfMonth } from "date-fns";
 import type { PlanLimits } from "@/lib/stripe/entitlements";
 
@@ -65,10 +71,4 @@ export function getUsagePercentages(
     locationsPercent,
     reviewsPercent,
   };
-}
-
-export function getUsageColor(percentage: number): string {
-  if (percentage >= 90) return "text-destructive";
-  if (percentage >= 70) return "text-yellow-600 dark:text-yellow-500";
-  return "text-green-600 dark:text-green-500";
 }

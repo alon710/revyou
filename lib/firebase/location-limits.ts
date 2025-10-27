@@ -11,7 +11,7 @@ import { type PlanLimits, getPlanLimits } from "@/lib/stripe/entitlements";
 import { enrichProduct } from "@/lib/stripe/product-parser";
 import { getUserLocations } from "@/lib/firebase/locations";
 
-export async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
+async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
   if (!db) {
     console.error("Firestore not initialized");
     return {
@@ -101,18 +101,5 @@ export async function checkLocationLimit(userId: string): Promise<boolean> {
   } catch (error) {
     console.error("Error checking location limit:", error);
     return false;
-  }
-}
-
-export async function getRemainingLocationSlots(
-  userId: string
-): Promise<number> {
-  try {
-    const limits = await getUserPlanLimits(userId);
-    const locations = await getUserLocations(userId);
-    return Math.max(0, limits.locations - locations.length);
-  } catch (error) {
-    console.error("Error getting remaining location slots:", error);
-    return 0;
   }
 }

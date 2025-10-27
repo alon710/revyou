@@ -1,7 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
-import { getFunctions, Functions } from "firebase/functions";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "demo-api-key",
@@ -26,7 +25,6 @@ const hasValidConfig =
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
-let functions: Functions | null = null;
 
 if (typeof window !== "undefined" || hasValidConfig) {
   if (!getApps().length) {
@@ -38,9 +36,8 @@ if (typeof window !== "undefined" || hasValidConfig) {
   // Initialize services
   auth = getAuth(app);
   db = getFirestore(app);
-  functions = getFunctions(app);
 }
 
 // Export with non-null assertion for usage (will be null during SSR without config)
-export { auth, db, functions };
+export { auth, db };
 export default app;

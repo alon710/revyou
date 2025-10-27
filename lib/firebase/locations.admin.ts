@@ -42,30 +42,3 @@ export async function getLocationAdmin(
   }
 }
 
-/**
- * Update location fields (Admin SDK version)
- * @param userId - User ID
- * @param locationId - Location ID
- * @param data - Partial location data to update
- * @returns Updated location
- */
-export async function updateLocationAdmin(
-  userId: string,
-  locationId: string,
-  data: Record<string, unknown>
-): Promise<Location> {
-  try {
-    const locationRef = adminDb
-      .collection("users")
-      .doc(userId)
-      .collection("locations")
-      .doc(locationId);
-    await locationRef.update(data);
-
-    // Return the updated location
-    return (await getLocationAdmin(userId, locationId)) as Location;
-  } catch (error) {
-    console.error("Error updating location (admin):", error);
-    throw new Error("לא ניתן לעדכן את המיקום");
-  }
-}

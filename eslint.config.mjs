@@ -1,22 +1,7 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import nextConfig from "eslint-config-next";
 import unusedImportsPlugin from "eslint-plugin-unused-imports";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-  {
-    plugins: {
-      "unused-imports": unusedImportsPlugin,
-    },
-  },
   {
     ignores: [
       "node_modules/**",
@@ -27,7 +12,11 @@ const eslintConfig = [
       "functions/lib/**",
     ],
   },
+  ...nextConfig,
   {
+    plugins: {
+      "unused-imports": unusedImportsPlugin,
+    },
     rules: {
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": "off",
@@ -35,7 +24,6 @@ const eslintConfig = [
       "unused-imports/no-unused-vars": "error",
     },
   },
-  ...compat.extends("prettier"),
 ];
 
 export default eslintConfig;

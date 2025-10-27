@@ -12,23 +12,16 @@ const timestampSchemaAdmin = z.custom<Timestamp | Date>(
   }
 );
 
-export const subscriptionTierSchema = z.enum(["free", "basic", "professional"]);
-export type SubscriptionTier = z.infer<typeof subscriptionTierSchema>;
-
-export const toneOfVoiceSchema = z.enum([
+const toneOfVoiceSchema = z.enum([
   "friendly",
   "formal",
   "humorous",
   "professional",
 ]);
 
-export const languageModeSchema = z.enum([
-  "hebrew",
-  "english",
-  "auto-detect",
-]);
+const languageModeSchema = z.enum(["hebrew", "english", "auto-detect"]);
 
-export const replyStatusSchema = z.enum([
+const replyStatusSchema = z.enum([
   "pending",
   "approved",
   "rejected",
@@ -36,18 +29,12 @@ export const replyStatusSchema = z.enum([
   "failed",
 ]);
 
-export const subscriptionStatusSchema = z.enum([
-  "active",
-  "canceled",
-  "past_due",
-]);
-
-export const starConfigSchema = z.object({
+const starConfigSchema = z.object({
   customInstructions: z.string().max(1000),
   autoReply: z.boolean(),
 });
 
-export const locationConfigSchema = z.object({
+const locationConfigSchema = z.object({
   businessDescription: z.string().min(10).max(2000),
   toneOfVoice: toneOfVoiceSchema,
   useEmojis: z.boolean(),
@@ -59,18 +46,6 @@ export const locationConfigSchema = z.object({
     4: starConfigSchema,
     5: starConfigSchema,
   }),
-});
-
-export const userSchemaAdmin = z.object({
-  uid: z.string().min(1),
-  email: z.string().email(),
-  displayName: z.string().min(1),
-  photoURL: z.string().url(),
-  createdAt: timestampSchemaAdmin,
-  subscriptionTier: subscriptionTierSchema,
-  stripeCustomerId: z.string().nullish(),
-  googleRefreshToken: z.string().nullish(),
-  selectedLocationId: z.string().optional(),
 });
 
 export const locationSchemaAdmin = z.object({
@@ -103,14 +78,4 @@ export const reviewSchemaAdmin = z.object({
   postedBy: z.string().nullable().optional(),
   wasEdited: z.boolean(),
   editedReply: z.string().max(2000).nullable().optional(),
-});
-
-export const subscriptionSchemaAdmin = z.object({
-  id: z.string().min(1),
-  userId: z.string().min(1),
-  stripeSubscriptionId: z.string().min(1),
-  stripePriceId: z.string().min(1),
-  status: subscriptionStatusSchema,
-  currentPeriodEnd: timestampSchemaAdmin,
-  cancelAtPeriodEnd: z.boolean(),
 });

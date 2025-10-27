@@ -13,7 +13,7 @@ function getGeminiClient(): GoogleGenerativeAI {
   return genAI;
 }
 
-export async function generateReply(
+async function generateReply(
   prompt: string,
   options?: {
     temperature?: number;

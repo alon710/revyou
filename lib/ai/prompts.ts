@@ -2,7 +2,7 @@ import { LocationConfig, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
 import Mustache from "mustache";
 import { TONE_LABELS } from "@/components/dashboard/location-config/types";
 
-export interface ReviewData {
+interface ReviewData {
   rating: number;
   reviewerName: string;
   reviewText: string;
@@ -45,17 +45,4 @@ export function buildReplyPrompt(
 
   const template = DEFAULT_PROMPT_TEMPLATE;
   return Mustache.render(template, templateData);
-}
-
-export function validatePrompt(prompt: string): boolean {
-  if (!prompt || prompt.trim().length === 0) {
-    return false;
-  }
-
-  if (prompt.length > 30000) {
-    console.warn("Prompt is too long");
-    return false;
-  }
-
-  return true;
 }

@@ -8,7 +8,7 @@ export const FEATURE_KEYS = {
   WHATSAPP_SUPPORT: "whatsapp_support",
 } as const;
 
-export interface FeatureConfig {
+interface FeatureConfig {
   key: string;
   displayName: string;
   type: "number" | "text" | "boolean";

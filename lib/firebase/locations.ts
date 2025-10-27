@@ -165,14 +165,3 @@ export async function deleteLocation(
   }
 }
 
-export async function getConnectedLocations(
-  userId: string
-): Promise<Location[]> {
-  const locations = await getUserLocations(userId);
-  return locations.filter((l) => l.connected);
-}
-
-export async function countUserLocations(userId: string): Promise<number> {
-  const locations = await getUserLocations(userId);
-  return locations.length;
-}

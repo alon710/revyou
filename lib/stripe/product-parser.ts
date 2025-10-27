@@ -8,7 +8,7 @@ export interface EnrichedProduct extends Omit<Product, "prices"> {
   recommended?: boolean;
 }
 
-export function getPlanId(product: Product): string {
+function getPlanId(product: Product): string {
   if (product.metadata?.plan_id) {
     return product.metadata.plan_id as string;
   }
@@ -28,7 +28,7 @@ export function getPlanId(product: Product): string {
   return "unknown";
 }
 
-export function isRecommended(product: Product): boolean {
+function isRecommended(product: Product): boolean {
   const recommended = product.metadata?.recommended;
   return (
     recommended === "true" ||

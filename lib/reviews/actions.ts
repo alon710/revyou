@@ -1,34 +1,8 @@
 import {
-  approveReply as approveReplyFb,
   rejectReply as rejectReplyFb,
   updateReviewReply,
 } from "@/lib/firebase/review-replies";
 
-/**
- * Client-side review actions
- * These functions wrap Firestore operations and API calls
- */
-
-/**
- * Approve a review reply
- * @param userId - User ID
- * @param businessId - Location ID
- * @param reviewId - Review document ID
- */
-export async function approveReply(
-  userId: string,
-  businessId: string,
-  reviewId: string
-): Promise<void> {
-  await approveReplyFb(userId, businessId, reviewId);
-}
-
-/**
- * Reject a review reply
- * @param userId - User ID
- * @param businessId - Location ID
- * @param reviewId - Review document ID
- */
 export async function rejectReply(
   userId: string,
   businessId: string,
@@ -37,13 +11,6 @@ export async function rejectReply(
   await rejectReplyFb(userId, businessId, reviewId);
 }
 
-/**
- * Edit a review reply
- * @param userId - User ID
- * @param businessId - Location ID
- * @param reviewId - Review document ID
- * @param newReply - New reply text
- */
 export async function editReply(
   userId: string,
   businessId: string,
@@ -53,14 +20,6 @@ export async function editReply(
   await updateReviewReply(userId, businessId, reviewId, newReply, true);
 }
 
-/**
- * Regenerate AI reply (calls API route)
- * @param userId - User ID
- * @param businessId - Location ID
- * @param reviewId - Review document ID
- * @param token - Firebase ID token
- * @returns Generated reply text
- */
 export async function regenerateReply(
   userId: string,
   businessId: string,
@@ -85,13 +44,6 @@ export async function regenerateReply(
   return data.aiReply;
 }
 
-/**
- * Post reply to Google (calls API route)
- * @param userId - User ID
- * @param businessId - Location ID
- * @param reviewId - Review document ID
- * @param token - Firebase ID token
- */
 export async function postReplyToGoogle(
   userId: string,
   businessId: string,
@@ -110,29 +62,5 @@ export async function postReplyToGoogle(
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.error || "Failed to post reply");
-  }
-}
-
-/**
- * Enable notifications for a location (calls API route)
- * @param businessId - Location document ID
- * @param token - Firebase ID token
- */
-export async function enableNotificationsForLocation(
-  businessId: string,
-  token: string
-): Promise<void> {
-  const response = await fetch("/api/google/notifications", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ businessId }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to enable notifications");
   }
 }

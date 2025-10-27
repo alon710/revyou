@@ -1,11 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 
 export type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";
-
-export type LanguageMode =
-  | "hebrew"
-  | "english"
-  | "auto-detect";
+export type LanguageMode = "hebrew" | "english" | "auto-detect";
 
 export type ReplyStatus =
   | "pending"
@@ -13,8 +9,6 @@ export type ReplyStatus =
   | "rejected"
   | "posted"
   | "failed";
-
-export type SubscriptionStatus = "active" | "canceled" | "past_due";
 
 export interface User {
   uid: string;
@@ -85,16 +79,6 @@ export interface Review {
 
   wasEdited: boolean;
   editedReply?: string | null;
-}
-
-export interface Subscription {
-  id: string;
-  userId: string;
-  stripeSubscriptionId: string;
-  stripePriceId: string;
-  status: SubscriptionStatus;
-  currentPeriodEnd: Timestamp;
-  cancelAtPeriodEnd: boolean;
 }
 
 export { DEFAULT_LOCATION_PROMPT_TEMPLATE as DEFAULT_PROMPT_TEMPLATE } from "@/lib/ai/prompt-templates";
