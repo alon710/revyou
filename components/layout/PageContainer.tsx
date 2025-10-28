@@ -11,7 +11,6 @@ export function PageContainer({ children, className }: PageContainerProps) {
     <div
       className={cn(
         "mx-auto w-full space-y-6",
-        // Use full width on small/medium screens, max width on large screens
         "max-w-full lg:max-w-7xl",
         className
       )}

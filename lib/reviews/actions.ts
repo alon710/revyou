@@ -1,69 +1,28 @@
 import {
-  approveReply as approveReplyFb,
   rejectReply as rejectReplyFb,
   updateReviewReply,
 } from "@/lib/firebase/review-replies";
 
-/**
- * Client-side review actions
- * These functions wrap Firestore operations and API calls
- */
-
-/**
- * Approve a review reply
- * @param userId - User ID
- * @param businessId - Business ID
- * @param reviewId - Review document ID
- */
-export async function approveReply(
-  userId: string,
-  businessId: string,
-  reviewId: string
-): Promise<void> {
-  await approveReplyFb(userId, businessId, reviewId);
-}
-
-/**
- * Reject a review reply
- * @param userId - User ID
- * @param businessId - Business ID
- * @param reviewId - Review document ID
- */
 export async function rejectReply(
   userId: string,
-  businessId: string,
+  locationId: string,
   reviewId: string
 ): Promise<void> {
-  await rejectReplyFb(userId, businessId, reviewId);
+  await rejectReplyFb(userId, locationId, reviewId);
 }
 
-/**
- * Edit a review reply
- * @param userId - User ID
- * @param businessId - Business ID
- * @param reviewId - Review document ID
- * @param newReply - New reply text
- */
 export async function editReply(
   userId: string,
-  businessId: string,
+  locationId: string,
   reviewId: string,
   newReply: string
 ): Promise<void> {
-  await updateReviewReply(userId, businessId, reviewId, newReply, true);
+  await updateReviewReply(userId, locationId, reviewId, newReply, true);
 }
 
-/**
- * Regenerate AI reply (calls API route)
- * @param userId - User ID
- * @param businessId - Business ID
- * @param reviewId - Review document ID
- * @param token - Firebase ID token
- * @returns Generated reply text
- */
 export async function regenerateReply(
   userId: string,
-  businessId: string,
+  locationId: string,
   reviewId: string,
   token: string
 ): Promise<string> {
@@ -73,7 +32,7 @@ export async function regenerateReply(
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, businessId }),
+    body: JSON.stringify({ userId, locationId }),
   });
 
   if (!response.ok) {
@@ -85,16 +44,9 @@ export async function regenerateReply(
   return data.aiReply;
 }
 
-/**
- * Post reply to Google (calls API route)
- * @param userId - User ID
- * @param businessId - Business ID
- * @param reviewId - Review document ID
- * @param token - Firebase ID token
- */
 export async function postReplyToGoogle(
   userId: string,
-  businessId: string,
+  locationId: string,
   reviewId: string,
   token: string
 ): Promise<void> {
@@ -104,35 +56,11 @@ export async function postReplyToGoogle(
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, businessId }),
+    body: JSON.stringify({ userId, locationId }),
   });
 
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.error || "Failed to post reply");
-  }
-}
-
-/**
- * Enable notifications for a business (calls API route)
- * @param businessId - Business document ID
- * @param token - Firebase ID token
- */
-export async function enableNotificationsForBusiness(
-  businessId: string,
-  token: string
-): Promise<void> {
-  const response = await fetch("/api/google/notifications", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ businessId }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to enable notifications");
   }
 }

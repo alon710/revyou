@@ -1,12 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 
 export type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";
-
-export type LanguageMode =
-  | "hebrew"
-  | "english"
-  | "auto-detect"
-  | "match-reviewer";
+export type LanguageMode = "hebrew" | "english" | "auto-detect";
 
 export type ReplyStatus =
   | "pending"
@@ -15,15 +10,13 @@ export type ReplyStatus =
   | "posted"
   | "failed";
 
-export type SubscriptionStatus = "active" | "canceled" | "past_due";
-
 export interface User {
   uid: string;
   email: string;
   createdAt: Timestamp;
   stripeCustomerId?: string;
   googleRefreshToken?: string;
-  selectedBusinessId?: string;
+  selectedLocationId?: string;
 }
 
 export interface StarConfig {
@@ -31,10 +24,10 @@ export interface StarConfig {
   autoReply: boolean;
 }
 
-export interface BusinessConfig {
-  businessName?: string;
-  businessDescription: string;
-  businessPhone?: string;
+export interface LocationConfig {
+  locationName?: string;
+  locationDescription: string;
+  locationPhone?: string;
 
   toneOfVoice: ToneOfVoice;
   useEmojis: boolean;
@@ -53,7 +46,7 @@ export interface BusinessConfig {
   };
 }
 
-export interface Business {
+export interface Location {
   id: string;
   googleAccountId: string;
   googleLocationId: string;
@@ -62,7 +55,7 @@ export interface Business {
   photoUrl?: string;
   connected: boolean;
   connectedAt: Timestamp;
-  config: BusinessConfig;
+  config: LocationConfig;
   emailOnNewReview: boolean;
 }
 
@@ -88,14 +81,4 @@ export interface Review {
   editedReply?: string | null;
 }
 
-export interface Subscription {
-  id: string;
-  userId: string;
-  stripeSubscriptionId: string;
-  stripePriceId: string;
-  status: SubscriptionStatus;
-  currentPeriodEnd: Timestamp;
-  cancelAtPeriodEnd: boolean;
-}
-
-export { DEFAULT_BUSINESS_PROMPT_TEMPLATE as DEFAULT_PROMPT_TEMPLATE } from "@/lib/ai/prompt-templates";
+export { DEFAULT_LOCATION_PROMPT_TEMPLATE } from "@/lib/ai/prompt-templates";

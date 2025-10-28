@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useBusiness } from "@/contexts/BusinessContext";
+import { useLocation } from "@/contexts/LocationContext";
 import { collection, query, orderBy, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { Review } from "@/types/database";
@@ -15,15 +15,15 @@ import { PageHeader } from "@/components/layout/PageHeader";
 export default function ReviewsPage() {
   const { user } = useAuth();
   const {
-    currentBusiness,
-    businesses,
-    loading: businessLoading,
-  } = useBusiness();
+    currentLocation,
+    locations,
+    loading: locationLoading,
+  } = useLocation();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadReviews = useCallback(async () => {
-    if (!db || !currentBusiness || !user) {
+    if (!db || !currentLocation || !user) {
       setIsLoading(false);
       return;
     }
@@ -36,8 +36,8 @@ export default function ReviewsPage() {
           db,
           "users",
           user.uid,
-          "businesses",
-          currentBusiness.id,
+          "locations",
+          currentLocation.id,
           "reviews"
         ),
         orderBy("receivedAt", "desc")
@@ -56,19 +56,19 @@ export default function ReviewsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentBusiness, user]);
+  }, [currentLocation, user]);
 
   useEffect(() => {
-    if (!businessLoading) {
+    if (!locationLoading) {
       loadReviews();
     }
-  }, [businessLoading, loadReviews]);
+  }, [locationLoading, loadReviews]);
 
   const handleUpdate = () => {
     loadReviews();
   };
 
-  if (businessLoading) {
+  if (locationLoading) {
     return (
       <PageContainer>
         <Loading fullScreen text="טוען..." />
@@ -76,7 +76,7 @@ export default function ReviewsPage() {
     );
   }
 
-  if (businesses.length === 0) {
+  if (locations.length === 0) {
     return (
       <PageContainer>
         <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
@@ -85,7 +85,7 @@ export default function ReviewsPage() {
     );
   }
 
-  if (!currentBusiness) {
+  if (!currentLocation) {
     return (
       <PageContainer>
         <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
@@ -99,7 +99,7 @@ export default function ReviewsPage() {
   return (
     <PageContainer>
       <PageHeader
-        title={`ביקורות - ${currentBusiness.name}`}
+        title={`ביקורות - ${currentLocation.name}`}
         description="כל הביקורות עבור עסק זה ממוינות מחדש לישן"
       />
 
@@ -108,7 +108,7 @@ export default function ReviewsPage() {
           <Loading text="טוען ביקורות..." />
         ) : reviews.length === 0 ? (
           <div className="text-center text-muted-foreground py-12">
-            אין ביקורות עדיין. הביקורות של {currentBusiness.name} יופיעו כאן
+            אין ביקורות עדיין. הביקורות של {currentLocation.name} יופיעו כאן
             ברגע שהן יגיעו מגוגל
           </div>
         ) : (
@@ -117,7 +117,7 @@ export default function ReviewsPage() {
               key={review.id}
               review={review}
               userId={user!.uid}
-              businessId={currentBusiness.id}
+              locationId={currentLocation.id}
               onUpdate={handleUpdate}
             />
           ))

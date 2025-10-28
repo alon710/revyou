@@ -29,7 +29,7 @@ export function AuthButtons({
   if (user) {
     return (
       <>
-        <Link href="/businesses">
+        <Link href="/locations">
           <Button className={buttonClass}>החשבון שלי</Button>
         </Link>
         <Button

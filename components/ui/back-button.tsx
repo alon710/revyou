@@ -3,20 +3,12 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-export interface BackButtonProps {
+interface BackButtonProps {
   href: string;
   label?: string;
   className?: string;
 }
 
-/**
- * BackButton Component
- * A reusable RTL-ready back navigation button
- *
- * @param href - The URL to navigate back to
- * @param label - Optional label text (defaults to "חזור")
- * @param className - Optional additional CSS classes
- */
 export function BackButton({
   href,
   label = "חזור",

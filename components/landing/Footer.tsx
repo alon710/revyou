@@ -134,11 +134,6 @@ export function Footer() {
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} תשובות AI. כל הזכויות שמורות.
             </p>
-            <div className="flex items-center gap-4">
-              <span className="text-xs text-muted-foreground">
-                מופעל על ידי Google Gemini AI
-              </span>
-            </div>
           </div>
         </div>
       </div>

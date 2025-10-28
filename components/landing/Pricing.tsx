@@ -12,17 +12,21 @@ import {
   createSubscriptionCheckout,
   getAvailableProducts,
 } from "@/lib/stripe/client";
+import { type BillingPeriod } from "@/lib/stripe/entitlements";
 import {
-  type BillingPeriod,
-  type EnrichedProduct,
-  getPriceId,
-} from "@/lib/stripe/entitlements";
-import { enrichProduct, sortProductsByPlan } from "@/lib/stripe/product-parser";
+  EnrichedProduct,
+  enrichProduct,
+  sortProductsByPlan,
+} from "@/lib/stripe/product-parser";
 import {
   FEATURE_CONFIGS,
   formatFeatureValue,
 } from "@/lib/stripe/feature-config";
-import { getMonthlyPrice, getYearlyPrice } from "@/lib/stripe/pricing";
+import {
+  getMonthlyPrice,
+  getPriceId,
+  getYearlyPrice,
+} from "@/lib/stripe/pricing";
 
 const YEARLY_DISCOUNT = 0.2;
 
@@ -70,7 +74,7 @@ export function Pricing() {
       }
 
       if (isFree) {
-        router.push("/businesses");
+        router.push("/locations");
         return;
       }
 

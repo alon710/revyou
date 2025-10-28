@@ -31,7 +31,7 @@ service cloud.firestore {
 
     // Validate language mode
     function isValidLanguageMode(mode) {
-      return mode in ['hebrew', 'english', 'auto-detect', 'match-reviewer'];
+      return mode in ['hebrew', 'english', 'auto-detect'];
     }
 
     // Validate reply status
@@ -91,35 +91,35 @@ service cloud.firestore {
         allow write: if false;
       }
 
-      // ====== BUSINESSES SUBCOLLECTION ======
-      match /businesses/{businessId} {
-        // Users can read their own businesses (ownership implicit via path)
+      // ====== LOCATIONS SUBCOLLECTION ======
+      match /locations/{locationId} {
+        // Users can read their own locations (ownership implicit via path)
         allow read: if isOwner(userId);
 
-        // Users can create businesses in their own subcollection
+        // Users can create locations in their own subcollection
         allow create: if isOwner(userId) &&
         request.resource.data.keys().hasAll(['googleAccountId', 'googleLocationId', 'name', 'address', 'connected', 'connectedAt', 'config']) &&
         validStringLength(request.resource.data.name, 1, 200) &&
         validStringLength(request.resource.data.address, 1, 500) &&
         request.resource.data.connected is bool &&
         // Validate config structure
-        request.resource.data.config.keys().hasAll(['businessDescription', 'toneOfVoice', 'useEmojis', 'languageMode', 'autoPost', 'requireApproval', 'starConfigs']) &&
-        validStringLength(request.resource.data.config.businessDescription, 0, 2000) &&
+        request.resource.data.config.keys().hasAll(['locationDescription', 'toneOfVoice', 'useEmojis', 'languageMode', 'autoPost', 'requireApproval', 'starConfigs']) &&
+        validStringLength(request.resource.data.config.locationDescription, 0, 2000) &&
         isValidTone(request.resource.data.config.toneOfVoice) &&
         isValidLanguageMode(request.resource.data.config.languageMode) &&
         request.resource.data.config.useEmojis is bool &&
         request.resource.data.config.autoPost is bool &&
         request.resource.data.config.requireApproval is bool;
 
-        // Users can update their own businesses
+        // Users can update their own locations
         allow update: if isOwner(userId);
 
-        // Users can delete their own businesses
+        // Users can delete their own locations
         allow delete: if isOwner(userId);
 
         // ====== REVIEWS SUBCOLLECTION ======
         match /reviews/{reviewId} {
-          // Users can read reviews in their own businesses (ownership implicit via path)
+          // Users can read reviews in their own locations (ownership implicit via path)
           allow read: if isOwner(userId);
 
           // Cloud Functions and users can create reviews

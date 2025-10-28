@@ -46,11 +46,11 @@ export default function LoginPage() {
         } catch (error) {
           console.error("Error parsing return URL:", error);
           // Fallback to normal flow
-          router.push("/businesses");
+          router.push("/locations");
         }
       } else {
         // Normal flow - go to dashboard
-        router.push("/businesses");
+        router.push("/locations");
       }
     }
   }, [user, authLoading, router]);
@@ -85,11 +85,11 @@ export default function LoginPage() {
         } catch (error) {
           console.error("Error parsing return URL:", error);
           // Fallback to normal flow
-          router.push("/businesses");
+          router.push("/locations");
         }
       } else {
         // Normal flow - go to dashboard
-        router.push("/businesses");
+        router.push("/locations");
       }
     }
   };

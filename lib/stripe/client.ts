@@ -3,7 +3,6 @@
 import {
   getStripePayments,
   createCheckoutSession,
-  getCurrentUserSubscriptions,
   onCurrentUserSubscriptionUpdate,
   getProducts,
   type SubscriptionSnapshot,
@@ -13,7 +12,7 @@ import type { StripePayments } from "@invertase/firestore-stripe-payments";
 
 let paymentsInstance: StripePayments | null = null;
 
-export function getPayments(): StripePayments {
+function getPayments(): StripePayments {
   if (!paymentsInstance && app) {
     paymentsInstance = getStripePayments(app, {
       productsCollection: "products",
@@ -33,17 +32,9 @@ export async function createSubscriptionCheckout(priceId: string) {
 
   return createCheckoutSession(payments, {
     price: priceId,
-    success_url: `${window.location.origin}/businesses`,
+    success_url: `${window.location.origin}/locations`,
     cancel_url: `${window.location.origin}/`,
     allow_promotion_codes: true,
-  });
-}
-
-export async function getActiveSubscriptions() {
-  const payments = getPayments();
-
-  return getCurrentUserSubscriptions(payments, {
-    status: ["active", "trialing"],
   });
 }
 
@@ -62,18 +53,4 @@ export async function getAvailableProducts() {
     includePrices: true,
     activeOnly: true,
   });
-}
-
-export async function getCustomerPortalUrl(): Promise<string> {
-  const response = await fetch("/api/stripe/create-portal-session", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create customer portal session");
-  }
-
-  const data = await response.json();
-  return data.url;
 }

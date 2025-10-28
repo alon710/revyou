@@ -1,14 +1,14 @@
 import type { Product } from "@invertase/firestore-stripe-payments";
 
 export const FEATURE_KEYS = {
-  MAX_BUSINESSES: "max_businesses",
+  MAX_LOCATIONS: "max_locations",
   MONTHLY_REVIEWS: "monthly_reviews",
   MANUAL_APPROVAL: "manual_approval",
   AUTO_PUBLISH: "auto_publish",
   WHATSAPP_SUPPORT: "whatsapp_support",
 } as const;
 
-export interface FeatureConfig {
+interface FeatureConfig {
   key: string;
   displayName: string;
   type: "number" | "text" | "boolean";
@@ -16,8 +16,8 @@ export interface FeatureConfig {
 
 export const FEATURE_CONFIGS: FeatureConfig[] = [
   {
-    key: FEATURE_KEYS.MAX_BUSINESSES,
-    displayName: "מספר עסקים",
+    key: FEATURE_KEYS.MAX_LOCATIONS,
+    displayName: "מספר מיקומים",
     type: "number",
   },
   {

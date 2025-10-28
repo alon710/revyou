@@ -19,5 +19,3 @@ if (!getApps().length) {
 
 export const adminAuth: Auth = getAuth(app);
 export const adminDb: Firestore = getFirestore(app);
-
-export default app;
