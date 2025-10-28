@@ -1,4 +1,7 @@
-import { LocationConfig, DEFAULT_PROMPT_TEMPLATE } from "@/types/database";
+import {
+  LocationConfig,
+  DEFAULT_LOCATION_PROMPT_TEMPLATE,
+} from "@/types/database";
 import Mustache from "mustache";
 import { TONE_LABELS } from "@/components/dashboard/location-config/types";
 
@@ -43,6 +46,6 @@ export function buildReplyPrompt(
     REVIEW_TEXT: review.reviewText || "(אין טקסט)",
   };
 
-  const template = DEFAULT_PROMPT_TEMPLATE;
+  const template = DEFAULT_LOCATION_PROMPT_TEMPLATE;
   return Mustache.render(template, templateData);
 }

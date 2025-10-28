@@ -81,4 +81,4 @@ export interface Review {
   editedReply?: string | null;
 }
 
-export { DEFAULT_LOCATION_PROMPT_TEMPLATE as DEFAULT_PROMPT_TEMPLATE } from "@/lib/ai/prompt-templates";
+export { DEFAULT_LOCATION_PROMPT_TEMPLATE } from "@/lib/ai/prompt-templates";

@@ -26,9 +26,9 @@ const starConfigSchema = z.object({
 });
 
 export const locationConfigSchema = z.object({
-  businessName: z.string().max(200).optional(),
-  businessDescription: z.string().max(2000).default(""),
-  businessPhone: z.string().max(50).optional(),
+  locationName: z.string().max(200).optional(),
+  locationDescription: z.string().max(2000).default(""),
+  locationPhone: z.string().max(50).optional(),
 
   toneOfVoice: toneOfVoiceSchema,
   useEmojis: z.boolean(),
@@ -84,3 +84,6 @@ export const reviewSchema = z.object({
   wasEdited: z.boolean(),
   editedReply: z.string().max(2000).nullable().optional(),
 });
+
+export type LocationCreateInput = z.infer<typeof locationCreateSchema>;
+export type LocationUpdateInput = z.infer<typeof locationUpdateSchema>;
