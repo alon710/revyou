@@ -1,7 +1,6 @@
 "use client";
 
 import type { Route } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
@@ -11,7 +10,6 @@ interface SiteLogoProps {
   color?: string;
   className?: string;
   size?: "sm" | "md" | "lg" | "xl";
-  src?: string;
 }
 
 const sizePx = {
@@ -21,12 +19,7 @@ const sizePx = {
   xl: 52,
 };
 
-export function Logo({
-  href,
-  className,
-  size = "lg",
-  src = "/logo.png",
-}: SiteLogoProps) {
+export function Logo({ href, className, size = "lg" }: SiteLogoProps) {
   const height = sizePx[size];
 
   const width = Math.round(height * (122.03 / 45.69));
@@ -48,10 +41,12 @@ export function Logo({
         }}
       >
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className={cn(
-            "font-nunito font-extrabold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent",
-            fontSizeClasses[size]
-          )}>
+          <span
+            className={cn(
+              "font-nunito font-extrabold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent",
+              fontSizeClasses[size]
+            )}
+          >
             RevYou
           </span>
         </div>

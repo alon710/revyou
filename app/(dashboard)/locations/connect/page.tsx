@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { createLocation } from "@/lib/firebase/locations";
 import { checkLocationLimit } from "@/lib/firebase/location-limits";
+import { GoogleBusinessProfileLocation } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import {
   DashboardCard,
@@ -26,8 +27,8 @@ export default function ConnectLocationPage() {
   const { user, loading: authLoading } = useAuth();
 
   const [step, setStep] = useState<"auth" | "select">("auth");
-  const [locations, setLocations] = useState<[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<null>(null);
+  const [locations, setLocations] = useState<GoogleBusinessProfileLocation[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<GoogleBusinessProfileLocation | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingLocations, setLoadingLocations] = useState(false);
   const [error, setError] = useState<string | null>(null);

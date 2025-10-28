@@ -46,6 +46,14 @@ export interface LocationConfig {
   };
 }
 
+export interface GoogleBusinessProfileLocation {
+  accountId: string;
+  id: string;
+  name: string;
+  address: string;
+  photoUrl?: string;
+}
+
 export interface Location {
   id: string;
   googleAccountId: string;
