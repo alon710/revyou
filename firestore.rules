@@ -103,8 +103,8 @@ service cloud.firestore {
         validStringLength(request.resource.data.address, 1, 500) &&
         request.resource.data.connected is bool &&
         // Validate config structure
-        request.resource.data.config.keys().hasAll(['businessDescription', 'toneOfVoice', 'useEmojis', 'languageMode', 'autoPost', 'requireApproval', 'starConfigs']) &&
-        validStringLength(request.resource.data.config.businessDescription, 0, 2000) &&
+        request.resource.data.config.keys().hasAll(['locationDescription', 'toneOfVoice', 'useEmojis', 'languageMode', 'autoPost', 'requireApproval', 'starConfigs']) &&
+        validStringLength(request.resource.data.config.locationDescription, 0, 2000) &&
         isValidTone(request.resource.data.config.toneOfVoice) &&
         isValidLanguageMode(request.resource.data.config.languageMode) &&
         request.resource.data.config.useEmojis is bool &&

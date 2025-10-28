@@ -17,7 +17,7 @@ export default function ReviewsPage() {
   const {
     currentLocation,
     locations,
-    loading: businessLoading,
+    loading: locationLoading,
   } = useLocation();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,16 +59,16 @@ export default function ReviewsPage() {
   }, [currentLocation, user]);
 
   useEffect(() => {
-    if (!businessLoading) {
+    if (!locationLoading) {
       loadReviews();
     }
-  }, [businessLoading, loadReviews]);
+  }, [locationLoading, loadReviews]);
 
   const handleUpdate = () => {
     loadReviews();
   };
 
-  if (businessLoading) {
+  if (locationLoading) {
     return (
       <PageContainer>
         <Loading fullScreen text="טוען..." />
@@ -117,7 +117,7 @@ export default function ReviewsPage() {
               key={review.id}
               review={review}
               userId={user!.uid}
-              businessId={currentLocation.id}
+              locationId={currentLocation.id}
               onUpdate={handleUpdate}
             />
           ))

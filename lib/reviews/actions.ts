@@ -5,24 +5,24 @@ import {
 
 export async function rejectReply(
   userId: string,
-  businessId: string,
+  locationId: string,
   reviewId: string
 ): Promise<void> {
-  await rejectReplyFb(userId, businessId, reviewId);
+  await rejectReplyFb(userId, locationId, reviewId);
 }
 
 export async function editReply(
   userId: string,
-  businessId: string,
+  locationId: string,
   reviewId: string,
   newReply: string
 ): Promise<void> {
-  await updateReviewReply(userId, businessId, reviewId, newReply, true);
+  await updateReviewReply(userId, locationId, reviewId, newReply, true);
 }
 
 export async function regenerateReply(
   userId: string,
-  businessId: string,
+  locationId: string,
   reviewId: string,
   token: string
 ): Promise<string> {
@@ -32,7 +32,7 @@ export async function regenerateReply(
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, businessId }),
+    body: JSON.stringify({ userId, locationId }),
   });
 
   if (!response.ok) {
@@ -46,7 +46,7 @@ export async function regenerateReply(
 
 export async function postReplyToGoogle(
   userId: string,
-  businessId: string,
+  locationId: string,
   reviewId: string,
   token: string
 ): Promise<void> {
@@ -56,7 +56,7 @@ export async function postReplyToGoogle(
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, businessId }),
+    body: JSON.stringify({ userId, locationId }),
   });
 
   if (!response.ok) {

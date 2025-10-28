@@ -1,6 +1,6 @@
 import { OAuth2Client } from "google-auth-library";
 
-const GOOGLE_BUSINESS_SCOPES = [
+const GOOGLE_BUSINESS_PROFILE_API_SCOPES = [
   "https://www.googleapis.com/auth/business.manage",
 ];
 
@@ -21,7 +21,7 @@ export function getAuthorizationUrl(state?: string): string {
 
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: "offline",
-    scope: GOOGLE_BUSINESS_SCOPES,
+    scope: GOOGLE_BUSINESS_PROFILE_API_SCOPES,
     state: state || "",
     prompt: "consent",
   });

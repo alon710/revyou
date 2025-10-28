@@ -20,23 +20,19 @@ export interface GoogleLocationData {
   website?: string;
 }
 
-interface BusinessSelectorProps {
+interface LocationSelectorProps {
   locations: GoogleLocationData[];
   selectedLocationId: string | null;
   onSelect: (location: GoogleLocationData) => void;
   loading?: boolean;
 }
 
-/**
- * Location Selector Component
- * Allows user to select a location location from their Google account
- */
-export default function BusinessSelector({
+export function LocationSelector({
   locations,
   selectedLocationId,
   onSelect,
   loading = false,
-}: BusinessSelectorProps) {
+}: LocationSelectorProps) {
   if (loading) {
     return (
       <div className="text-center py-8">

@@ -10,9 +10,8 @@ import {
   getPlanLimits,
   type PlanType,
   type PlanLimits,
-  type EnrichedProduct,
 } from "@/lib/stripe/entitlements";
-import { enrichProduct } from "@/lib/stripe/product-parser";
+import { EnrichedProduct, enrichProduct } from "@/lib/stripe/product-parser";
 
 export interface Subscription {
   id: string;
@@ -51,10 +50,8 @@ export function useSubscription(): UseSubscriptionReturn {
     requireApproval: true,
   });
 
-  // Reset state when user changes to null
   useEffect(() => {
     if (!user) {
-      // Use setTimeout to defer state updates and avoid synchronous setState in effect
       const timer = setTimeout(() => {
         setLoading(false);
         setSubscription(null);
@@ -64,13 +61,11 @@ export function useSubscription(): UseSubscriptionReturn {
     }
   }, [user]);
 
-  // Set up subscription listener when user is available
   useEffect(() => {
     if (!user) {
       return;
     }
 
-    // Use setTimeout to defer state update and avoid synchronous setState in effect
     const loadingTimer = setTimeout(() => setLoading(true), 0);
     let unsubscribe: (() => void) | undefined;
 

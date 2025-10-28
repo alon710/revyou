@@ -35,7 +35,7 @@ const starConfigSchema = z.object({
 });
 
 const locationConfigSchema = z.object({
-  businessDescription: z.string().min(10).max(2000),
+  locationDescription: z.string().min(10).max(2000),
   toneOfVoice: toneOfVoiceSchema,
   useEmojis: z.boolean(),
   languageMode: languageModeSchema,

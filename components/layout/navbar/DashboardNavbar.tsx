@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/Logo";
 import { cn } from "@/lib/utils";
 import { navItems } from "@/components/layout/navbar/shared/nav-items";
-import { BusinessToggler } from "@/components/dashboard/LocationToggler";
+import { LocationToggler } from "@/components/dashboard/LocationToggler";
 import { NavbarContainer } from "@/components/layout/navbar/shared/NavbarContainer";
 import { MobileMenuButton } from "@/components/layout/navbar/shared/MobileMenuButton";
 import { MobileMenuSheet } from "@/components/layout/navbar/shared/MobileMenuSheet";
@@ -49,7 +49,7 @@ export function DashboardNavbar() {
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
-          <BusinessToggler />
+          <LocationToggler />
           <Button size="sm" variant="ghost" asChild>
             <Link href="/settings">
               <Settings className="h-4 w-4" />
@@ -65,7 +65,7 @@ export function DashboardNavbar() {
 
       <MobileMenuSheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
         <div className="pb-3 border-b border-border/40">
-          <BusinessToggler />
+          <LocationToggler />
         </div>
 
         {navItems.map((item) => {

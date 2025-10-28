@@ -18,7 +18,7 @@ import { Edit } from "lucide-react";
 interface ReplyEditorProps {
   review: Review;
   userId: string;
-  businessId: string;
+  locationId: string;
   open: boolean;
   onClose: () => void;
   onSave: () => void;
@@ -26,15 +26,10 @@ interface ReplyEditorProps {
   loadingText?: string;
 }
 
-/**
- * Reply Editor Component
- * Modal dialog for editing AI-generated replies
- * Follows the ConfirmationDialog pattern for consistency
- */
 export function ReplyEditor({
   review,
   userId,
-  businessId,
+  locationId,
   open,
   onClose,
   onSave,
@@ -49,7 +44,7 @@ export function ReplyEditor({
   const handleSave = async () => {
     try {
       setIsLoading(true);
-      await editReply(userId, businessId, review.id, replyText);
+      await editReply(userId, locationId, review.id, replyText);
       onSave();
     } catch (error) {
       console.error("Error saving reply:", error);

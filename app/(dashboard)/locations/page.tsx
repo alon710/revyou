@@ -14,12 +14,12 @@ import { Loading } from "@/components/ui/loading";
 import LocationDetailsCard from "@/components/dashboard/LocationDetailsCard";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
 
-export default function BusinessesPage() {
+export default function LocationsPage() {
   const { user, loading: authLoading } = useAuth();
   const {
     currentLocation,
     locations,
-    loading: businessLoading,
+    loading: locationLoading,
     refreshLocations,
   } = useLocation();
   const { limits } = useSubscription();
@@ -38,7 +38,7 @@ export default function BusinessesPage() {
   const maxLocations = limits.locations;
   const canAddMore = locations.length < maxLocations;
 
-  if (authLoading || businessLoading) {
+  if (authLoading || locationLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Loading size="md" />
@@ -88,7 +88,7 @@ export default function BusinessesPage() {
       <LocationDetailsCard
         location={currentLocation}
         userId={user!.uid}
-        loading={businessLoading}
+        loading={locationLoading}
         onUpdate={refreshLocations}
       />
     </PageContainer>

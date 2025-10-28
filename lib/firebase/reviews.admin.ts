@@ -2,22 +2,9 @@ import { adminDb } from "@/lib/firebase/admin";
 import { Review } from "@/types/database";
 import { reviewSchemaAdmin } from "@/lib/validation/database.admin";
 
-/**
- * ADMIN SDK FUNCTIONS FOR REVIEWS
- * These functions use Firebase Admin SDK and should ONLY be called from server-side code (API routes, server actions)
- * They bypass Firestore security rules and have elevated privileges
- */
-
-/**
- * Get a single review by ID (Admin SDK version)
- * @param userId - User ID
- * @param businessId - Location ID
- * @param reviewId - Review ID
- * @returns Review data or null if not found
- */
 export async function getReviewAdmin(
   userId: string,
-  businessId: string,
+  locationId: string,
   reviewId: string
 ): Promise<Review | null> {
   try {
@@ -25,7 +12,7 @@ export async function getReviewAdmin(
       .collection("users")
       .doc(userId)
       .collection("locations")
-      .doc(businessId)
+      .doc(locationId)
       .collection("reviews")
       .doc(reviewId);
     const reviewSnap = await reviewRef.get();
@@ -43,18 +30,9 @@ export async function getReviewAdmin(
   }
 }
 
-/**
- * Update review reply (Admin SDK version)
- * @param userId - User ID
- * @param businessId - Location ID
- * @param reviewId - Review ID
- * @param reply - Reply text
- * @param isEdited - Whether this is a user edit
- * @returns Updated review
- */
 export async function updateReviewReplyAdmin(
   userId: string,
-  businessId: string,
+  locationId: string,
   reviewId: string,
   reply: string,
   isEdited: boolean = false
@@ -64,7 +42,7 @@ export async function updateReviewReplyAdmin(
       .collection("users")
       .doc(userId)
       .collection("locations")
-      .doc(businessId)
+      .doc(locationId)
       .collection("reviews")
       .doc(reviewId);
     const updateData: Record<string, unknown> = {
@@ -79,8 +57,7 @@ export async function updateReviewReplyAdmin(
 
     await reviewRef.update(updateData);
 
-    // Return the updated review
-    return (await getReviewAdmin(userId, businessId, reviewId)) as Review;
+    return (await getReviewAdmin(userId, locationId, reviewId)) as Review;
   } catch (error) {
     console.error("Error updating review reply (admin):", error);
     throw new Error("לא ניתן לעדכן את התגובה");

@@ -73,7 +73,7 @@ async function seedDatabase() {
 
     console.log("🏢 Creating location documents...");
 
-    const business1 = {
+    const businessLocation1 = {
       googleAccountId: "google_account_123",
       googleLocationId: "location_123",
       name: "מסעדת חמישים ושמונה",
@@ -83,7 +83,7 @@ async function seedDatabase() {
       connectedAt: Timestamp.fromDate(new Date("2024-01-15")),
       emailOnNewReview: true,
       config: {
-        businessDescription: "מסעדה איטלקית משפחתית המגישה פיצות ופסטות טריות",
+        locationDescription: "מסעדה איטלקית משפחתית המגישה פיצות ופסטות טריות",
         toneOfVoice: "friendly",
         useEmojis: true,
         languageMode: "hebrew",
@@ -113,7 +113,7 @@ async function seedDatabase() {
       },
     };
 
-    const business2 = {
+    const businessLocation2 = {
       googleAccountId: "google_account_456",
       googleLocationId: "location_456",
       name: "בית קפה המלך ג'ורג'",
@@ -123,7 +123,7 @@ async function seedDatabase() {
       connectedAt: Timestamp.fromDate(new Date("2024-02-01")),
       emailOnNewReview: true,
       config: {
-        businessDescription: "בית קפה בוטיק עם קפה איכותי ועוגות תוצרת בית",
+        locationDescription: "בית קפה בוטיק עם קפה איכותי ועוגות תוצרת בית",
         toneOfVoice: "professional",
         useEmojis: false,
         languageMode: "hebrew",
@@ -156,16 +156,16 @@ async function seedDatabase() {
       .collection("users")
       .doc(USER_ID)
       .collection("locations")
-      .doc("business_test_001")
-      .set(business1);
+      .doc("location_test_001")
+      .set(businessLocation1);
     console.log("✅ Location 1 created: מסעדת חמישים ושמונה");
 
     await db
       .collection("users")
       .doc(USER_ID)
       .collection("locations")
-      .doc("business_test_002")
-      .set(business2);
+      .doc("location_test_002")
+      .set(businessLocation2);
     console.log("✅ Location 2 created: בית קפה המלך ג'ורג'\n");
 
     console.log("⭐ Creating review documents...");
@@ -332,7 +332,7 @@ async function seedDatabase() {
       },
     ];
 
-    const business1Reviews = reviews.filter((r) =>
+    const location1Reviews = reviews.filter((r) =>
       [
         "google_review_123",
         "google_review_124",
@@ -343,13 +343,13 @@ async function seedDatabase() {
       ].includes(r.id)
     );
 
-    for (const review of business1Reviews) {
+    for (const review of location1Reviews) {
       const { id, ...reviewData } = review;
       await db
         .collection("users")
         .doc(USER_ID)
         .collection("locations")
-        .doc("business_test_001")
+        .doc("location_test_001")
         .collection("reviews")
         .doc(id)
         .set(reviewData);
@@ -358,17 +358,17 @@ async function seedDatabase() {
       );
     }
 
-    const business2Reviews = reviews.filter((r) =>
+    const location2Reviews = reviews.filter((r) =>
       ["google_review_201", "google_review_202"].includes(r.id)
     );
 
-    for (const review of business2Reviews) {
+    for (const review of location2Reviews) {
       const { id, ...reviewData } = review;
       await db
         .collection("users")
         .doc(USER_ID)
         .collection("locations")
-        .doc("business_test_002")
+        .doc("location_test_002")
         .collection("reviews")
         .doc(id)
         .set(reviewData);
@@ -381,7 +381,7 @@ async function seedDatabase() {
     console.log("✨ Database seeding completed successfully!\n");
     console.log("📊 Summary:");
     console.log("  - 1 User (Free Tier)");
-    console.log("  - 2 Businesses");
+    console.log("  - 2 Locations");
     console.log("  - 8 Reviews (various states)");
     console.log(
       "\n💡 Note: User is on FREE tier. Subscribe via Stripe to upgrade to Basic/Pro."

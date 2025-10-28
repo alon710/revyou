@@ -25,9 +25,9 @@ export interface StarConfig {
 }
 
 export interface LocationConfig {
-  businessName?: string;
-  businessDescription: string;
-  businessPhone?: string;
+  locationName?: string;
+  locationDescription: string;
+  locationPhone?: string;
 
   toneOfVoice: ToneOfVoice;
   useEmojis: boolean;

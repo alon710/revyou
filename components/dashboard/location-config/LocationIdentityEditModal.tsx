@@ -29,14 +29,14 @@ export function LocationIdentityEditModal({
   onClose,
   onSave,
 }: LocationIdentityEditModalProps) {
-  const [businessName, setBusinessName] = useState(
-    location.config.businessName || ""
+  const [locationName, setLocationName] = useState(
+    location.config.locationName || ""
   );
-  const [businessDescription, setBusinessDescription] = useState(
-    location.config.businessDescription || ""
+  const [locationDescription, setLocationDescription] = useState(
+    location.config.locationDescription || ""
   );
-  const [businessPhone, setBusinessPhone] = useState(
-    location.config.businessPhone || ""
+  const [locationPhone, setLocationPhone] = useState(
+    location.config.locationPhone || ""
   );
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,9 +44,9 @@ export function LocationIdentityEditModal({
     try {
       setIsLoading(true);
       await onSave({
-        businessName,
-        businessDescription,
-        businessPhone,
+        locationName: locationName,
+        locationDescription: locationDescription,
+        locationPhone: locationPhone,
       });
       onClose();
     } catch (error) {
@@ -58,9 +58,9 @@ export function LocationIdentityEditModal({
 
   const handleCancel = () => {
     // Reset to original values
-    setBusinessName(location.config.businessName || "");
-    setBusinessDescription(location.config.businessDescription || "");
-    setBusinessPhone(location.config.businessPhone || "");
+    setLocationName(location.config.locationName || "");
+    setLocationDescription(location.config.locationDescription || "");
+    setLocationPhone(location.config.locationPhone || "");
     onClose();
   };
 
@@ -80,14 +80,14 @@ export function LocationIdentityEditModal({
         <div className="space-y-6 py-4">
           {/* Location Name */}
           <div className="space-y-2">
-            <Label htmlFor="businessName" className="text-right block">
+            <Label htmlFor="locationName" className="text-right block">
               שם העסק
             </Label>
             <Input
-              id="businessName"
+              id="locationName"
               type="text"
-              value={businessName}
-              onChange={(e) => setBusinessName(e.target.value)}
+              value={locationName}
+              onChange={(e) => setLocationName(e.target.value)}
               placeholder={location.name}
               disabled={isLoading}
             />
@@ -98,13 +98,13 @@ export function LocationIdentityEditModal({
 
           {/* Location Description */}
           <div className="space-y-2">
-            <Label htmlFor="businessDescription" className="text-right block">
+            <Label htmlFor="locationDescription" className="text-right block">
               תיאור העסק
             </Label>
             <Textarea
-              id="businessDescription"
-              value={businessDescription}
-              onChange={(e) => setBusinessDescription(e.target.value)}
+              id="locationDescription"
+              value={locationDescription}
+              onChange={(e) => setLocationDescription(e.target.value)}
               placeholder="תאר את העסק שלך, את השירותים שאתה מספק..."
               rows={4}
               disabled={isLoading}
@@ -117,15 +117,15 @@ export function LocationIdentityEditModal({
 
           {/* Location Phone */}
           <div className="space-y-2">
-            <Label htmlFor="businessPhone" className="text-right block">
+            <Label htmlFor="locationPhone" className="text-right block">
               טלפון ליצירת קשר (לביקורות שליליות)
             </Label>
             <Input
-              id="businessPhone"
+              id="locationPhone"
               type="tel"
-              value={businessPhone}
-              onChange={(e) => setBusinessPhone(e.target.value)}
-              placeholder="03-123-4567"
+              value={locationPhone}
+              onChange={(e) => setLocationPhone(e.target.value)}
+              placeholder="039025977"
               disabled={isLoading}
             />
             <p className="text-xs text-muted-foreground text-right">

@@ -11,7 +11,7 @@ import { locationConfigSchema } from "@/lib/validation/database";
 
 export function getDefaultLocationConfig(): LocationConfig {
   return {
-    businessDescription: "",
+    locationDescription: "",
     toneOfVoice: "professional" as ToneOfVoice,
     useEmojis: false,
     languageMode: "hebrew" as LanguageMode,

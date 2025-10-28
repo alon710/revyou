@@ -14,23 +14,23 @@ interface ReviewData {
 export function buildReplyPrompt(
   locationConfig: LocationConfig,
   review: ReviewData,
-  businessName: string,
-  businessPhone?: string
+  locationName: string,
+  locationPhone?: string
 ): string {
   const languageMode = locationConfig.languageMode;
   const isAutoDetect = languageMode === "auto-detect";
   const targetLanguage = isAutoDetect ? undefined : languageMode;
 
   const templateData = {
-    LOCATION_NAME: businessName || "",
-    LOCATION_DESCRIPTION: locationConfig.businessDescription || "",
-    LOCATION_PHONE: businessPhone || locationConfig.businessPhone || "",
+    LOCATION_NAME: locationName || "",
+    LOCATION_DESCRIPTION: locationConfig.locationDescription || "",
+    LOCATION_PHONE: locationPhone || locationConfig.locationPhone || "",
     IS_AUTO_DETECT: isAutoDetect,
     TARGET_LANGUAGE: targetLanguage,
     TONE: TONE_LABELS[locationConfig.toneOfVoice],
     ALLOWED_EMOJIS: locationConfig.allowedEmojis?.join(" ") || "",
     MAX_SENTENCES: locationConfig.maxSentences || 2,
-    SIGNATURE: locationConfig.signature || `צוות ${businessName}`,
+    SIGNATURE: locationConfig.signature || `צוות ${locationName}`,
     CUSTOM_INSTRUCTIONS_1:
       locationConfig.starConfigs?.[1]?.customInstructions || "",
     CUSTOM_INSTRUCTIONS_2:

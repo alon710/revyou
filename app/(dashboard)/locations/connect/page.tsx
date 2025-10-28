@@ -16,14 +16,15 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BackButton } from "@/components/ui/back-button";
 import { Building2, AlertCircle } from "lucide-react";
-import BusinessSelector, {
+import {
   GoogleLocationData,
+  LocationSelector,
 } from "@/components/dashboard/LocationSelector";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
 
-export default function ConnectBusinessPage() {
+export default function ConnectLocationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
@@ -232,7 +233,7 @@ export default function ConnectBusinessPage() {
             )}
 
             {!error && (
-              <BusinessSelector
+              <LocationSelector
                 locations={locations}
                 selectedLocationId={selectedLocation?.id || null}
                 onSelect={setSelectedLocation}

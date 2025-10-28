@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function BusinessToggler() {
+export function LocationToggler() {
   const {
     currentLocation,
     locations,
@@ -21,8 +21,8 @@ export function BusinessToggler() {
     loading,
   } = useLocation();
 
-  const handleBusinessChange = (businessId: string) => {
-    selectLocation(businessId);
+  const handleLocationChange = (locationId: string) => {
+    selectLocation(locationId);
   };
 
   if (loading) {
@@ -48,7 +48,7 @@ export function BusinessToggler() {
   return (
     <Select
       value={selectedLocationId || undefined}
-      onValueChange={handleBusinessChange}
+      onValueChange={handleLocationChange}
     >
       <SelectTrigger dir="rtl">
         <SelectValue placeholder="בחר עסק">

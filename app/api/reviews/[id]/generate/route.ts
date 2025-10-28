@@ -22,7 +22,7 @@ export async function POST(
 
     const { id: reviewId } = await params;
 
-    const { userId: requestUserId, businessId } = await req.json();
+    const { userId: requestUserId, locationId: locationId } = await req.json();
 
     if (requestUserId !== authenticatedUserId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -30,7 +30,7 @@ export async function POST(
 
     const review = await getReviewAdmin(
       authenticatedUserId,
-      businessId,
+      locationId,
       reviewId
     );
 
@@ -38,7 +38,7 @@ export async function POST(
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    const location = await getLocationAdmin(authenticatedUserId, businessId);
+    const location = await getLocationAdmin(authenticatedUserId, locationId);
 
     if (!location) {
       return NextResponse.json(
@@ -55,14 +55,14 @@ export async function POST(
         reviewText: review.reviewText,
       },
       location.name,
-      location.config.businessPhone
+      location.config.locationPhone
     );
 
     const aiReply = await generateReplyWithRetry(prompt);
 
     await updateReviewReplyAdmin(
       authenticatedUserId,
-      businessId,
+      locationId,
       reviewId,
       aiReply,
       false
