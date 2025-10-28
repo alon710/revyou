@@ -27,8 +27,11 @@ export default function ConnectLocationPage() {
   const { user, loading: authLoading } = useAuth();
 
   const [step, setStep] = useState<"auth" | "select">("auth");
-  const [locations, setLocations] = useState<GoogleBusinessProfileLocation[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<GoogleBusinessProfileLocation | null>(null);
+  const [locations, setLocations] = useState<GoogleBusinessProfileLocation[]>(
+    []
+  );
+  const [selectedLocation, setSelectedLocation] =
+    useState<GoogleBusinessProfileLocation | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingLocations, setLoadingLocations] = useState(false);
   const [error, setError] = useState<string | null>(null);

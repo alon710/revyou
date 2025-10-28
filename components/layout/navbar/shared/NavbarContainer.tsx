@@ -52,7 +52,9 @@ export function NavbarContainer({
           "w-full px-4 md:px-8 rounded-none md:rounded-full",
           "md:w-[90vw] md:max-w-[1300px]",
           "shadow-[0_1px_0_0_rgba(255,255,255,0.25),0_-1px_0_0_rgba(255,255,255,0.1)]",
-          scrolled ? "bg-white/85 border-white/30" : "bg-white/60 border-white/30"
+          scrolled
+            ? "bg-white/85 border-white/30"
+            : "bg-white/60 border-white/30"
         )}
       >
         <div className="flex h-16 md:h-20 items-center justify-between gap-4 md:gap-10">

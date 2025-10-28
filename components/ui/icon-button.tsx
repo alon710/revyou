@@ -72,11 +72,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         ref={ref}
         {...props}
       >
-        {asChild ? (
-          children
-        ) : (
-          <Icon className={cn(iconSize, iconClassName)} />
-        )}
+        {asChild ? children : <Icon className={cn(iconSize, iconClassName)} />}
       </Comp>
     );
   }

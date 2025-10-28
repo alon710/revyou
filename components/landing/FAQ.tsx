@@ -132,7 +132,7 @@ export function FAQ() {
                           transition={{
                             duration: 0.4,
                             ease: "easeOut",
-                            delay: 0.1
+                            delay: 0.1,
                           }}
                           className="text-muted-foreground leading-relaxed"
                         >

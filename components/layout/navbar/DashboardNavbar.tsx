@@ -25,7 +25,7 @@ const SettingsButton = () => {
       icon={Settings}
       aria-label="הגדרות"
       size="sm"
-      onClick={() => router.push('/settings')}
+      onClick={() => router.push("/settings")}
     />
   );
 };

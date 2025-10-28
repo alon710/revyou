@@ -36,7 +36,11 @@ export function LocationToggler() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <IconButton icon={Building2} aria-label="Switch location" variant="ghost" />
+        <IconButton
+          icon={Building2}
+          aria-label="Switch location"
+          variant="ghost"
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {locations.map((location) => (

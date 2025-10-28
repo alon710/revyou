@@ -29,7 +29,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="he" dir="rtl">
-      <body className={`${rubik.variable} ${nunito.variable} font-rubik antialiased`}>
+      <body
+        className={`${rubik.variable} ${nunito.variable} font-rubik antialiased`}
+      >
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
