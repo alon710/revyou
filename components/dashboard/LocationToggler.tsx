@@ -40,7 +40,7 @@ export function LocationToggler() {
   if (locations.length === 1) {
     return (
       <div className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-border/40 bg-background shadow-sm">
-        <span className="truncate text-sm">{currentLocation?.name}</span>
+        <span className="truncate text-sm">{locations[0].name}</span>
       </div>
     );
   }

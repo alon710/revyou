@@ -93,12 +93,14 @@ export function ConfirmationDialog({
               ))}
             {title}
           </DialogTitle>
-          <DialogDescription className="space-y-2 text-right">
-            {typeof description === "string" ? (
-              <p>{description}</p>
-            ) : (
-              description
-            )}
+          <DialogDescription asChild className="space-y-2 text-right">
+            <div>
+              {typeof description === "string" ? (
+                <p>{description}</p>
+              ) : (
+                description
+              )}
+            </div>
           </DialogDescription>
         </DialogHeader>
 
