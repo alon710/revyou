@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
 import LocationDetailsCard from "@/components/dashboard/LocationDetailsCard";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
+import router from "next/router";
 
 export default function LocationsPage() {
   const { user, loading: authLoading } = useAuth();

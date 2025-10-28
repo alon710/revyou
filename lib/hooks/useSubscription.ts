@@ -56,6 +56,12 @@ export function useSubscription(): UseSubscriptionReturn {
         setLoading(false);
         setSubscription(null);
         setPlanType("free");
+        setLimits({
+          locations: 1,
+          reviewsPerMonth: 5,
+          autoPost: false,
+          requireApproval: true,
+        });
       }, 0);
       return () => clearTimeout(timer);
     }
