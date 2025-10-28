@@ -14,30 +14,29 @@ const GoogleSsoButton = React.forwardRef<
     <button
       ref={ref}
       className={cn(
-        // Base styles following Google's branding guidelines
         "inline-flex items-center justify-center w-full gap-3",
-        // Google official colors - light theme
+
         "bg-white dark:bg-[#131314]",
         "text-[#1F1F1F] dark:text-[#E3E3E3]",
-        // Border following Google guidelines with design language soft borders
+
         "border border-[#747775]/60 dark:border-[#8E918F]/60",
-        // Design language enhancements
+
         "rounded-lg shadow-sm hover:shadow-md",
         "transition-all",
-        // Typography - Roboto Medium 14px (using font-sans from design system)
+
         "font-sans font-medium text-sm",
-        // Spacing - Google's official padding
+
         "px-3 py-2.5 h-11",
-        // States
+
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         "disabled:pointer-events-none disabled:opacity-50",
         "hover:bg-[#F8F9FA] dark:hover:bg-[#1F1F1F]",
+        "cursor-pointer",
         className
       )}
       disabled={isLoading || props.disabled}
       {...props}
     >
-      {/* Google Logo SVG - Official 4-color version */}
       <svg
         className="h-5 w-5 shrink-0"
         viewBox="0 0 24 24"
@@ -63,7 +62,6 @@ const GoogleSsoButton = React.forwardRef<
         </g>
       </svg>
 
-      {/* Button Text */}
       <span className="leading-5">
         {isLoading ? "מתחבר..." : children || "התחבר עם Google"}
       </span>

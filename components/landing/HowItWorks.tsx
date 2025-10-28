@@ -1,7 +1,9 @@
-import { Card } from "@/components/ui/card";
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Link2, Settings, MessageSquare, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const steps = [
   {
@@ -36,9 +38,9 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="bg-secondary/5">
+    <div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
             איך זה עובד?
           </h2>
@@ -52,32 +54,101 @@ export function HowItWorks() {
             {steps.map((step, index) => {
               const Icon = step.icon;
               return (
-                <Card
+                <motion.div
                   key={index}
-                  className="p-8 relative overflow-hidden border border-border/40 shadow-sm hover:shadow-md transition-all rounded-lg"
+                  className="p-8 relative overflow-hidden border border-border/40 shadow-lg rounded-lg bg-card text-card-foreground cursor-pointer group"
+                  initial={{ opacity: 0, y: 60, scale: 0.9 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{
+                    duration: 0.7,
+                    delay: index * 0.12,
+                    ease: [0.16, 1, 0.3, 1],
+                    opacity: { duration: 0.5, ease: "easeOut" },
+                    scale: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                  }}
+                  whileHover={{
+                    scale: 1.05,
+                    y: -8,
+                    transition: {
+                      duration: 0.3,
+                      ease: [0.16, 1, 0.3, 1],
+                    },
+                  }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <div className="absolute top-4 end-4 text-6xl font-bold text-primary/10">
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"
+                    initial={false}
+                  />
+
+                  <motion.div
+                    className="absolute inset-0 border-2 border-primary/0 group-hover:border-primary/20 rounded-lg transition-all duration-500"
+                    initial={false}
+                  />
+
+                  <motion.div
+                    className="absolute top-4 end-4 text-6xl font-bold text-primary/10 group-hover:text-primary/20 transition-colors duration-500"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      delay: index * 0.12 + 0.2,
+                      duration: 0.5,
+                      ease: "backOut",
+                    }}
+                  >
                     {step.number}
-                  </div>
+                  </motion.div>
 
                   <div className="relative">
-                    <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-                      <Icon className="h-7 w-7 text-primary" />
-                    </div>
-                    <h3 className="text-2xl font-semibold mb-3 text-foreground">
+                    <motion.div
+                      className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300"
+                      initial={{ opacity: 0, scale: 0 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{
+                        delay: index * 0.12 + 0.15,
+                        duration: 0.5,
+                        ease: "backOut",
+                      }}
+                    >
+                      <Icon className="h-7 w-7 text-primary group-hover:scale-110 transition-transform duration-300" />
+                    </motion.div>
+                    <motion.h3
+                      className="text-2xl font-semibold mb-3 text-foreground"
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{
+                        delay: index * 0.12 + 0.25,
+                        duration: 0.5,
+                        ease: "easeOut",
+                      }}
+                    >
                       {step.title}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed">
+                    </motion.h3>
+                    <motion.p
+                      className="text-muted-foreground leading-relaxed"
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{
+                        delay: index * 0.12 + 0.35,
+                        duration: 0.5,
+                        ease: "easeOut",
+                      }}
+                    >
                       {step.description}
-                    </p>
+                    </motion.p>
                   </div>
-                </Card>
+                </motion.div>
               );
             })}
           </div>
         </div>
 
-        <div className="text-center mt-16">
+        <div className="text-center mt-12">
           <p className="text-lg text-muted-foreground mb-6">
             מוכנים להתחיל? זה לוקח פחות מ-5 דקות
           </p>
@@ -88,6 +159,6 @@ export function HowItWorks() {
           </Link>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

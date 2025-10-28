@@ -89,9 +89,7 @@ export default function ReviewsPage() {
     return (
       <PageContainer>
         <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
-        <div className="text-center text-muted-foreground py-12">
-          בחר עסק מהתפריט למעלה כדי לראות את הביקורות שלו
-        </div>
+        <EmptyState />
       </PageContainer>
     );
   }

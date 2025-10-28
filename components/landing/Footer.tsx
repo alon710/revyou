@@ -53,7 +53,7 @@ export function Footer() {
                       .getElementById("how-it-works")
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   איך זה עובד
                 </button>
@@ -65,7 +65,7 @@ export function Footer() {
                       .getElementById("pricing")
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   מחירון
                 </button>
@@ -77,7 +77,7 @@ export function Footer() {
                       .getElementById("faq")
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   שאלות נפוצות
                 </button>

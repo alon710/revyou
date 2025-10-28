@@ -5,7 +5,7 @@ import { Logo } from "@/components/ui/Logo";
 import { NavbarContainer } from "@/components/layout/navbar/shared/NavbarContainer";
 import { MobileMenuButton } from "@/components/layout/navbar/shared/MobileMenuButton";
 import { AuthButtons } from "@/components/layout/navbar/shared/AuthButtons";
-import { MobileMenuSheet } from "@/components/layout/navbar/shared/MobileMenuSheet";
+import { MobileMenu } from "@/components/layout/navbar/shared/MobileMenu";
 
 interface LandingSection {
   id: string;
@@ -38,48 +38,45 @@ export function LandingPageNavbar({
   return (
     <>
       <NavbarContainer>
-        <Logo href="/" />
+        <div className="flex-shrink-0 pl-2">
+          <Logo href="/" />
+        </div>
 
-        <nav className="hidden md:flex items-center gap-2">
+        <nav className="hidden md:flex items-center flex-1 justify-center h-full gap-2">
           {sections.map((section) => (
             <button
+              type="button"
               key={section.id}
               onClick={() => scrollToSection(section.id)}
-              className="text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-accent/10 transition-all px-3 py-2 rounded-lg"
+              className="flex items-center gap-2 text-sm font-medium transition-all px-3 py-2 rounded-lg text-gray-600 opacity-60 hover:text-gray-900/90 hover:opacity-100 cursor-pointer"
             >
               {section.label}
             </button>
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-3 flex-shrink-0 pr-2">
           <AuthButtons variant="desktop" />
         </div>
 
-        <MobileMenuButton
-          isOpen={mobileMenuOpen}
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        />
-      </NavbarContainer>
-
-      <MobileMenuSheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        {sections.map((section) => (
-          <button
-            key={section.id}
-            onClick={() => scrollToSection(section.id)}
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all text-foreground/80 hover:bg-accent/50 hover:text-foreground text-right"
-          >
-            {section.label}
-          </button>
-        ))}
-
-        <div className="flex flex-col gap-2 pt-3 border-t border-border/40 mt-3">
-          <AuthButtons
-            variant="mobile"
-            onAction={() => setMobileMenuOpen(false)}
+        <div className="flex md:hidden items-center gap-2">
+          <AuthButtons variant="mobile" />
+          <MobileMenuButton
+            isOpen={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           />
         </div>
-      </MobileMenuSheet>
+      </NavbarContainer>
+
+      <MobileMenu
+        open={mobileMenuOpen}
+        onOpenChange={setMobileMenuOpen}
+        items={sections.map((section) => ({
+          type: "scroll",
+          targetId: section.id,
+          label: section.label,
+        }))}
+      />
     </>
   );
 }

@@ -3,38 +3,27 @@ import { cn } from "@/lib/utils";
 
 interface NavbarContainerProps {
   children: ReactNode;
-  scrollSelector?: string; // CSS selector for scroll container, defaults to window
+  scrollSelector?: string;
 }
 
 export function NavbarContainer({
   children,
   scrollSelector,
 }: NavbarContainerProps) {
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = (e: Event) => {
       let currentScrollY: number;
 
       if (scrollSelector) {
-        // Dashboard: specific element scroll
         const target = e.target as HTMLElement;
         currentScrollY = target.scrollTop;
       } else {
-        // Landing: window scroll
         currentScrollY = window.scrollY;
       }
 
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling down & past threshold
-        setIsVisible(false);
-      } else {
-        // Scrolling up
-        setIsVisible(true);
-      }
-
-      setLastScrollY(currentScrollY);
+      setScrolled(currentScrollY > 20);
     };
 
     if (scrollSelector) {
@@ -45,17 +34,32 @@ export function NavbarContainer({
       window.addEventListener("scroll", handleScroll);
       return () => window.removeEventListener("scroll", handleScroll);
     }
-  }, [lastScrollY, scrollSelector]);
+  }, [scrollSelector]);
 
   return (
     <header
       className={cn(
-        "fixed left-0 right-0 z-50 px-4 md:px-8 transition-all duration-300",
-        isVisible ? "top-4" : "-top-24"
+        "fixed inset-x-0 z-50 transition-all duration-300",
+        "top-0 md:top-5"
       )}
+      style={{
+        transform: `scale(${scrolled ? 0.99 : 1})`,
+      }}
     >
-      <div className="max-w-full lg:max-w-7xl mx-auto border border-border/40 rounded-lg bg-card/95 backdrop-blur-md shadow-sm supports-[backdrop-filter]:bg-card/60 transition-shadow px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">{children}</div>
+      <div
+        className={cn(
+          "mx-auto backdrop-blur-lg border transition-all duration-300",
+          "w-full px-4 md:px-8 rounded-none md:rounded-full",
+          "md:w-[90vw] md:max-w-[1300px]",
+          "shadow-[0_1px_0_0_rgba(255,255,255,0.25),0_-1px_0_0_rgba(255,255,255,0.1)]",
+          scrolled
+            ? "bg-white/85 border-white/30"
+            : "bg-white/60 border-white/30"
+        )}
+      >
+        <div className="flex h-16 md:h-20 items-center justify-between gap-4 md:gap-10">
+          {children}
+        </div>
       </div>
     </header>
   );

@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocation } from "@/contexts/LocationContext";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { getUser } from "@/lib/firebase/users";
-import { signOut } from "@/lib/firebase/auth";
 import { getReviewCountThisMonth } from "@/lib/subscription/usage-stats";
 import { User } from "@/types/database";
 import { AccountInfo } from "@/components/dashboard/settings/AccountInfo";
@@ -14,7 +12,6 @@ import { SubscriptionInfo } from "@/components/dashboard/settings/SubscriptionIn
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
-import { Button } from "@/components/ui/button";
 
 export default function SettingsPage() {
   const { user: authUser, loading: authLoading } = useAuth();
@@ -24,7 +21,6 @@ export default function SettingsPage() {
     limits,
     loading: subscriptionLoading,
   } = useSubscription();
-  const router = useRouter();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [reviewCount, setReviewCount] = useState(0);
@@ -51,11 +47,6 @@ export default function SettingsPage() {
     }
   }, [authUser, authLoading, loadUserData]);
 
-  const handleSignOut = async () => {
-    await signOut();
-    router.push("/");
-  };
-
   if (authLoading || loading || subscriptionLoading) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -73,11 +64,6 @@ export default function SettingsPage() {
       <PageHeader
         title="הגדרות חשבון"
         description="נהל את הגדרות החשבון והתראות האימייל שלך"
-        actions={
-          <Button size="sm" variant="outline" onClick={handleSignOut}>
-            התנתק
-          </Button>
-        }
       />
 
       <AccountInfo

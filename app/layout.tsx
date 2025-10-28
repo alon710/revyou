@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Rubik } from "next/font/google";
+import { Rubik, Nunito } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -7,6 +7,13 @@ const rubik = Rubik({
   variable: "--font-rubik",
   subsets: ["hebrew", "latin"],
   display: "swap",
+});
+
+const nunito = Nunito({
+  variable: "--font-nunito",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -22,7 +29,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="he" dir="rtl">
-      <body className={`${rubik.variable} font-rubik antialiased`}>
+      <body
+        className={`${rubik.variable} ${nunito.variable} font-rubik antialiased`}
+      >
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
