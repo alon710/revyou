@@ -16,10 +16,6 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BackButton } from "@/components/ui/back-button";
 import { Building2, AlertCircle } from "lucide-react";
-import {
-  GoogleLocationData,
-  LocationSelector,
-} from "@/components/dashboard/LocationSelector";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
@@ -30,9 +26,8 @@ export default function ConnectLocationPage() {
   const { user, loading: authLoading } = useAuth();
 
   const [step, setStep] = useState<"auth" | "select">("auth");
-  const [locations, setLocations] = useState<GoogleLocationData[]>([]);
-  const [selectedLocation, setSelectedLocation] =
-    useState<GoogleLocationData | null>(null);
+  const [locations, setLocations] = useState<[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingLocations, setLoadingLocations] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -230,15 +225,6 @@ export default function ConnectLocationPage() {
                   נסה שוב
                 </Button>
               </div>
-            )}
-
-            {!error && (
-              <LocationSelector
-                locations={locations}
-                selectedLocationId={selectedLocation?.id || null}
-                onSelect={setSelectedLocation}
-                loading={loadingLocations}
-              />
             )}
 
             {selectedLocation && (

@@ -9,7 +9,7 @@ export default function LandingLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <LandingPageNavbar />
-      <div className="pt-24 md:pt-28">{children}</div>
+      {children}
       <Footer />
     </div>
   );

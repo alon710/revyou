@@ -32,16 +32,13 @@ export default function DashboardLayout({
 
   return (
     <LocationProvider>
-      <div className="flex flex-col h-screen overflow-hidden bg-background">
-        {/* Top Navigation Bar */}
+      <div className="flex flex-col h-screen overflow-hidden bg-gradient-to-br from-primary/20 via-white to-secondary/20">
         <DashboardNavbar />
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-y-auto bg-muted/30 pt-24 md:pt-28 px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8">
+        <main className="flex-1 overflow-y-auto bg-transparent pt-24 md:pt-28 px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8">
           {children}
         </main>
 
-        {/* Upgrade Banner (only for free tier users) */}
         <UpgradeBanner />
       </div>
     </LocationProvider>

@@ -73,11 +73,6 @@ export default function SettingsPage() {
       <PageHeader
         title="הגדרות חשבון"
         description="נהל את הגדרות החשבון והתראות האימייל שלך"
-        actions={
-          <Button size="sm" variant="outline" onClick={handleSignOut}>
-            התנתק
-          </Button>
-        }
       />
 
       <AccountInfo

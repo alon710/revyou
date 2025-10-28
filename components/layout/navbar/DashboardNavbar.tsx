@@ -1,46 +1,76 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Logo } from "@/components/ui/Logo";
-import { cn } from "@/lib/utils";
 import { navItems } from "@/components/layout/navbar/shared/nav-items";
 import { LocationToggler } from "@/components/dashboard/LocationToggler";
 import { NavbarContainer } from "@/components/layout/navbar/shared/NavbarContainer";
 import { MobileMenuButton } from "@/components/layout/navbar/shared/MobileMenuButton";
-import { MobileMenuSheet } from "@/components/layout/navbar/shared/MobileMenuSheet";
-import { Settings } from "lucide-react";
+import { MobileMenu } from "@/components/layout/navbar/shared/MobileMenu";
+import { Settings, LogOut } from "lucide-react";
+import { signOut } from "@/lib/firebase/auth";
+
+function isNavItemActive(pathname: string, href: string): boolean {
+  return pathname === href;
+}
+
+const SettingsButton = () => {
+  const router = useRouter();
+
+  return (
+    <IconButton
+      icon={Settings}
+      aria-label="הגדרות"
+      size="sm"
+      onClick={() => router.push('/settings')}
+    />
+  );
+};
+
+const SignOutButton = () => {
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/");
+  };
+
+  return (
+    <IconButton
+      icon={LogOut}
+      aria-label="התנתק"
+      size="sm"
+      onClick={handleSignOut}
+    />
+  );
+};
 
 export function DashboardNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  const handleNavClick = () => {
-    setMobileMenuOpen(false);
-  };
-
   return (
     <>
       <NavbarContainer scrollSelector="main">
-        <Logo href="/locations" />
+        <div className="flex-shrink-0 pl-2">
+          <Logo href="/locations" />
+        </div>
 
-        <nav className="hidden md:flex items-center gap-2">
+        <nav className="hidden md:flex items-center flex-1 justify-center h-full gap-2">
           {navItems.map((item) => {
-            const isActive =
-              pathname === item.href || pathname.startsWith(item.href);
-
+            const isActive = isNavItemActive(pathname, item.href);
             return (
               <Link
                 key={item.title}
                 href={item.href}
-                className={cn(
-                  "flex items-center gap-2 text-sm font-medium transition-all px-3 py-2 rounded-lg",
+                className={`flex items-center gap-2 text-sm font-medium transition-all px-3 py-2 rounded-lg cursor-pointer ${
                   isActive
-                    ? "bg-accent text-accent-foreground shadow-sm"
-                    : "text-foreground/80 hover:text-foreground hover:bg-accent/50"
-                )}
+                    ? "text-gray-900 opacity-100 font-semibold"
+                    : "text-gray-600 opacity-60 hover:text-gray-900/90 hover:opacity-100"
+                }`}
               >
                 <span>{item.title}</span>
               </Link>
@@ -48,56 +78,32 @@ export function DashboardNavbar() {
           })}
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-3 flex-shrink-0 pr-2">
           <LocationToggler />
-          <Button size="sm" variant="ghost" asChild>
-            <Link href="/settings">
-              <Settings className="h-4 w-4" />
-            </Link>
-          </Button>
+          <SettingsButton />
+          <SignOutButton />
         </div>
 
-        <MobileMenuButton
-          isOpen={mobileMenuOpen}
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        />
+        <div className="flex md:hidden items-center gap-2">
+          <LocationToggler />
+          <SettingsButton />
+          <SignOutButton />
+          <MobileMenuButton
+            isOpen={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          />
+        </div>
       </NavbarContainer>
 
-      <MobileMenuSheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <div className="pb-3 border-b border-border/40">
-          <LocationToggler />
-        </div>
-
-        {navItems.map((item) => {
-          const isActive =
-            pathname === item.href || pathname.startsWith(item.href);
-
-          return (
-            <Link
-              key={item.title}
-              href={item.href}
-              onClick={handleNavClick}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
-                isActive
-                  ? "bg-accent text-accent-foreground shadow-sm"
-                  : "text-foreground/80 hover:bg-accent/50 hover:text-foreground"
-              )}
-            >
-              <span>{item.title}</span>
-            </Link>
-          );
-        })}
-
-        <div className="pt-3 border-t border-border/40 mt-3">
-          <Button variant="outline" size="sm" className="w-full" asChild>
-            <Link href="/settings" onClick={handleNavClick}>
-              <Settings className="h-4 w-4 mr-2" />
-              הגדרות חשבון
-            </Link>
-          </Button>
-        </div>
-      </MobileMenuSheet>
+      <MobileMenu
+        open={mobileMenuOpen}
+        onOpenChange={setMobileMenuOpen}
+        items={navItems.map((item) => ({
+          type: "link",
+          href: item.href,
+          label: item.title,
+        }))}
+      />
     </>
   );
 }

@@ -1,4 +1,5 @@
 import { Menu, X } from "lucide-react";
+import { IconButton } from "@/components/ui/icon-button";
 
 interface MobileMenuButtonProps {
   isOpen: boolean;
@@ -7,12 +8,14 @@ interface MobileMenuButtonProps {
 
 export function MobileMenuButton({ isOpen, onClick }: MobileMenuButtonProps) {
   return (
-    <button
-      className="md:hidden p-2 rounded-lg hover:bg-accent/50 active:bg-accent transition-all"
-      onClick={onClick}
-      aria-label="תפריט"
-    >
-      {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-    </button>
+    <div className="md:hidden">
+      <IconButton
+        icon={isOpen ? X : Menu}
+        onClick={onClick}
+        aria-label="תפריט"
+        size="default"
+        variant="ghost"
+      />
+    </div>
   );
 }

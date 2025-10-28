@@ -1,13 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Check, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/firebase/auth";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card } from "@/components/ui/card";
 import {
   createSubscriptionCheckout,
   getAvailableProducts,
@@ -121,10 +122,10 @@ export function Pricing() {
 
   if (loading) {
     return (
-      <section id="pricing" className="bg-background">
+      <div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header skeleton */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <Skeleton className="h-12 w-96 mx-auto mb-4" />
             <Skeleton className="h-6 w-80 mx-auto mb-8" />
             <Skeleton className="h-10 w-48 mx-auto" />
@@ -169,14 +170,14 @@ export function Pricing() {
             ))}
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 
   return (
-    <section id="pricing" className="bg-background">
+    <div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
             תוכניות מחיר שמתאימות לכם
           </h2>
@@ -199,35 +200,116 @@ export function Pricing() {
           </Tabs>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {products.map((product) => {
-            const monthlyPrice = getOriginalMonthlyPrice(product);
-            const showYearlyDiscount =
-              billingPeriod === "yearly" && monthlyPrice > 0;
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={billingPeriod}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            {products.map((product, index) => {
+              const monthlyPrice = getOriginalMonthlyPrice(product);
+              const showYearlyDiscount =
+                billingPeriod === "yearly" && monthlyPrice > 0;
 
-            return (
-              <Card
-                key={product.id}
-                className={`relative p-8 flex flex-col rounded-lg ${
-                  product.recommended
-                    ? "border border-primary/40 shadow-md"
-                    : "border border-border/40 shadow-sm"
-                }`}
-              >
+              return (
+                <motion.div
+                  key={product.id}
+                  className={`relative p-8 flex flex-col rounded-lg cursor-pointer group bg-card text-card-foreground ${
+                    product.recommended
+                      ? "border border-primary/40 shadow-lg"
+                      : "border border-border/40 shadow-lg"
+                  }`}
+                  initial={{ opacity: 0, y: 60, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: index * 0.1,
+                    ease: [0.16, 1, 0.3, 1],
+                    opacity: { duration: 0.4, ease: "easeOut" },
+                    scale: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                  }}
+                  whileHover={{
+                    scale: 1.05,
+                    y: -8,
+                    transition: {
+                      duration: 0.3,
+                      ease: [0.16, 1, 0.3, 1],
+                    },
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                <motion.div
+                  className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
+                    product.recommended
+                      ? "bg-gradient-to-br from-primary/10 via-primary/5 to-primary/10"
+                      : "bg-gradient-to-br from-primary/5 via-transparent to-primary/10"
+                  }`}
+                  initial={false}
+                />
+
+                <motion.div
+                  className={`absolute inset-0 border-2 rounded-lg transition-all duration-500 ${
+                    product.recommended
+                      ? "border-primary/0 group-hover:border-primary/30"
+                      : "border-primary/0 group-hover:border-primary/20"
+                  }`}
+                  initial={false}
+                />
+
                 {product.recommended && (
-                  <div className="absolute -top-4 right-1/2 translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
+                  <motion.div
+                    className="absolute -top-4 right-1/2 translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium shadow-lg"
+                    initial={{ opacity: 0, scale: 0.5, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{
+                      delay: index * 0.12 + 0.1,
+                      duration: 0.4,
+                      ease: "backOut",
+                    }}
+                  >
                     מומלץ
-                  </div>
+                  </motion.div>
                 )}
 
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold text-foreground mb-2">
+                <div className="mb-6 relative">
+                  <motion.h3
+                    className="text-2xl font-bold text-foreground mb-2"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      delay: index * 0.12 + 0.2,
+                      duration: 0.5,
+                      ease: "easeOut",
+                    }}
+                  >
                     {product.name}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  </motion.h3>
+                  <motion.p
+                    className="text-sm text-muted-foreground mb-4"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      delay: index * 0.12 + 0.3,
+                      duration: 0.5,
+                      ease: "easeOut",
+                    }}
+                  >
                     {product.description}
-                  </p>
-                  <div className="flex flex-col">
+                  </motion.p>
+                  <motion.div
+                    className="flex flex-col"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                      delay: index * 0.12 + 0.4,
+                      duration: 0.5,
+                      ease: "easeOut",
+                    }}
+                  >
                     {showYearlyDiscount && (
                       <span className="text-sm text-muted-foreground line-through mb-1">
                         ₪{monthlyPrice}
@@ -244,11 +326,11 @@ export function Pricing() {
                         חסכון של ₪{getSavingsAmount(product)} לחודש
                       </span>
                     )}
-                  </div>
+                  </motion.div>
                 </div>
 
                 <ul className="space-y-3 mb-8 flex-grow">
-                  {FEATURE_CONFIGS.map((featureConfig) => {
+                  {FEATURE_CONFIGS.map((featureConfig, featureIndex) => {
                     const value = product.features[featureConfig.key];
                     const formattedValue = formatFeatureValue(
                       value,
@@ -261,9 +343,16 @@ export function Pricing() {
                         : value !== undefined && value !== null;
 
                     return (
-                      <li
+                      <motion.li
                         key={featureConfig.key}
                         className="flex items-start gap-2"
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{
+                          delay: index * 0.12 + 0.5 + featureIndex * 0.08,
+                          duration: 0.4,
+                          ease: "easeOut",
+                        }}
                       >
                         {isBoolean ? (
                           isEnabled ? (
@@ -285,27 +374,38 @@ export function Pricing() {
                             ? featureConfig.displayName
                             : `${featureConfig.displayName}: ${formattedValue}`}
                         </span>
-                      </li>
+                      </motion.li>
                     );
                   })}
                 </ul>
 
-                <Button
-                  className="w-full"
-                  variant={product.recommended ? "default" : "outline"}
-                  onClick={() => handleCheckout(product)}
-                  disabled={loadingProductId === product.id}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    delay: index * 0.12 + 0.5 + FEATURE_CONFIGS.length * 0.08,
+                    duration: 0.5,
+                    ease: "easeOut",
+                  }}
                 >
-                  {loadingProductId === product.id
-                    ? "טוען..."
-                    : product.metadata?.cta ||
-                      (product.planId === "free" ? "התחל בחינם" : "התחל עכשיו")}
-                </Button>
-              </Card>
+                  <Button
+                    className="w-full group-hover:scale-105 transition-transform duration-300"
+                    variant={product.recommended ? "default" : "outline"}
+                    onClick={() => handleCheckout(product)}
+                    disabled={loadingProductId === product.id}
+                  >
+                    {loadingProductId === product.id
+                      ? "טוען..."
+                      : product.metadata?.cta ||
+                        (product.planId === "free" ? "התחל בחינם" : "התחל עכשיו")}
+                  </Button>
+                </motion.div>
+              </motion.div>
             );
           })}
-        </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
-    </section>
+    </div>
   );
 }
