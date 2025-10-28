@@ -34,7 +34,11 @@ const SignOutButton = () => {
   const router = useRouter();
 
   const handleSignOut = async () => {
-    await signOut();
+    const { error } = await signOut();
+    if (error) {
+      console.error("Sign out failed:", error);
+      return;
+    }
     router.push("/");
   };
 
