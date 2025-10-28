@@ -37,6 +37,7 @@ export function AuthButtons({
       return (
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={handleAccountClick}
             className="p-2 text-sm font-medium text-gray-900 hover:text-purple-700 hover:bg-gray-50 rounded-lg transition-all duration-200 cursor-pointer"
             aria-label="החשבון שלי"
@@ -44,6 +45,7 @@ export function AuthButtons({
             <User className="w-5 h-5" />
           </button>
           <button
+            type="button"
             onClick={handleSignOut}
             className="p-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 cursor-pointer"
             aria-label="התנתק"
@@ -57,6 +59,7 @@ export function AuthButtons({
     return (
       <div className="flex items-center gap-3 px-2">
         <button
+          type="button"
           onClick={handleAccountClick}
           className="px-4 py-2 text-sm font-medium text-gray-900 hover:text-purple-700 hover:bg-gray-50 rounded-lg transition-all duration-200 cursor-pointer"
         >
@@ -64,6 +67,7 @@ export function AuthButtons({
         </button>
         <div className="w-px h-4 bg-gray-200" />
         <button
+          type="button"
           onClick={handleSignOut}
           className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 cursor-pointer"
         >

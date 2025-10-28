@@ -45,6 +45,7 @@ export function LandingPageNavbar({
         <nav className="hidden md:flex items-center flex-1 justify-center h-full gap-2">
           {sections.map((section) => (
             <button
+              type="button"
               key={section.id}
               onClick={() => scrollToSection(section.id)}
               className="flex items-center gap-2 text-sm font-medium transition-all px-3 py-2 rounded-lg text-gray-600 opacity-60 hover:text-gray-900/90 hover:opacity-100 cursor-pointer"

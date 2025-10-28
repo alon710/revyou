@@ -46,6 +46,7 @@ export function MobileMenu({ open, onOpenChange, items }: MobileMenuProps) {
         if (item.type === "scroll") {
           return (
             <button
+              type="button"
               key={item.targetId}
               onClick={() => scrollToSection(item.targetId)}
               className={menuItemClassName}
