@@ -11,8 +11,10 @@ import { Loading } from "@/components/ui/loading";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { useRouter } from "next/navigation";
 
 export default function ReviewsPage() {
+  const router = useRouter();
   const { user } = useAuth();
   const {
     currentLocation,
@@ -111,13 +113,18 @@ export default function ReviewsPage() {
           </div>
         ) : (
           reviews.map((review) => (
-            <ReviewCard
+            <div
               key={review.id}
-              review={review}
-              userId={user!.uid}
-              locationId={currentLocation.id}
-              onUpdate={handleUpdate}
-            />
+              onClick={() => router.push(`/reviews/${review.id}`)}
+              className="cursor-pointer hover:opacity-90 transition-opacity"
+            >
+              <ReviewCard
+                review={review}
+                userId={user!.uid}
+                locationId={currentLocation.id}
+                onUpdate={handleUpdate}
+              />
+            </div>
           ))
         )}
       </div>
