@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithGoogle } from "@/lib/firebase/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -18,41 +18,19 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && user) {
-      const searchParams = new URLSearchParams(window.location.search);
-      const redirect = searchParams.get("redirect");
-      const returnTo = searchParams.get("returnTo");
-      const plan = searchParams.get("plan");
-      const period = searchParams.get("period");
-
-      if (returnTo && plan && period) {
-        try {
-          const url = new URL(returnTo);
-          if (user.email) {
-            url.searchParams.set("prefilled_email", user.email);
-          }
-          url.searchParams.set("client_reference_id", user.uid);
-
-          window.location.href = url.toString();
-        } catch (error) {
-          console.error("Error parsing return URL:", error);
-
-          router.push("/locations");
-        }
-      } else if (redirect) {
-        router.push(redirect);
-      } else {
-        router.push("/locations");
-      }
+      const redirect = searchParams.get("redirect") || "/locations";
+      router.push(redirect);
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, searchParams]);
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
@@ -64,31 +42,8 @@ export default function LoginPage() {
       setError(error);
       setIsLoading(false);
     } else if (user) {
-      const searchParams = new URLSearchParams(window.location.search);
-      const redirect = searchParams.get("redirect");
-      const returnTo = searchParams.get("returnTo");
-      const plan = searchParams.get("plan");
-      const period = searchParams.get("period");
-
-      if (returnTo && plan && period) {
-        try {
-          const url = new URL(returnTo);
-          if (user.email) {
-            url.searchParams.set("prefilled_email", user.email);
-          }
-          url.searchParams.set("client_reference_id", user.uid);
-
-          window.location.href = url.toString();
-        } catch (error) {
-          console.error("Error parsing return URL:", error);
-
-          router.push("/locations");
-        }
-      } else if (redirect) {
-        router.push(redirect);
-      } else {
-        router.push("/locations");
-      }
+      const redirect = searchParams.get("redirect") || "/locations";
+      router.push(redirect);
     }
   };
 
@@ -155,5 +110,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<Loading fullScreen />}>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -6,13 +6,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Check, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/firebase/auth";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import {
-  createSubscriptionCheckout,
-  getAvailableProducts,
-} from "@/lib/stripe/client";
+import { getAvailableProducts } from "@/lib/stripe/client";
 import { type BillingPeriod } from "@/lib/stripe/entitlements";
 import {
   EnrichedProduct,
@@ -67,26 +64,25 @@ export function Pricing() {
     try {
       const isFree = product.planId === "free";
 
-      if (!user) {
-        router.push(
-          `/login?returnTo=/&plan=${product.planId}&period=${billingPeriod}`
-        );
-        return;
-      }
-
       if (isFree) {
-        router.push("/locations");
+        if (!user) {
+          router.push(`/login?redirect=${encodeURIComponent("/locations")}`);
+        } else {
+          router.push("/locations");
+        }
         return;
       }
 
       const priceId = getPriceId(product, billingPeriod);
-      if (!priceId) {
-        console.error("No price ID found for product:", product.name);
-        return;
-      }
+      const redirectUrl = priceId
+        ? `/checkout?plan=${product.planId}&period=${billingPeriod}&priceId=${priceId}`
+        : `/checkout?plan=${product.planId}&period=${billingPeriod}`;
 
-      const session = await createSubscriptionCheckout(priceId);
-      window.location.assign(session.url);
+      if (!user) {
+        router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
+      } else {
+        router.push(redirectUrl);
+      }
     } catch (error) {
       console.error("Error creating checkout session:", error);
     } finally {
@@ -123,7 +119,7 @@ export function Pricing() {
   if (loading) {
     return (
       <div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-6 sm:px-8 lg:px-12">
           {/* Header skeleton */}
           <div className="text-center mb-12">
             <Skeleton className="h-12 w-96 mx-auto mb-4" />
@@ -176,7 +172,7 @@ export function Pricing() {
 
   return (
     <div>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-6 sm:px-8 lg:px-12">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
             תוכניות מחיר שמתאימות לכם
@@ -203,7 +199,7 @@ export function Pricing() {
         <AnimatePresence mode="wait">
           <motion.div
             key={billingPeriod}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto"
+            className="grid grid-cols-1 md:grid-cols-[1fr_1.15fr_1fr] gap-8 md:gap-6 max-w-6xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -217,24 +213,28 @@ export function Pricing() {
               return (
                 <motion.div
                   key={product.id}
-                  className={`relative p-8 flex flex-col rounded-lg cursor-pointer group bg-card text-card-foreground ${
+                  className={`relative p-8 flex flex-col rounded-lg cursor-pointer group text-card-foreground ${
                     product.recommended
-                      ? "border border-primary/40 shadow-lg"
-                      : "border border-border/40 shadow-lg"
+                      ? "border-2 border-primary shadow-2xl bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5"
+                      : "border border-border/40 shadow-lg bg-card"
                   }`}
-                  initial={{ opacity: 0, y: 60, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    scale: product.recommended ? 1.02 : 1,
+                  }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{
-                    duration: 0.5,
-                    delay: index * 0.1,
+                    duration: 0.3,
+                    delay: index * 0.05,
                     ease: [0.16, 1, 0.3, 1],
-                    opacity: { duration: 0.4, ease: "easeOut" },
-                    scale: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                    opacity: { duration: 0.3, ease: "easeOut" },
+                    scale: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
                   }}
                   whileHover={{
-                    scale: 1.05,
-                    y: -8,
+                    scale: product.recommended ? 1.03 : 1.02,
+                    y: -4,
                     transition: {
                       duration: 0.3,
                       ease: [0.16, 1, 0.3, 1],
@@ -245,7 +245,7 @@ export function Pricing() {
                   <motion.div
                     className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
                       product.recommended
-                        ? "bg-gradient-to-br from-primary/10 via-primary/5 to-primary/10"
+                        ? "bg-gradient-to-br from-primary/15 via-primary/8 to-primary/15"
                         : "bg-gradient-to-br from-primary/5 via-transparent to-primary/10"
                     }`}
                     initial={false}
@@ -254,26 +254,11 @@ export function Pricing() {
                   <motion.div
                     className={`absolute inset-0 border-2 rounded-lg transition-all duration-500 ${
                       product.recommended
-                        ? "border-primary/0 group-hover:border-primary/30"
+                        ? "border-primary/0 group-hover:border-primary/40"
                         : "border-primary/0 group-hover:border-primary/20"
                     }`}
                     initial={false}
                   />
-
-                  {product.recommended && (
-                    <motion.div
-                      className="absolute -top-4 right-1/2 translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium shadow-lg"
-                      initial={{ opacity: 0, scale: 0.5, y: 10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      transition={{
-                        delay: index * 0.12 + 0.1,
-                        duration: 0.4,
-                        ease: "backOut",
-                      }}
-                    >
-                      מומלץ
-                    </motion.div>
-                  )}
 
                   <div className="mb-6 relative">
                     <motion.h3
@@ -281,8 +266,8 @@ export function Pricing() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{
-                        delay: index * 0.12 + 0.2,
-                        duration: 0.5,
+                        delay: index * 0.05 + 0.1,
+                        duration: 0.3,
                         ease: "easeOut",
                       }}
                     >
@@ -293,8 +278,8 @@ export function Pricing() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{
-                        delay: index * 0.12 + 0.3,
-                        duration: 0.5,
+                        delay: index * 0.05 + 0.15,
+                        duration: 0.3,
                         ease: "easeOut",
                       }}
                     >
@@ -305,8 +290,8 @@ export function Pricing() {
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{
-                        delay: index * 0.12 + 0.4,
-                        duration: 0.5,
+                        delay: index * 0.05 + 0.2,
+                        duration: 0.3,
                         ease: "easeOut",
                       }}
                     >
@@ -349,8 +334,8 @@ export function Pricing() {
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{
-                            delay: index * 0.12 + 0.5 + featureIndex * 0.08,
-                            duration: 0.4,
+                            delay: index * 0.05 + 0.25 + featureIndex * 0.03,
+                            duration: 0.3,
                             ease: "easeOut",
                           }}
                         >
@@ -383,8 +368,9 @@ export function Pricing() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{
-                      delay: index * 0.12 + 0.5 + FEATURE_CONFIGS.length * 0.08,
-                      duration: 0.5,
+                      delay:
+                        index * 0.05 + 0.25 + FEATURE_CONFIGS.length * 0.03,
+                      duration: 0.3,
                       ease: "easeOut",
                     }}
                   >

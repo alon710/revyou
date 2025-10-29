@@ -37,7 +37,7 @@ export function UpgradeBanner() {
   };
 
   const handleUpgrade = () => {
-    router.push("/#pricing");
+    router.push("/");
   };
 
   if (!isVisible) {

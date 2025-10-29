@@ -50,26 +50,26 @@ export function HowItWorks() {
         </div>
 
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-8">
             {steps.map((step, index) => {
               const Icon = step.icon;
               return (
                 <motion.div
                   key={index}
                   className="p-8 relative overflow-hidden border border-border/40 shadow-lg rounded-lg bg-card text-card-foreground cursor-pointer group"
-                  initial={{ opacity: 0, y: 60, scale: 0.9 }}
+                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   viewport={{ once: true, amount: 0.2 }}
                   transition={{
-                    duration: 0.7,
-                    delay: index * 0.12,
+                    duration: 0.3,
+                    delay: index * 0.05,
                     ease: [0.16, 1, 0.3, 1],
-                    opacity: { duration: 0.5, ease: "easeOut" },
-                    scale: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                    opacity: { duration: 0.3, ease: "easeOut" },
+                    scale: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
                   }}
                   whileHover={{
-                    scale: 1.05,
-                    y: -8,
+                    scale: 1.02,
+                    y: -4,
                     transition: {
                       duration: 0.3,
                       ease: [0.16, 1, 0.3, 1],
@@ -93,8 +93,8 @@ export function HowItWorks() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{
-                      delay: index * 0.12 + 0.2,
-                      duration: 0.5,
+                      delay: index * 0.05 + 0.1,
+                      duration: 0.3,
                       ease: "backOut",
                     }}
                   >
@@ -108,8 +108,8 @@ export function HowItWorks() {
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
                       transition={{
-                        delay: index * 0.12 + 0.15,
-                        duration: 0.5,
+                        delay: index * 0.05 + 0.08,
+                        duration: 0.3,
                         ease: "backOut",
                       }}
                     >
@@ -121,8 +121,8 @@ export function HowItWorks() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{
-                        delay: index * 0.12 + 0.25,
-                        duration: 0.5,
+                        delay: index * 0.05 + 0.12,
+                        duration: 0.3,
                         ease: "easeOut",
                       }}
                     >
@@ -134,8 +134,8 @@ export function HowItWorks() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{
-                        delay: index * 0.12 + 0.35,
-                        duration: 0.5,
+                        delay: index * 0.05 + 0.15,
+                        duration: 0.3,
                         ease: "easeOut",
                       }}
                     >
