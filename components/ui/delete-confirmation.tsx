@@ -13,22 +13,18 @@ import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { AlertTriangle, Trash2 } from "lucide-react";
 
 interface DeleteConfirmationProps {
-  // Display
   title: string;
   description: string;
   warningText?: string;
   items?: string[];
 
-  // Confirmation
   confirmationText: string;
   confirmationLabel: string;
   confirmationPlaceholder?: string;
 
-  // Actions
   onDelete: () => Promise<void>;
   deleteButtonText: string;
 
-  // Styling
   variant?: "card" | "inline";
   className?: string;
 }
@@ -130,7 +126,6 @@ export function DeleteConfirmation({
     );
   }
 
-  // Inline variant - just button and dialog
   return (
     <>
       <Button

@@ -19,7 +19,6 @@ export async function getReviewCountThisMonth(): Promise<number> {
     const userId = auth.currentUser.uid;
     const startDate = startOfMonth(new Date());
 
-    // Get all connected locations
     const locationsQuery = query(
       collection(db, "users", userId, "locations"),
       where("connected", "==", true)
@@ -31,7 +30,6 @@ export async function getReviewCountThisMonth(): Promise<number> {
       return 0;
     }
 
-    // Query all locations in parallel
     const reviewCountPromises = locationIds.map(async (locationId) => {
       const reviewsQuery = query(
         collection(db!, "users", userId, "locations", locationId, "reviews"),

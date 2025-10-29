@@ -21,14 +21,12 @@ export function LocationToggler() {
     selectLocation(locationId);
   };
 
-  // Redirect to connect page if no locations
   useEffect(() => {
     if (!loading && locations.length === 0) {
       router.push("/locations/connect");
     }
   }, [loading, locations.length, router]);
 
-  // Only show toggle when there are multiple locations
   if (loading || locations.length <= 1) {
     return null;
   }
