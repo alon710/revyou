@@ -53,7 +53,8 @@ export function ReviewCard({
     return <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>;
   };
 
-  const handleReject = async () => {
+  const handleReject = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       setIsLoading(true);
       await rejectReply(userId, locationId, review.id);
@@ -78,7 +79,8 @@ export function ReviewCard({
     }
   };
 
-  const handleRegenerate = async () => {
+  const handleRegenerate = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!user) return;
 
     try {
@@ -109,7 +111,6 @@ export function ReviewCard({
         </DashboardCardHeader>
 
         <DashboardCardContent className="space-y-4">
-          {/* Review Text */}
           {review.reviewText && (
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -123,7 +124,6 @@ export function ReviewCard({
             </div>
           )}
 
-          {/* AI Reply */}
           {(review.aiReply || review.editedReply) && (
             <DashboardCardSection withBorder={!!review.reviewText}>
               <div className="flex items-center gap-2 mb-2">
@@ -140,7 +140,6 @@ export function ReviewCard({
           )}
         </DashboardCardContent>
 
-        {/* Action Buttons - For Pending and Failed */}
         {(review.replyStatus === "pending" ||
           review.replyStatus === "failed") && (
           <DashboardCardFooter>
@@ -161,7 +160,10 @@ export function ReviewCard({
               צור מחדש
             </Button>
             <Button
-              onClick={() => setShowEditor(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowEditor(true);
+              }}
               disabled={isLoading}
               size="sm"
               variant="outline"
@@ -169,7 +171,10 @@ export function ReviewCard({
               ערוך
             </Button>
             <Button
-              onClick={() => setShowPublishDialog(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowPublishDialog(true);
+              }}
               disabled={isLoading}
               size="sm"
               variant="default"
