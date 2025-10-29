@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { createSubscriptionCheckout } from "@/lib/stripe/client";
@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 
-export default function CheckoutPage() {
+function CheckoutForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
@@ -91,4 +91,23 @@ export default function CheckoutPage() {
   }
 
   return null;
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+            <div className="space-y-2">
+              <h2 className="text-2xl font-semibold">טוען...</h2>
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <CheckoutForm />
+    </Suspense>
+  );
 }
