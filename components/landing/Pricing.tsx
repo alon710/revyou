@@ -213,7 +213,7 @@ export function Pricing() {
               return (
                 <motion.div
                   key={product.id}
-                  className={`relative p-8 flex flex-col rounded-lg group text-card-foreground ${
+                  className={`relative p-8 flex flex-col rounded-lg group text-card-foreground touch-manipulation ${
                     product.recommended
                       ? "border-2 border-primary shadow-2xl bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5"
                       : "border border-border/40 shadow-lg bg-card"
@@ -242,7 +242,7 @@ export function Pricing() {
                   }}
                 >
                   <motion.div
-                    className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
+                    className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
                       product.recommended
                         ? "bg-gradient-to-br from-primary/15 via-primary/8 to-primary/15"
                         : "bg-gradient-to-br from-primary/5 via-transparent to-primary/10"
@@ -251,7 +251,7 @@ export function Pricing() {
                   />
 
                   <motion.div
-                    className={`absolute inset-0 border-2 rounded-lg transition-all duration-500 ${
+                    className={`absolute inset-0 border-2 rounded-lg transition-all duration-500 pointer-events-none ${
                       product.recommended
                         ? "border-primary/0 group-hover:border-primary/40"
                         : "border-primary/0 group-hover:border-primary/20"
@@ -374,7 +374,7 @@ export function Pricing() {
                     }}
                   >
                     <Button
-                      className="w-full group-hover:scale-105 transition-transform duration-300"
+                      className="w-full"
                       variant={product.recommended ? "default" : "outline"}
                       onClick={() => handleCheckout(product)}
                       disabled={loadingProductId === product.id}
