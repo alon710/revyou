@@ -213,7 +213,7 @@ export function Pricing() {
               return (
                 <motion.div
                   key={product.id}
-                  className={`relative p-8 flex flex-col rounded-lg cursor-pointer group text-card-foreground ${
+                  className={`relative p-8 flex flex-col rounded-lg group text-card-foreground ${
                     product.recommended
                       ? "border-2 border-primary shadow-2xl bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5"
                       : "border border-border/40 shadow-lg bg-card"
@@ -240,7 +240,6 @@ export function Pricing() {
                       ease: [0.16, 1, 0.3, 1],
                     },
                   }}
-                  whileTap={{ scale: 0.98 }}
                 >
                   <motion.div
                     className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
