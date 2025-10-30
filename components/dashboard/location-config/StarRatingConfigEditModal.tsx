@@ -61,7 +61,6 @@ export function StarRatingConfigEditModal({
   };
 
   const handleCancel = () => {
-    // Reset to original values
     setLocalStarConfigs(starConfigs);
     onClose();
   };
