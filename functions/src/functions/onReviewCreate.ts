@@ -1,8 +1,10 @@
 import * as admin from "firebase-admin";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import { defineSecret, defineString } from "firebase-functions/params";
+import { render } from "@react-email/render";
 import { generateAIReply } from "../lib/ai";
-import { sendReviewNotification } from "../lib/email";
+import { sendEmail } from "../lib/email";
+import { ReviewNotificationEmail } from "../email-templates/review-notification";
 import type { Review, Location, User, StarConfig } from "../types";
 
 const db = admin.firestore();
@@ -126,14 +128,32 @@ async function sendEmailNotification(
   console.log("Sending email notification", { reviewId, replyStatus });
 
   try {
-    await sendReviewNotification({
-      review: { ...review, id: reviewId, aiReply, replyStatus },
-      location,
-      user,
-      aiReply,
+    const recipientEmail = user.email;
+    const recipientName = user.displayName || user.email;
+    const status = replyStatus === "pending" ? "pending" : "posted";
+
+    const emailHtml = render(
+      ReviewNotificationEmail({
+        recipientName,
+        businessName: location.name,
+        reviewerName: review.reviewerName,
+        rating: review.rating,
+        reviewText: review.reviewText,
+        aiReply,
+        status,
+        dashboardUrl: `${appUrlVal}/dashboard`,
+        reviewId,
+      })
+    );
+
+    const subject = `ביקורת חדשה התקבלה: ${review.rating} כוכבים - ${location.name}`;
+
+    await sendEmail({
+      to: recipientEmail,
+      from: fromEmailVal,
+      subject,
+      html: emailHtml,
       resendApiKey: resendApiKeyVal,
-      appUrl: appUrlVal,
-      fromEmail: fromEmailVal,
     });
 
     console.log("Email notification sent", { reviewId, replyStatus });
