@@ -3,7 +3,7 @@ import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import { defineSecret, defineString } from "firebase-functions/params";
 import { render } from "@react-email/render";
 import { generateAIReply } from "../lib/ai";
-import { sendEmail } from "../lib/email";
+import { sendEmail } from "../lib/email/resend";
 import { ReviewNotificationEmail } from "../email-templates/review-notification";
 import type { Review, Location, User, StarConfig } from "../types";
 
@@ -11,10 +11,8 @@ const db = admin.firestore();
 
 const geminiApiKey = defineSecret("GEMINI_API_KEY");
 const resendApiKey = defineSecret("RESEND_API_KEY");
-const appUrl = defineString("APP_URL", { default: "http://localhost:3000" });
-const fromEmail = defineString("FROM_EMAIL", {
-  default: "Review AI <onboarding@updates.divex.io>",
-});
+const appUrl = defineString("APP_URL");
+const fromEmail = defineString("FROM_EMAIL");
 
 type ReplyStatus = "pending" | "posted" | "failed";
 
@@ -195,6 +193,7 @@ export const onReviewCreate = onDocumentCreated(
         location.config,
         geminiApiKey.value()
       );
+
       if (!aiReply) return;
 
       const replyStatus = await updateReplyStatus(
@@ -202,7 +201,9 @@ export const onReviewCreate = onDocumentCreated(
         aiReply,
         starConfig.autoReply
       );
+
       const user = await getUser(userId);
+
       if (!user) return;
 
       if (shouldSendEmail(location)) {

@@ -1,4 +1,5 @@
-import { generateWithGemini, buildReplyPrompt } from "./ai/core";
+import { generateWithGemini } from "./core";
+import { buildReplyPrompt } from "./prompts";
 import type { Review, LocationConfig } from "../types";
 
 export async function generateAIReply(
@@ -20,31 +21,17 @@ export async function generateAIReply(
     rating: review.rating,
     reviewerName: review.reviewerName,
     reviewText: review.reviewText,
-    reviewDate: review.reviewDate,
+    reviewDate: review.reviewDate ? review.reviewDate.toDate() : new Date(),
   };
 
-  const configData = {
-    locationName: config.locationName,
-    locationDescription: config.locationDescription,
-    locationPhone: config.locationPhone,
-    toneOfVoice: config.toneOfVoice,
-    languageMode: config.languageMode,
-    maxSentences: config.maxSentences,
-    allowedEmojis: config.allowedEmojis,
-    signature: config.signature,
-    starConfigs: config.starConfigs,
-  };
+  const prompt = buildReplyPrompt(
+    config,
+    reviewData,
+    config.locationName ?? "",
+    config.locationPhone
+  );
 
-  const prompt = buildReplyPrompt(reviewData, configData);
+  const reply = await generateWithGemini(geminiApiKey, prompt);
 
-  const reply = await generateWithGemini(geminiApiKey, prompt, {
-    modelName: "gemini-2.5-flash",
-    temperature: 0.7,
-    topP: 0.9,
-    topK: 40,
-    maxOutputTokens: 500,
-  });
-
-  console.log("AI reply generated successfully");
   return reply;
 }
