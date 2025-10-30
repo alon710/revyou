@@ -66,7 +66,8 @@ async function seedDatabase() {
       .doc(USER_ID)
       .set({
         uid: USER_ID,
-        email: "test@example.com",
+        email: "alon710@gmail.com",
+        displayName: "Alon",
         createdAt: Timestamp.fromDate(new Date("2024-01-01")),
       });
     console.log("✅ User created\n");
@@ -89,7 +90,7 @@ async function seedDatabase() {
         languageMode: "hebrew",
         starConfigs: {
           1: {
-            autoReply: true,
+            autoReply: false,
             customInstructions:
               "התנצל בצורה כנה, הציע פיצוי כמו ארוחה חינם, וספק טלפון ליצירת קשר",
           },
@@ -106,7 +107,7 @@ async function seedDatabase() {
             customInstructions: "הודה חם ושאל מה היה אפשר לעשות טוב יותר",
           },
           5: {
-            autoReply: true,
+            autoReply: false,
             customInstructions: "הודה בהתלהבות והזמן לבקר שוב",
           },
         },
@@ -129,7 +130,7 @@ async function seedDatabase() {
         languageMode: "hebrew",
         starConfigs: {
           1: {
-            autoReply: true,
+            autoReply: false,
             customInstructions: "התנצל בצורה פורמלית ומקצועית",
           },
           2: {
@@ -145,7 +146,7 @@ async function seedDatabase() {
             customInstructions: "הודה והזמן לבקר שוב",
           },
           5: {
-            autoReply: true,
+            autoReply: false,
             customInstructions: "הודה והדגש את המחויבות לשירות",
           },
         },
@@ -178,8 +179,6 @@ async function seedDatabase() {
         reviewerPhotoUrl:
           "https://example.com/photos/restaurant_58_reviewer_1.jpg",
         rating: 5,
-        reviewText:
-          "חוויה מדהימה! הפיצה הכי טעימה שאכלתי בחיי. השירות מעולה והאווירה נעימה מאוד. בהחלט נחזור!",
         reviewDate: Timestamp.fromDate(getDaysAgo(20)),
         receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(20), 5)),
         aiReply:
@@ -330,6 +329,55 @@ async function seedDatabase() {
         postedAt: null,
         postedBy: null,
       },
+      {
+        id: "google_review_auto_001",
+        googleReviewId: "google_review_auto_001",
+        reviewerName: "נועה לוי",
+        reviewerPhotoUrl:
+          "https://example.com/photos/restaurant_58_reviewer_auto.jpg",
+        rating: 5,
+        reviewText:
+          "השירות היה מצוין והאוכל טעים מאוד! חוויה נהדרת, ממליצה בחום!",
+        reviewDate: Timestamp.fromDate(new Date()),
+        receivedAt: Timestamp.fromDate(new Date()),
+        replyStatus: "pending",
+        wasEdited: false,
+        postedReply: null,
+        postedAt: null,
+        postedBy: null,
+      },
+      {
+        id: "google_review_auto_002",
+        googleReviewId: "google_review_auto_002",
+        reviewerName: "משה כהן",
+        reviewerPhotoUrl:
+          "https://example.com/photos/restaurant_58_reviewer_auto2.jpg",
+        rating: 2,
+        reviewText: "האוכל היה בסדר אבל שירות לקוי. חיכינו הרבה זמן לאוכל.",
+        reviewDate: Timestamp.fromDate(new Date()),
+        receivedAt: Timestamp.fromDate(new Date()),
+        replyStatus: "pending",
+        wasEdited: false,
+        postedReply: null,
+        postedAt: null,
+        postedBy: null,
+      },
+      {
+        id: "google_review_auto_003",
+        googleReviewId: "google_review_auto_003",
+        reviewerName: "תמר אוחנה",
+        reviewerPhotoUrl:
+          "https://example.com/photos/king_george_cafe_auto.jpg",
+        rating: 4,
+        reviewText: "קפה איכותי ומקום נעים. אבל קצת יקר.",
+        reviewDate: Timestamp.fromDate(new Date()),
+        receivedAt: Timestamp.fromDate(new Date()),
+        replyStatus: "pending",
+        wasEdited: false,
+        postedReply: null,
+        postedAt: null,
+        postedBy: null,
+      },
     ];
 
     const location1Reviews = reviews.filter((r) =>
@@ -340,6 +388,8 @@ async function seedDatabase() {
         "google_review_126",
         "google_review_127",
         "google_review_128",
+        "google_review_auto_001",
+        "google_review_auto_002",
       ].includes(r.id)
     );
 
@@ -359,7 +409,11 @@ async function seedDatabase() {
     }
 
     const location2Reviews = reviews.filter((r) =>
-      ["google_review_201", "google_review_202"].includes(r.id)
+      [
+        "google_review_201",
+        "google_review_202",
+        "google_review_auto_003",
+      ].includes(r.id)
     );
 
     for (const review of location2Reviews) {
@@ -382,11 +436,29 @@ async function seedDatabase() {
     console.log("📊 Summary:");
     console.log("  - 1 User (Free Tier)");
     console.log("  - 2 Locations");
-    console.log("  - 8 Reviews (various states)");
+    console.log("  - 11 Reviews total:");
+    console.log("    - 8 with existing AI replies (manual flow test data)");
+    console.log(
+      "    - 3 WITHOUT AI replies (will trigger automation when Cloud Functions deployed)"
+    );
     console.log(
       "\n💡 Note: User is on FREE tier. Subscribe via Stripe to upgrade to Basic/Pro."
     );
-    console.log("🎉 You can now test all pages in your application!");
+    console.log("\n🤖 AUTOMATION TEST DATA:");
+    console.log(
+      "  - google_review_auto_001: 5-star review (Restaurant) - will auto-generate AI reply"
+    );
+    console.log(
+      "  - google_review_auto_002: 2-star review (Restaurant) - will auto-generate AI reply"
+    );
+    console.log(
+      "  - google_review_auto_003: 4-star review (Café) - will auto-generate AI reply"
+    );
+    console.log("\n📧 Both locations have emailOnNewReview: true");
+    console.log(
+      "   Email notifications will be sent when AI replies are generated."
+    );
+    console.log("\n🎉 You can now test all pages in your application!");
   } catch (error) {
     console.error("❌ Error seeding database:", error);
     process.exit(1);
