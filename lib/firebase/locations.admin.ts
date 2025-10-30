@@ -2,18 +2,6 @@ import { adminDb } from "@/lib/firebase/admin";
 import { Location } from "@/types/database";
 import { locationSchemaAdmin } from "@/lib/validation/database.admin";
 
-/**
- * ADMIN SDK FUNCTIONS FOR LOCATIONS
- * These functions use Firebase Admin SDK and should ONLY be called from server-side code (API routes, server actions)
- * They bypass Firestore security rules and have elevated privileges
- */
-
-/**
- * Get a single location by ID (Admin SDK version)
- * @param userId - User ID
- * @param locationId - Location ID
- * @returns Location data or null if not found
- */
 export async function getLocationAdmin(
   userId: string,
   locationId: string
