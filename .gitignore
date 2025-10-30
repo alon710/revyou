@@ -43,3 +43,6 @@ next-env.d.ts
 firebase-debug
 *.env
 firebase-debug.log
+
+# Functions build output
+/functions/lib/

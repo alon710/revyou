@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateReplyWithRetry } from "@/lib/ai/gemini";
+import { generateAIReply } from "@/lib/ai/gemini";
 import { buildReplyPrompt } from "@/lib/ai/prompts";
 import { getReviewAdmin } from "@/lib/firebase/reviews.admin";
 import { updateReviewReplyAdmin } from "@/lib/firebase/reviews.admin";
@@ -58,7 +58,7 @@ export async function POST(
       location.config.locationPhone
     );
 
-    const aiReply = await generateReplyWithRetry(prompt);
+    const aiReply = await generateAIReply(prompt);
 
     await updateReviewReplyAdmin(
       authenticatedUserId,
@@ -70,7 +70,7 @@ export async function POST(
 
     return NextResponse.json({ aiReply, success: true });
   } catch (error) {
-    console.error("Error generating reply:", error);
+    console.error("Error generating reply", error);
     return NextResponse.json(
       {
         error:
