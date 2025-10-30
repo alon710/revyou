@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
-import LocationDetailsCard from "@/components/dashboard/LocationDetailsCard";
+import LocationDetailsCard from "@/components/dashboard/locations/LocationDetailsCard";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
 
 export default function LocationsPage() {
