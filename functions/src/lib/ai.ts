@@ -1,4 +1,4 @@
-import { generateWithGemini } from "./core";
+import { generateWithGemini } from "./core/gemini-client";
 import { buildReplyPrompt } from "./prompts";
 import type { Review, LocationConfig } from "../types";
 
