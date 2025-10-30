@@ -1,14 +1,12 @@
 "use client";
 
 import { Location, LocationConfig } from "@/types/database";
-import {
-  LocationIdentitySection,
-  AIResponseSettingsSection,
-  StarRatingConfigSection,
-  NotificationPreferencesSection,
-} from "@/components/dashboard/location-config";
 import { updateLocationConfig } from "@/lib/firebase/location-config";
 import { updateLocation } from "@/lib/firebase/locations";
+import LocationIdentitySection from "@/components/dashboard/locations/LocationIdentitySection";
+import AIResponseSettingsSection from "@/components/dashboard/locations/AIResponseSettingsSection";
+import StarRatingConfigSection from "@/components/dashboard/locations/StarRatingConfigSection";
+import NotificationPreferencesSection from "@/components/dashboard/locations/NotificationPreferencesSection";
 
 interface LocationDetailsCardProps {
   location: Location;

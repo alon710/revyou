@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Settings } from "lucide-react";
-import { AIResponseSettingsEditModal } from "@/components/dashboard/location-config/AIResponseSettingsEditModal";
+import { AIResponseSettingsEditModal } from "@/components/dashboard/reviews/AIResponseSettingsEditModal";
 
 interface AIResponseSettingsSectionProps {
   config: LocationConfig;
