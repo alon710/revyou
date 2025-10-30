@@ -6,7 +6,7 @@ import { useLocation } from "@/contexts/LocationContext";
 import { collection, query, orderBy, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { Review } from "@/types/database";
-import { ReviewCard } from "@/components/dashboard/ReviewCard";
+import { ReviewCard } from "@/components/dashboard/reviews/ReviewCard";
 import { Loading } from "@/components/ui/loading";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageContainer } from "@/components/layout/PageContainer";
