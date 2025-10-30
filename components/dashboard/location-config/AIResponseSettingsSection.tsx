@@ -12,10 +12,6 @@ import {
 } from "@/components/ui/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Settings } from "lucide-react";
-import {
-  TONE_LABELS,
-  LANGUAGE_LABELS,
-} from "@/components/dashboard/location-config/types";
 import { AIResponseSettingsEditModal } from "@/components/dashboard/location-config/AIResponseSettingsEditModal";
 
 interface AIResponseSettingsSectionProps {
@@ -56,21 +52,14 @@ export default function AIResponseSettingsSection({
           </div>
         </DashboardCardHeader>
         <DashboardCardContent className="space-y-6">
-          {/* Tone of Voice */}
           <DashboardCardField label="סגנון תשובה">
-            <p className="text-sm font-medium">
-              {TONE_LABELS[config.toneOfVoice]}
-            </p>
+            <p className="text-sm font-medium">{config.toneOfVoice}</p>
           </DashboardCardField>
 
-          {/* Language */}
           <DashboardCardField label="שפת תגובה">
-            <p className="text-sm font-medium">
-              {LANGUAGE_LABELS[config.languageMode || "auto-detect"]}
-            </p>
+            <p className="text-sm font-medium">{config.languageMode}</p>
           </DashboardCardField>
 
-          {/* Allowed Emojis */}
           <DashboardCardField label="אימוג'ים מותרים">
             <p className="text-sm font-medium">
               {config.allowedEmojis?.length
@@ -79,14 +68,12 @@ export default function AIResponseSettingsSection({
             </p>
           </DashboardCardField>
 
-          {/* Max Sentences */}
           <DashboardCardField label="מספר משפטים מקסימלי">
             <p className="text-sm font-medium">
               {config.maxSentences || 2} משפטים
             </p>
           </DashboardCardField>
 
-          {/* Signature */}
           <DashboardCardField label="חתימה">
             <p className="text-sm font-medium">
               {config.signature || "ללא חתימה"}

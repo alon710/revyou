@@ -70,7 +70,6 @@ export async function POST(
 
     return NextResponse.json({ aiReply, success: true });
   } catch (error) {
-    console.error("Error generating reply", error);
     return NextResponse.json(
       {
         error:
