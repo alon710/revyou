@@ -36,7 +36,7 @@ service cloud.firestore {
 
     // Validate reply status
     function isValidReplyStatus(status) {
-      return status in ['pending', 'approved', 'rejected', 'posted', 'failed'];
+      return status in ['pending', 'rejected', 'posted', 'failed'];
     }
 
     // Validate rating (1-5)

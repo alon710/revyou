@@ -12,13 +12,7 @@ const toneOfVoiceSchema = z.enum([
   "professional",
 ]);
 const languageModeSchema = z.enum(["hebrew", "english", "auto-detect"]);
-const replyStatusSchema = z.enum([
-  "pending",
-  "approved",
-  "rejected",
-  "posted",
-  "failed",
-]);
+const replyStatusSchema = z.enum(["pending", "rejected", "posted", "failed"]);
 
 const starConfigSchema = z.object({
   customInstructions: z.string().max(1000).default(""),

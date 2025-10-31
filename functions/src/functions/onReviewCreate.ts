@@ -4,7 +4,12 @@ import { defineSecret, defineString } from "firebase-functions/params";
 import { render } from "@react-email/render";
 import { generateAIReply } from "../lib/ai";
 import { ReviewNotificationEmail } from "../email-templates/review-notification";
-import type { Review, Location, User, StarConfig } from "../shared/types/database";
+import type {
+  Review,
+  Location,
+  User,
+  StarConfig,
+} from "../shared/types/database";
 
 const db = admin.firestore();
 

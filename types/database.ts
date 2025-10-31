@@ -3,12 +3,7 @@ import { Timestamp } from "firebase/firestore";
 export type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";
 export type LanguageMode = "hebrew" | "english" | "auto-detect";
 
-export type ReplyStatus =
-  | "pending"
-  | "approved"
-  | "rejected"
-  | "posted"
-  | "failed";
+export type ReplyStatus = "pending" | "rejected" | "posted" | "failed";
 
 export interface User {
   uid: string;
