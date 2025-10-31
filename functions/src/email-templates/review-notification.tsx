@@ -19,7 +19,7 @@ interface ReviewNotificationEmailProps {
   reviewText: string;
   aiReply: string;
   status: "pending" | "posted";
-  dashboardUrl: string;
+  appBaseUrl: string;
   reviewId: string;
 }
 
@@ -31,12 +31,12 @@ export const ReviewNotificationEmail = ({
   reviewText = "",
   aiReply = "",
   status = "pending",
-  dashboardUrl = "",
+  appBaseUrl = "http://localhost:3000",
   reviewId = "",
 }: ReviewNotificationEmailProps) => {
   const statusText = status === "pending" ? "ממתינה לאישור" : "פורסמה";
   const statusColor = status === "pending" ? "#f59e0b" : "#10b981";
-  const reviewPageUrl = `${dashboardUrl}/reviews/${reviewId}`;
+  const reviewPageUrl = `${appBaseUrl}/reviews/${reviewId}`;
 
   return (
     <Html lang="he" dir="rtl">

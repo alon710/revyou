@@ -11,7 +11,7 @@ const db = admin.firestore();
 
 const geminiApiKey = defineSecret("GEMINI_API_KEY");
 const resendApiKey = defineSecret("RESEND_API_KEY");
-const appUrl = defineString("APP_URL");
+const appBaseUrl = defineString("APP_BASE_URL");
 const fromEmail = defineString("FROM_EMAIL");
 
 type ReplyStatus = "pending" | "posted" | "failed";
@@ -120,7 +120,7 @@ async function sendEmailNotification(
   replyStatus: ReplyStatus,
   reviewId: string,
   resendApiKeyVal: string,
-  appUrlVal: string,
+  appBaseUrl: string,
   fromEmailVal: string
 ) {
   console.log("Sending email notification", { reviewId, replyStatus });
@@ -139,7 +139,7 @@ async function sendEmailNotification(
         reviewText: review.reviewText,
         aiReply,
         status,
-        dashboardUrl: `${appUrlVal}/dashboard`,
+        appBaseUrl,
         reviewId,
       })
     );
@@ -215,7 +215,7 @@ export const onReviewCreate = onDocumentCreated(
           replyStatus,
           reviewId,
           resendApiKey.value(),
-          appUrl.value(),
+          appBaseUrl.value(),
           fromEmail.value()
         );
       }
