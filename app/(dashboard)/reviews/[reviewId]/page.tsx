@@ -127,7 +127,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
         <BackButton href="/reviews" />
       </div>
       <PageHeader
-        title={`ביקורת מאת ${review.reviewerName}`}
+        title={`ביקורת מאת ${review.name}`}
         description={`${currentLocation?.name || ""} - ${review.rating} כוכבים`}
       />
 

@@ -50,7 +50,7 @@ export async function POST(
     const prompt = buildReplyPrompt(
       location.config,
       {
-        rating: review.rating,
+        rating: review.rating as 1 | 2 | 3 | 4 | 5,
         name: review.name,
         text: review.text,
       },

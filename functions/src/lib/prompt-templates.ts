@@ -139,9 +139,12 @@ Example:
 {{/CUSTOM_INSTRUCTIONS_2}}
 {{^CUSTOM_INSTRUCTIONS_2}}
 ⭐⭐ (2 stars):
-Default behavior: Apologize for the experience and invite the reviewer to contact you via phone.
-Example:
+Default behavior: Apologize for the experience and invite the reviewer to contact you.
+{{#LOCATION_PHONE}}Example (with phone):
 - "We're sorry to hear that, {{REVIEWER_NAME}}. Please contact us at {{LOCATION_PHONE}} so we can make things right 🙏 {{SIGNATURE}}"
+{{/LOCATION_PHONE}}{{^LOCATION_PHONE}}Example (without phone):
+- "We're sorry to hear that, {{REVIEWER_NAME}}. Please contact us privately so we can make things right 🙏 {{SIGNATURE}}"
+{{/LOCATION_PHONE}}
 {{/CUSTOM_INSTRUCTIONS_2}}
 
 ---
@@ -153,9 +156,12 @@ Example:
 {{/CUSTOM_INSTRUCTIONS_1}}
 {{^CUSTOM_INSTRUCTIONS_1}}
 ⭐ (1 star):
-Default behavior: Offer a sincere apology, acknowledge the negative experience, and include the location phone number to encourage private follow-up.
-Example:
+Default behavior: Offer a sincere apology, acknowledge the negative experience, and encourage private follow-up.
+{{#LOCATION_PHONE}}Example (with phone):
 - "We're truly sorry, {{REVIEWER_NAME}}. This isn't the experience we aim for — please reach us at {{LOCATION_PHONE}} so we can resolve it. {{SIGNATURE}}"
+{{/LOCATION_PHONE}}{{^LOCATION_PHONE}}Example (without phone):
+- "We're truly sorry, {{REVIEWER_NAME}}. This isn't the experience we aim for — please reach out to us privately so we can resolve it. {{SIGNATURE}}"
+{{/LOCATION_PHONE}}
 {{/CUSTOM_INSTRUCTIONS_1}}
 
 ---
@@ -165,7 +171,9 @@ If {{REVIEW_TEXT}} is empty, generate a short generic response aligned with the 
 Examples:
 - 5★ → "Thank you, {{REVIEWER_NAME}}! We're so glad you enjoyed your experience 🙏 {{SIGNATURE}}"
 - 3★ → "Thanks for rating us, {{REVIEWER_NAME}}. We'd love to hear how we can improve ✨ {{SIGNATURE}}"
-- 1★ → "We're sorry to hear that, {{REVIEWER_NAME}}. Please call {{LOCATION_PHONE}} so we can help. {{SIGNATURE}}"
+{{#LOCATION_PHONE}}- 1★ (with phone) → "We're sorry to hear that, {{REVIEWER_NAME}}. Please call {{LOCATION_PHONE}} so we can help. {{SIGNATURE}}"
+{{/LOCATION_PHONE}}{{^LOCATION_PHONE}}- 1★ (without phone) → "We're sorry to hear that, {{REVIEWER_NAME}}. Please reach out to us privately so we can help. {{SIGNATURE}}"
+{{/LOCATION_PHONE}}
 
 ---
 
@@ -173,7 +181,9 @@ Examples:
 - Never mention the numeric rating directly ("thanks for 5 stars").
 - Avoid identical phrasing across responses — vary your language naturally.
 - Keep replies short, empathetic, and professional.
-- Never argue or discuss details publicly. Redirect issues to private contact using {{LOCATION_PHONE}}.
+{{#LOCATION_PHONE}}- Never argue or discuss details publicly. Redirect issues to private contact using {{LOCATION_PHONE}}.
+{{/LOCATION_PHONE}}{{^LOCATION_PHONE}}- Never argue or discuss details publicly. Redirect issues to private contact (e.g., "reach out to us privately", "contact us directly").
+{{/LOCATION_PHONE}}
 
 ---
 
@@ -216,7 +226,11 @@ Review: "שירות מעולה!"
 Name: "John Smith"
 > "תודה רבה, ג׳ון! שמחים שנהניתם מהחוויה 🙏 צוות מסעדת חמישים ושמונה"
 
-**1★ (no text, English mode)**
+{{#LOCATION_PHONE}}**1★ (no text, English mode, with phone)**
 Name: "Alex Johnson"
 > "We're sorry to hear that, Alex. Please contact us at {{LOCATION_PHONE}} so we can help. Restaurant 58 Team"
+{{/LOCATION_PHONE}}{{^LOCATION_PHONE}}**1★ (no text, English mode, without phone)**
+Name: "Alex Johnson"
+> "We're sorry to hear that, Alex. Please reach out to us privately so we can help. Restaurant 58 Team"
+{{/LOCATION_PHONE}}
 `;
