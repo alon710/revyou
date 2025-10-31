@@ -47,13 +47,11 @@ export function LocationToggler() {
             onClick={() => handleLocationChange(location.id)}
             className="cursor-pointer"
           >
-            {selectedLocationId === location.id && (
-              <Check className="h-4 w-4 shrink-0 text-primary" />
-            )}
-            <div className="flex items-center justify-between gap-3 w-full">
-              <div className="flex items-center gap-2">
-                <span className="truncate">{location.name}</span>
-              </div>
+            <div className="flex items-center gap-3 w-full">
+              {selectedLocationId === location.id && (
+                <Check className="h-4 w-4 shrink-0 text-primary" />
+              )}
+              <span className="truncate">{location.name}</span>
             </div>
           </DropdownMenuItem>
         ))}
