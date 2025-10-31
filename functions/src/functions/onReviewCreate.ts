@@ -6,6 +6,7 @@ import { generateAIReply } from "../lib/ai";
 import { ReviewNotificationEmail } from "../email-templates/review-notification";
 import type {
   Review,
+  LocationConfig,
   Location,
   User,
   StarConfig,
@@ -52,7 +53,7 @@ async function getUser(userId: string): Promise<User | null> {
 async function handleAIReply(
   eventData: FirebaseFirestore.DocumentSnapshot,
   review: Review,
-  config: any,
+  config: LocationConfig,
   apiKey: string
 ): Promise<string | null> {
   try {
