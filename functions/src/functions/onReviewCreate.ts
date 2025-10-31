@@ -10,6 +10,7 @@ import type {
   Location,
   User,
   StarConfig,
+  ReplyStatus,
 } from "../shared/types/database";
 
 const db = admin.firestore();
@@ -17,8 +18,6 @@ const db = admin.firestore();
 const geminiApiKey = defineSecret("GEMINI_API_KEY");
 const appBaseUrl = defineString("APP_BASE_URL");
 const fromEmail = defineString("FROM_EMAIL");
-
-type ReplyStatus = "pending" | "posted" | "failed";
 
 async function getLocation(
   userId: string,
