@@ -3,14 +3,12 @@ import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import { defineSecret, defineString } from "firebase-functions/params";
 import { render } from "@react-email/render";
 import { generateAIReply } from "../lib/ai";
-import { sendEmail } from "../lib/email/resend";
 import { ReviewNotificationEmail } from "../email-templates/review-notification";
 import type { Review, Location, User, StarConfig } from "../types";
 
 const db = admin.firestore();
 
 const geminiApiKey = defineSecret("GEMINI_API_KEY");
-const resendApiKey = defineSecret("RESEND_API_KEY");
 const appBaseUrl = defineString("APP_BASE_URL");
 const fromEmail = defineString("FROM_EMAIL");
 
@@ -119,7 +117,6 @@ async function sendEmailNotification(
   aiReply: string,
   replyStatus: ReplyStatus,
   reviewId: string,
-  resendApiKeyVal: string,
   appBaseUrl: string,
   fromEmailVal: string
 ) {
@@ -146,24 +143,26 @@ async function sendEmailNotification(
 
     const subject = `ביקורת חדשה התקבלה: ${review.rating} כוכבים - ${location.name}`;
 
-    await sendEmail({
+    await db.collection("emails").add({
       to: recipientEmail,
       from: fromEmailVal,
-      subject,
-      html: emailHtml,
-      resendApiKey: resendApiKeyVal,
+      message: {
+        subject,
+        html: emailHtml,
+      },
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    console.log("Email notification sent", { reviewId, replyStatus });
+    console.log("Email queued for sending", { reviewId, replyStatus });
   } catch (error) {
-    console.error("Failed to send email notification", { reviewId, error });
+    console.error("Failed to queue email notification", { reviewId, error });
   }
 }
 
 export const onReviewCreate = onDocumentCreated(
   {
     document: "users/{userId}/locations/{locationId}/reviews/{reviewId}",
-    secrets: [geminiApiKey, resendApiKey],
+    secrets: [geminiApiKey],
     timeoutSeconds: 300,
     minInstances: 0,
     maxInstances: 3,
@@ -214,7 +213,6 @@ export const onReviewCreate = onDocumentCreated(
           aiReply,
           replyStatus,
           reviewId,
-          resendApiKey.value(),
           appBaseUrl.value(),
           fromEmail.value()
         );
