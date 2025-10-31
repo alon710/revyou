@@ -134,9 +134,9 @@ async function sendEmailNotification(
       ReviewNotificationEmail({
         recipientName,
         businessName: location.name,
-        reviewerName: review.reviewerName,
+        reviewerName: review.name,
         rating: review.rating,
-        reviewText: review.reviewText,
+        reviewText: review.text || "",
         aiReply,
         status,
         appBaseUrl,

@@ -70,11 +70,11 @@ export interface Location {
 export interface Review {
   id: string;
   googleReviewId: string;
-  reviewerName: string;
-  reviewerPhotoUrl?: string;
+  name: string;
+  photoUrl?: string;
   rating: number;
-  reviewText: string;
-  reviewDate: Timestamp;
+  text?: string;
+  date: Timestamp;
   receivedAt: Timestamp;
 
   aiReply?: string;

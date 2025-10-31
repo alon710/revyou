@@ -51,8 +51,8 @@ export async function POST(
       location.config,
       {
         rating: review.rating,
-        reviewerName: review.reviewerName,
-        reviewText: review.reviewText,
+        name: review.name,
+        text: review.text,
       },
       location.name,
       location.config.locationPhone

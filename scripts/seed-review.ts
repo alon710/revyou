@@ -6,7 +6,6 @@ import { randomBytes } from "crypto";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
 
-// Helper function to get a random date within the last N days
 function getRandomDaysAgo(maxDays: number): Date {
   const daysAgo = Math.floor(Math.random() * maxDays) + 1;
   const date = new Date();
@@ -14,12 +13,10 @@ function getRandomDaysAgo(maxDays: number): Date {
   return date;
 }
 
-// Helper function to add minutes to a date
 function addMinutes(date: Date, minutes: number): Date {
   return new Date(date.getTime() + minutes * 60000);
 }
 
-// Initialize Firebase Admin SDK
 if (getApps().length === 0) {
   const privateKey =
     process.env.FIREBASE_ADMIN_PRIVATE_KEY || process.env.FIREBASE_PRIVATE_KEY;
@@ -49,7 +46,6 @@ if (getApps().length === 0) {
 
 const db = getFirestore();
 
-// Validate and read environment variables
 const USER_ID = process.env.SEED_REVIEW_USER_ID || "";
 const LOCATION_ID = process.env.SEED_REVIEW_LOCATION_ID || "";
 const RATING = process.env.SEED_REVIEW_RATING;
@@ -57,7 +53,6 @@ const REVIEW_TEXT = process.env.SEED_REVIEW_TEXT || "";
 const REVIEWER_NAME = process.env.SEED_REVIEW_REVIEWER_NAME;
 const REVIEWER_PHOTO_URL = process.env.SEED_REVIEW_PHOTO_URL;
 
-// Validate required parameters
 if (!USER_ID) {
   console.error("⚠️  Missing SEED_REVIEW_USER_ID in .env.local");
   console.error(
@@ -109,7 +104,6 @@ async function seedReview() {
   console.log("🌱 Starting review seeding...\n");
 
   try {
-    // Verify that the location exists
     console.log(`🔍 Verifying location ${LOCATION_ID}...`);
     const locationRef = db
       .collection("users")
@@ -131,31 +125,26 @@ async function seedReview() {
     const locationData = locationDoc.data();
     console.log(`✅ Location found: ${locationData?.name || LOCATION_ID}\n`);
 
-    // Generate unique IDs
     const reviewId = `google_review_${randomBytes(8).toString("hex")}`;
-    const googleReviewId = reviewId; // Use same ID for simplicity
+    const googleReviewId = reviewId;
 
-    // Generate timestamps
-    const reviewDate = getRandomDaysAgo(7); // Random date within last week
-    const receivedAt = addMinutes(reviewDate, 5); // Received 5 minutes after review posted
+    const reviewDate = getRandomDaysAgo(7);
+    const receivedAt = addMinutes(reviewDate, 5);
 
-    // Build review data object (excluding the document ID)
     const reviewData: any = {
       googleReviewId,
-      reviewerName: REVIEWER_NAME,
+      name: REVIEWER_NAME,
       rating: ratingNumber,
-      reviewText: REVIEW_TEXT,
-      reviewDate: Timestamp.fromDate(reviewDate),
+      text: REVIEW_TEXT,
+      date: Timestamp.fromDate(reviewDate),
       receivedAt: Timestamp.fromDate(receivedAt),
       replyStatus: "pending",
     };
 
-    // Add optional reviewer photo URL if provided
     if (REVIEWER_PHOTO_URL) {
-      reviewData.reviewerPhotoUrl = REVIEWER_PHOTO_URL;
+      reviewData.photoUrl = REVIEWER_PHOTO_URL;
     }
 
-    // Create the review document
     console.log("⭐ Creating review document...");
     await db
       .collection("users")
@@ -176,7 +165,6 @@ async function seedReview() {
     console.log(`  - Review Date: ${reviewDate.toISOString()}`);
     console.log(`  - Status: pending`);
 
-    // Check if auto-reply is enabled for this rating
     const starConfigs = locationData?.config?.starConfigs;
     const starConfig = starConfigs?.[ratingNumber];
 

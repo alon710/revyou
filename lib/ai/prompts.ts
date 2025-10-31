@@ -36,8 +36,8 @@ export function buildReplyPrompt(
     CUSTOM_INSTRUCTIONS_5:
       locationConfig.starConfigs?.[5]?.customInstructions || "",
     RATING: review.rating,
-    REVIEWER_NAME: review.reviewerName || "",
-    REVIEW_TEXT: review.reviewText || "(אין טקסט)",
+    REVIEWER_NAME: review.name || "",
+    REVIEW_TEXT: review.text || "(אין טקסט)",
   };
 
   const template = DEFAULT_LOCATION_PROMPT_TEMPLATE;

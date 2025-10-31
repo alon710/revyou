@@ -81,7 +81,7 @@ export function ReplyEditor({
               הביקורת המקורית:
             </p>
             <p className="text-sm text-muted-foreground text-right">
-              {review.reviewText || "(אין טקסט)"}
+              {review.text || "(אין טקסט)"}
             </p>
           </div>
 

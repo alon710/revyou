@@ -14,14 +14,14 @@ export async function generateAIReply(
   console.log(`Generating AI reply`, {
     reviewId: review.id,
     rating: review.rating,
-    content: review.reviewText,
+    content: review.text,
   });
 
   const reviewData = {
     rating: review.rating,
-    reviewerName: review.reviewerName,
-    reviewText: review.reviewText,
-    reviewDate: review.reviewDate ? review.reviewDate.toDate() : new Date(),
+    name: review.name,
+    text: review.text,
+    date: review.date ? review.date.toDate() : new Date(),
   };
 
   const prompt = buildReplyPrompt(

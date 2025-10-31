@@ -175,11 +175,11 @@ async function seedDatabase() {
       {
         id: "google_review_123",
         googleReviewId: "google_review_123",
-        reviewerName: "שרה כהן",
-        reviewerPhotoUrl:
+        name: "שרה כהן",
+        photoUrl:
           "https://example.com/photos/restaurant_58_reviewer_1.jpg",
         rating: 5,
-        reviewDate: Timestamp.fromDate(getDaysAgo(20)),
+        date: Timestamp.fromDate(getDaysAgo(20)),
         receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(20), 5)),
         aiReply:
           "תודה רבה שרה על המילים החמות! ❤️ אנחנו שמחים מאוד שנהניתם מהפיצה ומהשירות. נשמח לארח אתכם שוב בקרוב! 🥂\n\nבברכה,\nצוות חמישים ושמונה",
@@ -193,13 +193,13 @@ async function seedDatabase() {
       {
         id: "google_review_124",
         googleReviewId: "google_review_124",
-        reviewerName: "דוד לוי",
-        reviewerPhotoUrl:
+        name: "דוד לוי",
+        photoUrl:
           "https://example.com/photos/restaurant_58_reviewer_2.jpg",
         rating: 1,
-        reviewText:
+        text:
           "חוויה איומה. הפסטה הגיעה קרה והשירות היה איטי מאוד. לא ממליץ.",
-        reviewDate: Timestamp.fromDate(getDaysAgo(18)),
+        date: Timestamp.fromDate(getDaysAgo(18)),
         receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(18), 5)),
         aiReply:
           "היי דוד, אנחנו מצטערים מאוד לשמוע על החוויה הלא נעימה. 🙏 זה לא מייצג את הסטנדרטים שלנו. נשמח אם תיצור איתנו קשר בטלפון 03-1234567 כדי שנוכל לפצות על כך עם ארוחה חינם בפעם הבאה.\n\nבברכה,\nצוות חמישים ושמונה",
@@ -213,12 +213,12 @@ async function seedDatabase() {
       {
         id: "google_review_125",
         googleReviewId: "google_review_125",
-        reviewerName: "מיכל אברהם",
-        reviewerPhotoUrl:
+        name: "מיכל אברהם",
+        photoUrl:
           "https://example.com/photos/restaurant_58_reviewer_3.jpg",
         rating: 4,
-        reviewText: "אוכל טוב מאוד, אבל היה קצת רועש. בסך הכל נהננו.",
-        reviewDate: Timestamp.fromDate(getDaysAgo(22)),
+        text: "אוכל טוב מאוד, אבל היה קצת רועש. בסך הכל נהננו.",
+        date: Timestamp.fromDate(getDaysAgo(22)),
         receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(22), 5)),
         aiReply:
           "תודה רבה מיכל על המשוב! ✨ אנחנו שמחים שנהניתם מהאוכל. נקח בחשבון את ההערה לגבי הרעש ונשתדל לשפר.\n\nבברכה,\nצוות חמישים ושמונה",
@@ -233,12 +233,12 @@ async function seedDatabase() {
       {
         id: "google_review_126",
         googleReviewId: "google_review_126",
-        reviewerName: "יוסי מזרחי",
-        reviewerPhotoUrl:
+        name: "יוסי מזרחי",
+        photoUrl:
           "https://example.com/photos/restaurant_58_reviewer_4.jpg",
         rating: 3,
-        reviewText: "בסדר, לא מיוחד. הציפיתי ליותר בהתחשב בביקורות.",
-        reviewDate: Timestamp.fromDate(getDaysAgo(15)),
+        text: "בסדר, לא מיוחד. הציפיתי ליותר בהתחשב בביקורות.",
+        date: Timestamp.fromDate(getDaysAgo(15)),
         receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(15), 5)),
         aiReply:
           "היי יוסי, תודה על המשוב! נשמח לשמוע מה היה אפשר לעשות טוב יותר.\n\nבברכה,\nצוות חמישים ושמונה",
@@ -255,12 +255,12 @@ async function seedDatabase() {
       {
         id: "google_review_127",
         googleReviewId: "google_review_127",
-        reviewerName: "רחל גולדשטיין",
-        reviewerPhotoUrl:
+        name: "רחל גולדשטיין",
+        photoUrl:
           "https://example.com/photos/restaurant_58_reviewer_5.jpg",
         rating: 5,
-        reviewText: "מקום נפלא עם אוכל מצוין!",
-        reviewDate: Timestamp.fromDate(getDaysAgo(10)),
+        text: "מקום נפלא עם אוכל מצוין!",
+        date: Timestamp.fromDate(getDaysAgo(10)),
         receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(10), 5)),
         aiReply:
           "תודה רבה רחל! ❤️ נשמח לראותך שוב בקרוב!\n\nבברכה,\nצוות חמישים ושמונה",
@@ -275,12 +275,12 @@ async function seedDatabase() {
       {
         id: "google_review_201",
         googleReviewId: "google_review_201",
-        reviewerName: "אבי שמעון",
-        reviewerPhotoUrl:
+        name: "אבי שמעון",
+        photoUrl:
           "https://example.com/photos/king_george_cafe_reviewer_1.jpg",
         rating: 5,
-        reviewText: "הקפה הכי טוב בעיר!",
-        reviewDate: Timestamp.fromDate(getDaysAgo(7)),
+        text: "הקפה הכי טוב בעיר!",
+        date: Timestamp.fromDate(getDaysAgo(7)),
         receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(7), 5)),
         aiReply:
           "תודה רבה על המילים החמות. נשמח לארח אותך שוב בקרוב.\n\nבברכה, צוות בית הקפה",
@@ -294,12 +294,12 @@ async function seedDatabase() {
       {
         id: "google_review_202",
         googleReviewId: "google_review_202",
-        reviewerName: "דנה כץ",
-        reviewerPhotoUrl:
+        name: "דנה כץ",
+        photoUrl:
           "https://example.com/photos/king_george_cafe_reviewer_2.jpg",
         rating: 4,
-        reviewText: "קפה טעים מאוד, אבל הייתה המתנה ארוכה.",
-        reviewDate: Timestamp.fromDate(getDaysAgo(3)),
+        text: "קפה טעים מאוד, אבל הייתה המתנה ארוכה.",
+        date: Timestamp.fromDate(getDaysAgo(3)),
         receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(3), 5)),
         aiReply:
           "תודה רבה על המשוב. אנחנו שמחים שנהנית מהקפה ומתנצלים על ההמתנה. נעבוד על שיפור זמני ההמתנה.\n\nבברכה, צוות בית הקפה",
@@ -313,12 +313,12 @@ async function seedDatabase() {
       {
         id: "google_review_128",
         googleReviewId: "google_review_128",
-        reviewerName: "אלון ברזילי",
-        reviewerPhotoUrl:
+        name: "אלון ברזילי",
+        photoUrl:
           "https://example.com/photos/restaurant_58_reviewer_1.jpg",
         rating: 5,
-        reviewText: "פיצה מדהימה! אחלה של מקום",
-        reviewDate: Timestamp.fromDate(getDaysAgo(1)),
+        text: "פיצה מדהימה! אחלה של מקום",
+        date: Timestamp.fromDate(getDaysAgo(1)),
         receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(1), 5)),
         aiReply:
           "תודה רבה אלון! 🥂 נשמח לראותך שוב!\n\nבברכה,\nצוות חמישים ושמונה",
@@ -332,13 +332,13 @@ async function seedDatabase() {
       {
         id: "google_review_auto_001",
         googleReviewId: "google_review_auto_001",
-        reviewerName: "נועה לוי",
-        reviewerPhotoUrl:
+        name: "נועה לוי",
+        photoUrl:
           "https://example.com/photos/restaurant_58_reviewer_auto.jpg",
         rating: 5,
-        reviewText:
+        text:
           "השירות היה מצוין והאוכל טעים מאוד! חוויה נהדרת, ממליצה בחום!",
-        reviewDate: Timestamp.fromDate(new Date()),
+        date: Timestamp.fromDate(new Date()),
         receivedAt: Timestamp.fromDate(new Date()),
         replyStatus: "pending",
         wasEdited: false,
@@ -349,12 +349,12 @@ async function seedDatabase() {
       {
         id: "google_review_auto_002",
         googleReviewId: "google_review_auto_002",
-        reviewerName: "משה כהן",
-        reviewerPhotoUrl:
+        name: "משה כהן",
+        photoUrl:
           "https://example.com/photos/restaurant_58_reviewer_auto2.jpg",
         rating: 2,
-        reviewText: "האוכל היה בסדר אבל שירות לקוי. חיכינו הרבה זמן לאוכל.",
-        reviewDate: Timestamp.fromDate(new Date()),
+        text: "האוכל היה בסדר אבל שירות לקוי. חיכינו הרבה זמן לאוכל.",
+        date: Timestamp.fromDate(new Date()),
         receivedAt: Timestamp.fromDate(new Date()),
         replyStatus: "pending",
         wasEdited: false,
@@ -365,12 +365,12 @@ async function seedDatabase() {
       {
         id: "google_review_auto_003",
         googleReviewId: "google_review_auto_003",
-        reviewerName: "תמר אוחנה",
-        reviewerPhotoUrl:
+        name: "תמר אוחנה",
+        photoUrl:
           "https://example.com/photos/king_george_cafe_auto.jpg",
         rating: 4,
-        reviewText: "קפה איכותי ומקום נעים. אבל קצת יקר.",
-        reviewDate: Timestamp.fromDate(new Date()),
+        text: "קפה איכותי ומקום נעים. אבל קצת יקר.",
+        date: Timestamp.fromDate(new Date()),
         receivedAt: Timestamp.fromDate(new Date()),
         replyStatus: "pending",
         wasEdited: false,

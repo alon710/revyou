@@ -1,8 +1,8 @@
 export interface ReviewData {
-  rating: number;
-  reviewerName: string;
-  reviewText: string;
-  reviewDate?: Date | { toDate: () => Date };
+  rating: 1 | 2 | 3 | 4 | 5;
+  name: string;
+  text?: string;
+  date?: Date | { toDate: () => Date };
 }
 
 export interface StarConfig {

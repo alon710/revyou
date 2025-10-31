@@ -124,10 +124,10 @@ service cloud.firestore {
 
           // Cloud Functions and users can create reviews
           allow create: if isOwner(userId) &&
-          request.resource.data.keys().hasAll(['googleReviewId', 'reviewerName', 'rating', 'reviewText', 'reviewDate', 'receivedAt', 'replyStatus', 'wasEdited']) &&
-          validStringLength(request.resource.data.reviewerName, 1, 200) &&
+          request.resource.data.keys().hasAll(['googleReviewId', 'name', 'rating', 'date', 'receivedAt', 'replyStatus', 'wasEdited']) &&
+          validStringLength(request.resource.data.name, 1, 200) &&
           isValidRating(request.resource.data.rating) &&
-          validStringLength(request.resource.data.reviewText, 0, 5000) &&
+          (!('text' in request.resource.data) || validStringLength(request.resource.data.text, 0, 5000)) &&
           isValidReplyStatus(request.resource.data.replyStatus) &&
           request.resource.data.wasEdited is bool;
 
