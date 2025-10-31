@@ -1,6 +1,6 @@
-import { generateWithGemini } from "./core/gemini-client";
-import { buildReplyPrompt } from "./prompts";
-import type { Review, LocationConfig } from "../types";
+import { generateWithGemini } from "../shared/ai/core/gemini-client";
+import { buildReplyPrompt } from "../shared/ai/prompts/builder";
+import type { Review, LocationConfig } from "../shared/types/database";
 
 export async function generateAIReply(
   review: Review,
@@ -18,7 +18,7 @@ export async function generateAIReply(
   });
 
   const reviewData = {
-    rating: review.rating,
+    rating: review.rating as 1 | 2 | 3 | 4 | 5,
     name: review.name,
     text: review.text,
     date: review.date ? review.date.toDate() : new Date(),

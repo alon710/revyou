@@ -4,7 +4,9 @@
   "description": "Firebase Cloud Functions for automated AI review workflow",
   "main": "lib/index.js",
   "scripts": {
+    "prebuild": "rm -rf src/shared && mkdir -p src/shared && cp -r ../lib/ai ../types src/shared/ && ([ -f src/shared/ai/prompts/builder.ts ] && sed -i.bak 's|@/types/database|../../types/database|g' src/shared/ai/prompts/builder.ts && rm -f src/shared/ai/prompts/builder.ts.bak || true) && ([ -f src/shared/types/database.ts ] && sed -i.bak 's|@/lib/ai/prompts/template|../ai/prompts/template|g' src/shared/types/database.ts && rm -f src/shared/types/database.ts.bak || true)",
     "build": "tsc",
+    "postbuild": "rm -rf src/shared",
     "build:watch": "tsc --watch",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
@@ -27,6 +29,7 @@
   "devDependencies": {
     "@types/mustache": "^4.2.6",
     "@types/node": "^20.0.0",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.3.0"
   },
   "private": true

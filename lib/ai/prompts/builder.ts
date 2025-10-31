@@ -1,9 +1,7 @@
-import {
-  LocationConfig,
-  DEFAULT_LOCATION_PROMPT_TEMPLATE,
-} from "@/types/database";
+import { DEFAULT_LOCATION_PROMPT_TEMPLATE } from "./template";
+import type { LocationConfig } from "@/types/database";
 import Mustache from "mustache";
-import type { ReviewData } from "@/lib/ai/core/types";
+import type { ReviewData } from "../core/types";
 
 export function buildReplyPrompt(
   locationConfig: LocationConfig,

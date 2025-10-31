@@ -13,6 +13,7 @@ export type ReplyStatus =
 export interface User {
   uid: string;
   email: string;
+  displayName?: string;
   createdAt: Timestamp;
   stripeCustomerId?: string;
   googleRefreshToken?: string;
@@ -89,4 +90,4 @@ export interface Review {
   editedReply?: string | null;
 }
 
-export { DEFAULT_LOCATION_PROMPT_TEMPLATE } from "@/lib/ai/prompt-templates";
+export { DEFAULT_LOCATION_PROMPT_TEMPLATE } from "@/lib/ai/prompts/template";

@@ -45,3 +45,11 @@ firebase-debug.log
 
 # Functions build output
 /functions/lib/
+/functions/src/shared/
+
+# Compiled TypeScript files
+/lib/**/*.js
+/lib/**/*.js.map
+!/lib/**/*.config.js
+/types/**/*.js
+/types/**/*.js.map
