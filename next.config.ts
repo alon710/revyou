@@ -12,6 +12,14 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
+    browserDebugInfoInTerminal: true,
+  },
+  // Suppress hydration warnings caused by browser extensions
+  reactStrictMode: true,
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
   },
 };
 

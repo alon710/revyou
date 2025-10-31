@@ -60,7 +60,10 @@ async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
     }
 
     const subData = subSnapshot.docs[0].data();
-    const productId = subData.product;
+    const productId =
+      typeof subData.product === "string"
+        ? subData.product
+        : subData.product.id;
 
     const productRef = doc(db, "products", productId);
     const productSnapshot = await getDoc(productRef);

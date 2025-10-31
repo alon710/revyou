@@ -98,18 +98,17 @@ service cloud.firestore {
 
         // Users can create locations in their own subcollection
         allow create: if isOwner(userId) &&
-        request.resource.data.keys().hasAll(['googleAccountId', 'googleLocationId', 'name', 'address', 'connected', 'connectedAt', 'config']) &&
+        request.resource.data.keys().hasAll(['googleAccountId', 'googleLocationId', 'name', 'address', 'connected', 'connectedAt', 'config', 'emailOnNewReview']) &&
         validStringLength(request.resource.data.name, 1, 200) &&
         validStringLength(request.resource.data.address, 1, 500) &&
         request.resource.data.connected is bool &&
+        request.resource.data.emailOnNewReview is bool &&
         // Validate config structure
-        request.resource.data.config.keys().hasAll(['locationDescription', 'toneOfVoice', 'useEmojis', 'languageMode', 'autoPost', 'requireApproval', 'starConfigs']) &&
+        request.resource.data.config.keys().hasAll(['locationDescription', 'toneOfVoice', 'useEmojis', 'languageMode', 'starConfigs']) &&
         validStringLength(request.resource.data.config.locationDescription, 0, 2000) &&
         isValidTone(request.resource.data.config.toneOfVoice) &&
         isValidLanguageMode(request.resource.data.config.languageMode) &&
-        request.resource.data.config.useEmojis is bool &&
-        request.resource.data.config.autoPost is bool &&
-        request.resource.data.config.requireApproval is bool;
+        request.resource.data.config.useEmojis is bool;
 
         // Users can update their own locations
         allow update: if isOwner(userId);

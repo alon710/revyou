@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { exchangeCodeForTokens, encryptToken } from "@/lib/google/oauth";
 import { updateUserGoogleRefreshToken } from "@/lib/firebase/admin-users";
 
+export const runtime = "nodejs";
+
 const redirectToLocations = (success = false) => {
   const url = success
-    ? `${process.env.NEXT_PUBLIC_APP_URL}/locations/connect`
+    ? `${process.env.NEXT_PUBLIC_APP_URL}/locations/connect?success=true`
     : `${process.env.NEXT_PUBLIC_APP_URL}/locations`;
   return NextResponse.redirect(url);
 };

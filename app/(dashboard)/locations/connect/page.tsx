@@ -16,10 +16,12 @@ import {
 } from "@/components/ui/dashboard-card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BackButton } from "@/components/ui/back-button";
-import { Building2, AlertCircle } from "lucide-react";
+import { Building2, AlertCircle, MapPin } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 export default function ConnectLocationPage() {
   const router = useRouter();
@@ -216,12 +218,18 @@ export default function ConnectLocationPage() {
         <DashboardCard>
           <DashboardCardHeader>
             <DashboardCardTitle>בחר עסק</DashboardCardTitle>
-            <DashboardCardDescription>
-              בחר את העסק שברצונך לחבר מרשימת העסקים שלך
-            </DashboardCardDescription>
+            <div className="text-sm text-muted-foreground">
+              {loadingLocations ? (
+                <Loading size="md" text="טוען עסקים..." />
+              ) : locations.length > 0 ? (
+                `בחר את העסק שברצונך לחבר (נמצאו ${locations.length} עסקים)`
+              ) : (
+                "בחר את העסק שברצונך לחבר מרשימת העסקים שלך"
+              )}
+            </div>
           </DashboardCardHeader>
           <DashboardCardContent>
-            {error && locations.length === 0 && (
+            {!loadingLocations && error && locations.length === 0 && (
               <div className="text-center py-8">
                 <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                 <p className="text-muted-foreground mb-4">{error}</p>
@@ -231,24 +239,69 @@ export default function ConnectLocationPage() {
               </div>
             )}
 
-            {selectedLocation && (
-              <div className="mt-6 flex gap-3">
-                <Button
-                  onClick={handleConnect}
-                  disabled={connecting}
-                  size="lg"
-                  className="flex-1"
+            {!loadingLocations && locations.length > 0 && (
+              <>
+                <RadioGroup
+                  value={selectedLocation?.id || ""}
+                  onValueChange={(value) => {
+                    const location = locations.find((loc) => loc.id === value);
+                    setSelectedLocation(location || null);
+                  }}
+                  className="gap-3"
                 >
-                  חבר עסק זה
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setSelectedLocation(null)}
-                  disabled={connecting}
-                >
-                  בטל בחירה
-                </Button>
-              </div>
+                  {locations.map((location) => (
+                    <div
+                      key={location.id}
+                      className={`relative flex items-start space-x-3 space-x-reverse rounded-lg border p-4 transition-colors ${
+                        selectedLocation?.id === location.id
+                          ? "border-primary bg-primary/5"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <RadioGroupItem
+                        value={location.id}
+                        id={location.id}
+                        className="mt-1"
+                      />
+                      <Label
+                        htmlFor={location.id}
+                        className="flex-1 cursor-pointer space-y-1"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Building2 className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-semibold">{location.name}</span>
+                        </div>
+                        {location.address && (
+                          <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                            <MapPin className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                            <span>{location.address}</span>
+                          </div>
+                        )}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+
+                {selectedLocation && (
+                  <div className="mt-6 flex gap-3">
+                    <Button
+                      onClick={handleConnect}
+                      disabled={connecting}
+                      size="lg"
+                      className="flex-1"
+                    >
+                      {connecting ? "מחבר..." : "חבר עסק זה"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setSelectedLocation(null)}
+                      disabled={connecting}
+                    >
+                      בטל בחירה
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </DashboardCardContent>
         </DashboardCard>
