@@ -2,8 +2,12 @@ import { generateWithGemini } from "./core/gemini-client";
 
 export async function generateAIReply(prompt: string): Promise<string> {
   try {
-    const apiKey = process.env.GEMINI_API_KEY as string;
-    return await generateWithGemini(apiKey, prompt);
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+    if (!geminiApiKey) {
+      throw new Error("GEMINI_API_KEY environment variable is not configured");
+    }
+
+    return await generateWithGemini(geminiApiKey, prompt);
   } catch (error) {
     throw error;
   }
