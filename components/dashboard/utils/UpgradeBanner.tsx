@@ -85,7 +85,6 @@ export function UpgradeBanner() {
             </div>
           </div>
 
-          {/* Mobile: Full width upgrade button */}
           <div className="sm:hidden px-4 pb-4">
             <Button onClick={handleUpgrade} className="w-full" size="sm">
               שדרג לתוכנית בסיסי

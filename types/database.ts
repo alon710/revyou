@@ -3,16 +3,12 @@ import { Timestamp } from "firebase/firestore";
 export type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";
 export type LanguageMode = "hebrew" | "english" | "auto-detect";
 
-export type ReplyStatus =
-  | "pending"
-  | "approved"
-  | "rejected"
-  | "posted"
-  | "failed";
+export type ReplyStatus = "pending" | "rejected" | "posted" | "failed";
 
 export interface User {
   uid: string;
   email: string;
+  displayName?: string;
   createdAt: Timestamp;
   stripeCustomerId?: string;
   googleRefreshToken?: string;
@@ -70,11 +66,11 @@ export interface Location {
 export interface Review {
   id: string;
   googleReviewId: string;
-  reviewerName: string;
-  reviewerPhotoUrl?: string;
+  name: string;
+  photoUrl?: string;
   rating: number;
-  reviewText: string;
-  reviewDate: Timestamp;
+  text?: string;
+  date: Timestamp;
   receivedAt: Timestamp;
 
   aiReply?: string;
@@ -89,4 +85,4 @@ export interface Review {
   editedReply?: string | null;
 }
 
-export { DEFAULT_LOCATION_PROMPT_TEMPLATE } from "@/lib/ai/prompt-templates";
+export { DEFAULT_LOCATION_PROMPT_TEMPLATE } from "@/lib/ai/prompts/template";

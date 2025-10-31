@@ -1,15 +1,7 @@
-import {
-  LocationConfig,
-  DEFAULT_LOCATION_PROMPT_TEMPLATE,
-} from "@/types/database";
+import { DEFAULT_LOCATION_PROMPT_TEMPLATE } from "./template";
+import type { LocationConfig } from "@/types/database";
 import Mustache from "mustache";
-import { TONE_LABELS } from "@/components/dashboard/location-config/types";
-
-interface ReviewData {
-  rating: number;
-  reviewerName: string;
-  reviewText: string;
-}
+import type { ReviewData } from "../core/types";
 
 export function buildReplyPrompt(
   locationConfig: LocationConfig,
@@ -27,7 +19,7 @@ export function buildReplyPrompt(
     LOCATION_PHONE: locationPhone || locationConfig.locationPhone || "",
     IS_AUTO_DETECT: isAutoDetect,
     TARGET_LANGUAGE: targetLanguage,
-    TONE: TONE_LABELS[locationConfig.toneOfVoice],
+    TONE: locationConfig.toneOfVoice,
     ALLOWED_EMOJIS: locationConfig.allowedEmojis?.join(" ") || "",
     MAX_SENTENCES: locationConfig.maxSentences || 2,
     SIGNATURE: locationConfig.signature || `צוות ${locationName}`,
@@ -42,8 +34,8 @@ export function buildReplyPrompt(
     CUSTOM_INSTRUCTIONS_5:
       locationConfig.starConfigs?.[5]?.customInstructions || "",
     RATING: review.rating,
-    REVIEWER_NAME: review.reviewerName || "",
-    REVIEW_TEXT: review.reviewText || "(אין טקסט)",
+    REVIEWER_NAME: review.name || "",
+    REVIEW_TEXT: review.text || "(אין טקסט)",
   };
 
   const template = DEFAULT_LOCATION_PROMPT_TEMPLATE;

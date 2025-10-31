@@ -21,14 +21,12 @@ export function LocationToggler() {
     selectLocation(locationId);
   };
 
-  // Redirect to connect page if no locations
   useEffect(() => {
     if (!loading && locations.length === 0) {
       router.push("/locations/connect");
     }
   }, [loading, locations.length, router]);
 
-  // Only show toggle when there are multiple locations
   if (loading || locations.length <= 1) {
     return null;
   }
@@ -49,14 +47,11 @@ export function LocationToggler() {
             onClick={() => handleLocationChange(location.id)}
             className="cursor-pointer"
           >
-            <div className="flex items-center justify-between gap-3 w-full">
-              <div className="flex items-center gap-2">
-                <Building2 className="h-4 w-4 shrink-0" />
-                <span className="truncate">{location.name}</span>
-              </div>
+            <div className="flex items-center gap-3 w-full">
               {selectedLocationId === location.id && (
                 <Check className="h-4 w-4 shrink-0 text-primary" />
               )}
+              <span className="truncate">{location.name}</span>
             </div>
           </DropdownMenuItem>
         ))}

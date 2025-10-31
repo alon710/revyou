@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { LocationProvider } from "@/contexts/LocationContext";
 import { DashboardNavbar } from "@/components/layout/navbar/DashboardNavbar";
-import { UpgradeBanner } from "@/components/dashboard/UpgradeBanner";
+import { UpgradeBanner } from "@/components/dashboard/utils/UpgradeBanner";
 import { Loading } from "@/components/ui/loading";
 
 export default function DashboardLayout({

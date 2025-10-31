@@ -1,16 +1,12 @@
 import { Star } from "lucide-react";
 
 interface StarRatingProps {
-  rating: number; // 1-5
+  rating: number;
   size?: number;
   className?: string;
   showNumber?: boolean;
 }
 
-/**
- * Star Rating Display Component
- * Shows 1-5 stars visually with filled/empty states
- */
 export function StarRating({
   rating,
   size = 20,

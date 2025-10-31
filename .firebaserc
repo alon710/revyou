@@ -6,6 +6,7 @@
   "etags": {
     "review-ai-reply": {
       "extensionInstances": {
+        "firestore-send-email": "54bf26e56fe01a7d06dce3490b0e8a1e7dc784f69d9dced49bee07d357f80da5",
         "firestore-stripe-payments": "04626154de8967a06f9c34eedbc29c8803a67cf8aeeb94421dbad878f5b0d1a5"
       }
     }

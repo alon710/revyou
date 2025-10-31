@@ -6,7 +6,7 @@ import { useLocation } from "@/contexts/LocationContext";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { Review } from "@/types/database";
-import { ReviewCard } from "@/components/dashboard/ReviewCard";
+import { ReviewCard } from "@/components/dashboard/reviews/ReviewCard";
 import { Loading } from "@/components/ui/loading";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -127,7 +127,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
         <BackButton href="/reviews" />
       </div>
       <PageHeader
-        title={`ביקורת מאת ${review.reviewerName}`}
+        title={`ביקורת מאת ${review.name}`}
         description={`${currentLocation?.name || ""} - ${review.rating} כוכבים`}
       />
 

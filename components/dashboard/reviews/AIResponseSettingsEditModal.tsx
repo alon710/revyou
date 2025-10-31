@@ -91,7 +91,6 @@ export function AIResponseSettingsEditModal({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Tone of Voice */}
           <div className="space-y-2">
             <Label htmlFor="toneOfVoice" className="block">
               סגנון תשובה
@@ -113,7 +112,6 @@ export function AIResponseSettingsEditModal({
             </Select>
           </div>
 
-          {/* Language Mode */}
           <div className="space-y-2">
             <Label htmlFor="languageMode" className="text-right block">
               שפת תגובה
@@ -134,7 +132,6 @@ export function AIResponseSettingsEditModal({
             </Select>
           </div>
 
-          {/* Allowed Emojis */}
           <div className="space-y-2">
             <Label htmlFor="allowedEmojis" className="text-right block">
               אימוג&apos;ים מותרים
@@ -156,7 +153,6 @@ export function AIResponseSettingsEditModal({
             </p>
           </div>
 
-          {/* Max Sentences */}
           <div className="space-y-2">
             <Label htmlFor="maxSentences" className="text-right block">
               מספר משפטים מקסימלי
@@ -177,7 +173,6 @@ export function AIResponseSettingsEditModal({
             </Select>
           </div>
 
-          {/* Signature */}
           <div className="space-y-2">
             <Label htmlFor="signature" className="text-right block">
               חתימה

@@ -18,7 +18,7 @@ import {
   regenerateReply,
 } from "@/lib/reviews/actions";
 import { useAuth } from "@/contexts/AuthContext";
-import { ReplyEditor } from "@/components/dashboard/ReplyEditor";
+import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { User } from "lucide-react";
 
@@ -43,7 +43,6 @@ export function ReviewCard({
   const getStatusBadge = (status: ReplyStatus) => {
     const statusMap = {
       pending: { label: "ממתין לאישור", variant: "secondary" as const },
-      approved: { label: "מאושר", variant: "default" as const },
       posted: { label: "פורסם", variant: "default" as const },
       rejected: { label: "נדחה", variant: "secondary" as const },
       failed: { label: "נכשל", variant: "secondary" as const },
@@ -103,7 +102,7 @@ export function ReviewCard({
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-              <h3 className="font-semibold truncate">{review.reviewerName}</h3>
+              <h3 className="font-semibold truncate">{review.name}</h3>
             </div>
             <StarRating rating={review.rating} size={18} />
             {getStatusBadge(review.replyStatus)}
@@ -111,7 +110,7 @@ export function ReviewCard({
         </DashboardCardHeader>
 
         <DashboardCardContent className="space-y-4">
-          {review.reviewText && (
+          {review.text && (
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -119,13 +118,13 @@ export function ReviewCard({
                 </span>
               </div>
               <div className="rounded-md bg-muted/50 p-3">
-                <p className="text-sm leading-relaxed">{review.reviewText}</p>
+                <p className="text-sm leading-relaxed">{review.text}</p>
               </div>
             </div>
           )}
 
           {(review.aiReply || review.editedReply) && (
-            <DashboardCardSection withBorder={!!review.reviewText}>
+            <DashboardCardSection withBorder={!!review.text}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   תגובה AI
@@ -207,14 +206,14 @@ export function ReviewCard({
             <div className="rounded-md bg-muted p-3 space-y-2">
               <div className="flex items-center gap-2 text-sm">
                 <span className="font-medium">למבקר:</span>
-                <span>{review.reviewerName}</span>
+                <span>{review.name}</span>
                 <span>•</span>
                 <StarRating rating={review.rating} size={14} />
               </div>
               <div className="text-sm">
                 <span className="font-medium">הביקורת:</span>
                 <p className="mt-1 text-muted-foreground">
-                  {review.reviewText || "(אין טקסט)"}
+                  {review.text || "(אין טקסט)"}
                 </p>
               </div>
             </div>

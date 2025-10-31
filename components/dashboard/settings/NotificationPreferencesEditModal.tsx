@@ -46,7 +46,6 @@ export function NotificationPreferencesEditModal({
   };
 
   const handleCancel = () => {
-    // Reset to original values
     setLocalEmailOnNewReview(emailOnNewReview);
     onClose();
   };
@@ -65,7 +64,6 @@ export function NotificationPreferencesEditModal({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Email on New Review */}
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1 flex-1">
               <Label

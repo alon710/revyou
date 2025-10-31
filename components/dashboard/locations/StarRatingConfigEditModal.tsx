@@ -61,7 +61,6 @@ export function StarRatingConfigEditModal({
   };
 
   const handleCancel = () => {
-    // Reset to original values
     setLocalStarConfigs(starConfigs);
     onClose();
   };
@@ -151,7 +150,7 @@ export function StarRatingConfigEditModal({
             disabled={isLoading}
             className="gap-2"
           >
-            {isLoading ? <>שומר...</> : <>שמירה</>}
+            {isLoading ? "שומר..." : "שמירה"}
           </Button>
         </DialogFooter>
       </DialogContent>

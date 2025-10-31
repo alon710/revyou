@@ -6,7 +6,7 @@ import Link from "next/link";
 import { IconButton } from "@/components/ui/icon-button";
 import { Logo } from "@/components/ui/Logo";
 import { navItems } from "@/components/layout/navbar/shared/nav-items";
-import { LocationToggler } from "@/components/dashboard/LocationToggler";
+import { LocationToggler } from "@/components/dashboard/utils/LocationToggler";
 import { NavbarContainer } from "@/components/layout/navbar/shared/NavbarContainer";
 import { MobileMenuButton } from "@/components/layout/navbar/shared/MobileMenuButton";
 import { MobileMenu } from "@/components/layout/navbar/shared/MobileMenu";

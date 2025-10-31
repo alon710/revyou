@@ -12,13 +12,7 @@ const toneOfVoiceSchema = z.enum([
   "professional",
 ]);
 const languageModeSchema = z.enum(["hebrew", "english", "auto-detect"]);
-const replyStatusSchema = z.enum([
-  "pending",
-  "approved",
-  "rejected",
-  "posted",
-  "failed",
-]);
+const replyStatusSchema = z.enum(["pending", "rejected", "posted", "failed"]);
 
 const starConfigSchema = z.object({
   customInstructions: z.string().max(1000).default(""),
@@ -69,11 +63,11 @@ export const locationUpdateSchema = locationSchema
 export const reviewSchema = z.object({
   id: z.string().min(1),
   googleReviewId: z.string().min(1),
-  reviewerName: z.string().min(1).max(200),
-  reviewerPhotoUrl: z.string().url().optional(),
+  name: z.string().min(1).max(200),
+  photoUrl: z.string().url().optional(),
   rating: z.number().int().min(1).max(5),
-  reviewText: z.string().max(5000),
-  reviewDate: timestampSchema,
+  text: z.string().max(5000).optional(),
+  date: timestampSchema,
   receivedAt: timestampSchema,
   aiReply: z.string().max(2000).optional(),
   aiReplyGeneratedAt: timestampSchema.optional(),

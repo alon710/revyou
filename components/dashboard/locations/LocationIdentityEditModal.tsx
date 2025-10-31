@@ -57,7 +57,6 @@ export function LocationIdentityEditModal({
   };
 
   const handleCancel = () => {
-    // Reset to original values
     setLocationName(location.config.locationName || "");
     setLocationDescription(location.config.locationDescription || "");
     setLocationPhone(location.config.locationPhone || "");
@@ -78,7 +77,6 @@ export function LocationIdentityEditModal({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Location Name */}
           <div className="space-y-2">
             <Label htmlFor="locationName" className="text-right block">
               שם העסק
@@ -96,7 +94,6 @@ export function LocationIdentityEditModal({
             </p>
           </div>
 
-          {/* Location Description */}
           <div className="space-y-2">
             <Label htmlFor="locationDescription" className="text-right block">
               תיאור העסק
@@ -115,7 +112,6 @@ export function LocationIdentityEditModal({
             </p>
           </div>
 
-          {/* Location Phone */}
           <div className="space-y-2">
             <Label htmlFor="locationPhone" className="text-right block">
               טלפון ליצירת קשר (לביקורות שליליות)
