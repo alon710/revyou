@@ -22,7 +22,13 @@ export async function getAuthenticatedUserId(): Promise<
 
     return { userId: decodedClaims.uid };
   } catch (error) {
-    console.error("Error verifying session cookie:", error);
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    console.error(
+      "Error verifying session cookie:",
+      error instanceof Error ? error.message : "Unknown authentication error"
+    );
+    return NextResponse.json(
+      { error: "אירעה שגיאה באימות המשתמש" },
+      { status: 401 }
+    );
   }
 }
