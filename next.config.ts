@@ -14,12 +14,24 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
     browserDebugInfoInTerminal: true,
   },
-  // Suppress hydration warnings caused by browser extensions
   reactStrictMode: true,
   logging: {
     fetches: {
       fullUrl: true,
     },
+  },
+  webpack: (config, { isServer }) => {
+    // Exclude functions directory from being processed by webpack
+    config.externals = config.externals || [];
+    if (isServer) {
+      config.externals.push((context: string, request: string, callback: Function) => {
+        if (request.startsWith('./functions/') || request.includes('/functions/')) {
+          return callback(null, 'commonjs ' + request);
+        }
+        callback();
+      });
+    }
+    return config;
   },
 };
 

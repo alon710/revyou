@@ -114,7 +114,11 @@ service cloud.firestore {
         (!('phoneNumber' in request.resource.data.config) || validStringLength(request.resource.data.config.phoneNumber, 0, 50)) &&
         isValidTone(request.resource.data.config.toneOfVoice) &&
         isValidLanguageMode(request.resource.data.config.languageMode) &&
-        request.resource.data.config.useEmojis is bool;
+        request.resource.data.config.useEmojis is bool &&
+        (!('languageInstructions' in request.resource.data.config) || validStringLength(request.resource.data.config.languageInstructions, 0, 100)) &&
+        (!('maxSentences' in request.resource.data.config) || (request.resource.data.config.maxSentences is int && request.resource.data.config.maxSentences >= 1 && request.resource.data.config.maxSentences <= 5)) &&
+        (!('allowedEmojis' in request.resource.data.config) || (request.resource.data.config.allowedEmojis is list && request.resource.data.config.allowedEmojis.size() <= 50)) &&
+        (!('signature' in request.resource.data.config) || validStringLength(request.resource.data.config.signature, 0, 100));
 
         // Users can update their own locations
         allow update: if isOwner(userId);
