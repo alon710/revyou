@@ -6,8 +6,11 @@ import { isAnchorLink } from "@/lib/navigation";
 import { useNavigation } from "@/hooks/useNavigation";
 
 export function BottomNavigation() {
-  const { navItems, scrollToSection, isActive: checkIsActive } =
-    useNavigation();
+  const {
+    navItems,
+    scrollToSection,
+    isActive: checkIsActive,
+  } = useNavigation();
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg h-16">
