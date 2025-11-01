@@ -4,23 +4,16 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 import { NavbarContainer } from "./NavbarContainer";
 import { Button } from "@/components/ui/button";
-import { IconButton } from "@/components/ui/icon-button";
-import { LogOut } from "lucide-react";
 import { LocationToggler } from "@/components/dashboard/utils/LocationToggler";
 import { useNavigation } from "@/hooks/useNavigation";
+import { AuthButton } from "@/components/auth/AuthButton";
 
 export function UnifiedNavbar({
   variant,
 }: {
   variant: "landing" | "dashboard";
 }) {
-  const {
-    user,
-    navItems,
-    handleSignOut,
-    scrollToSection,
-    isActive,
-  } = useNavigation(variant);
+  const { user, navItems, scrollToSection, isActive } = useNavigation(variant);
 
   return (
     <NavbarContainer>
@@ -66,26 +59,8 @@ export function UnifiedNavbar({
       </nav>
 
       <div className="flex items-center gap-2 shrink-0 pr-2">
-        {user ? (
-          <>
-            {variant === "dashboard" && <LocationToggler />}
-            {variant === "landing" && (
-              <Link href="/dashboard/locations">
-                <Button size="sm">החשבון שלי</Button>
-              </Link>
-            )}
-            <IconButton
-              icon={LogOut}
-              aria-label="התנתק"
-              size="sm"
-              onClick={handleSignOut}
-            />
-          </>
-        ) : (
-          <Link href="/login">
-            <Button size="sm">התחברות</Button>
-          </Link>
-        )}
+        {variant === "dashboard" && user && <LocationToggler />}
+        <AuthButton showAccountButton={variant === "landing"} />
       </div>
     </NavbarContainer>
   );

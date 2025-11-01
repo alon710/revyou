@@ -3,18 +3,11 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { isAnchorLink } from "@/lib/navigation";
-import { LayoutDashboard, LogOut } from "lucide-react";
 import { useNavigation } from "@/hooks/useNavigation";
 
 export function BottomNavigation() {
-  const {
-    user,
-    variant,
-    navItems,
-    handleSignOut,
-    scrollToSection,
-    isActive: checkIsActive,
-  } = useNavigation();
+  const { navItems, scrollToSection, isActive: checkIsActive } =
+    useNavigation();
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg h-16">
@@ -76,28 +69,6 @@ export function BottomNavigation() {
             </Link>
           );
         })}
-
-        {user && variant === "landing" && (
-          <>
-            <Link
-              href="/dashboard/locations"
-              className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all text-gray-600 hover:text-gray-900 active:scale-95"
-            >
-              <LayoutDashboard className="w-5 h-5 transition-all" />
-              <span className="text-xs font-medium transition-all">
-                החשבון שלי
-              </span>
-            </Link>
-            <button
-              type="button"
-              onClick={handleSignOut}
-              className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all text-gray-600 hover:text-gray-900 active:scale-95"
-            >
-              <LogOut className="w-5 h-5 transition-all" />
-              <span className="text-xs font-medium transition-all">התנתק</span>
-            </button>
-          </>
-        )}
       </div>
     </nav>
   );
