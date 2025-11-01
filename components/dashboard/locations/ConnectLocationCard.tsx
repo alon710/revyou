@@ -92,7 +92,7 @@ export function ConnectLocationCard({
     }
 
     if (errorParam) {
-      setError(decodeURIComponent(errorParam));
+      setError(errorParam);
     }
   }, [successParam, errorParam, loadAvailableLocations]);
 

@@ -38,7 +38,6 @@ export async function signInWithGoogle() {
       });
     }
 
-    // Create session cookie for server-side authentication
     try {
       const idToken = await user.getIdToken();
       await fetch("/api/auth/session", {
@@ -50,7 +49,6 @@ export async function signInWithGoogle() {
       });
     } catch (sessionError) {
       console.error("Error creating session cookie:", sessionError);
-      // Continue even if session creation fails - client-side auth still works
     }
 
     return { user, error: null };
@@ -62,25 +60,45 @@ export async function signInWithGoogle() {
 
 export async function signOut() {
   if (!auth) {
-    return { error: "Firebase לא מוגדר" };
+    return { error: "Firebase לא מוגדר", sessionDeletionFailed: false };
   }
 
+  let sessionDeletionFailed = false;
+
   try {
-    // Delete session cookie first
     try {
-      await fetch("/api/auth/session", {
+      const response = await fetch("/api/auth/session", {
         method: "DELETE",
       });
+
+      if (!response.ok) {
+        sessionDeletionFailed = true;
+        let responseBody;
+        try {
+          responseBody = await response.json();
+        } catch {
+          responseBody = await response.text();
+        }
+        console.error("Session deletion failed:", {
+          status: response.status,
+          statusText: response.statusText,
+          body: responseBody,
+        });
+      }
     } catch (sessionError) {
-      console.error("Error deleting session cookie:", sessionError);
-      // Continue with sign out even if session deletion fails
+      sessionDeletionFailed = true;
+      console.error("Session deletion request failed:", {
+        error: sessionError,
+        message: sessionError instanceof Error ? sessionError.message : "Unknown error",
+        stack: sessionError instanceof Error ? sessionError.stack : undefined,
+      });
     }
 
     await firebaseSignOut(auth);
-    return { error: null };
+    return { error: null, sessionDeletionFailed };
   } catch (error) {
     console.error("Error signing out:", error);
-    return { error: "אירעה שגיאה בהתנתקות" };
+    return { error: "אירעה שגיאה בהתנתקות", sessionDeletionFailed };
   }
 }
 
