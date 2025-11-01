@@ -24,7 +24,7 @@ export async function GET() {
       );
     }
 
-    const refreshToken = decryptToken(encryptedRefreshToken);
+    const refreshToken = await decryptToken(encryptedRefreshToken);
     const locations = await listAllLocations(refreshToken);
 
     return NextResponse.json({ locations });

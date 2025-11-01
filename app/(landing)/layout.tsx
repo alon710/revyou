@@ -1,4 +1,4 @@
-import { LandingPageNavbar } from "@/components/layout/navbar/LandingPageNavbar";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { Footer } from "@/components/landing/Footer";
 
 export default function LandingLayout({
@@ -8,9 +8,10 @@ export default function LandingLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <LandingPageNavbar />
-      {children}
-      <Footer />
+      <AppLayout variant="landing" className="!pt-0 !pb-0 !px-0">
+        {children}
+        <Footer />
+      </AppLayout>
     </div>
   );
 }
