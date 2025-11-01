@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { createLocation, getUserLocations } from "@/lib/firebase/locations";
 import { checkLocationLimit } from "@/lib/firebase/location-limits";
 import { GoogleBusinessProfileLocation, Location } from "@/types/database";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
 import { Loading } from "@/components/ui/loading";
 import { ConnectedLocationsList } from "./ConnectedLocationsList";
 import { OAuthPrompt } from "./OAuthPrompt";
@@ -55,7 +53,7 @@ export function ConnectLocationCard({
       setLoadingAvailable(true);
       setError(null);
 
-      const response = await fetch(`/api/google/locations?userId=${userId}`);
+      const response = await fetch("/api/google/locations");
       const data = await response.json();
 
       if (!response.ok) {
@@ -81,7 +79,7 @@ export function ConnectLocationCard({
     } finally {
       setLoadingAvailable(false);
     }
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
     loadExistingLocations();
@@ -111,7 +109,7 @@ export function ConnectLocationCard({
         return;
       }
 
-      window.location.href = `/api/google/auth?userId=${userId}`;
+      window.location.href = "/api/google/auth";
     } catch (err) {
       console.error("Error starting OAuth:", err);
       setError("לא ניתן להתחיל את תהליך ההזדהות");
@@ -168,13 +166,6 @@ export function ConnectLocationCard({
 
   return (
     <div className="space-y-4">
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
       {existingLocations.length > 0 && step === "auth" && (
         <ConnectedLocationsList
           locations={existingLocations}

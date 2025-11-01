@@ -38,6 +38,21 @@ export async function signInWithGoogle() {
       });
     }
 
+    // Create session cookie for server-side authentication
+    try {
+      const idToken = await user.getIdToken();
+      await fetch("/api/auth/session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken }),
+      });
+    } catch (sessionError) {
+      console.error("Error creating session cookie:", sessionError);
+      // Continue even if session creation fails - client-side auth still works
+    }
+
     return { user, error: null };
   } catch (error) {
     console.error("Error signing in with Google:", error);
@@ -51,6 +66,16 @@ export async function signOut() {
   }
 
   try {
+    // Delete session cookie first
+    try {
+      await fetch("/api/auth/session", {
+        method: "DELETE",
+      });
+    } catch (sessionError) {
+      console.error("Error deleting session cookie:", sessionError);
+      // Continue with sign out even if session deletion fails
+    }
+
     await firebaseSignOut(auth);
     return { error: null };
   } catch (error) {

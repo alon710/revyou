@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getUserGoogleRefreshToken } from "@/lib/firebase/admin-users";
 import { listAllLocations, decryptToken } from "@/lib/google/business-profile";
-import { authenticateRequest } from "@/lib/api/auth";
+import { getAuthenticatedUserId } from "@/lib/api/auth";
 
 export const runtime = "nodejs";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const authResult = await authenticateRequest(request);
+    const authResult = await getAuthenticatedUserId();
     if (authResult instanceof NextResponse) {
       return authResult;
     }

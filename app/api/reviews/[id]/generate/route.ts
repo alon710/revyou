@@ -4,14 +4,14 @@ import { buildReplyPrompt } from "@/lib/ai/prompts/builder";
 import { getReviewAdmin } from "@/lib/firebase/reviews.admin";
 import { updateReviewReplyAdmin } from "@/lib/firebase/reviews.admin";
 import { getLocationAdmin } from "@/lib/firebase/locations.admin";
-import { authenticateRequest } from "@/lib/api/auth";
+import { getAuthenticatedUserId } from "@/lib/api/auth";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const authResult = await authenticateRequest(req);
+    const authResult = await getAuthenticatedUserId();
     if (authResult instanceof NextResponse) {
       return authResult;
     }

@@ -1,14 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getAuthorizationUrl } from "@/lib/google/oauth";
+import { getAuthenticatedUserId } from "@/lib/api/auth";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get("userId");
-
-    if (!userId) {
-      return NextResponse.json({ error: "חסר מזהה משתמש" }, { status: 400 });
+    const authResult = await getAuthenticatedUserId();
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
+
+    const { userId } = authResult;
 
     const state = Buffer.from(JSON.stringify({ userId })).toString("base64");
 

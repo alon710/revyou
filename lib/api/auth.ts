@@ -1,22 +1,28 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { adminAuth } from "@/lib/firebase/admin";
+import { cookies } from "next/headers";
 
-export async function authenticateRequest(
-  request: NextRequest
-): Promise<{ userId: string } | NextResponse> {
-  const authHeader = request.headers.get("authorization");
+const SESSION_COOKIE_NAME = "session";
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+export async function getAuthenticatedUserId(): Promise<
+  { userId: string } | NextResponse
+> {
   try {
-    const token = authHeader.split("Bearer ")[1];
-    const decodedToken = await adminAuth.verifyIdToken(token);
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME);
 
-    return { userId: decodedToken.uid };
+    if (!sessionCookie) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const decodedClaims = await adminAuth.verifySessionCookie(
+      sessionCookie.value,
+      true
+    );
+
+    return { userId: decodedClaims.uid };
   } catch (error) {
-    console.error("Error verifying Firebase ID token:", error);
+    console.error("Error verifying session cookie:", error);
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 }

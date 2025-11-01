@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { exchangeCodeForTokens, encryptToken } from "@/lib/google/oauth";
 import { updateUserGoogleRefreshToken } from "@/lib/firebase/admin-users";
+import { getAuthenticatedUserId } from "@/lib/api/auth";
 
 export const runtime = "nodejs";
 
@@ -23,9 +24,21 @@ export async function GET(request: NextRequest) {
     }
 
     const stateData = JSON.parse(Buffer.from(state, "base64").toString());
-    const userId = stateData?.userId;
+    const stateUserId = stateData?.userId;
 
-    if (!userId) {
+    if (!stateUserId) {
+      return redirectToLocations();
+    }
+
+    const authResult = await getAuthenticatedUserId();
+    if (authResult instanceof NextResponse) {
+      return redirectToLocations();
+    }
+
+    const { userId: authenticatedUserId } = authResult;
+
+    if (stateUserId !== authenticatedUserId) {
+      console.error("State userId mismatch with authenticated user");
       return redirectToLocations();
     }
 
@@ -36,7 +49,7 @@ export async function GET(request: NextRequest) {
     }
 
     const encryptedToken = encryptToken(tokens.refresh_token);
-    await updateUserGoogleRefreshToken(userId, encryptedToken);
+    await updateUserGoogleRefreshToken(authenticatedUserId, encryptedToken);
 
     return redirectToLocations(true);
   } catch (error) {
