@@ -28,13 +28,10 @@ export function UnifiedNavbar({
   const [hash, setHash] = useState("");
 
   useEffect(() => {
-    // Update hash on client side
     setHash(window.location.hash);
-
     const handleHashChange = () => {
       setHash(window.location.hash);
     };
-
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
@@ -45,22 +42,15 @@ export function UnifiedNavbar({
   };
 
   const scrollToSection = (href: string) => {
-    const anchorHash = href.substring(1); // Remove leading '/'
-
+    const anchorHash = href.substring(1);
     if (pathname !== "/") {
       router.push(href);
       return;
     }
-
-    // Update hash state immediately for active indicator
     setHash(anchorHash);
-
-    // Scroll to section
     document
       .getElementById(anchorHash.replace("#", ""))
       ?.scrollIntoView({ behavior: "smooth" });
-
-    // Update URL
     window.history.pushState(null, "", href);
   };
 
@@ -114,6 +104,11 @@ export function UnifiedNavbar({
         {user ? (
           <>
             {variant === "dashboard" && <LocationToggler />}
+            {variant === "landing" && (
+              <Link href="/locations">
+                <Button size="sm">החשבון שלי</Button>
+              </Link>
+            )}
             <IconButton
               icon={LogOut}
               aria-label="התנתק"

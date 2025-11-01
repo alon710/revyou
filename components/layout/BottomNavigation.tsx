@@ -11,38 +11,41 @@ import {
   isAnchorLink,
 } from "@/lib/navigation";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { signOut } from "@/lib/firebase/auth";
+import { LayoutDashboard, LogOut } from "lucide-react";
 
 export function BottomNavigation() {
+  const { user } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [hash, setHash] = useState("");
   const variant = getNavigationVariant(pathname);
   const navItems = variant === "dashboard" ? dashboardNavItems : landingNavItems;
 
-  useEffect(() => {
-    // Update hash on client side
-    setHash(window.location.hash);
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/");
+  };
 
+  useEffect(() => {
+    setHash(window.location.hash);
     const handleHashChange = () => {
       setHash(window.location.hash);
     };
-
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
   const handleAnchorClick = (href: string) => {
-    const anchorHash = href.substring(1); // Remove leading '/'
-
+    const anchorHash = href.substring(1);
     if (pathname === "/") {
-      // Already on homepage - just scroll and update hash
       setHash(anchorHash);
       document
         .getElementById(anchorHash.replace("#", ""))
         ?.scrollIntoView({ behavior: "smooth" });
       window.history.pushState(null, "", href);
     } else {
-      // Navigate to homepage with hash
       router.push(href);
     }
   };
@@ -107,6 +110,26 @@ export function BottomNavigation() {
             </Link>
           );
         })}
+
+        {user && variant === "landing" && (
+          <>
+            <Link
+              href="/locations"
+              className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all text-gray-600 hover:text-gray-900 active:scale-95"
+            >
+              <LayoutDashboard className="w-5 h-5 transition-all" />
+              <span className="text-xs font-medium transition-all">החשבון שלי</span>
+            </Link>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all text-gray-600 hover:text-gray-900 active:scale-95"
+            >
+              <LogOut className="w-5 h-5 transition-all" />
+              <span className="text-xs font-medium transition-all">התנתק</span>
+            </button>
+          </>
+        )}
       </div>
     </nav>
   );

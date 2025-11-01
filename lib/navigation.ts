@@ -46,23 +46,17 @@ export function getIsActive(
   href: string,
   hash?: string
 ): boolean {
-  // Handle anchor links (e.g., /#pricing, /#hero)
   if (isAnchorLink(href)) {
-    const anchorHash = href.substring(1); // Remove the leading '/'
-
-    // Special case for #hero - also active when no hash (default landing state)
+    const anchorHash = href.substring(1);
     if (anchorHash === "#hero") {
       return pathname === "/" && (!hash || hash === "#hero");
     }
-
     return pathname === "/" && hash === anchorHash;
   }
 
-  // Handle root path specially - only match exact path
   if (href === "/") {
     return pathname === "/" && !hash;
   }
 
-  // Handle regular paths - exact match or starts with
   return pathname === href || pathname.startsWith(href);
 }
