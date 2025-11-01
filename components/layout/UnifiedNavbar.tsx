@@ -1,62 +1,26 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 import { NavbarContainer } from "./NavbarContainer";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { LogOut } from "lucide-react";
-import { signOut } from "@/lib/firebase/auth";
-import { useAuth } from "@/contexts/AuthContext";
 import { LocationToggler } from "@/components/dashboard/utils/LocationToggler";
-import {
-  dashboardNavItems,
-  landingNavItems,
-  getIsActive,
-} from "@/lib/navigation";
-import { useEffect, useState } from "react";
+import { useNavigation } from "@/hooks/useNavigation";
 
 export function UnifiedNavbar({
   variant,
 }: {
   variant: "landing" | "dashboard";
 }) {
-  const { user } = useAuth();
-  const pathname = usePathname();
-  const router = useRouter();
-  const [hash, setHash] = useState(() =>
-    typeof window !== "undefined" ? window.location.hash : ""
-  );
-
-  useEffect(() => {
-    const handleHashChange = () => {
-      setHash(window.location.hash);
-    };
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.push("/");
-  };
-
-  const scrollToSection = (href: string) => {
-    const anchorHash = href.substring(1);
-    if (pathname !== "/") {
-      router.push(href);
-      return;
-    }
-    setHash(anchorHash);
-    document
-      .getElementById(anchorHash.replace("#", ""))
-      ?.scrollIntoView({ behavior: "smooth" });
-    window.history.pushState(null, "", href);
-  };
-
-  const navItems =
-    variant === "dashboard" ? dashboardNavItems : landingNavItems;
+  const {
+    user,
+    navItems,
+    handleSignOut,
+    scrollToSection,
+    isActive,
+  } = useNavigation(variant);
 
   return (
     <NavbarContainer>
@@ -66,7 +30,7 @@ export function UnifiedNavbar({
 
       <nav className="hidden md:flex items-center flex-1 justify-center h-full gap-1">
         {navItems.map((item) => {
-          const isItemActive = getIsActive(pathname, item.href, hash);
+          const isItemActive = isActive(item.href);
 
           if (variant === "landing" && item.href.startsWith("/#")) {
             return (

@@ -1,63 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import {
-  dashboardNavItems,
-  landingNavItems,
-  getNavigationVariant,
-  getIsActive,
-  isAnchorLink,
-} from "@/lib/navigation";
-import { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { signOut } from "@/lib/firebase/auth";
+import { isAnchorLink } from "@/lib/navigation";
 import { LayoutDashboard, LogOut } from "lucide-react";
+import { useNavigation } from "@/hooks/useNavigation";
 
 export function BottomNavigation() {
-  const { user } = useAuth();
-  const pathname = usePathname();
-  const router = useRouter();
-  const [hash, setHash] = useState(() =>
-    typeof window !== "undefined" ? window.location.hash : ""
-  );
-  const variant = getNavigationVariant(pathname);
-  const navItems =
-    variant === "dashboard" ? dashboardNavItems : landingNavItems;
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.push("/");
-  };
-
-  useEffect(() => {
-    const handleHashChange = () => {
-      setHash(window.location.hash);
-    };
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
-
-  const handleAnchorClick = (href: string) => {
-    const anchorHash = href.substring(1);
-    if (pathname === "/") {
-      setHash(anchorHash);
-      document
-        .getElementById(anchorHash.replace("#", ""))
-        ?.scrollIntoView({ behavior: "smooth" });
-      window.history.pushState(null, "", href);
-    } else {
-      router.push(href);
-    }
-  };
+  const {
+    user,
+    variant,
+    navItems,
+    handleSignOut,
+    scrollToSection,
+    isActive: checkIsActive,
+  } = useNavigation();
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg h-16">
       <div className="flex items-center justify-around h-full px-2">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = getIsActive(pathname, item.href, hash);
+          const isActive = checkIsActive(item.href);
           const isAnchor = isAnchorLink(item.href);
 
           const content = (
@@ -84,7 +48,7 @@ export function BottomNavigation() {
               <button
                 key={item.href}
                 type="button"
-                onClick={() => handleAnchorClick(item.href)}
+                onClick={() => scrollToSection(item.href)}
                 className={cn(
                   "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all",
                   isActive
