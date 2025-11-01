@@ -176,8 +176,7 @@ async function seedDatabase() {
         id: "google_review_123",
         googleReviewId: "google_review_123",
         name: "שרה כהן",
-        photoUrl:
-          "https://example.com/photos/restaurant_58_reviewer_1.jpg",
+        photoUrl: "https://example.com/photos/restaurant_58_reviewer_1.jpg",
         rating: 5,
         date: Timestamp.fromDate(getDaysAgo(20)),
         receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(20), 5)),
@@ -193,11 +192,9 @@ async function seedDatabase() {
         id: "google_review_124",
         googleReviewId: "google_review_124",
         name: "דוד לוי",
-        photoUrl:
-          "https://example.com/photos/restaurant_58_reviewer_2.jpg",
+        photoUrl: "https://example.com/photos/restaurant_58_reviewer_2.jpg",
         rating: 1,
-        text:
-          "חוויה איומה. הפסטה הגיעה קרה והשירות היה איטי מאוד. לא ממליץ.",
+        text: "חוויה איומה. הפסטה הגיעה קרה והשירות היה איטי מאוד. לא ממליץ.",
         date: Timestamp.fromDate(getDaysAgo(18)),
         receivedAt: Timestamp.fromDate(addMinutes(getDaysAgo(18), 5)),
         aiReply:
@@ -212,8 +209,7 @@ async function seedDatabase() {
         id: "google_review_125",
         googleReviewId: "google_review_125",
         name: "מיכל אברהם",
-        photoUrl:
-          "https://example.com/photos/restaurant_58_reviewer_3.jpg",
+        photoUrl: "https://example.com/photos/restaurant_58_reviewer_3.jpg",
         rating: 4,
         text: "אוכל טוב מאוד, אבל היה קצת רועש. בסך הכל נהננו.",
         date: Timestamp.fromDate(getDaysAgo(22)),
@@ -231,8 +227,7 @@ async function seedDatabase() {
         id: "google_review_126",
         googleReviewId: "google_review_126",
         name: "יוסי מזרחי",
-        photoUrl:
-          "https://example.com/photos/restaurant_58_reviewer_4.jpg",
+        photoUrl: "https://example.com/photos/restaurant_58_reviewer_4.jpg",
         rating: 3,
         text: "בסדר, לא מיוחד. הציפיתי ליותר בהתחשב בביקורות.",
         date: Timestamp.fromDate(getDaysAgo(15)),
@@ -250,8 +245,7 @@ async function seedDatabase() {
         id: "google_review_127",
         googleReviewId: "google_review_127",
         name: "רחל גולדשטיין",
-        photoUrl:
-          "https://example.com/photos/restaurant_58_reviewer_5.jpg",
+        photoUrl: "https://example.com/photos/restaurant_58_reviewer_5.jpg",
         rating: 5,
         text: "מקום נפלא עם אוכל מצוין!",
         date: Timestamp.fromDate(getDaysAgo(10)),
@@ -269,8 +263,7 @@ async function seedDatabase() {
         id: "google_review_201",
         googleReviewId: "google_review_201",
         name: "אבי שמעון",
-        photoUrl:
-          "https://example.com/photos/king_george_cafe_reviewer_1.jpg",
+        photoUrl: "https://example.com/photos/king_george_cafe_reviewer_1.jpg",
         rating: 5,
         text: "הקפה הכי טוב בעיר!",
         date: Timestamp.fromDate(getDaysAgo(7)),
@@ -287,8 +280,7 @@ async function seedDatabase() {
         id: "google_review_202",
         googleReviewId: "google_review_202",
         name: "דנה כץ",
-        photoUrl:
-          "https://example.com/photos/king_george_cafe_reviewer_2.jpg",
+        photoUrl: "https://example.com/photos/king_george_cafe_reviewer_2.jpg",
         rating: 4,
         text: "קפה טעים מאוד, אבל הייתה המתנה ארוכה.",
         date: Timestamp.fromDate(getDaysAgo(3)),
@@ -305,8 +297,7 @@ async function seedDatabase() {
         id: "google_review_128",
         googleReviewId: "google_review_128",
         name: "אלון ברזילי",
-        photoUrl:
-          "https://example.com/photos/restaurant_58_reviewer_1.jpg",
+        photoUrl: "https://example.com/photos/restaurant_58_reviewer_1.jpg",
         rating: 5,
         text: "פיצה מדהימה! אחלה של מקום",
         date: Timestamp.fromDate(getDaysAgo(1)),
@@ -323,11 +314,9 @@ async function seedDatabase() {
         id: "google_review_auto_001",
         googleReviewId: "google_review_auto_001",
         name: "נועה לוי",
-        photoUrl:
-          "https://example.com/photos/restaurant_58_reviewer_auto.jpg",
+        photoUrl: "https://example.com/photos/restaurant_58_reviewer_auto.jpg",
         rating: 5,
-        text:
-          "השירות היה מצוין והאוכל טעים מאוד! חוויה נהדרת, ממליצה בחום!",
+        text: "השירות היה מצוין והאוכל טעים מאוד! חוויה נהדרת, ממליצה בחום!",
         date: Timestamp.fromDate(new Date()),
         receivedAt: Timestamp.fromDate(new Date()),
         replyStatus: "pending",
@@ -339,8 +328,7 @@ async function seedDatabase() {
         id: "google_review_auto_002",
         googleReviewId: "google_review_auto_002",
         name: "משה כהן",
-        photoUrl:
-          "https://example.com/photos/restaurant_58_reviewer_auto2.jpg",
+        photoUrl: "https://example.com/photos/restaurant_58_reviewer_auto2.jpg",
         rating: 2,
         text: "האוכל היה בסדר אבל שירות לקוי. חיכינו הרבה זמן לאוכל.",
         date: Timestamp.fromDate(new Date()),
@@ -354,8 +342,7 @@ async function seedDatabase() {
         id: "google_review_auto_003",
         googleReviewId: "google_review_auto_003",
         name: "תמר אוחנה",
-        photoUrl:
-          "https://example.com/photos/king_george_cafe_auto.jpg",
+        photoUrl: "https://example.com/photos/king_george_cafe_auto.jpg",
         rating: 4,
         text: "קפה איכותי ומקום נעים. אבל קצת יקר.",
         date: Timestamp.fromDate(new Date()),

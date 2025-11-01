@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
     // Completely ignore the functions directory
     config.watchOptions = {
       ...config.watchOptions,
-      ignored: ['**/node_modules', '**/functions/**'],
+      ignored: ["**/node_modules", "**/functions/**"],
     };
 
     return config;

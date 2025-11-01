@@ -89,7 +89,10 @@ export async function signOut() {
       sessionDeletionFailed = true;
       console.error("Session deletion request failed:", {
         error: sessionError,
-        message: sessionError instanceof Error ? sessionError.message : "Unknown error",
+        message:
+          sessionError instanceof Error
+            ? sessionError.message
+            : "Unknown error",
         stack: sessionError instanceof Error ? sessionError.stack : undefined,
       });
     }

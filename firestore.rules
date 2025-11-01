@@ -46,20 +46,20 @@ service cloud.firestore {
 
     // Validate individual star config structure
     function isValidStarConfig(starConfig) {
-      return starConfig.keys().hasAll(['customInstructions', 'autoReply']) &&
-             validStringLength(starConfig.customInstructions, 0, 1000) &&
-             starConfig.autoReply is bool;
+      return starConfig.keys().hasOnly(['customInstructions', 'autoReply']) &&
+      validStringLength(starConfig.customInstructions, 0, 1000) &&
+      starConfig.autoReply is bool;
     }
 
     // Validate starConfigs map structure
     function isValidStarConfigs(starConfigs) {
       return starConfigs is map &&
-             starConfigs.keys().hasOnly(['1', '2', '3', '4', '5']) &&
-             isValidStarConfig(starConfigs['1']) &&
-             isValidStarConfig(starConfigs['2']) &&
-             isValidStarConfig(starConfigs['3']) &&
-             isValidStarConfig(starConfigs['4']) &&
-             isValidStarConfig(starConfigs['5']);
+      starConfigs.keys().hasOnly(['1', '2', '3', '4', '5']) &&
+      isValidStarConfig(starConfigs['1']) &&
+      isValidStarConfig(starConfigs['2']) &&
+      isValidStarConfig(starConfigs['3']) &&
+      isValidStarConfig(starConfigs['4']) &&
+      isValidStarConfig(starConfigs['5']);
     }
 
     // ====== USERS COLLECTION ======
