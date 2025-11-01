@@ -10,18 +10,12 @@ import { LogOut } from "lucide-react";
 import { signOut } from "@/lib/firebase/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { LocationToggler } from "@/components/dashboard/utils/LocationToggler";
-
-const landingNavItems = [
-  { title: "בית", href: "/" },
-  { title: "מחירון", href: "/#pricing" },
-  { title: "שאלות נפוצות", href: "/#faq" },
-];
-
-const dashboardNavItems = [
-  { title: "בית", href: "/locations" },
-  { title: "ביקורות", href: "/reviews" },
-  { title: "הגדרות", href: "/settings" },
-];
+import {
+  dashboardNavItems,
+  landingNavItems,
+  getIsActive,
+} from "@/lib/navigation";
+import { useEffect, useState } from "react";
 
 export function UnifiedNavbar({
   variant,
@@ -31,26 +25,47 @@ export function UnifiedNavbar({
   const { user } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
+  const [hash, setHash] = useState("");
+
+  useEffect(() => {
+    // Update hash on client side
+    setHash(window.location.hash);
+
+    const handleHashChange = () => {
+      setHash(window.location.hash);
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
     router.push("/");
   };
 
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = (href: string) => {
+    const anchorHash = href.substring(1); // Remove leading '/'
+
     if (pathname !== "/") {
-      router.push(`/${sectionId}`);
+      router.push(href);
       return;
     }
+
+    // Update hash state immediately for active indicator
+    setHash(anchorHash);
+
+    // Scroll to section
     document
-      .getElementById(sectionId.replace("/#", ""))
+      .getElementById(anchorHash.replace("#", ""))
       ?.scrollIntoView({ behavior: "smooth" });
+
+    // Update URL
+    window.history.pushState(null, "", href);
   };
 
   const navItems =
     variant === "dashboard" ? dashboardNavItems : landingNavItems;
-  const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(href);
 
   return (
     <NavbarContainer>
@@ -60,30 +75,36 @@ export function UnifiedNavbar({
 
       <nav className="hidden md:flex items-center flex-1 justify-center h-full gap-1">
         {navItems.map((item) => {
+          const isItemActive = getIsActive(pathname, item.href, hash);
+
           if (variant === "landing" && item.href.startsWith("/#")) {
             return (
               <button
-                key={item.title}
+                key={item.label}
                 type="button"
                 onClick={() => scrollToSection(item.href)}
-                className="text-sm font-medium px-4 py-2 rounded-lg text-gray-600 hover:text-gray-900"
+                className={`text-sm font-medium px-4 py-2 rounded-lg ${
+                  isItemActive
+                    ? "text-gray-900 font-semibold"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
               >
-                {item.title}
+                {item.label}
               </button>
             );
           }
 
           return (
             <Link
-              key={item.title}
+              key={item.label}
               href={item.href}
               className={`text-sm font-medium px-4 py-2 rounded-lg ${
-                isActive(item.href)
+                isItemActive
                   ? "text-gray-900 font-semibold"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              {item.title}
+              {item.label}
             </Link>
           );
         })}
