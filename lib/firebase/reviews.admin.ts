@@ -40,8 +40,7 @@ export async function updateReviewReplyAdmin(
   userId: string,
   locationId: string,
   reviewId: string,
-  reply: string,
-  isEdited: boolean = false
+  reply: string
 ): Promise<Review> {
   try {
     const reviewRef = adminDb

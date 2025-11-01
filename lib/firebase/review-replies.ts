@@ -7,8 +7,7 @@ export async function updateReviewReply(
   userId: string,
   locationId: string,
   reviewId: string,
-  reply: string,
-  isEdited: boolean = false
+  reply: string
 ): Promise<Review> {
   if (!db) {
     throw new Error("Firestore not initialized");
