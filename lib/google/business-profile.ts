@@ -140,7 +140,7 @@ async function listLocationsForAccount(
     return allLocations;
   } catch (error) {
     console.error("Error listing locations for account:", accountName, error);
-    return [];
+    throw new Error("Failed to fetch locations from Google Business Profile");
   }
 }
 
