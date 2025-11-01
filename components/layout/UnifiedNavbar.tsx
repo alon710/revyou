@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 import { NavbarContainer } from "./NavbarContainer";
-import { Button } from "@/components/ui/button";
 import { LocationToggler } from "@/components/dashboard/utils/LocationToggler";
 import { useNavigation } from "@/hooks/useNavigation";
 import { AuthButton } from "@/components/auth/AuthButton";
