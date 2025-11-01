@@ -59,13 +59,16 @@ export async function updateReviewReplyAdmin(
     if (isEdited) {
       updateData.wasEdited = true;
       updateData.editedReply = reply;
+    } else {
+      updateData.wasEdited = false;
+      updateData.editedReply = null;
     }
 
     await reviewRef.update(updateData);
 
     return (await getReviewAdmin(userId, locationId, reviewId)) as Review;
   } catch (error) {
-    console.error("Error updating review reply (admin):", error);
+    console.error("Error updating review reply (admin)", error);
     throw new Error("לא ניתן לעדכן את התגובה");
   }
 }

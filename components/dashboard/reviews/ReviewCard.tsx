@@ -127,7 +127,7 @@ export function ReviewCard({
             <DashboardCardSection withBorder={!!review.text}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  תגובה AI
+                  תגובת בינה מלאכותית
                 </span>
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
@@ -211,10 +211,9 @@ export function ReviewCard({
                 <StarRating rating={review.rating} size={14} />
               </div>
               <div className="text-sm">
-                <span className="font-medium">הביקורת:</span>
-                <p className="mt-1 text-muted-foreground">
-                  {review.text || "(אין טקסט)"}
-                </p>
+                {review.text && (
+                  <p className="mt-1 text-muted-foreground">{review.text}</p>
+                )}
               </div>
             </div>
             <div className="rounded-md border border-accent bg-accent/10 p-3">
