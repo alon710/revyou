@@ -53,11 +53,24 @@ export default function AIResponseSettingsSection({
         </DashboardCardHeader>
         <DashboardCardContent className="space-y-6">
           <DashboardCardField label="סגנון תשובה">
-            <p className="text-sm font-medium">{config.toneOfVoice}</p>
+            <p className="text-sm font-medium">
+              {{
+                professional: "מקצועי",
+                friendly: "ידידותי",
+                formal: "פורמלי",
+                humorous: "משעשע",
+              }[config.toneOfVoice]}
+            </p>
           </DashboardCardField>
 
           <DashboardCardField label="שפת תגובה">
-            <p className="text-sm font-medium">{config.languageMode}</p>
+            <p className="text-sm font-medium">
+              {{
+                "auto-detect": "זיהוי אוטומטי",
+                hebrew: "עברית",
+                english: "English",
+              }[config.languageMode]}
+            </p>
           </DashboardCardField>
 
           <DashboardCardField label="אימוג'ים מותרים">

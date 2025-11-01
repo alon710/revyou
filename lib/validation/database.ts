@@ -79,8 +79,6 @@ export const reviewSchema = z.object({
   postedReply: z.string().max(2000).nullable().optional(),
   postedAt: timestampSchema.nullable().optional(),
   postedBy: z.string().nullable().optional(),
-  wasEdited: z.boolean(),
-  editedReply: z.string().max(2000).nullable().optional(),
 });
 
 export type LocationCreateInput = z.infer<typeof locationCreateSchema>;

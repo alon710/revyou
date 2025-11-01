@@ -95,6 +95,4 @@ export const reviewSchemaAdmin = z.object({
   postedReply: z.string().max(2000).nullable().optional(),
   postedAt: timestampSchemaAdmin.nullable().optional(),
   postedBy: z.string().nullable().optional(),
-  wasEdited: z.boolean().default(false),
-  editedReply: z.string().max(2000).nullable().optional(),
 });

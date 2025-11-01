@@ -29,11 +29,6 @@ export async function updateReviewReply(
       aiReplyGeneratedAt: serverTimestamp(),
     };
 
-    if (isEdited) {
-      updateData.wasEdited = true;
-      updateData.editedReply = reply;
-    }
-
     await updateDoc(reviewRef, updateData);
 
     return (await getReview(userId, locationId, reviewId)) as Review;

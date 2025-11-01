@@ -88,9 +88,6 @@ export interface Review {
   postedReply?: string | null;
   postedAt?: Timestamp | null;
   postedBy?: string | null;
-
-  wasEdited: boolean;
-  editedReply?: string | null;
 }
 
 export { DEFAULT_LOCATION_PROMPT_TEMPLATE } from "@/lib/ai/prompts/template";

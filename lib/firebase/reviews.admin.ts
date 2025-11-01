@@ -56,14 +56,6 @@ export async function updateReviewReplyAdmin(
       aiReplyGeneratedAt: new Date(),
     };
 
-    if (isEdited) {
-      updateData.wasEdited = true;
-      updateData.editedReply = reply;
-    } else {
-      updateData.wasEdited = false;
-      updateData.editedReply = null;
-    }
-
     await reviewRef.update(updateData);
 
     return (await getReviewAdmin(userId, locationId, reviewId)) as Review;

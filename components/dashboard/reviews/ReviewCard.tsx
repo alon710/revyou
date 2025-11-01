@@ -123,7 +123,7 @@ export function ReviewCard({
             </div>
           )}
 
-          {(review.aiReply || review.editedReply) && (
+          {review.aiReply && (
             <DashboardCardSection withBorder={!!review.text}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -132,7 +132,7 @@ export function ReviewCard({
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
                 <p className="text-sm leading-relaxed">
-                  {review.editedReply || review.aiReply}
+                  {review.aiReply}
                 </p>
               </div>
             </DashboardCardSection>
@@ -219,7 +219,7 @@ export function ReviewCard({
             <div className="rounded-md border border-accent bg-accent/10 p-3">
               <p className="text-sm font-medium mb-1">התגובה שתפורסם:</p>
               <p className="text-sm text-foreground">
-                {review.editedReply || review.aiReply}
+                {review.aiReply}
               </p>
             </div>
           </div>
