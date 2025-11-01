@@ -36,7 +36,7 @@ export const ReviewNotificationEmail = ({
 }: ReviewNotificationEmailProps) => {
   const statusText = status === "pending" ? "ממתינה לאישור" : "פורסמה";
   const statusColor = status === "pending" ? "#f59e0b" : "#10b981";
-  const reviewPageUrl = `${appBaseUrl}/reviews/${reviewId}`;
+  const reviewPageUrl = `${appBaseUrl}/dashboard/reviews/${reviewId}`;
 
   return (
     <Html lang="he" dir="rtl">

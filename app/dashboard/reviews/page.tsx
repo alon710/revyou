@@ -115,7 +115,7 @@ export default function ReviewsPage() {
           reviews.map((review) => (
             <div
               key={review.id}
-              onClick={() => router.push(`/reviews/${review.id}`)}
+              onClick={() => router.push(`/dashboard/reviews/${review.id}`)}
               className="cursor-pointer hover:opacity-90 transition-opacity"
             >
               <ReviewCard
