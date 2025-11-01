@@ -1,22 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserGoogleRefreshToken } from "@/lib/firebase/admin-users";
 import { listAllLocations, decryptToken } from "@/lib/google/business-profile";
+import { authenticateRequest } from "@/lib/api/auth";
 
 export const runtime = "nodejs";
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get("userId");
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: "User ID is required" },
-        { status: 400 }
-      );
+    const authResult = await authenticateRequest(request);
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
 
-    const encryptedRefreshToken = await getUserGoogleRefreshToken(userId);
+    const { userId: authenticatedUserId } = authResult;
+
+    const encryptedRefreshToken =
+      await getUserGoogleRefreshToken(authenticatedUserId);
 
     if (!encryptedRefreshToken) {
       return NextResponse.json(

@@ -24,14 +24,6 @@ interface GoogleLocation {
     primaryPhone?: string;
   };
   websiteUri?: string;
-  regularHours?: {
-    periods?: Array<{
-      openDay?: string;
-      openTime?: unknown;
-      closeDay?: string;
-      closeTime?: unknown;
-    }>;
-  };
   metadata?: {
     mapsUri?: string;
     newReviewUri?: string;
@@ -118,12 +110,34 @@ async function listLocationsForAccount(
   accessToken: string
 ): Promise<GoogleLocation[]> {
   try {
-    const url = `${GOOGLE_MY_BUSINESS_API_BASE}/${accountName}/locations?readMask=name,title,storefrontAddress,phoneNumbers,websiteUri,regularHours,metadata,profile`;
-    const data = await makeAuthorizedRequest<LocationsResponse>(
-      url,
-      accessToken
-    );
-    return data.locations || [];
+    const allLocations: GoogleLocation[] = [];
+    let pageToken: string | undefined = undefined;
+
+    do {
+      const url = new URL(
+        `${GOOGLE_MY_BUSINESS_API_BASE}/${accountName}/locations`
+      );
+      url.searchParams.set(
+        "readMask",
+        "name,title,storefrontAddress,phoneNumbers,websiteUri,metadata,profile"
+      );
+      if (pageToken) {
+        url.searchParams.set("pageToken", pageToken);
+      }
+
+      const data = await makeAuthorizedRequest<LocationsResponse>(
+        url.toString(),
+        accessToken
+      );
+
+      if (data.locations) {
+        allLocations.push(...data.locations);
+      }
+
+      pageToken = data.nextPageToken;
+    } while (pageToken);
+
+    return allLocations;
   } catch (error) {
     console.error("Error listing locations for account:", accountName, error);
     return [];

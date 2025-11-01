@@ -20,17 +20,13 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
-  webpack: (config, { isServer }) => {
-    // Exclude functions directory from being processed by webpack
-    config.externals = config.externals || [];
-    if (isServer) {
-      config.externals.push((context: string, request: string, callback: Function) => {
-        if (request.startsWith('./functions/') || request.includes('/functions/')) {
-          return callback(null, 'commonjs ' + request);
-        }
-        callback();
-      });
-    }
+  webpack: (config) => {
+    // Completely ignore the functions directory
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: ['**/node_modules', '**/functions/**'],
+    };
+
     return config;
   },
 };

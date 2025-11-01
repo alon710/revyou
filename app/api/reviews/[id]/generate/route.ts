@@ -4,21 +4,19 @@ import { buildReplyPrompt } from "@/lib/ai/prompts/builder";
 import { getReviewAdmin } from "@/lib/firebase/reviews.admin";
 import { updateReviewReplyAdmin } from "@/lib/firebase/reviews.admin";
 import { getLocationAdmin } from "@/lib/firebase/locations.admin";
-import { adminAuth } from "@/lib/firebase/admin";
+import { authenticateRequest } from "@/lib/api/auth";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await authenticateRequest(req);
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
 
-    const token = authHeader.split("Bearer ")[1];
-    const decodedToken = await adminAuth.verifyIdToken(token);
-    const authenticatedUserId = decodedToken.uid;
+    const { userId: authenticatedUserId } = authResult;
 
     const { id: reviewId } = await params;
 
