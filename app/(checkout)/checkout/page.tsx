@@ -28,7 +28,7 @@ function CheckoutForm() {
     }
 
     if (plan === "free") {
-      router.push("/dashboard/locations");
+      router.push("/dashboard");
       return;
     }
 

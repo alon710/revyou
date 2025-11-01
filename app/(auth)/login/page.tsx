@@ -27,7 +27,7 @@ function LoginForm() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      const redirect = searchParams.get("redirect") || "/dashboard/locations";
+      const redirect = searchParams.get("redirect") || "/dashboard";
       router.push(redirect);
     }
   }, [user, authLoading, router, searchParams]);
@@ -42,7 +42,7 @@ function LoginForm() {
       setError(error);
       setIsLoading(false);
     } else if (user) {
-      const redirect = searchParams.get("redirect") || "/dashboard/locations";
+      const redirect = searchParams.get("redirect") || "/dashboard";
       router.push(redirect);
     }
   };

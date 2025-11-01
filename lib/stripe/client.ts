@@ -32,7 +32,7 @@ export async function createSubscriptionCheckout(priceId: string) {
 
   return createCheckoutSession(payments, {
     price: priceId,
-    success_url: `${window.location.origin}/dashboard/locations`,
+    success_url: `${window.location.origin}/dashboard`,
     cancel_url: `${window.location.origin}/`,
     allow_promotion_codes: true,
   });
