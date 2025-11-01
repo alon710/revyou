@@ -25,10 +25,11 @@ export function UnifiedNavbar({
   const { user } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const [hash, setHash] = useState("");
+  const [hash, setHash] = useState(() =>
+    typeof window !== "undefined" ? window.location.hash : ""
+  );
 
   useEffect(() => {
-    setHash(window.location.hash);
     const handleHashChange = () => {
       setHash(window.location.hash);
     };
@@ -60,7 +61,7 @@ export function UnifiedNavbar({
   return (
     <NavbarContainer>
       <div className="shrink-0 pl-2">
-        <Logo href={user ? "/locations" : "/"} />
+        <Logo href={user ? "/dashboard/locations" : "/"} />
       </div>
 
       <nav className="hidden md:flex items-center flex-1 justify-center h-full gap-1">
@@ -105,7 +106,7 @@ export function UnifiedNavbar({
           <>
             {variant === "dashboard" && <LocationToggler />}
             {variant === "landing" && (
-              <Link href="/locations">
+              <Link href="/dashboard/locations">
                 <Button size="sm">החשבון שלי</Button>
               </Link>
             )}

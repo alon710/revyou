@@ -23,7 +23,7 @@ export function LocationToggler() {
 
   useEffect(() => {
     if (!loading && locations.length === 0) {
-      router.push("/locations/connect");
+      router.push("/dashboard/locations/connect");
     }
   }, [loading, locations.length, router]);
 

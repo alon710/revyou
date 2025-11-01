@@ -7,8 +7,8 @@ export const runtime = "nodejs";
 
 const redirectToLocations = (success = false) => {
   const url = success
-    ? `${process.env.NEXT_PUBLIC_APP_URL}/locations/connect?success=true`
-    : `${process.env.NEXT_PUBLIC_APP_URL}/locations`;
+    ? `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/locations/connect?success=true`
+    : `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/locations`;
   return NextResponse.redirect(url);
 };
 

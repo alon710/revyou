@@ -66,9 +66,11 @@ export function Pricing() {
 
       if (isFree) {
         if (!user) {
-          router.push(`/login?redirect=${encodeURIComponent("/locations")}`);
+          router.push(
+            `/login?redirect=${encodeURIComponent("/dashboard/locations")}`
+          );
         } else {
-          router.push("/locations");
+          router.push("/dashboard/locations");
         }
         return;
       }

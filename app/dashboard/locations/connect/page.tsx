@@ -27,7 +27,7 @@ export default function ConnectLocationPage() {
   return (
     <PageContainer>
       <div className="flex items-center gap-4 mb-6">
-        <BackButton href="/locations" />
+        <BackButton href="/dashboard/locations" />
       </div>
 
       <PageHeader

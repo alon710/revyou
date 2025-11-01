@@ -19,9 +19,12 @@ export function BottomNavigation() {
   const { user } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const [hash, setHash] = useState("");
+  const [hash, setHash] = useState(() =>
+    typeof window !== "undefined" ? window.location.hash : ""
+  );
   const variant = getNavigationVariant(pathname);
-  const navItems = variant === "dashboard" ? dashboardNavItems : landingNavItems;
+  const navItems =
+    variant === "dashboard" ? dashboardNavItems : landingNavItems;
 
   const handleSignOut = async () => {
     await signOut();
@@ -29,7 +32,6 @@ export function BottomNavigation() {
   };
 
   useEffect(() => {
-    setHash(window.location.hash);
     const handleHashChange = () => {
       setHash(window.location.hash);
     };
@@ -114,11 +116,13 @@ export function BottomNavigation() {
         {user && variant === "landing" && (
           <>
             <Link
-              href="/locations"
+              href="/dashboard/locations"
               className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all text-gray-600 hover:text-gray-900 active:scale-95"
             >
               <LayoutDashboard className="w-5 h-5 transition-all" />
-              <span className="text-xs font-medium transition-all">החשבון שלי</span>
+              <span className="text-xs font-medium transition-all">
+                החשבון שלי
+              </span>
             </Link>
             <button
               type="button"

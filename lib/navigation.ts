@@ -5,6 +5,7 @@ import {
   PiggyBank,
   ShieldQuestionMarkIcon,
   Rocket,
+  LayoutDashboard,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -15,9 +16,10 @@ export interface NavItem {
 }
 
 export const dashboardNavItems: NavItem[] = [
-  { href: "/locations", label: "בית", icon: Home },
-  { href: "/reviews", label: "ביקורות", icon: MessageSquare },
-  { href: "/settings", label: "הגדרות", icon: Settings },
+  { href: "/dashboard", label: "לוח הבקרה", icon: LayoutDashboard },
+  { href: "/dashboard/locations", label: "עסקים", icon: Home },
+  { href: "/dashboard/reviews", label: "ביקורות", icon: MessageSquare },
+  { href: "/dashboard/settings", label: "הגדרות", icon: Settings },
 ];
 
 export const landingNavItems: NavItem[] = [
@@ -30,11 +32,7 @@ export const landingNavItems: NavItem[] = [
 export function getNavigationVariant(
   pathname: string
 ): "dashboard" | "landing" {
-  return pathname.startsWith("/locations") ||
-    pathname.startsWith("/reviews") ||
-    pathname.startsWith("/settings")
-    ? "dashboard"
-    : "landing";
+  return pathname.startsWith("/dashboard") ? "dashboard" : "landing";
 }
 
 export function isAnchorLink(href: string): boolean {
@@ -56,6 +54,11 @@ export function getIsActive(
 
   if (href === "/") {
     return pathname === "/" && !hash;
+  }
+
+  // Special case for /dashboard - only match exact path
+  if (href === "/dashboard") {
+    return pathname === "/dashboard";
   }
 
   return pathname === href || pathname.startsWith(href);
