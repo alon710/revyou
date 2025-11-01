@@ -1,18 +1,15 @@
-import { NextResponse } from "next/server";
 import { adminAuth } from "@/lib/firebase/admin";
 import { cookies } from "next/headers";
 
 const SESSION_COOKIE_NAME = "session";
 
-export async function getAuthenticatedUserId(): Promise<
-  { userId: string } | NextResponse
-> {
+export async function getAuthenticatedUserId(): Promise<{ userId: string }> {
   try {
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME);
 
     if (!sessionCookie) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      throw new Error("Session cookie not found");
     }
 
     const decodedClaims = await adminAuth.verifySessionCookie(
@@ -26,9 +23,7 @@ export async function getAuthenticatedUserId(): Promise<
       "Error verifying session cookie:",
       error instanceof Error ? error.message : "Unknown authentication error"
     );
-    return NextResponse.json(
-      { error: "אירעה שגיאה באימות המשתמש" },
-      { status: 401 }
-    );
+
+    throw new Error("Failed to authenticate user");
   }
 }

@@ -1,11 +1,10 @@
 import { DEFAULT_LOCATION_PROMPT_TEMPLATE } from "./template";
-import type { LocationConfig } from "@/types/database";
+import type { LocationConfig, Review } from "@/types/database";
 import Mustache from "mustache";
-import type { ReviewData } from "../core/types";
 
 export function buildReplyPrompt(
   locationConfig: LocationConfig,
-  review: ReviewData,
+  review: Review,
   locationName: string,
   locationPhone?: string
 ): string {

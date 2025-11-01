@@ -70,7 +70,8 @@
   "knip": {
     "ignore": [
       "components/ui/**",
-      "functions/**"
+      "functions/**",
+      "lib/ai/core/**"
     ],
     "rules": {
       "dependencies": "off",
