@@ -17,7 +17,7 @@ export async function editReply(
   reviewId: string,
   newReply: string
 ): Promise<void> {
-  await updateReviewReply(userId, locationId, reviewId, newReply, true);
+  await updateReviewReply(userId, locationId, reviewId, newReply);
 }
 
 export async function regenerateReply(

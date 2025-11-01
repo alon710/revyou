@@ -99,7 +99,13 @@ export async function createLocation(
     }
 
     const defaultConfig = getDefaultLocationConfig();
-    const locationConfig = { ...defaultConfig, ...data.config };
+    const locationConfig = {
+      ...defaultConfig,
+      ...data.config,
+      name: data.config?.name || data.name,
+      description: data.config?.description || data.description,
+      phoneNumber: data.config?.phoneNumber || data.phoneNumber,
+    };
 
     const { userId, ...locationDataWithoutUserId } = data;
 
@@ -111,7 +117,11 @@ export async function createLocation(
       emailOnNewReview: data.emailOnNewReview ?? true,
     };
 
-    locationCreateSchema.parse(locationData);
+    // Skip validation for connectedAt since serverTimestamp() is a sentinel value
+    // that becomes a Timestamp only after Firestore processes it
+    // eslint-disable-next-line unused-imports/no-unused-vars
+    const { connectedAt, ...validationData } = locationData;
+    locationCreateSchema.omit({ connectedAt: true }).parse(validationData);
 
     const locationsRef = collection(db, "users", userId, "locations");
     const docRef = await addDoc(locationsRef, locationData);

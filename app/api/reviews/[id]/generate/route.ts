@@ -4,21 +4,19 @@ import { buildReplyPrompt } from "@/lib/ai/prompts/builder";
 import { getReviewAdmin } from "@/lib/firebase/reviews.admin";
 import { updateReviewReplyAdmin } from "@/lib/firebase/reviews.admin";
 import { getLocationAdmin } from "@/lib/firebase/locations.admin";
-import { adminAuth } from "@/lib/firebase/admin";
+import { getAuthenticatedUserId } from "@/lib/api/auth";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await getAuthenticatedUserId();
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
 
-    const token = authHeader.split("Bearer ")[1];
-    const decodedToken = await adminAuth.verifyIdToken(token);
-    const authenticatedUserId = decodedToken.uid;
+    const { userId: authenticatedUserId } = authResult;
 
     const { id: reviewId } = await params;
 
@@ -55,7 +53,7 @@ export async function POST(
         text: review.text,
       },
       location.name,
-      location.config.locationPhone
+      location.config.phoneNumber
     );
 
     const aiReply = await generateAIReply(prompt);
@@ -64,16 +62,17 @@ export async function POST(
       authenticatedUserId,
       locationId,
       reviewId,
-      aiReply,
-      false
+      aiReply
     );
 
     return NextResponse.json({ aiReply, success: true });
   } catch (error) {
+    console.error("Error in generate reply API:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to generate reply";
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to generate reply",
+        error: errorMessage,
       },
       { status: 500 }
     );

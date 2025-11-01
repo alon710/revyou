@@ -26,6 +26,12 @@ export async function getReviewAdmin(
     return null;
   } catch (error) {
     console.error("Error fetching review (admin):", error);
+    if (error instanceof Error) {
+      console.error("Error details:", error.message);
+      if (error.name === "ZodError") {
+        console.error("Validation error:", JSON.stringify(error, null, 2));
+      }
+    }
     throw new Error("לא ניתן לטעון את הביקורת");
   }
 }
@@ -34,8 +40,7 @@ export async function updateReviewReplyAdmin(
   userId: string,
   locationId: string,
   reviewId: string,
-  reply: string,
-  isEdited: boolean = false
+  reply: string
 ): Promise<Review> {
   try {
     const reviewRef = adminDb
@@ -50,16 +55,11 @@ export async function updateReviewReplyAdmin(
       aiReplyGeneratedAt: new Date(),
     };
 
-    if (isEdited) {
-      updateData.wasEdited = true;
-      updateData.editedReply = reply;
-    }
-
     await reviewRef.update(updateData);
 
     return (await getReviewAdmin(userId, locationId, reviewId)) as Review;
   } catch (error) {
-    console.error("Error updating review reply (admin):", error);
+    console.error("Error updating review reply (admin)", error);
     throw new Error("לא ניתן לעדכן את התגובה");
   }
 }

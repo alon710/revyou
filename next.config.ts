@@ -12,6 +12,22 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
+    browserDebugInfoInTerminal: true,
+  },
+  reactStrictMode: true,
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
+  webpack: (config) => {
+    // Completely ignore the functions directory
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: ["**/node_modules", "**/functions/**"],
+    };
+
+    return config;
   },
 };
 

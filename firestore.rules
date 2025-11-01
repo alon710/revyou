@@ -44,6 +44,24 @@ service cloud.firestore {
       return rating is int && rating >= 1 && rating <= 5;
     }
 
+    // Validate individual star config structure
+    function isValidStarConfig(starConfig) {
+      return starConfig.keys().hasOnly(['customInstructions', 'autoReply']) &&
+      validStringLength(starConfig.customInstructions, 0, 1000) &&
+      starConfig.autoReply is bool;
+    }
+
+    // Validate starConfigs map structure
+    function isValidStarConfigs(starConfigs) {
+      return starConfigs is map &&
+      starConfigs.keys().hasOnly(['1', '2', '3', '4', '5']) &&
+      isValidStarConfig(starConfigs['1']) &&
+      isValidStarConfig(starConfigs['2']) &&
+      isValidStarConfig(starConfigs['3']) &&
+      isValidStarConfig(starConfigs['4']) &&
+      isValidStarConfig(starConfigs['5']);
+    }
+
     // ====== USERS COLLECTION ======
     match /users/{userId} {
       // Users can read and write their own data
@@ -98,21 +116,47 @@ service cloud.firestore {
 
         // Users can create locations in their own subcollection
         allow create: if isOwner(userId) &&
-        request.resource.data.keys().hasAll(['googleAccountId', 'googleLocationId', 'name', 'address', 'connected', 'connectedAt', 'config']) &&
+        request.resource.data.keys().hasAll(['googleAccountId', 'googleLocationId', 'name', 'address', 'connected', 'connectedAt', 'config', 'emailOnNewReview']) &&
         validStringLength(request.resource.data.name, 1, 200) &&
         validStringLength(request.resource.data.address, 1, 500) &&
         request.resource.data.connected is bool &&
+        request.resource.data.emailOnNewReview is bool &&
+        (!('phoneNumber' in request.resource.data) || validStringLength(request.resource.data.phoneNumber, 0, 50)) &&
+        (!('websiteUrl' in request.resource.data) || validStringLength(request.resource.data.websiteUrl, 1, 200)) &&
+        (!('mapsUrl' in request.resource.data) || validStringLength(request.resource.data.mapsUrl, 1, 200)) &&
+        (!('description' in request.resource.data) || validStringLength(request.resource.data.description, 0, 5000)) &&
         // Validate config structure
-        request.resource.data.config.keys().hasAll(['locationDescription', 'toneOfVoice', 'useEmojis', 'languageMode', 'autoPost', 'requireApproval', 'starConfigs']) &&
-        validStringLength(request.resource.data.config.locationDescription, 0, 2000) &&
+        request.resource.data.config.keys().hasAll(['name', 'toneOfVoice', 'useEmojis', 'languageMode', 'starConfigs']) &&
+        validStringLength(request.resource.data.config.name, 1, 200) &&
+        (!('description' in request.resource.data.config) || validStringLength(request.resource.data.config.description, 0, 2000)) &&
+        (!('phoneNumber' in request.resource.data.config) || validStringLength(request.resource.data.config.phoneNumber, 0, 50)) &&
         isValidTone(request.resource.data.config.toneOfVoice) &&
         isValidLanguageMode(request.resource.data.config.languageMode) &&
         request.resource.data.config.useEmojis is bool &&
-        request.resource.data.config.autoPost is bool &&
-        request.resource.data.config.requireApproval is bool;
+        (!('languageInstructions' in request.resource.data.config) || validStringLength(request.resource.data.config.languageInstructions, 0, 100)) &&
+        (!('maxSentences' in request.resource.data.config) || (request.resource.data.config.maxSentences is int && request.resource.data.config.maxSentences >= 1 && request.resource.data.config.maxSentences <= 5)) &&
+        (!('allowedEmojis' in request.resource.data.config) || (request.resource.data.config.allowedEmojis is list && request.resource.data.config.allowedEmojis.size() <= 50)) &&
+        (!('signature' in request.resource.data.config) || validStringLength(request.resource.data.config.signature, 0, 100)) &&
+        // Validate starConfigs structure
+        isValidStarConfigs(request.resource.data.config.starConfigs);
 
         // Users can update their own locations
-        allow update: if isOwner(userId);
+        allow update: if isOwner(userId) &&
+        // Validate config structure if being updated
+        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['config']) ||
+        (request.resource.data.config.keys().hasAll(['name', 'toneOfVoice', 'useEmojis', 'languageMode', 'starConfigs']) &&
+        validStringLength(request.resource.data.config.name, 1, 200) &&
+        (!('description' in request.resource.data.config) || validStringLength(request.resource.data.config.description, 0, 2000)) &&
+        (!('phoneNumber' in request.resource.data.config) || validStringLength(request.resource.data.config.phoneNumber, 0, 50)) &&
+        isValidTone(request.resource.data.config.toneOfVoice) &&
+        isValidLanguageMode(request.resource.data.config.languageMode) &&
+        request.resource.data.config.useEmojis is bool &&
+        (!('languageInstructions' in request.resource.data.config) || validStringLength(request.resource.data.config.languageInstructions, 0, 100)) &&
+        (!('maxSentences' in request.resource.data.config) || (request.resource.data.config.maxSentences is int && request.resource.data.config.maxSentences >= 1 && request.resource.data.config.maxSentences <= 5)) &&
+        (!('allowedEmojis' in request.resource.data.config) || (request.resource.data.config.allowedEmojis is list && request.resource.data.config.allowedEmojis.size() <= 50)) &&
+        (!('signature' in request.resource.data.config) || validStringLength(request.resource.data.config.signature, 0, 100)) &&
+        // Validate starConfigs structure
+        isValidStarConfigs(request.resource.data.config.starConfigs)));
 
         // Users can delete their own locations
         allow delete: if isOwner(userId);
@@ -124,12 +168,11 @@ service cloud.firestore {
 
           // Cloud Functions and users can create reviews
           allow create: if isOwner(userId) &&
-          request.resource.data.keys().hasAll(['googleReviewId', 'name', 'rating', 'date', 'receivedAt', 'replyStatus', 'wasEdited']) &&
+          request.resource.data.keys().hasAll(['googleReviewId', 'name', 'rating', 'date', 'receivedAt', 'replyStatus']) &&
           validStringLength(request.resource.data.name, 1, 200) &&
           isValidRating(request.resource.data.rating) &&
           (!('text' in request.resource.data) || validStringLength(request.resource.data.text, 0, 5000)) &&
-          isValidReplyStatus(request.resource.data.replyStatus) &&
-          request.resource.data.wasEdited is bool;
+          isValidReplyStatus(request.resource.data.replyStatus);
 
           // Users and Cloud Functions can update reviews
           allow update: if isOwner(userId) &&

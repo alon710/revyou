@@ -153,9 +153,7 @@ export function HowItWorks() {
             מוכנים להתחיל? זה לוקח פחות מ-5 דקות
           </p>
           <Link href="/login">
-            <Button size="lg" className="text-lg px-8">
-              התחל עכשיו בחינם
-            </Button>
+            <Button className="text-lg px-8">התחל עכשיו בחינם</Button>
           </Link>
         </div>
       </div>

@@ -107,7 +107,7 @@ export function AIResponseSettingsEditModal({
                 <SelectItem value="professional">מקצועי</SelectItem>
                 <SelectItem value="friendly">ידידותי</SelectItem>
                 <SelectItem value="formal">פורמלי</SelectItem>
-                <SelectItem value="humorous">הומוריסטי</SelectItem>
+                <SelectItem value="humorous">משעשע</SelectItem>
               </SelectContent>
             </Select>
           </div>

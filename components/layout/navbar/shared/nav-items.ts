@@ -5,7 +5,7 @@ interface NavItem {
 
 export const navItems: NavItem[] = [
   {
-    title: "המיקום שלי",
+    title: "העסק שלי",
     href: "/locations",
   },
   {

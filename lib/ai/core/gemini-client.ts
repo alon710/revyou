@@ -3,7 +3,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 export async function generateWithGemini(
   apiKey: string,
   prompt: string,
-  modelName: string = "gemini-2.0-flash"
+  modelName: string = "gemini-2.0-flash",
+  maxOutputTokens: number = 8192
 ): Promise<string> {
   if (!apiKey) {
     throw new Error("API key is required");
@@ -17,6 +18,9 @@ export async function generateWithGemini(
 
   const result = await model.generateContent({
     contents: [{ role: "user", parts: [{ text: prompt }] }],
+    generationConfig: {
+      maxOutputTokens,
+    },
   });
 
   return result.response.text().trim();

@@ -2,7 +2,8 @@ import * as admin from "firebase-admin";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import { defineSecret, defineString } from "firebase-functions/params";
 import { render } from "@react-email/render";
-import { generateAIReply } from "../lib/ai";
+import { generateWithGemini } from "../shared/ai/core/gemini-client";
+import { buildReplyPrompt } from "../shared/ai/prompts/builder";
 import { ReviewNotificationEmail } from "../email-templates/review-notification";
 import type {
   Review,
@@ -53,11 +54,28 @@ async function handleAIReply(
   eventData: FirebaseFirestore.DocumentSnapshot,
   review: Review,
   config: LocationConfig,
-  apiKey: string
+  apiKey: string,
+  businessName: string,
+  phoneNumber?: string
 ): Promise<string | null> {
   try {
     console.log("Generating AI reply", { reviewId: eventData.id });
-    const aiReply = await generateAIReply(review, config, apiKey);
+
+    const reviewData = {
+      rating: review.rating as 1 | 2 | 3 | 4 | 5,
+      name: review.name,
+      text: review.text,
+      date: review.date ? review.date.toDate() : new Date(),
+    };
+
+    const prompt = buildReplyPrompt(
+      config,
+      reviewData,
+      businessName,
+      phoneNumber
+    );
+
+    const aiReply = await generateWithGemini(apiKey, prompt);
 
     await eventData.ref.update({
       aiReply,
@@ -195,7 +213,9 @@ export const onReviewCreate = onDocumentCreated(
         eventData,
         review,
         location.config,
-        geminiApiKey.value()
+        geminiApiKey.value(),
+        location.name,
+        location.config.phoneNumber
       );
 
       if (!aiReply) return;

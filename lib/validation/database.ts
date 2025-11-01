@@ -20,9 +20,9 @@ const starConfigSchema = z.object({
 });
 
 export const locationConfigSchema = z.object({
-  locationName: z.string().max(200).optional(),
-  locationDescription: z.string().max(2000).default(""),
-  locationPhone: z.string().max(50).optional(),
+  name: z.string().max(200),
+  description: z.string().max(2000).optional(),
+  phoneNumber: z.string().max(50).optional(),
 
   toneOfVoice: toneOfVoiceSchema,
   useEmojis: z.boolean(),
@@ -47,6 +47,10 @@ export const locationSchema = z.object({
   googleLocationId: z.string().min(1),
   name: z.string().min(1).max(200),
   address: z.string().min(1).max(500),
+  phoneNumber: z.string().max(50).optional(),
+  websiteUrl: z.string().url().optional(),
+  mapsUrl: z.string().url().optional(),
+  description: z.string().max(5000).optional(),
   photoUrl: z.string().url().optional(),
   connected: z.boolean(),
   connectedAt: timestampSchema,
@@ -75,8 +79,6 @@ export const reviewSchema = z.object({
   postedReply: z.string().max(2000).nullable().optional(),
   postedAt: timestampSchema.nullable().optional(),
   postedBy: z.string().nullable().optional(),
-  wasEdited: z.boolean(),
-  editedReply: z.string().max(2000).nullable().optional(),
 });
 
 export type LocationCreateInput = z.infer<typeof locationCreateSchema>;

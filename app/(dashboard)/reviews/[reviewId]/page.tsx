@@ -128,7 +128,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       </div>
       <PageHeader
         title={`ביקורת מאת ${review.name}`}
-        description={`${currentLocation?.name || ""} - ${review.rating} כוכבים`}
+        description={currentLocation?.name}
       />
 
       <div className="mt-6">

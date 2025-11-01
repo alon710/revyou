@@ -38,6 +38,19 @@ export async function signInWithGoogle() {
       });
     }
 
+    try {
+      const idToken = await user.getIdToken();
+      await fetch("/api/auth/session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken }),
+      });
+    } catch (sessionError) {
+      console.error("Error creating session cookie:", sessionError);
+    }
+
     return { user, error: null };
   } catch (error) {
     console.error("Error signing in with Google:", error);
@@ -47,15 +60,48 @@ export async function signInWithGoogle() {
 
 export async function signOut() {
   if (!auth) {
-    return { error: "Firebase לא מוגדר" };
+    return { error: "Firebase לא מוגדר", sessionDeletionFailed: false };
   }
 
+  let sessionDeletionFailed = false;
+
   try {
+    try {
+      const response = await fetch("/api/auth/session", {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        sessionDeletionFailed = true;
+        let responseBody;
+        try {
+          responseBody = await response.json();
+        } catch {
+          responseBody = await response.text();
+        }
+        console.error("Session deletion failed:", {
+          status: response.status,
+          statusText: response.statusText,
+          body: responseBody,
+        });
+      }
+    } catch (sessionError) {
+      sessionDeletionFailed = true;
+      console.error("Session deletion request failed:", {
+        error: sessionError,
+        message:
+          sessionError instanceof Error
+            ? sessionError.message
+            : "Unknown error",
+        stack: sessionError instanceof Error ? sessionError.stack : undefined,
+      });
+    }
+
     await firebaseSignOut(auth);
-    return { error: null };
+    return { error: null, sessionDeletionFailed };
   } catch (error) {
     console.error("Error signing out:", error);
-    return { error: "אירעה שגיאה בהתנתקות" };
+    return { error: "אירעה שגיאה בהתנתקות", sessionDeletionFailed };
   }
 }
 

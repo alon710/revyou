@@ -29,10 +29,16 @@ const starConfigSchema = z.object({
 });
 
 const locationConfigSchema = z.object({
-  locationDescription: z.string().min(10).max(2000),
+  name: z.string().max(200),
+  description: z.string().max(2000).optional(),
+  phoneNumber: z.string().max(50).optional(),
   toneOfVoice: toneOfVoiceSchema,
   useEmojis: z.boolean(),
   languageMode: languageModeSchema,
+  languageInstructions: z.string().max(100).optional(),
+  maxSentences: z.number().min(1).max(5).optional(),
+  allowedEmojis: z.array(z.string()).optional(),
+  signature: z.string().max(100).optional(),
   starConfigs: z.object({
     1: starConfigSchema,
     2: starConfigSchema,
@@ -48,7 +54,26 @@ export const locationSchemaAdmin = z.object({
   googleLocationId: z.string().min(1),
   name: z.string().min(1).max(200),
   address: z.string().min(1).max(500),
-  photoUrl: z.string().url().optional(),
+  phoneNumber: z.string().max(50).optional(),
+  websiteUrl: z
+    .string()
+    .url()
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
+  mapsUrl: z
+    .string()
+    .url()
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
+  description: z.string().max(5000).optional(),
+  photoUrl: z
+    .string()
+    .url()
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
   connected: z.boolean(),
   connectedAt: timestampSchemaAdmin,
   config: locationConfigSchema,
@@ -70,6 +95,4 @@ export const reviewSchemaAdmin = z.object({
   postedReply: z.string().max(2000).nullable().optional(),
   postedAt: timestampSchemaAdmin.nullable().optional(),
   postedBy: z.string().nullable().optional(),
-  wasEdited: z.boolean(),
-  editedReply: z.string().max(2000).nullable().optional(),
 });

@@ -36,9 +36,7 @@ export function ReplyEditor({
   variant = "default",
   loadingText = "שומר...",
 }: ReplyEditorProps) {
-  const [replyText, setReplyText] = useState(
-    review.editedReply || review.aiReply || ""
-  );
+  const [replyText, setReplyText] = useState(review.aiReply || "");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
@@ -54,7 +52,7 @@ export function ReplyEditor({
   };
 
   const handleCancel = () => {
-    setReplyText(review.editedReply || review.aiReply || "");
+    setReplyText(review.aiReply || "");
     onClose();
   };
 
@@ -102,9 +100,6 @@ export function ReplyEditor({
               <span>
                 {charCount} / {maxChars} תווים
               </span>
-              {review.wasEdited && (
-                <span className="text-accent">נערך בעבר</span>
-              )}
             </div>
           </div>
         </div>

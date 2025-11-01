@@ -7,8 +7,7 @@ export async function updateReviewReply(
   userId: string,
   locationId: string,
   reviewId: string,
-  reply: string,
-  isEdited: boolean = false
+  reply: string
 ): Promise<Review> {
   if (!db) {
     throw new Error("Firestore not initialized");
@@ -28,11 +27,6 @@ export async function updateReviewReply(
       aiReply: reply,
       aiReplyGeneratedAt: serverTimestamp(),
     };
-
-    if (isEdited) {
-      updateData.wasEdited = true;
-      updateData.editedReply = reply;
-    }
 
     await updateDoc(reviewRef, updateData);
 

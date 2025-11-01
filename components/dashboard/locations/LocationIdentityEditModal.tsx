@@ -29,14 +29,12 @@ export function LocationIdentityEditModal({
   onClose,
   onSave,
 }: LocationIdentityEditModalProps) {
-  const [locationName, setLocationName] = useState(
-    location.config.locationName || ""
-  );
+  const [locationName, setLocationName] = useState(location.config.name || "");
   const [locationDescription, setLocationDescription] = useState(
-    location.config.locationDescription || ""
+    location.config.description || ""
   );
   const [locationPhone, setLocationPhone] = useState(
-    location.config.locationPhone || ""
+    location.config.phoneNumber || ""
   );
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,9 +42,9 @@ export function LocationIdentityEditModal({
     try {
       setIsLoading(true);
       await onSave({
-        locationName: locationName,
-        locationDescription: locationDescription,
-        locationPhone: locationPhone,
+        name: locationName,
+        description: locationDescription,
+        phoneNumber: locationPhone,
       });
       onClose();
     } catch (error) {
@@ -57,9 +55,9 @@ export function LocationIdentityEditModal({
   };
 
   const handleCancel = () => {
-    setLocationName(location.config.locationName || "");
-    setLocationDescription(location.config.locationDescription || "");
-    setLocationPhone(location.config.locationPhone || "");
+    setLocationName(location.config.name || "");
+    setLocationDescription(location.config.description || "");
+    setLocationPhone(location.config.phoneNumber || "");
     onClose();
   };
 
