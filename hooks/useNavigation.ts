@@ -32,7 +32,10 @@ export function useNavigation(variant?: "landing" | "dashboard") {
   }, []);
 
   const handleSignOut = async () => {
-    await signOut();
+    const { error } = await signOut();
+    if (error) {
+      console.error("Sign out failed", error);
+    }
     router.push("/");
   };
 
