@@ -22,9 +22,10 @@ export function AppLayout({
       <UnifiedNavbar variant={navVariant} />
       <main
         className={cn(
-          "flex-1 overflow-y-auto pb-20 md:pb-0",
-          variant === "dashboard" &&
-            "px-4 md:px-6 lg:px-8 py-6 bg-gradient-to-br from-primary/20 via-white to-secondary/20",
+          "flex-1 overflow-y-auto",
+          variant === "dashboard"
+            ? "px-4 md:px-6 lg:px-8 pt-6 pb-20 md:pb-6 bg-gradient-to-br from-primary/20 via-white to-secondary/20"
+            : "pb-16 md:pb-0",
           className
         )}
       >
