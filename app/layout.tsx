@@ -31,7 +31,6 @@ export default function RootLayout({
     <html lang="he" dir="rtl">
       <body
         className={`${rubik.variable} ${nunito.variable} font-rubik antialiased`}
-        suppressHydrationWarning
       >
         <AuthProvider>{children}</AuthProvider>
       </body>
