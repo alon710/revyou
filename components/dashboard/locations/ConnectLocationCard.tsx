@@ -137,6 +137,10 @@ export function ConnectLocationCard({
         googleLocationId: location.id,
         name: location.name,
         address: location.address,
+        phoneNumber: location.phoneNumber,
+        websiteUrl: location.websiteUrl,
+        mapsUrl: location.mapsUrl,
+        description: location.description,
       });
 
       if (onSuccess) {

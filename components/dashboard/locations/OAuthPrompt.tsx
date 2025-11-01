@@ -44,7 +44,7 @@ export function OAuthPrompt({ onConnect, loading }: OAuthPromptProps) {
           </ul>
         </div>
 
-        <Button onClick={onConnect} disabled={loading} size="lg" className="w-full">
+        <Button onClick={onConnect} disabled={loading} className="w-full">
           התחבר עם Google
         </Button>
       </DashboardCardContent>

@@ -55,7 +55,7 @@ export async function POST(
         text: review.text,
       },
       location.name,
-      location.config.locationPhone
+      location.config.phoneNumber
     );
 
     const aiReply = await generateAIReply(prompt);
@@ -70,10 +70,12 @@ export async function POST(
 
     return NextResponse.json({ aiReply, success: true });
   } catch (error) {
+    console.error("Error in generate reply API:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to generate reply";
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to generate reply",
+        error: errorMessage,
       },
       { status: 500 }
     );

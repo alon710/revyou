@@ -26,6 +26,12 @@ export async function getReviewAdmin(
     return null;
   } catch (error) {
     console.error("Error fetching review (admin):", error);
+    if (error instanceof Error) {
+      console.error("Error details:", error.message);
+      if (error.name === "ZodError") {
+        console.error("Validation error:", JSON.stringify(error, null, 2));
+      }
+    }
     throw new Error("לא ניתן לטעון את הביקורת");
   }
 }

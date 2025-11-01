@@ -99,7 +99,13 @@ export async function createLocation(
     }
 
     const defaultConfig = getDefaultLocationConfig();
-    const locationConfig = { ...defaultConfig, ...data.config };
+    const locationConfig = {
+      ...defaultConfig,
+      ...data.config,
+      name: data.config?.name || data.name,
+      description: data.config?.description || data.description,
+      phoneNumber: data.config?.phoneNumber || data.phoneNumber,
+    };
 
     const { userId, ...locationDataWithoutUserId } = data;
 

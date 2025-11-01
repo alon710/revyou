@@ -107,24 +107,15 @@ export function LocationSelector({
               ))}
             </RadioGroup>
 
-            {selected && (
-              <div className="mt-6 flex gap-3" dir="rtl">
-                <Button
-                  onClick={handleConnect}
-                  disabled={connecting}
-                  className="flex-1"
-                >
-                  {connecting ? "מחבר..." : "חבר עסק זה"}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setSelected(null)}
-                  disabled={connecting}
-                >
-                  בטל בחירה
-                </Button>
-              </div>
-            )}
+            <div className="mt-6 flex gap-3" dir="rtl">
+              <Button
+                onClick={handleConnect}
+                className="flex-1"
+                disabled={connecting || !selected}
+              >
+                {connecting ? "מחבר..." : "חבר עסק זה"}
+              </Button>
+            </div>
           </>
         )}
       </DashboardCardContent>

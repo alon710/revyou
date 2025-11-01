@@ -16,9 +16,18 @@ export async function getLocationAdmin(
 
     if (locationSnap.exists) {
       const data = locationSnap.data();
+
+      // Clean up empty string URLs before validation
+      const cleanedData = {
+        ...data,
+        websiteUrl: data?.websiteUrl === "" ? undefined : data?.websiteUrl,
+        mapsUrl: data?.mapsUrl === "" ? undefined : data?.mapsUrl,
+        photoUrl: data?.photoUrl === "" ? undefined : data?.photoUrl,
+      };
+
       const validated = locationSchemaAdmin.parse({
         id: locationSnap.id,
-        ...data,
+        ...cleanedData,
       });
       return validated as Location;
     }
@@ -26,6 +35,12 @@ export async function getLocationAdmin(
     return null;
   } catch (error) {
     console.error("Error fetching location (admin):", error);
+    if (error instanceof Error) {
+      console.error("Error details:", error.message);
+      if (error.name === "ZodError") {
+        console.error("Validation error:", JSON.stringify(error, null, 2));
+      }
+    }
     throw new Error("לא ניתן לטעון את פרטי המיקום");
   }
 }

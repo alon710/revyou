@@ -15,8 +15,8 @@ export function buildReplyPrompt(
 
   const templateData = {
     LOCATION_NAME: locationName || "",
-    LOCATION_DESCRIPTION: locationConfig.locationDescription || "",
-    LOCATION_PHONE: locationPhone || locationConfig.locationPhone || "",
+    LOCATION_DESCRIPTION: locationConfig.description || "",
+    LOCATION_PHONE: locationPhone || locationConfig.phoneNumber || "",
     IS_AUTO_DETECT: isAutoDetect,
     TARGET_LANGUAGE: targetLanguage,
     TONE: locationConfig.toneOfVoice,

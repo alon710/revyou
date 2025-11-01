@@ -21,9 +21,9 @@ export interface StarConfig {
 }
 
 export interface LocationConfig {
-  locationName?: string;
-  locationDescription: string;
-  locationPhone?: string;
+  name: string;
+  description?: string;
+  phoneNumber?: string;
 
   toneOfVoice: ToneOfVoice;
   useEmojis: boolean;
@@ -47,6 +47,10 @@ export interface GoogleBusinessProfileLocation {
   id: string;
   name: string;
   address: string;
+  phoneNumber?: string;
+  websiteUrl?: string;
+  mapsUrl?: string;
+  description?: string;
   photoUrl?: string;
 }
 
@@ -56,6 +60,10 @@ export interface Location {
   googleLocationId: string;
   name: string;
   address: string;
+  phoneNumber?: string;
+  websiteUrl?: string;
+  mapsUrl?: string;
+  description?: string;
   photoUrl?: string;
   connected: boolean;
   connectedAt: Timestamp;

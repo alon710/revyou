@@ -103,9 +103,15 @@ service cloud.firestore {
         validStringLength(request.resource.data.address, 1, 500) &&
         request.resource.data.connected is bool &&
         request.resource.data.emailOnNewReview is bool &&
+        (!('phoneNumber' in request.resource.data) || validStringLength(request.resource.data.phoneNumber, 0, 50)) &&
+        (!('websiteUrl' in request.resource.data) || request.resource.data.websiteUrl is string) &&
+        (!('mapsUrl' in request.resource.data) || request.resource.data.mapsUrl is string) &&
+        (!('description' in request.resource.data) || validStringLength(request.resource.data.description, 0, 5000)) &&
         // Validate config structure
-        request.resource.data.config.keys().hasAll(['locationDescription', 'toneOfVoice', 'useEmojis', 'languageMode', 'starConfigs']) &&
-        validStringLength(request.resource.data.config.locationDescription, 0, 2000) &&
+        request.resource.data.config.keys().hasAll(['name', 'toneOfVoice', 'useEmojis', 'languageMode', 'starConfigs']) &&
+        validStringLength(request.resource.data.config.name, 1, 200) &&
+        (!('description' in request.resource.data.config) || validStringLength(request.resource.data.config.description, 0, 2000)) &&
+        (!('phoneNumber' in request.resource.data.config) || validStringLength(request.resource.data.config.phoneNumber, 0, 50)) &&
         isValidTone(request.resource.data.config.toneOfVoice) &&
         isValidLanguageMode(request.resource.data.config.languageMode) &&
         request.resource.data.config.useEmojis is bool;

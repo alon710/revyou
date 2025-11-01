@@ -56,18 +56,18 @@ export default function LocationIdentitySection({
         <DashboardCardContent className="space-y-6">
           <DashboardCardField label="שם העסק">
             <p className="text-sm font-medium">
-              {config.locationName || location.name}
+              {config.name || location.name}
             </p>
           </DashboardCardField>
 
           <DashboardCardField label="תיאור העסק">
             <p className="text-sm bg-muted/50 p-3 rounded-md whitespace-pre-wrap leading-relaxed">
-              {config.locationDescription || "אין תיאור"}
+              {config.description || "אין תיאור"}
             </p>
           </DashboardCardField>
 
           <DashboardCardField label="טלפון ליצירת קשר (לביקורות שליליות)">
-            <p className="text-sm font-medium">{config.locationPhone}</p>
+            <p className="text-sm font-medium">{config.phoneNumber}</p>
           </DashboardCardField>
         </DashboardCardContent>
       </DashboardCard>

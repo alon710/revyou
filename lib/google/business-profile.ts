@@ -1,7 +1,8 @@
 import { OAuth2Client } from "google-auth-library";
 import { GoogleBusinessProfileLocation } from "@/types/database";
 
-const GOOGLE_MY_BUSINESS_API_BASE = "https://mybusinessbusinessinformation.googleapis.com/v1";
+const GOOGLE_MY_BUSINESS_API_BASE =
+  "https://mybusinessbusinessinformation.googleapis.com/v1";
 
 interface GoogleAccount {
   name: string;
@@ -18,6 +19,25 @@ interface GoogleLocation {
     administrativeArea?: string;
     postalCode?: string;
     regionCode?: string;
+  };
+  phoneNumbers?: {
+    primaryPhone?: string;
+  };
+  websiteUri?: string;
+  regularHours?: {
+    periods?: Array<{
+      openDay?: string;
+      openTime?: unknown;
+      closeDay?: string;
+      closeTime?: unknown;
+    }>;
+  };
+  metadata?: {
+    mapsUri?: string;
+    newReviewUri?: string;
+  };
+  profile?: {
+    description?: string;
   };
 }
 
@@ -82,7 +102,10 @@ export async function getAccessTokenFromRefreshToken(
 async function listAccounts(accessToken: string): Promise<GoogleAccount[]> {
   try {
     const url = `${GOOGLE_MY_BUSINESS_API_BASE}/accounts`;
-    const data = await makeAuthorizedRequest<AccountsResponse>(url, accessToken);
+    const data = await makeAuthorizedRequest<AccountsResponse>(
+      url,
+      accessToken
+    );
     return data.accounts || [];
   } catch (error) {
     console.error("Error listing accounts:", error);
@@ -95,8 +118,11 @@ async function listLocationsForAccount(
   accessToken: string
 ): Promise<GoogleLocation[]> {
   try {
-    const url = `${GOOGLE_MY_BUSINESS_API_BASE}/${accountName}/locations?readMask=name,title,storefrontAddress`;
-    const data = await makeAuthorizedRequest<LocationsResponse>(url, accessToken);
+    const url = `${GOOGLE_MY_BUSINESS_API_BASE}/${accountName}/locations?readMask=name,title,storefrontAddress,phoneNumbers,websiteUri,regularHours,metadata,profile`;
+    const data = await makeAuthorizedRequest<LocationsResponse>(
+      url,
+      accessToken
+    );
     return data.locations || [];
   } catch (error) {
     console.error("Error listing locations for account:", accountName, error);
@@ -143,7 +169,10 @@ export async function listAllLocations(
     const allLocations: GoogleBusinessProfileLocation[] = [];
 
     for (const account of accounts) {
-      const locations = await listLocationsForAccount(account.name, accessToken);
+      const locations = await listLocationsForAccount(
+        account.name,
+        accessToken
+      );
 
       for (const location of locations) {
         allLocations.push({
@@ -151,6 +180,10 @@ export async function listAllLocations(
           id: location.name,
           name: location.title,
           address: formatAddress(location),
+          phoneNumber: location.phoneNumbers?.primaryPhone,
+          websiteUrl: location.websiteUri,
+          mapsUrl: location.metadata?.mapsUri,
+          description: location.profile?.description,
         });
       }
     }

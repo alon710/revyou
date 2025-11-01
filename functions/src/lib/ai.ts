@@ -27,11 +27,9 @@ export async function generateAIReply(
   const prompt = buildReplyPrompt(
     config,
     reviewData,
-    config.locationName ?? "",
-    config.locationPhone
+    config.name,
+    config.phoneNumber
   );
 
-  const reply = await generateWithGemini(geminiApiKey, prompt);
-
-  return reply;
+  return await generateWithGemini(geminiApiKey, prompt);
 }
