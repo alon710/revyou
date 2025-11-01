@@ -123,7 +123,7 @@ service cloud.firestore {
         request.resource.data.emailOnNewReview is bool &&
         (!('phoneNumber' in request.resource.data) || validStringLength(request.resource.data.phoneNumber, 0, 50)) &&
         (!('websiteUrl' in request.resource.data) || validStringLength(request.resource.data.websiteUrl, 1, 200)) &&
-        (!('mapsUrl' in request.resource.data) || validStringLength(request.resource.data.mapsUrl, 1, 200)) &&
+        (!('mapsUrl' in request.resource.data) || validStringLength(request.resource.data.mapsUrl, 1, 2000)) &&
         (!('description' in request.resource.data) || validStringLength(request.resource.data.description, 0, 5000)) &&
         // Validate config structure
         request.resource.data.config.keys().hasAll(['name', 'toneOfVoice', 'useEmojis', 'languageMode', 'starConfigs']) &&

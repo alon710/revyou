@@ -1,4 +1,5 @@
 import { OAuth2Client } from "google-auth-library";
+import * as Iron from "@hapi/iron";
 import { GoogleBusinessProfileLocation } from "@/types/database";
 
 const GOOGLE_MY_BUSINESS_API_BASE =
@@ -209,6 +210,18 @@ export async function listAllLocations(
   }
 }
 
-export function decryptToken(encryptedToken: string): string {
-  return Buffer.from(encryptedToken, "base64").toString();
+export async function decryptToken(encryptedToken: string): Promise<string> {
+  const secret = process.env.TOKEN_ENCRYPTION_SECRET;
+
+  if (!secret) {
+    throw new Error("TOKEN_ENCRYPTION_SECRET not configured");
+  }
+
+  try {
+    const unsealed = await Iron.unseal(encryptedToken, secret, Iron.defaults);
+    return unsealed as string;
+  } catch (error) {
+    console.error("Error decrypting token:", error);
+    throw new Error("Failed to decrypt token");
+  }
 }

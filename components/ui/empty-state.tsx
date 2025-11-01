@@ -10,7 +10,7 @@ export function EmptyState() {
         אוטומטיות לביקורות הלקוחות שלך
       </p>
       <Button asChild>
-        <Link href="/locations/connect">חבר עסק ראשון</Link>
+        <Link href="/dashboard/locations/connect">חבר עסק ראשון</Link>
       </Button>
     </div>
   );

@@ -1,4 +1,5 @@
 import { OAuth2Client } from "google-auth-library";
+import * as Iron from "@hapi/iron";
 
 const GOOGLE_BUSINESS_PROFILE_API_SCOPES = [
   "https://www.googleapis.com/auth/business.manage",
@@ -41,6 +42,17 @@ export async function exchangeCodeForTokens(code: string) {
   }
 }
 
-export function encryptToken(token: string): string {
-  return Buffer.from(token).toString("base64");
+export async function encryptToken(token: string): Promise<string> {
+  const secret = process.env.TOKEN_ENCRYPTION_SECRET;
+
+  if (!secret) {
+    throw new Error("TOKEN_ENCRYPTION_SECRET not configured");
+  }
+
+  try {
+    return await Iron.seal(token, secret, Iron.defaults);
+  } catch (error) {
+    console.error("Error encrypting token:", error);
+    throw new Error("Failed to encrypt token");
+  }
 }

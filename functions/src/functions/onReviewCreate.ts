@@ -61,19 +61,7 @@ async function handleAIReply(
   try {
     console.log("Generating AI reply", { reviewId: eventData.id });
 
-    const reviewData = {
-      rating: review.rating as 1 | 2 | 3 | 4 | 5,
-      name: review.name,
-      text: review.text,
-      date: review.date ? review.date.toDate() : new Date(),
-    };
-
-    const prompt = buildReplyPrompt(
-      config,
-      reviewData,
-      businessName,
-      phoneNumber
-    );
+    const prompt = buildReplyPrompt(config, review, businessName, phoneNumber);
 
     const aiReply = await generateWithGemini(apiKey, prompt);
 

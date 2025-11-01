@@ -20,15 +20,6 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
-  webpack: (config) => {
-    // Completely ignore the functions directory
-    config.watchOptions = {
-      ...config.watchOptions,
-      ignored: ["**/node_modules", "**/functions/**"],
-    };
-
-    return config;
-  },
 };
 
 export default nextConfig;

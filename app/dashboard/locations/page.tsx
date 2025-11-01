@@ -79,7 +79,7 @@ export default function LocationsPage() {
               variant="inline"
             />
             <Button asChild disabled={!canAddMore} variant="outline" size="sm">
-              <Link href="/locations/connect">הוסף עסק</Link>
+              <Link href="/dashboard/locations/connect">הוסף עסק</Link>
             </Button>
           </>
         }

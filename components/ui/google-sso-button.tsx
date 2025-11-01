@@ -14,34 +14,18 @@ const GoogleSsoButton = React.forwardRef<
     <button
       ref={ref}
       className={cn(
-        "inline-flex items-center justify-center w-full gap-3",
-
-        "bg-white dark:bg-[#131314]",
-        "text-[#1F1F1F] dark:text-[#E3E3E3]",
-
-        "border border-[#747775]/60 dark:border-[#8E918F]/60",
-
-        "rounded-lg shadow-sm hover:shadow-md",
-        "transition-all",
-
-        "font-sans font-medium text-sm",
-
-        "px-3 py-2.5 h-11",
-
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        "inline-flex items-center justify-center gap-2 w-full h-9 px-4 py-2",
+        "rounded-md text-sm font-medium border border-input bg-background shadow-sm",
+        "hover:bg-accent hover:text-accent-foreground transition-colors",
+        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
         "disabled:pointer-events-none disabled:opacity-50",
-        "hover:bg-[#F8F9FA] dark:hover:bg-[#1F1F1F]",
         "cursor-pointer",
         className
       )}
       disabled={isLoading || props.disabled}
       {...props}
     >
-      <svg
-        className="h-5 w-5 shrink-0"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
         <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
           <path
             fill="#4285F4"
@@ -61,10 +45,7 @@ const GoogleSsoButton = React.forwardRef<
           />
         </g>
       </svg>
-
-      <span className="leading-5">
-        {isLoading ? "מתחבר..." : children || "התחבר עם Google"}
-      </span>
+      <span>{isLoading ? "מתחבר..." : children || "התחבר עם גוגל"}</span>
     </button>
   );
 });

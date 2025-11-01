@@ -144,7 +144,7 @@ export function ConnectLocationCard({
       if (onSuccess) {
         onSuccess();
       } else {
-        router.push("/locations");
+        router.push("/dashboard/locations");
       }
     } catch (err) {
       console.error("Error connecting location:", err);

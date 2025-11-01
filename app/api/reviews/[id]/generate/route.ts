@@ -12,16 +12,9 @@ export async function POST(
 ) {
   try {
     const authResult = await getAuthenticatedUserId();
-    if (authResult instanceof NextResponse) {
-      return authResult;
-    }
-
     const { userId: authenticatedUserId } = authResult;
-
     const { id: reviewId } = await params;
-
     const { userId: requestUserId, locationId: locationId } = await req.json();
-
     if (requestUserId !== authenticatedUserId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -47,11 +40,7 @@ export async function POST(
 
     const prompt = buildReplyPrompt(
       location.config,
-      {
-        rating: review.rating as 1 | 2 | 3 | 4 | 5,
-        name: review.name,
-        text: review.text,
-      },
+      review,
       location.name,
       location.config.phoneNumber
     );
