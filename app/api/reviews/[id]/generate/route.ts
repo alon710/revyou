@@ -64,8 +64,7 @@ export async function POST(
       authenticatedUserId,
       locationId,
       reviewId,
-      aiReply,
-      false
+      aiReply
     );
 
     return NextResponse.json({ aiReply, success: true });
