@@ -44,6 +44,24 @@ service cloud.firestore {
       return rating is int && rating >= 1 && rating <= 5;
     }
 
+    // Validate individual star config structure
+    function isValidStarConfig(starConfig) {
+      return starConfig.keys().hasAll(['customInstructions', 'autoReply']) &&
+             validStringLength(starConfig.customInstructions, 0, 1000) &&
+             starConfig.autoReply is bool;
+    }
+
+    // Validate starConfigs map structure
+    function isValidStarConfigs(starConfigs) {
+      return starConfigs is map &&
+             starConfigs.keys().hasOnly(['1', '2', '3', '4', '5']) &&
+             isValidStarConfig(starConfigs['1']) &&
+             isValidStarConfig(starConfigs['2']) &&
+             isValidStarConfig(starConfigs['3']) &&
+             isValidStarConfig(starConfigs['4']) &&
+             isValidStarConfig(starConfigs['5']);
+    }
+
     // ====== USERS COLLECTION ======
     match /users/{userId} {
       // Users can read and write their own data
@@ -118,10 +136,27 @@ service cloud.firestore {
         (!('languageInstructions' in request.resource.data.config) || validStringLength(request.resource.data.config.languageInstructions, 0, 100)) &&
         (!('maxSentences' in request.resource.data.config) || (request.resource.data.config.maxSentences is int && request.resource.data.config.maxSentences >= 1 && request.resource.data.config.maxSentences <= 5)) &&
         (!('allowedEmojis' in request.resource.data.config) || (request.resource.data.config.allowedEmojis is list && request.resource.data.config.allowedEmojis.size() <= 50)) &&
-        (!('signature' in request.resource.data.config) || validStringLength(request.resource.data.config.signature, 0, 100));
+        (!('signature' in request.resource.data.config) || validStringLength(request.resource.data.config.signature, 0, 100)) &&
+        // Validate starConfigs structure
+        isValidStarConfigs(request.resource.data.config.starConfigs);
 
         // Users can update their own locations
-        allow update: if isOwner(userId);
+        allow update: if isOwner(userId) &&
+        // Validate config structure if being updated
+        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['config']) ||
+        (request.resource.data.config.keys().hasAll(['name', 'toneOfVoice', 'useEmojis', 'languageMode', 'starConfigs']) &&
+        validStringLength(request.resource.data.config.name, 1, 200) &&
+        (!('description' in request.resource.data.config) || validStringLength(request.resource.data.config.description, 0, 2000)) &&
+        (!('phoneNumber' in request.resource.data.config) || validStringLength(request.resource.data.config.phoneNumber, 0, 50)) &&
+        isValidTone(request.resource.data.config.toneOfVoice) &&
+        isValidLanguageMode(request.resource.data.config.languageMode) &&
+        request.resource.data.config.useEmojis is bool &&
+        (!('languageInstructions' in request.resource.data.config) || validStringLength(request.resource.data.config.languageInstructions, 0, 100)) &&
+        (!('maxSentences' in request.resource.data.config) || (request.resource.data.config.maxSentences is int && request.resource.data.config.maxSentences >= 1 && request.resource.data.config.maxSentences <= 5)) &&
+        (!('allowedEmojis' in request.resource.data.config) || (request.resource.data.config.allowedEmojis is list && request.resource.data.config.allowedEmojis.size() <= 50)) &&
+        (!('signature' in request.resource.data.config) || validStringLength(request.resource.data.config.signature, 0, 100)) &&
+        // Validate starConfigs structure
+        isValidStarConfigs(request.resource.data.config.starConfigs)));
 
         // Users can delete their own locations
         allow delete: if isOwner(userId);
