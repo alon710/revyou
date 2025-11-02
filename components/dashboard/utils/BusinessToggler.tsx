@@ -19,6 +19,7 @@ export function BusinessToggler() {
   };
 
   if (loading || businesses.length <= 1) {
+    return null;
   }
 
   return (

@@ -41,7 +41,7 @@ export async function GET() {
     }
 
     return NextResponse.json(
-      { error: "לא ניתן לטעון מיקומים מ-Google Business Profile" },
+      { error: "לא ניתן לטעון עסקים מ-Google Business Profile" },
       { status: 500 }
     );
   }

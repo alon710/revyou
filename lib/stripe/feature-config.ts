@@ -17,7 +17,7 @@ interface FeatureConfig {
 export const FEATURE_CONFIGS: FeatureConfig[] = [
   {
     key: FEATURE_KEYS.MAX_BUSINESSES,
-    displayName: "מספר מיקומים",
+    displayName: "מספר עסקים",
     type: "number",
   },
   {

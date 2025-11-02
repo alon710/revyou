@@ -74,7 +74,7 @@ export function ConnectBusinessCard({
     } catch (err) {
       console.error("Error loading available businesses:", err);
       const errorMessage =
-        err instanceof Error ? err.message : "לא ניתן לטעון מיקומים";
+        err instanceof Error ? err.message : "לא ניתן לטעון עסקים";
       setError(errorMessage);
     } finally {
       setLoadingAvailable(false);
