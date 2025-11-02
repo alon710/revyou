@@ -76,7 +76,7 @@ async function seedDatabase() {
 
     const business1 = {
       googleAccountId: "google_account_123",
-      googleBusinessId: "bsuiness_123",
+      googleBusinessId: "business_123",
       name: "מסעדת חמישים ושמונה",
       address: "רחוב הרצל 58, תל אביב",
       phoneNumber: "03-1234567",
