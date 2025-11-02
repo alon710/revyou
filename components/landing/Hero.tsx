@@ -7,9 +7,7 @@ import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 import lottieJson from "@/public/heroAnimation.json";
 
-interface HeroProps {}
-
-export function Hero({}: HeroProps) {
+export function Hero() {
   return (
     <section className="relative overflow-hidden min-h-[60vh] md:min-h-[90vh] flex items-center rounded-b-[2rem] md:rounded-b-[3rem] lg:rounded-b-[4rem] pt-32">
       <div className="absolute inset-0 bg-gradient-to-br from-[#f8f7fb] via-white to-[#f4f0fb]" />
