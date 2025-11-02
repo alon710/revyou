@@ -47,7 +47,7 @@
       ]
     },
     {
-      "collectionGroup": "locations",
+      "collectionGroup": "businesses",
       "queryScope": "COLLECTION_GROUP",
       "fields": [
         {

@@ -5,7 +5,7 @@ import { reviewSchema } from "@/lib/validation/database";
 
 export async function getReview(
   userId: string,
-  locationId: string,
+  businessId: string,
   reviewId: string
 ): Promise<Review | null> {
   if (!db) {
@@ -18,8 +18,8 @@ export async function getReview(
       db,
       "users",
       userId,
-      "locations",
-      locationId,
+      "businesses",
+      businessId,
       "reviews",
       reviewId
     );

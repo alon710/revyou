@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LocationConfig } from "@/types/database";
+import { BusinessConfig } from "@/types/database";
 import {
   DashboardCard,
   DashboardCardHeader,
@@ -15,9 +15,9 @@ import { Sparkles, Settings } from "lucide-react";
 import { AIResponseSettingsEditModal } from "@/components/dashboard/reviews/AIResponseSettingsEditModal";
 
 interface AIResponseSettingsSectionProps {
-  config: LocationConfig;
+  config: BusinessConfig;
   loading?: boolean;
-  onSave: (config: Partial<LocationConfig>) => Promise<void>;
+  onSave: (config: Partial<BusinessConfig>) => Promise<void>;
 }
 
 export default function AIResponseSettingsSection({

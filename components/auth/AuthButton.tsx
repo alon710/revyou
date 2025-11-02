@@ -40,7 +40,7 @@ export function AuthButton({
     return (
       <div className="flex items-center gap-2">
         {showAccountButton && (
-          <Link href="/dashboard/locations">
+          <Link href="/dashboard/businesses">
             <Button size={size} className={className}>
               החשבון שלי
             </Button>

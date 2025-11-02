@@ -9,13 +9,13 @@ import {
 import { db } from "@/lib/firebase/config";
 import { type PlanLimits, getPlanLimits } from "@/lib/stripe/entitlements";
 import { enrichProduct } from "@/lib/stripe/product-parser";
-import { getUserLocations } from "@/lib/firebase/locations";
+import { getUserBusinesses } from "@/lib/firebase/business";
 
 async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
   if (!db) {
     console.error("Firestore not initialized");
     return {
-      locations: 1,
+      businesses: 1,
       reviewsPerMonth: 5,
       autoPost: false,
       requireApproval: true,
@@ -52,7 +52,7 @@ async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
       }
 
       return {
-        locations: 1,
+        businesses: 1,
         reviewsPerMonth: 5,
         autoPost: false,
         requireApproval: true,
@@ -71,7 +71,7 @@ async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
     if (!productSnapshot.exists()) {
       console.error("Product not found:", productId);
       return {
-        locations: 1,
+        businesses: 1,
         reviewsPerMonth: 5,
         autoPost: false,
         requireApproval: true,
@@ -88,7 +88,7 @@ async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
   } catch (error) {
     console.error("Error fetching user plan limits:", error);
     return {
-      locations: 1,
+      businesses: 1,
       reviewsPerMonth: 5,
       autoPost: false,
       requireApproval: true,
@@ -96,13 +96,13 @@ async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
   }
 }
 
-export async function checkLocationLimit(userId: string): Promise<boolean> {
+export async function checkBusinessLimit(userId: string): Promise<boolean> {
   try {
     const limits = await getUserPlanLimits(userId);
-    const locations = await getUserLocations(userId);
-    return locations.length < limits.locations;
+    const businesses = await getUserBusinesses(userId);
+    return businesses.length < limits.businesses;
   } catch (error) {
-    console.error("Error checking location limit:", error);
+    console.error("Error checking business limit:", error);
     return false;
   }
 }

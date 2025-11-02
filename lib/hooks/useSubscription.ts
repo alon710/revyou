@@ -44,7 +44,7 @@ export function useSubscription(): UseSubscriptionReturn {
   const [error, setError] = useState<string | null>(null);
   const [planType, setPlanType] = useState<PlanType>("free");
   const [limits, setLimits] = useState<PlanLimits>({
-    locations: 1,
+    businesses: 1,
     reviewsPerMonth: 5,
     autoPost: false,
     requireApproval: true,
@@ -57,7 +57,7 @@ export function useSubscription(): UseSubscriptionReturn {
         setSubscription(null);
         setPlanType("free");
         setLimits({
-          locations: 1,
+          businesses: 1,
           reviewsPerMonth: 5,
           autoPost: false,
           requireApproval: true,
@@ -94,7 +94,7 @@ export function useSubscription(): UseSubscriptionReturn {
         const defaultLimits = freeProduct
           ? getPlanLimits(freeProduct)
           : {
-              locations: 1,
+              businesses: 1,
               reviewsPerMonth: 5,
               autoPost: false,
               requireApproval: true,

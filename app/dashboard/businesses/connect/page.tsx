@@ -6,9 +6,9 @@ import { BackButton } from "@/components/ui/back-button";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
-import { ConnectLocationCard } from "@/components/dashboard/locations/ConnectLocationCard";
+import { ConnectBusinessCard } from "@/components/dashboard/businesses/ConnectBusinessCard";
 
-export default function ConnectLocationPage() {
+export default function ConnectBusinessPage() {
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
 
@@ -27,7 +27,7 @@ export default function ConnectLocationPage() {
   return (
     <PageContainer>
       <div className="flex items-center gap-4 mb-6">
-        <BackButton href="/dashboard/locations" />
+        <BackButton href="/dashboard/businesses" />
       </div>
 
       <PageHeader
@@ -35,7 +35,7 @@ export default function ConnectLocationPage() {
         description="חבר את חשבון Google Business Profile שלך"
       />
 
-      <ConnectLocationCard
+      <ConnectBusinessCard
         userId={user.uid}
         successParam={searchParams.get("success")}
         errorParam={searchParams.get("error")}

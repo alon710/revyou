@@ -25,14 +25,14 @@ import { User } from "lucide-react";
 interface ReviewCardProps {
   review: Review;
   userId: string;
-  locationId: string;
+  businessId: string;
   onUpdate?: () => void;
 }
 
 export function ReviewCard({
   review,
   userId,
-  locationId,
+  businessId,
   onUpdate,
 }: ReviewCardProps) {
   const { user } = useAuth();
@@ -56,7 +56,7 @@ export function ReviewCard({
     e.stopPropagation();
     try {
       setIsLoading(true);
-      await rejectReply(userId, locationId, review.id);
+      await rejectReply(userId, businessId, review.id);
       onUpdate?.();
     } catch (error) {
       console.error("Error rejecting reply:", error);
@@ -70,7 +70,7 @@ export function ReviewCard({
 
     try {
       const token = await user.getIdToken();
-      await postReplyToGoogle(userId, locationId, review.id, token);
+      await postReplyToGoogle(userId, businessId, review.id, token);
       onUpdate?.();
     } catch (error) {
       console.error("Error publishing reply:", error);
@@ -85,7 +85,7 @@ export function ReviewCard({
     try {
       setIsLoading(true);
       const token = await user.getIdToken();
-      await regenerateReply(userId, locationId, review.id, token);
+      await regenerateReply(userId, businessId, review.id, token);
       onUpdate?.();
     } catch (error) {
       console.error("Error regenerating reply:", error);
@@ -185,7 +185,7 @@ export function ReviewCard({
       <ReplyEditor
         review={review}
         userId={userId}
-        locationId={locationId}
+        businessId={businessId}
         open={showEditor}
         onClose={() => setShowEditor(false)}
         onSave={() => {

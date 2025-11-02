@@ -5,8 +5,8 @@ import { getAuthenticatedUserId } from "@/lib/api/auth";
 
 export const runtime = "nodejs";
 
-const redirectToLocations = () => {
-  const url = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/locations`;
+const redirectToBusinesses = () => {
+  const url = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/businesses`;
   return NextResponse.redirect(url);
 };
 
@@ -18,40 +18,40 @@ export async function GET(request: NextRequest) {
     const error = searchParams.get("error");
 
     if (error || !code || !state) {
-      return redirectToLocations();
+      return redirectToBusinesses();
     }
 
     const stateData = JSON.parse(Buffer.from(state, "base64").toString());
     const stateUserId = stateData?.userId;
 
     if (!stateUserId) {
-      return redirectToLocations();
+      return redirectToBusinesses();
     }
 
     const authResult = await getAuthenticatedUserId();
     if (authResult instanceof NextResponse) {
-      return redirectToLocations();
+      return redirectToBusinesses();
     }
 
     const { userId: authenticatedUserId } = authResult;
 
     if (stateUserId !== authenticatedUserId) {
       console.error("State userId mismatch with authenticated user");
-      return redirectToLocations();
+      return redirectToBusinesses();
     }
 
     const tokens = await exchangeCodeForTokens(code);
 
     if (!tokens.refresh_token) {
-      return redirectToLocations();
+      return redirectToBusinesses();
     }
 
     const encryptedToken = await encryptToken(tokens.refresh_token);
     await updateUserGoogleRefreshToken(authenticatedUserId, encryptedToken);
 
-    return redirectToLocations();
+    return redirectToBusinesses();
   } catch (error) {
     console.error("Error in OAuth callback", error);
-    return redirectToLocations();
+    return redirectToBusinesses();
   }
 }

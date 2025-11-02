@@ -47,7 +47,7 @@ if (getApps().length === 0) {
 const db = getFirestore();
 
 const USER_ID = process.env.SEED_REVIEW_USER_ID || "";
-const LOCATION_ID = process.env.SEED_REVIEW_LOCATION_ID || "";
+const BUSINESS_ID = process.env.SEED_REVIEW_BUSINESS_ID || "";
 const RATING = process.env.SEED_REVIEW_RATING;
 const REVIEW_TEXT = process.env.SEED_REVIEW_TEXT || "";
 const REVIEWER_NAME = process.env.SEED_REVIEW_REVIEWER_NAME;
@@ -61,10 +61,10 @@ if (!USER_ID) {
   process.exit(1);
 }
 
-if (!LOCATION_ID) {
-  console.error("⚠️  Missing SEED_REVIEW_LOCATION_ID in .env.local");
+if (!BUSINESS_ID) {
+  console.error("⚠️  Missing SEED_REVIEW_BUSINESS_ID in .env.local");
   console.error(
-    "   Please set SEED_REVIEW_LOCATION_ID (e.g., location_test_001)"
+    "   Please set SEED_REVIEW_BUSINESS_ID (e.g., business_test_001)"
   );
   process.exit(1);
 }
@@ -104,26 +104,26 @@ async function seedReview() {
   console.log("🌱 Starting review seeding...\n");
 
   try {
-    console.log(`🔍 Verifying location ${LOCATION_ID}...`);
-    const locationRef = db
+    console.log(`🔍 Verifying business ${BUSINESS_ID}...`);
+    const businessRef = db
       .collection("users")
       .doc(USER_ID)
-      .collection("locations")
-      .doc(LOCATION_ID);
+      .collection("businesses")
+      .doc(BUSINESS_ID);
 
-    const locationDoc = await locationRef.get();
-    if (!locationDoc.exists) {
+    const businessDoc = await businessRef.get();
+    if (!businessDoc.exists) {
       console.error(
-        `⚠️  Location ${LOCATION_ID} does not exist for user ${USER_ID}`
+        `⚠️  Business ${BUSINESS_ID} does not exist for user ${USER_ID}`
       );
       console.error(
-        "   Please ensure the location exists or run seed-database.ts first"
+        "   Please ensure the business exists or run seed-database.ts first"
       );
       process.exit(1);
     }
 
-    const locationData = locationDoc.data();
-    console.log(`✅ Location found: ${locationData?.name || LOCATION_ID}\n`);
+    const businessData = businessDoc.data();
+    console.log(`✅ Business found: ${businessData?.name || BUSINESS_ID}\n`);
 
     const reviewId = `google_review_${randomBytes(8).toString("hex")}`;
     const googleReviewId = reviewId;
@@ -149,8 +149,8 @@ async function seedReview() {
     await db
       .collection("users")
       .doc(USER_ID)
-      .collection("locations")
-      .doc(LOCATION_ID)
+      .collection("businesses")
+      .doc(BUSINESS_ID)
       .collection("reviews")
       .doc(reviewId)
       .set(reviewData);
@@ -158,14 +158,14 @@ async function seedReview() {
     console.log(`✅ Review created successfully!\n`);
     console.log("📊 Review Details:");
     console.log(`  - Review ID: ${reviewId}`);
-    console.log(`  - Location: ${locationData?.name || LOCATION_ID}`);
+    console.log(`  - Business: ${businessData?.name || BUSINESS_ID}`);
     console.log(`  - Reviewer: ${REVIEWER_NAME}`);
     console.log(`  - Rating: ${ratingNumber}⭐`);
     console.log(`  - Review Text: ${REVIEW_TEXT || "(empty)"}`);
     console.log(`  - Review Date: ${reviewDate.toISOString()}`);
     console.log(`  - Status: pending`);
 
-    const starConfigs = locationData?.config?.starConfigs;
+    const starConfigs = businessData?.config?.starConfigs;
     const starConfig = starConfigs?.[ratingNumber];
 
     if (starConfig?.autoReply) {
@@ -190,10 +190,10 @@ async function seedReview() {
       console.log("   3. Send an email notification (if enabled)");
     }
 
-    if (locationData?.emailOnNewReview) {
-      console.log("\n📧 Email notifications are ENABLED for this location");
+    if (businessData?.emailOnNewReview) {
+      console.log("\n📧 Email notifications are ENABLED for this business");
     } else {
-      console.log("\n📧 Email notifications are DISABLED for this location");
+      console.log("\n📧 Email notifications are DISABLED for this business");
     }
 
     console.log("\n✨ Review seeding completed successfully!");

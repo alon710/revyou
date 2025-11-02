@@ -109,14 +109,14 @@ service cloud.firestore {
         allow write: if false;
       }
 
-      // ====== LOCATIONS SUBCOLLECTION ======
-      match /locations/{locationId} {
-        // Users can read their own locations (ownership implicit via path)
+      // ====== BUSINESSES SUBCOLLECTION ======
+      match /businesses/{businessId} {
+        // Users can read their own businesses (ownership implicit via path)
         allow read: if isOwner(userId);
 
-        // Users can create locations in their own subcollection
+        // Users can create businesses in their own subcollection
         allow create: if isOwner(userId) &&
-        request.resource.data.keys().hasAll(['googleAccountId', 'googleLocationId', 'name', 'address', 'connected', 'connectedAt', 'config', 'emailOnNewReview']) &&
+        request.resource.data.keys().hasAll(['googleAccountId', 'googleBusinessId', 'name', 'address', 'connected', 'connectedAt', 'config', 'emailOnNewReview']) &&
         validStringLength(request.resource.data.name, 1, 200) &&
         validStringLength(request.resource.data.address, 1, 500) &&
         request.resource.data.connected is bool &&
@@ -140,7 +140,7 @@ service cloud.firestore {
         // Validate starConfigs structure
         isValidStarConfigs(request.resource.data.config.starConfigs);
 
-        // Users can update their own locations
+        // Users can update their own businesses
         allow update: if isOwner(userId) &&
         // Validate config structure if being updated
         (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['config']) ||
@@ -158,12 +158,12 @@ service cloud.firestore {
         // Validate starConfigs structure
         isValidStarConfigs(request.resource.data.config.starConfigs)));
 
-        // Users can delete their own locations
+        // Users can delete their own businesses
         allow delete: if isOwner(userId);
 
         // ====== REVIEWS SUBCOLLECTION ======
         match /reviews/{reviewId} {
-          // Users can read reviews in their own locations (ownership implicit via path)
+          // Users can read reviews in their own businesses (ownership implicit via path)
           allow read: if isOwner(userId);
 
           // Cloud Functions and users can create reviews

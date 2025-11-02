@@ -18,7 +18,7 @@ import { Edit } from "lucide-react";
 interface ReplyEditorProps {
   review: Review;
   userId: string;
-  locationId: string;
+  businessId: string;
   open: boolean;
   onClose: () => void;
   onSave: () => void;
@@ -29,7 +29,7 @@ interface ReplyEditorProps {
 export function ReplyEditor({
   review,
   userId,
-  locationId,
+  businessId,
   open,
   onClose,
   onSave,
@@ -42,7 +42,7 @@ export function ReplyEditor({
   const handleSave = async () => {
     try {
       setIsLoading(true);
-      await editReply(userId, locationId, review.id, replyText);
+      await editReply(userId, businessId, review.id, replyText);
       onSave();
     } catch (error) {
       console.error("Error saving reply:", error);

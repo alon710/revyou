@@ -1,42 +1,42 @@
-import { DEFAULT_LOCATION_PROMPT_TEMPLATE } from "./template";
-import type { LocationConfig, Review } from "@/types/database";
+import { DEFAULT_BUSINESS_PROMPT_TEMPLATE } from "./template";
+import type { BusinessConfig, Review } from "@/types/database";
 import Mustache from "mustache";
 
 export function buildReplyPrompt(
-  locationConfig: LocationConfig,
+  businessConfig: BusinessConfig,
   review: Review,
-  locationName: string,
-  locationPhone?: string
+  businessName: string,
+  businessPhone?: string
 ): string {
-  const languageMode = locationConfig.languageMode;
+  const languageMode = businessConfig.languageMode;
   const isAutoDetect = languageMode === "auto-detect";
   const targetLanguage = isAutoDetect ? undefined : languageMode;
 
   const templateData = {
-    LOCATION_NAME: locationName || "",
-    LOCATION_DESCRIPTION: locationConfig.description || "",
-    LOCATION_PHONE: locationPhone || locationConfig.phoneNumber || "",
+    BUSINESS_NAME: businessName || "",
+    BUSINESS_DESCRIPTION: businessConfig.description || "",
+    BUSINESS_PHONE: businessPhone || businessConfig.phoneNumber || "",
     IS_AUTO_DETECT: isAutoDetect,
     TARGET_LANGUAGE: targetLanguage,
-    TONE: locationConfig.toneOfVoice,
-    ALLOWED_EMOJIS: locationConfig.allowedEmojis?.join(" ") || "",
-    MAX_SENTENCES: locationConfig.maxSentences || 2,
-    SIGNATURE: locationConfig.signature || `צוות ${locationName}`,
+    TONE: businessConfig.toneOfVoice,
+    ALLOWED_EMOJIS: businessConfig.allowedEmojis?.join(" ") || "",
+    MAX_SENTENCES: businessConfig.maxSentences || 2,
+    SIGNATURE: businessConfig.signature || `צוות ${businessName}`,
     CUSTOM_INSTRUCTIONS_1:
-      locationConfig.starConfigs?.[1]?.customInstructions || "",
+      businessConfig.starConfigs?.[1]?.customInstructions || "",
     CUSTOM_INSTRUCTIONS_2:
-      locationConfig.starConfigs?.[2]?.customInstructions || "",
+      businessConfig.starConfigs?.[2]?.customInstructions || "",
     CUSTOM_INSTRUCTIONS_3:
-      locationConfig.starConfigs?.[3]?.customInstructions || "",
+      businessConfig.starConfigs?.[3]?.customInstructions || "",
     CUSTOM_INSTRUCTIONS_4:
-      locationConfig.starConfigs?.[4]?.customInstructions || "",
+      businessConfig.starConfigs?.[4]?.customInstructions || "",
     CUSTOM_INSTRUCTIONS_5:
-      locationConfig.starConfigs?.[5]?.customInstructions || "",
+      businessConfig.starConfigs?.[5]?.customInstructions || "",
     RATING: review.rating,
     REVIEWER_NAME: review.name || "",
     REVIEW_TEXT: review.text || "(אין טקסט)",
   };
 
-  const template = DEFAULT_LOCATION_PROMPT_TEMPLATE;
+  const template = DEFAULT_BUSINESS_PROMPT_TEMPLATE;
   return Mustache.render(template, templateData);
 }

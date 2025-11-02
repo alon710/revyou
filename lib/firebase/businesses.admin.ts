@@ -1,23 +1,22 @@
 import { adminDb } from "@/lib/firebase/admin";
-import { Location } from "@/types/database";
-import { locationSchemaAdmin } from "@/lib/validation/database.admin";
+import { Business } from "@/types/database";
+import { businessSchemaAdmin } from "@/lib/validation/database.admin";
 
-export async function getLocationAdmin(
+export async function getBusinessAdmin(
   userId: string,
-  locationId: string
-): Promise<Location | null> {
+  businessId: string
+): Promise<Business | null> {
   try {
-    const locationRef = adminDb
+    const businessRef = adminDb
       .collection("users")
       .doc(userId)
-      .collection("locations")
-      .doc(locationId);
-    const locationSnap = await locationRef.get();
+      .collection("businesses")
+      .doc(businessId);
+    const businessSnap = await businessRef.get();
 
-    if (locationSnap.exists) {
-      const data = locationSnap.data();
+    if (businessSnap.exists) {
+      const data = businessSnap.data();
 
-      // Clean up empty string URLs before validation
       const cleanedData = {
         ...data,
         websiteUrl: data?.websiteUrl === "" ? undefined : data?.websiteUrl,
@@ -25,16 +24,16 @@ export async function getLocationAdmin(
         photoUrl: data?.photoUrl === "" ? undefined : data?.photoUrl,
       };
 
-      const validated = locationSchemaAdmin.parse({
-        id: locationSnap.id,
+      const validated = businessSchemaAdmin.parse({
+        id: businessSnap.id,
         ...cleanedData,
       });
-      return validated as Location;
+      return validated as Business;
     }
 
     return null;
   } catch (error) {
-    console.error("Error fetching location (admin):", error);
+    console.error("Error fetching business (admin):", error);
     if (error instanceof Error) {
       console.error("Error details:", error.message);
       if (error.name === "ZodError") {

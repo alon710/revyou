@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Location, LocationConfig } from "@/types/database";
+import { Business, BusinessConfig } from "@/types/database";
 import {
   Dialog,
   DialogContent,
@@ -16,25 +16,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Building2 } from "lucide-react";
 
-interface LocationIdentityEditModalProps {
-  location: Location;
+interface BusinessIdentityEditModalProps {
+  business: Business;
   open: boolean;
   onClose: () => void;
-  onSave: (config: Partial<LocationConfig>) => Promise<void>;
+  onSave: (config: Partial<BusinessConfig>) => Promise<void>;
 }
 
-export function LocationIdentityEditModal({
-  location,
+export function BusinessIdentityEditModal({
+  business,
   open,
   onClose,
   onSave,
-}: LocationIdentityEditModalProps) {
-  const [locationName, setLocationName] = useState(location.config.name || "");
-  const [locationDescription, setLocationDescription] = useState(
-    location.config.description || ""
+}: BusinessIdentityEditModalProps) {
+  const [businessName, setBusinessName] = useState(business.config.name || "");
+  const [businessDescription, setBusinessDescription] = useState(
+    business.config.description || ""
   );
-  const [locationPhone, setLocationPhone] = useState(
-    location.config.phoneNumber || ""
+  const [businessPhone, setBusinessPhone] = useState(
+    business.config.phoneNumber || ""
   );
   const [isLoading, setIsLoading] = useState(false);
 
@@ -42,22 +42,22 @@ export function LocationIdentityEditModal({
     try {
       setIsLoading(true);
       await onSave({
-        name: locationName,
-        description: locationDescription,
-        phoneNumber: locationPhone,
+        name: businessName,
+        description: businessDescription,
+        phoneNumber: businessPhone,
       });
       onClose();
     } catch (error) {
-      console.error("Error saving location identity:", error);
+      console.error("Error saving business identity:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleCancel = () => {
-    setLocationName(location.config.name || "");
-    setLocationDescription(location.config.description || "");
-    setLocationPhone(location.config.phoneNumber || "");
+    setBusinessName(business.config.name || "");
+    setBusinessDescription(business.config.description || "");
+    setBusinessPhone(business.config.phoneNumber || "");
     onClose();
   };
 
@@ -76,30 +76,30 @@ export function LocationIdentityEditModal({
 
         <div className="space-y-6 py-4">
           <div className="space-y-2">
-            <Label htmlFor="locationName" className="text-right block">
+            <Label htmlFor="businessName" className="text-right block">
               שם העסק
             </Label>
             <Input
-              id="locationName"
+              id="businessName"
               type="text"
-              value={locationName}
-              onChange={(e) => setLocationName(e.target.value)}
-              placeholder={location.name}
+              value={businessName}
+              onChange={(e) => setBusinessName(e.target.value)}
+              placeholder={business.name}
               disabled={isLoading}
             />
             <p className="text-xs text-muted-foreground text-right">
-              השאר ריק כדי להשתמש בשם מ-Google: {location.name}
+              השאר ריק כדי להשתמש בשם מ-Google: {business.name}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="locationDescription" className="text-right block">
+            <Label htmlFor="businessDescription" className="text-right block">
               תיאור העסק
             </Label>
             <Textarea
-              id="locationDescription"
-              value={locationDescription}
-              onChange={(e) => setLocationDescription(e.target.value)}
+              id="businessDescription"
+              value={businessDescription}
+              onChange={(e) => setBusinessDescription(e.target.value)}
               placeholder="תאר את העסק שלך, את השירותים שאתה מספק..."
               rows={4}
               disabled={isLoading}
@@ -111,14 +111,14 @@ export function LocationIdentityEditModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="locationPhone" className="text-right block">
+            <Label htmlFor="businessPhone" className="text-right block">
               טלפון ליצירת קשר (לביקורות שליליות)
             </Label>
             <Input
-              id="locationPhone"
+              id="businessPhone"
               type="tel"
-              value={locationPhone}
-              onChange={(e) => setLocationPhone(e.target.value)}
+              value={businessPhone}
+              onChange={(e) => setBusinessPhone(e.target.value)}
               placeholder="039025977"
               disabled={isLoading}
             />

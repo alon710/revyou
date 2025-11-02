@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useLocation } from "@/contexts/LocationContext";
+import { useBusiness } from "@/contexts/BusinessContext";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { getUser } from "@/lib/firebase/users";
 import { getReviewCountThisMonth } from "@/lib/subscription/usage-stats";
@@ -15,7 +15,7 @@ import { Loading } from "@/components/ui/loading";
 
 export default function SettingsPage() {
   const { user: authUser, loading: authLoading } = useAuth();
-  const { locations } = useLocation();
+  const { businesses } = useBusiness();
   const {
     subscription,
     limits,
@@ -75,7 +75,7 @@ export default function SettingsPage() {
       <SubscriptionInfo
         limits={limits}
         subscription={subscription}
-        currentLocations={locations.length}
+        currentBusiness={businesses.length}
         currentReviews={reviewCount}
       />
     </PageContainer>

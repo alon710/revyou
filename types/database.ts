@@ -12,7 +12,7 @@ export interface User {
   createdAt: Timestamp;
   stripeCustomerId?: string;
   googleRefreshToken?: string;
-  selectedLocationId?: string;
+  selectedBusinessId?: string;
 }
 
 export interface StarConfig {
@@ -20,7 +20,7 @@ export interface StarConfig {
   autoReply: boolean;
 }
 
-export interface LocationConfig {
+export interface BusinessConfig {
   name: string;
   description?: string;
   phoneNumber?: string;
@@ -42,7 +42,7 @@ export interface LocationConfig {
   };
 }
 
-export interface GoogleBusinessProfileLocation {
+export interface GoogleBusinessProfileBusiness {
   accountId: string;
   id: string;
   name: string;
@@ -54,10 +54,10 @@ export interface GoogleBusinessProfileLocation {
   photoUrl?: string;
 }
 
-export interface Location {
+export interface Business {
   id: string;
   googleAccountId: string;
-  googleLocationId: string;
+  googleBusinessId: string;
   name: string;
   address: string;
   phoneNumber?: string;
@@ -67,7 +67,7 @@ export interface Location {
   photoUrl?: string;
   connected: boolean;
   connectedAt: Timestamp;
-  config: LocationConfig;
+  config: BusinessConfig;
   emailOnNewReview: boolean;
 }
 
@@ -90,4 +90,4 @@ export interface Review {
   postedBy?: string | null;
 }
 
-export { DEFAULT_LOCATION_PROMPT_TEMPLATE } from "@/lib/ai/prompts/template";
+export { DEFAULT_BUSINESS_PROMPT_TEMPLATE } from "@/lib/ai/prompts/template";

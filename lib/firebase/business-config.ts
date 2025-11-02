@@ -1,15 +1,15 @@
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import {
-  Location,
-  LocationConfig,
+  Business,
+  BusinessConfig,
   ToneOfVoice,
   LanguageMode,
 } from "@/types/database";
-import { getLocation } from "@/lib/firebase/locations";
-import { locationConfigSchema } from "@/lib/validation/database";
+import { getBusiness } from "@/lib/firebase/business";
+import { BusinessConfigSchema } from "@/lib/validation/database";
 
-export function getDefaultLocationConfig(): LocationConfig {
+export function getDefaultBusinessConfig(): BusinessConfig {
   return {
     name: "",
     description: "",
@@ -50,22 +50,22 @@ export function getDefaultLocationConfig(): LocationConfig {
   };
 }
 
-export async function updateLocationConfig(
+export async function updateBusinessConfig(
   userId: string,
-  locationId: string,
-  config: Partial<LocationConfig>
-): Promise<Location> {
+  businessId: string,
+  config: Partial<BusinessConfig>
+): Promise<Business> {
   if (!db) {
     throw new Error("Firestore not initialized");
   }
 
   try {
-    const location = await getLocation(userId, locationId);
-    if (!location) {
+    const business = await getBusiness(userId, businessId);
+    if (!business) {
       throw new Error("המיקום לא נמצא");
     }
 
-    const partialSchema = locationConfigSchema.partial();
+    const partialSchema = BusinessConfigSchema.partial();
     const validationResult = partialSchema.safeParse(config);
 
     if (!validationResult.success) {
@@ -76,14 +76,14 @@ export async function updateLocationConfig(
       throw new Error(`נתונים לא תקינים: ${errorMessages}`);
     }
 
-    const updatedConfig = { ...location.config, ...validationResult.data };
+    const updatedConfig = { ...business.config, ...validationResult.data };
 
-    const locationRef = doc(db, "users", userId, "locations", locationId);
-    await updateDoc(locationRef, { config: updatedConfig });
+    const businessRef = doc(db, "users", userId, "businesses", businessId);
+    await updateDoc(businessRef, { config: updatedConfig });
 
-    return (await getLocation(userId, locationId)) as Location;
+    return (await getBusiness(userId, businessId)) as Business;
   } catch (error) {
-    console.error("Error updating location config:", error);
+    console.error("Error updating business config:", error);
     throw new Error("לא ניתן לעדכן את הגדרות המיקום");
   }
 }

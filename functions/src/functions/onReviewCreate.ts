@@ -7,8 +7,8 @@ import { buildReplyPrompt } from "../shared/ai/prompts/builder";
 import { ReviewNotificationEmail } from "../email-templates/review-notification";
 import type {
   Review,
-  LocationConfig,
-  Location,
+  BusinessConfig,
+  Business,
   User,
   StarConfig,
   ReplyStatus,
@@ -20,23 +20,23 @@ const geminiApiKey = defineSecret("GEMINI_API_KEY");
 const appBaseUrl = defineString("APP_BASE_URL");
 const fromEmail = defineString("FROM_EMAIL");
 
-async function getLocation(
+async function getBusiness(
   userId: string,
-  locationId: string
-): Promise<Location | null> {
-  const locationDoc = await db
+  businessId: string
+): Promise<Business | null> {
+  const businessDoc = await db
     .collection("users")
     .doc(userId)
-    .collection("locations")
-    .doc(locationId)
+    .collection("businesses")
+    .doc(businessId)
     .get();
 
-  if (!locationDoc.exists) {
-    console.error("Location not found", { locationId });
+  if (!businessDoc.exists) {
+    console.error("Business not found", { businessId });
     return null;
   }
 
-  return locationDoc.data() as Location;
+  return businessDoc.data() as Business;
 }
 
 async function getUser(userId: string): Promise<User | null> {
@@ -53,7 +53,7 @@ async function getUser(userId: string): Promise<User | null> {
 async function handleAIReply(
   eventData: FirebaseFirestore.DocumentSnapshot,
   review: Review,
-  config: LocationConfig,
+  config: BusinessConfig,
   apiKey: string,
   businessName: string,
   phoneNumber?: string
@@ -112,17 +112,17 @@ async function updateReplyStatus(
   return "pending";
 }
 
-function shouldSendEmail(location: Location): boolean {
-  const enabled = !!location.emailOnNewReview;
+function shouldSendEmail(business: Business): boolean {
+  const enabled = !!business.emailOnNewReview;
   console.log("Email notification setting checked", {
-    locationId: location.id,
+    businessId: business.id,
     emailEnabled: enabled,
   });
   return enabled;
 }
 
 async function sendEmailNotification(
-  location: Location,
+  business: Business,
   review: Review,
   user: User,
   aiReply: string,
@@ -141,7 +141,7 @@ async function sendEmailNotification(
     const emailHtml = render(
       ReviewNotificationEmail({
         recipientName,
-        businessName: location.name,
+        businessName: business.name,
         reviewerName: review.name,
         rating: review.rating,
         reviewText: review.text || "",
@@ -152,7 +152,7 @@ async function sendEmailNotification(
       })
     );
 
-    const subject = `ביקורת חדשה התקבלה: ${review.rating} כוכבים - ${location.name}`;
+    const subject = `ביקורת חדשה התקבלה: ${review.rating} כוכבים - ${business.name}`;
 
     await db.collection("emails").add({
       to: recipientEmail,
@@ -172,7 +172,7 @@ async function sendEmailNotification(
 
 export const onReviewCreate = onDocumentCreated(
   {
-    document: "users/{userId}/locations/{locationId}/reviews/{reviewId}",
+    document: "users/{userId}/businesses/{businessId}/reviews/{reviewId}",
     secrets: [geminiApiKey],
     timeoutSeconds: 300,
     minInstances: 0,
@@ -186,24 +186,24 @@ export const onReviewCreate = onDocumentCreated(
       return;
     }
 
-    const { userId, locationId, reviewId } = event.params;
-    console.log("Processing new review", { userId, locationId, reviewId });
+    const { userId, businessId, reviewId } = event.params;
+    console.log("Processing new review", { userId, businessId, reviewId });
 
     try {
       const review = eventData.data() as Review;
-      const location = await getLocation(userId, locationId);
-      if (!location) return;
+      const business = await getBusiness(userId, businessId);
+      if (!business) return;
 
       const starConfig: StarConfig =
-        location.config.starConfigs[review.rating as 1 | 2 | 3 | 4 | 5];
+        business.config.starConfigs[review.rating as 1 | 2 | 3 | 4 | 5];
 
       const aiReply = await handleAIReply(
         eventData,
         review,
-        location.config,
+        business.config,
         geminiApiKey.value(),
-        location.name,
-        location.config.phoneNumber
+        business.name,
+        business.config.phoneNumber
       );
 
       if (!aiReply) return;
@@ -218,9 +218,9 @@ export const onReviewCreate = onDocumentCreated(
 
       if (!user) return;
 
-      if (shouldSendEmail(location)) {
+      if (shouldSendEmail(business)) {
         await sendEmailNotification(
-          location,
+          business,
           review,
           user,
           aiReply,
@@ -236,7 +236,7 @@ export const onReviewCreate = onDocumentCreated(
       console.error("Error processing review", {
         error,
         userId,
-        locationId,
+        businessId,
         reviewId,
       });
       throw error;

@@ -2,33 +2,33 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { createLocation, getUserLocations } from "@/lib/firebase/locations";
-import { checkLocationLimit } from "@/lib/firebase/location-limits";
-import { GoogleBusinessProfileLocation, Location } from "@/types/database";
+import { createBusiness, getUserBusinesses } from "@/lib/firebase/business";
+import { checkBusinessLimit } from "@/lib/firebase/business-limits";
+import { GoogleBusinessProfileBusiness, Business } from "@/types/database";
 import { Loading } from "@/components/ui/loading";
-import { ConnectedLocationsList } from "./ConnectedLocationsList";
+import { ConnectedBusinessesList } from "./ConnectedBusinessesList";
 import { OAuthPrompt } from "./OAuthPrompt";
-import { LocationSelector } from "./LocationSelector";
+import { BusinessSelector } from "./BusinessSelector";
 
-interface ConnectLocationCardProps {
+interface ConnectBusinessCardProps {
   userId: string;
   onSuccess?: () => void;
   successParam?: string | null;
   errorParam?: string | null;
 }
 
-export function ConnectLocationCard({
+export function ConnectBusinessCard({
   userId,
   onSuccess,
   successParam,
   errorParam,
-}: ConnectLocationCardProps) {
+}: ConnectBusinessCardProps) {
   const router = useRouter();
 
   const [step, setStep] = useState<"auth" | "select">("auth");
-  const [existingLocations, setExistingLocations] = useState<Location[]>([]);
-  const [availableLocations, setAvailableLocations] = useState<
-    GoogleBusinessProfileLocation[]
+  const [existingBusinesses, setExistingBusinesses] = useState<Business[]>([]);
+  const [availableBusinesses, setAvailableBusinesses] = useState<
+    GoogleBusinessProfileBusiness[]
   >([]);
   const [loading, setLoading] = useState(false);
   const [loadingExisting, setLoadingExisting] = useState(true);
@@ -36,24 +36,24 @@ export function ConnectLocationCard({
   const [error, setError] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
 
-  const loadExistingLocations = useCallback(async () => {
+  const loadExistingBusinesses = useCallback(async () => {
     try {
       setLoadingExisting(true);
-      const locations = await getUserLocations(userId);
-      setExistingLocations(locations);
+      const businesses = await getUserBusinesses(userId);
+      setExistingBusinesses(businesses);
     } catch (err) {
-      console.error("Error loading existing locations:", err);
+      console.error("Error loading existing businesses:", err);
     } finally {
       setLoadingExisting(false);
     }
   }, [userId]);
 
-  const loadAvailableLocations = useCallback(async () => {
+  const loadAvailableBusinesses = useCallback(async () => {
     try {
       setLoadingAvailable(true);
       setError(null);
 
-      const response = await fetch("/api/google/locations");
+      const response = await fetch("/api/google/businesses");
       const data = await response.json();
 
       if (!response.ok) {
@@ -63,18 +63,18 @@ export function ConnectLocationCard({
               "Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב."
           );
         }
-        throw new Error(data.error || "Failed to load locations");
+        throw new Error(data.error || "Failed to load businesses");
       }
 
-      setAvailableLocations(data.locations);
+      setAvailableBusinesses(data.businesses);
 
-      if (data.locations.length === 0) {
+      if (data.businesses.length === 0) {
         setError("לא נמצאו עסקים בחשבון Google Business Profile שלך");
       }
     } catch (err) {
-      console.error("Error loading available locations:", err);
+      console.error("Error loading available businesses:", err);
       const errorMessage =
-        err instanceof Error ? err.message : "לא ניתן לטעון מיקומים";
+        err instanceof Error ? err.message : "לא ניתן לטעון עסקים";
       setError(errorMessage);
     } finally {
       setLoadingAvailable(false);
@@ -82,26 +82,26 @@ export function ConnectLocationCard({
   }, []);
 
   useEffect(() => {
-    loadExistingLocations();
-  }, [loadExistingLocations]);
+    loadExistingBusinesses();
+  }, [loadExistingBusinesses]);
 
   useEffect(() => {
     if (successParam === "true") {
       setStep("select");
-      loadAvailableLocations();
+      loadAvailableBusinesses();
     }
 
     if (errorParam) {
       setError(errorParam);
     }
-  }, [successParam, errorParam, loadAvailableLocations]);
+  }, [successParam, errorParam, loadAvailableBusinesses]);
 
   const handleStartOAuth = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const canAdd = await checkLocationLimit(userId);
+      const canAdd = await checkBusinessLimit(userId);
       if (!canAdd) {
         setError(
           "הגעת למגבלת העסקים בחבילת המינוי שלך. שדרג כדי להוסיף עסקים נוספים."
@@ -118,36 +118,36 @@ export function ConnectLocationCard({
     }
   };
 
-  const handleConnect = async (location: GoogleBusinessProfileLocation) => {
+  const handleConnect = async (business: GoogleBusinessProfileBusiness) => {
     try {
       setConnecting(true);
       setError(null);
 
-      const canAdd = await checkLocationLimit(userId);
+      const canAdd = await checkBusinessLimit(userId);
       if (!canAdd) {
         setError("הגעת למגבלת העסקים בחבילת המינוי שלך");
         return;
       }
 
-      await createLocation({
+      await createBusiness({
         userId,
-        googleAccountId: location.accountId,
-        googleLocationId: location.id,
-        name: location.name,
-        address: location.address,
-        phoneNumber: location.phoneNumber,
-        websiteUrl: location.websiteUrl,
-        mapsUrl: location.mapsUrl,
-        description: location.description,
+        googleAccountId: business.accountId,
+        googleBusinessId: business.id,
+        name: business.name,
+        address: business.address,
+        phoneNumber: business.phoneNumber,
+        websiteUrl: business.websiteUrl,
+        mapsUrl: business.mapsUrl,
+        description: business.description,
       });
 
       if (onSuccess) {
         onSuccess();
       } else {
-        router.push("/dashboard/locations");
+        router.push("/dashboard/businesses");
       }
     } catch (err) {
-      console.error("Error connecting location:", err);
+      console.error("Error connecting business:", err);
       const errorMessage =
         err instanceof Error ? err.message : "לא ניתן לחבר את העסק";
       setError(errorMessage);
@@ -166,25 +166,25 @@ export function ConnectLocationCard({
 
   return (
     <div className="space-y-4">
-      {existingLocations.length > 0 && step === "auth" && (
-        <ConnectedLocationsList
-          locations={existingLocations}
+      {existingBusinesses.length > 0 && step === "auth" && (
+        <ConnectedBusinessesList
+          businesses={existingBusinesses}
           onAddNew={handleStartOAuth}
           loading={loading}
         />
       )}
 
-      {existingLocations.length === 0 && step === "auth" && (
+      {existingBusinesses.length === 0 && step === "auth" && (
         <OAuthPrompt onConnect={handleStartOAuth} loading={loading} />
       )}
 
       {step === "select" && (
-        <LocationSelector
-          locations={availableLocations}
+        <BusinessSelector
+          businesses={availableBusinesses}
           loading={loadingAvailable}
           error={error}
           onSelect={handleConnect}
-          onRetry={loadAvailableLocations}
+          onRetry={loadAvailableBusinesses}
           connecting={connecting}
         />
       )}

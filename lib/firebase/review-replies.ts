@@ -5,7 +5,7 @@ import { getReview } from "@/lib/firebase/reviews";
 
 export async function updateReviewReply(
   userId: string,
-  locationId: string,
+  businessId: string,
   reviewId: string,
   reply: string
 ): Promise<Review> {
@@ -18,8 +18,8 @@ export async function updateReviewReply(
       db,
       "users",
       userId,
-      "locations",
-      locationId,
+      "businesses",
+      businessId,
       "reviews",
       reviewId
     );
@@ -30,7 +30,7 @@ export async function updateReviewReply(
 
     await updateDoc(reviewRef, updateData);
 
-    return (await getReview(userId, locationId, reviewId)) as Review;
+    return (await getReview(userId, businessId, reviewId)) as Review;
   } catch (error) {
     console.error("Error updating review reply:", error);
     throw new Error("לא ניתן לעדכן את התגובה");
@@ -39,7 +39,7 @@ export async function updateReviewReply(
 
 export async function rejectReply(
   userId: string,
-  locationId: string,
+  businessId: string,
   reviewId: string
 ): Promise<Review> {
   if (!db) {
@@ -51,14 +51,14 @@ export async function rejectReply(
       db,
       "users",
       userId,
-      "locations",
-      locationId,
+      "businesses",
+      businessId,
       "reviews",
       reviewId
     );
     await updateDoc(reviewRef, { replyStatus: "rejected" });
 
-    return (await getReview(userId, locationId, reviewId)) as Review;
+    return (await getReview(userId, businessId, reviewId)) as Review;
   } catch (error) {
     console.error("Error rejecting reply:", error);
     throw new Error("לא ניתן לדחות את התגובה");
