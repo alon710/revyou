@@ -48,7 +48,7 @@ export async function getUserBusinesses(userId: string): Promise<Business[]> {
     return businesses;
   } catch (error) {
     console.error("Error fetching businesses:", error);
-    throw new Error("לא ניתן לטעון את המיקומים");
+    throw new Error("לא ניתן לטעון את העסקים");
   }
 }
 
@@ -74,7 +74,7 @@ export async function getBusiness(
     return null;
   } catch (error) {
     console.error("Error fetching business:", error);
-    throw new Error("לא ניתן לטעון את פרטי המיקום");
+    throw new Error("לא ניתן לטעון את פרטי העסק");
   }
 }
 
@@ -95,7 +95,7 @@ export async function createBusiness(
   try {
     const canCreate = await checkBusinessLimit(data.userId);
     if (!canCreate) {
-      throw new Error("הגעת למגבלת המיקומים עבור חבילת המינוי שלך");
+      throw new Error("הגעת למגבלת העסקים עבור חבילת המינוי שלך");
     }
 
     const defaultConfig = getDefaultBusinessConfig();
@@ -132,7 +132,7 @@ export async function createBusiness(
     if (error instanceof Error && error.message.includes("מגבלת")) {
       throw error;
     }
-    throw new Error("לא ניתן ליצור מיקום חדש");
+    throw new Error("לא ניתן ליצור עסק חדש");
   }
 }
 
@@ -154,7 +154,7 @@ export async function updateBusiness(
     return (await getBusiness(userId, businessId)) as Business;
   } catch (error) {
     console.error("Error updating business:", error);
-    throw new Error("לא ניתן לעדכן את המיקום");
+    throw new Error("לא ניתן לעדכן את העסק");
   }
 }
 
@@ -171,6 +171,6 @@ export async function deleteBusiness(
     await deleteDoc(businessRef);
   } catch (error) {
     console.error("Error deleting business:", error);
-    throw new Error("לא ניתן למחוק את המיקום");
+    throw new Error("לא ניתן למחוק את העסק");
   }
 }
