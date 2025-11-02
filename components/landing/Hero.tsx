@@ -1,16 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { YouTubePlayer } from "@/components/ui/youtube-player";
+import { LottiePlayer } from "@/components/ui/lottie-player";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
+import lottieJson from "@/public/heroAnimation.json";
 
-interface HeroProps {
-  videoId?: string;
-}
+interface HeroProps {}
 
-export function Hero({ videoId }: HeroProps) {
+export function Hero({}: HeroProps) {
   return (
     <section className="relative overflow-hidden min-h-[60vh] md:min-h-[90vh] flex items-center rounded-b-[2rem] md:rounded-b-[3rem] lg:rounded-b-[4rem] pt-32">
       <div className="absolute inset-0 bg-gradient-to-br from-[#f8f7fb] via-white to-[#f4f0fb]" />
@@ -27,7 +26,11 @@ export function Hero({ videoId }: HeroProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
           >
-            <YouTubePlayer videoId={videoId} ariaLabel="סרטון הדגמה" />
+            <LottiePlayer
+              animationData={lottieJson}
+              ariaLabel="Hero animation"
+              className="max-w-full"
+            />
           </motion.div>
           <motion.div
             className="w-full md:w-1/2 text-center md:text-right order-1"

@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <main className="flex-grow">
       <section id="hero" className="scroll-mt-20 relative -mt-24 md:-mt-28">
-        <Hero videoId="dQw4w9WgXcQ" />
+        <Hero />
       </section>
 
       <section
