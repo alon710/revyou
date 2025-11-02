@@ -5,11 +5,22 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/lib/firebase/auth";
 import {
-  dashboardNavItems,
+  getDashboardNavItems,
   landingNavItems,
   getNavigationVariant,
   getIsActive,
 } from "@/lib/navigation";
+import { useUIStore } from "@/lib/store/ui-store";
+import type { NavItem } from "@/lib/navigation";
+
+function selectNavItems(
+  variant: "dashboard" | "landing",
+  businessId?: string
+): NavItem[] {
+  return variant === "dashboard"
+    ? getDashboardNavItems(businessId)
+    : landingNavItems;
+}
 
 export function useNavigation(variant?: "landing" | "dashboard") {
   const { user } = useAuth();
@@ -20,8 +31,11 @@ export function useNavigation(variant?: "landing" | "dashboard") {
   );
 
   const navigationVariant = variant || getNavigationVariant(pathname);
-  const navItems =
-    navigationVariant === "dashboard" ? dashboardNavItems : landingNavItems;
+
+  const businessId =
+    useUIStore((state) => state.lastSelectedBusinessId) || undefined;
+
+  const navItems = selectNavItems(navigationVariant, businessId);
 
   useEffect(() => {
     const handleHashChange = () => {

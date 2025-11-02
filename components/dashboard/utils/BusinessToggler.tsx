@@ -1,6 +1,7 @@
 "use client";
 
-import { useBusiness } from "@/contexts/BusinessContext";
+import { useRouter } from "next/navigation";
+import { Business } from "@/types/database";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,17 +10,38 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IconButton } from "@/components/ui/icon-button";
 import { Building2, Check } from "lucide-react";
+import { useUIStore } from "@/lib/store/ui-store";
 
-export function BusinessToggler() {
-  const { businesses, selectedBusinessId, selectBusiness, loading } =
-    useBusiness();
+interface BusinessTogglerProps {
+  businesses: Business[];
+  currentBusinessId?: string;
+}
+
+export function BusinessToggler({
+  businesses,
+  currentBusinessId,
+}: BusinessTogglerProps) {
+  const router = useRouter();
+  const setLastSelectedBusinessId = useUIStore(
+    (state) => state.setLastSelectedBusinessId
+  );
 
   const handleBusinessChange = (businessId: string) => {
-    selectBusiness(businessId);
+    setLastSelectedBusinessId(businessId);
+    router.push(`/dashboard/businesses/${businessId}`);
   };
 
-  if (loading || businesses.length <= 1) {
+  if (businesses.length === 0) {
     return null;
+  }
+
+  if (businesses.length === 1) {
+    const business = businesses[0];
+    return (
+      <div className="flex items-center gap-3 w-full">
+        <span className="truncate min-w-0">{business.name}</span>
+      </div>
+    );
   }
 
   return (
@@ -39,7 +61,7 @@ export function BusinessToggler() {
             className="cursor-pointer"
           >
             <div className="flex items-center gap-3 w-full">
-              {selectedBusinessId === business.id && (
+              {currentBusinessId === business.id && (
                 <Check className="h-4 w-4 shrink-0 text-primary" />
               )}
               <span className="truncate">{business.name}</span>

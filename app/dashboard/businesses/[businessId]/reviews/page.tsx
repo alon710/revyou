@@ -2,13 +2,12 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useBusiness } from "@/contexts/BusinessContext";
+import { useBusinessData } from "@/contexts/BusinessDataContext";
 import { collection, query, orderBy, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { Review } from "@/types/database";
 import { ReviewCard } from "@/components/dashboard/reviews/ReviewCard";
 import { Loading } from "@/components/ui/loading";
-import { EmptyState } from "@/components/ui/empty-state";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { useRouter } from "next/navigation";
@@ -16,16 +15,12 @@ import { useRouter } from "next/navigation";
 export default function ReviewsPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const {
-    currentBusiness,
-    businesses,
-    loading: businessLoading,
-  } = useBusiness();
+  const { business } = useBusinessData();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadReviews = useCallback(async () => {
-    if (!db || !currentBusiness || !user) {
+    if (!db || !business || !user) {
       setIsLoading(false);
       return;
     }
@@ -34,14 +29,7 @@ export default function ReviewsPage() {
       setIsLoading(true);
 
       const q = query(
-        collection(
-          db,
-          "users",
-          user.uid,
-          "businesses",
-          currentBusiness.id,
-          "reviews"
-        ),
+        collection(db, "users", user.uid, "businesses", business.id, "reviews"),
         orderBy("receivedAt", "desc")
       );
 
@@ -58,48 +46,20 @@ export default function ReviewsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentBusiness, user]);
+  }, [business, user]);
 
   useEffect(() => {
-    if (!businessLoading) {
-      loadReviews();
-    }
-  }, [businessLoading, loadReviews]);
+    loadReviews();
+  }, [loadReviews]);
 
   const handleUpdate = () => {
     loadReviews();
   };
 
-  if (businessLoading) {
-    return (
-      <PageContainer>
-        <Loading fullScreen text="טוען..." />
-      </PageContainer>
-    );
-  }
-
-  if (businesses.length === 0) {
-    return (
-      <PageContainer>
-        <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
-        <EmptyState />
-      </PageContainer>
-    );
-  }
-
-  if (!currentBusiness) {
-    return (
-      <PageContainer>
-        <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
-        <EmptyState />
-      </PageContainer>
-    );
-  }
-
   return (
     <PageContainer>
       <PageHeader
-        title={`ביקורות - ${currentBusiness.name}`}
+        title={`ביקורות - ${business.name}`}
         description="כל הביקורות עבור עסק זה ממוינות מחדש לישן"
       />
 
@@ -108,20 +68,24 @@ export default function ReviewsPage() {
           <Loading text="טוען ביקורות..." />
         ) : reviews.length === 0 ? (
           <div className="text-center text-muted-foreground py-12">
-            אין ביקורות עדיין. הביקורות של {currentBusiness.name} יופיעו כאן
-            ברגע שהן יגיעו מגוגל
+            אין ביקורות עדיין. הביקורות של {business.name} יופיעו כאן ברגע שהן
+            יגיעו מגוגל
           </div>
         ) : (
           reviews.map((review) => (
             <div
               key={review.id}
-              onClick={() => router.push(`/dashboard/reviews/${review.id}`)}
+              onClick={() =>
+                router.push(
+                  `/dashboard/businesses/${business.id}/reviews/${review.id}`
+                )
+              }
               className="cursor-pointer hover:opacity-90 transition-opacity"
             >
               <ReviewCard
                 review={review}
                 userId={user!.uid}
-                businessId={currentBusiness.id}
+                businessId={business.id}
                 onUpdate={handleUpdate}
               />
             </div>

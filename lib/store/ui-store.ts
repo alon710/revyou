@@ -1,21 +1,22 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-const DISMISS_DURATION = 24 * 60 * 60 * 1000;
+const DISMISS_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+const STORE_NAME = "RevYouStore";
 
 interface UIState {
   upgradeBannerDismissedAt: number | null;
   dismissUpgradeBanner: () => void;
   shouldShowUpgradeBanner: () => boolean;
-  selectedBusinessId: string | null;
-  setSelectedBusinessId: (id: string | null) => void;
-  clearSelectedBusinessId: () => void;
+  lastSelectedBusinessId: string | null;
+  setLastSelectedBusinessId: (id: string | null) => void;
 }
 
 export const useUIStore = create<UIState>()(
   persist(
     (set, get) => ({
       upgradeBannerDismissedAt: null,
+      lastSelectedBusinessId: null,
 
       dismissUpgradeBanner: () => {
         set({ upgradeBannerDismissedAt: Date.now() });
@@ -29,18 +30,12 @@ export const useUIStore = create<UIState>()(
         return now - dismissedAt >= DISMISS_DURATION;
       },
 
-      selectedBusinessId: null,
-
-      setSelectedBusinessId: (id: string | null) => {
-        set({ selectedBusinessId: id });
-      },
-
-      clearSelectedBusinessId: () => {
-        set({ selectedBusinessId: null });
+      setLastSelectedBusinessId: (id: string | null) => {
+        set({ lastSelectedBusinessId: id });
       },
     }),
     {
-      name: "RevUStore",
+      name: STORE_NAME,
       storage: createJSONStorage(() => localStorage),
     }
   )

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useBusiness } from "@/contexts/BusinessContext";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { getUser } from "@/lib/firebase/users";
 import { getReviewCountThisMonth } from "@/lib/subscription/usage-stats";
@@ -12,10 +11,10 @@ import { SubscriptionInfo } from "@/components/dashboard/settings/SubscriptionIn
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
+import { getUserBusinesses } from "@/lib/firebase/business";
 
 export default function SettingsPage() {
   const { user: authUser, loading: authLoading } = useAuth();
-  const { businesses } = useBusiness();
   const {
     subscription,
     limits,
@@ -24,6 +23,7 @@ export default function SettingsPage() {
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [reviewCount, setReviewCount] = useState(0);
+  const [businessCount, setBusinessCount] = useState(0);
 
   const loadUserData = useCallback(async () => {
     if (!authUser) return;
@@ -34,6 +34,10 @@ export default function SettingsPage() {
       setUserData(data);
       const count = await getReviewCountThisMonth();
       setReviewCount(count);
+
+      const businesses = await getUserBusinesses(authUser.uid);
+      const connected = businesses.filter((b) => b.connected);
+      setBusinessCount(connected.length);
     } catch (error) {
       console.error("Error loading user data:", error);
     } finally {
@@ -75,7 +79,7 @@ export default function SettingsPage() {
       <SubscriptionInfo
         limits={limits}
         subscription={subscription}
-        currentBusiness={businesses.length}
+        currentBusiness={businessCount}
         currentReviews={reviewCount}
       />
     </PageContainer>

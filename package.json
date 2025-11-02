@@ -4,17 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "yarn format:check && next build",
+    "build": "yarn format:write && next build",
     "start": "next start",
     "lint": "eslint",
     "lint:check": "eslint .",
     "lint:fix": "eslint . --fix",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "format:staged": "prettier --write",
+    "knip": "knip",
     "seed": "tsx scripts/seed-database.ts",
-    "seed:review": "tsx scripts/seed-review.ts",
-    "knip": "knip"
+    "seed:review": "tsx scripts/seed-review.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

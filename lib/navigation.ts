@@ -15,12 +15,18 @@ export interface NavItem {
   icon: LucideIcon;
 }
 
-export const dashboardNavItems: NavItem[] = [
-  { href: "/dashboard", label: "לוח הבקרה", icon: LayoutDashboard },
-  { href: "/dashboard/businesses", label: "עסקים", icon: Home },
-  { href: "/dashboard/reviews", label: "ביקורות", icon: MessageSquare },
-  { href: "/dashboard/settings", label: "הגדרות", icon: Settings },
-];
+export function getDashboardNavItems(businessId?: string): NavItem[] {
+  const basePath = businessId
+    ? `/dashboard/businesses/${businessId}`
+    : "/dashboard/businesses";
+
+  return [
+    { href: "/dashboard", label: "לוח הבקרה", icon: LayoutDashboard },
+    { href: basePath, label: "עסקים", icon: Home },
+    { href: `${basePath}/reviews`, label: "ביקורות", icon: MessageSquare },
+    { href: "/dashboard/settings", label: "הגדרות", icon: Settings },
+  ];
+}
 
 export const landingNavItems: NavItem[] = [
   { href: "/#hero", label: "בית", icon: Home },
@@ -45,21 +51,33 @@ export function getIsActive(
   hash?: string
 ): boolean {
   if (isAnchorLink(href)) {
-    const anchorHash = href.substring(1);
-    if (anchorHash === "#hero") {
-      return pathname === "/" && (!hash || hash === "#hero");
-    }
-    return pathname === "/" && hash === anchorHash;
+    const isOnLandingPage = pathname === "/";
+    const anchorMatches = href === hash || (href === "/#hero" && !hash);
+    return isOnLandingPage && anchorMatches;
   }
 
   if (href === "/") {
     return pathname === "/" && !hash;
   }
 
-  // Special case for /dashboard - only match exact path
   if (href === "/dashboard") {
     return pathname === "/dashboard";
   }
 
   return pathname === href || pathname.startsWith(href);
+}
+
+export function extractBusinessIdFromPathname(
+  pathname?: string
+): string | undefined {
+  if (!pathname) return undefined;
+
+  const parts = pathname.split("/");
+  const businessesIndex = parts.indexOf("businesses");
+
+  if (businessesIndex === -1 || businessesIndex >= parts.length - 1) {
+    return undefined;
+  }
+
+  return parts[businessesIndex + 1];
 }

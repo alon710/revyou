@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { BusinessProvider } from "@/contexts/BusinessContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { UpgradeBanner } from "@/components/dashboard/utils/UpgradeBanner";
 import { Loading } from "@/components/ui/loading";
@@ -24,7 +23,7 @@ export default function DashboardLayout({
   }, [user, loading, router]);
 
   if (loading) {
-    return <Loading fullScreen />;
+    return <Loading fullScreen text="טוען..." />;
   }
 
   if (!user) {
@@ -32,11 +31,9 @@ export default function DashboardLayout({
   }
 
   return (
-    <BusinessProvider>
-      <AppLayout variant="dashboard">
-        {children}
-        <UpgradeBanner />
-      </AppLayout>
-    </BusinessProvider>
+    <AppLayout variant="dashboard">
+      {children}
+      <UpgradeBanner />
+    </AppLayout>
   );
 }
