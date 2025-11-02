@@ -28,7 +28,7 @@ const starConfigSchema = z.object({
   autoReply: z.boolean(),
 });
 
-const locationConfigSchema = z.object({
+const BusinessConfigSchema = z.object({
   name: z.string().max(200),
   description: z.string().max(2000).optional(),
   phoneNumber: z.string().max(50).optional(),
@@ -48,10 +48,10 @@ const locationConfigSchema = z.object({
   }),
 });
 
-export const locationSchemaAdmin = z.object({
+export const businessSchemaAdmin = z.object({
   id: z.string().min(1),
   googleAccountId: z.string().min(1),
-  googleLocationId: z.string().min(1),
+  googleBusinessId: z.string().min(1),
   name: z.string().min(1).max(200),
   address: z.string().min(1).max(500),
   phoneNumber: z.string().max(50).optional(),
@@ -76,7 +76,7 @@ export const locationSchemaAdmin = z.object({
     .transform((val) => (val === "" ? undefined : val)),
   connected: z.boolean(),
   connectedAt: timestampSchemaAdmin,
-  config: locationConfigSchema,
+  config: BusinessConfigSchema,
   emailOnNewReview: z.boolean(),
 });
 

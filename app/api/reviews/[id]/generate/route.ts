@@ -3,7 +3,7 @@ import { generateAIReply } from "@/lib/ai/gemini";
 import { buildReplyPrompt } from "@/lib/ai/prompts/builder";
 import { getReviewAdmin } from "@/lib/firebase/reviews.admin";
 import { updateReviewReplyAdmin } from "@/lib/firebase/reviews.admin";
-import { getLocationAdmin } from "@/lib/firebase/locations.admin";
+import { getBusinessAdmin } from "@/lib/firebase/businesses.admin";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 
 export async function POST(
@@ -14,14 +14,14 @@ export async function POST(
     const authResult = await getAuthenticatedUserId();
     const { userId: authenticatedUserId } = authResult;
     const { id: reviewId } = await params;
-    const { userId: requestUserId, locationId: locationId } = await req.json();
+    const { userId: requestUserId, businessId: businessId } = await req.json();
     if (requestUserId !== authenticatedUserId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const review = await getReviewAdmin(
       authenticatedUserId,
-      locationId,
+      businessId,
       reviewId
     );
 
@@ -29,27 +29,27 @@ export async function POST(
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    const location = await getLocationAdmin(authenticatedUserId, locationId);
+    const business = await getBusinessAdmin(authenticatedUserId, businessId);
 
-    if (!location) {
+    if (!business) {
       return NextResponse.json(
-        { error: "Location not found" },
+        { error: "Business not found" },
         { status: 404 }
       );
     }
 
     const prompt = buildReplyPrompt(
-      location.config,
+      business.config,
       review,
-      location.name,
-      location.config.phoneNumber
+      business.name,
+      business.config.phoneNumber
     );
 
     const aiReply = await generateAIReply(prompt);
 
     await updateReviewReplyAdmin(
       authenticatedUserId,
-      locationId,
+      businessId,
       reviewId,
       aiReply
     );

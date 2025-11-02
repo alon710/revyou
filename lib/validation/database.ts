@@ -19,7 +19,7 @@ const starConfigSchema = z.object({
   autoReply: z.boolean(),
 });
 
-export const locationConfigSchema = z.object({
+export const BusinessConfigSchema = z.object({
   name: z.string().max(200),
   description: z.string().max(2000).optional(),
   phoneNumber: z.string().max(50).optional(),
@@ -41,10 +41,10 @@ export const locationConfigSchema = z.object({
   }),
 });
 
-export const locationSchema = z.object({
+export const businessSchema = z.object({
   id: z.string().min(1),
   googleAccountId: z.string().min(1),
-  googleLocationId: z.string().min(1),
+  googleBusinessId: z.string().min(1),
   name: z.string().min(1).max(200),
   address: z.string().min(1).max(500),
   phoneNumber: z.string().max(50).optional(),
@@ -54,13 +54,13 @@ export const locationSchema = z.object({
   photoUrl: z.string().url().optional(),
   connected: z.boolean(),
   connectedAt: timestampSchema,
-  config: locationConfigSchema,
+  config: BusinessConfigSchema,
   emailOnNewReview: z.boolean(),
 });
 
-export const locationCreateSchema = locationSchema.omit({ id: true });
+export const businessCreateSchema = businessSchema.omit({ id: true });
 
-export const locationUpdateSchema = locationSchema
+export const businessUpdateSchema = businessSchema
   .partial()
   .omit({ id: true, connectedAt: true });
 
@@ -81,5 +81,5 @@ export const reviewSchema = z.object({
   postedBy: z.string().nullable().optional(),
 });
 
-export type LocationCreateInput = z.infer<typeof locationCreateSchema>;
-export type LocationUpdateInput = z.infer<typeof locationUpdateSchema>;
+export type BusinessCreateInput = z.infer<typeof businessCreateSchema>;
+export type BusinessUpdateInput = z.infer<typeof businessUpdateSchema>;

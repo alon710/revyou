@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useLocation } from "@/contexts/LocationContext";
+import { useBusiness } from "@/contexts/BusinessContext";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { Review } from "@/types/database";
@@ -18,7 +18,7 @@ interface ReviewPageProps {
 
 export default function ReviewPage({ params }: ReviewPageProps) {
   const { user } = useAuth();
-  const { currentLocation, loading: locationLoading } = useLocation();
+  const { currentBusiness, loading: businessLoading } = useBusiness();
   const [review, setReview] = useState<Review | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +30,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
 
   useEffect(() => {
     async function loadReview() {
-      if (!db || !currentLocation || !user || !reviewId) {
+      if (!db || !currentBusiness || !user || !reviewId) {
         setIsLoading(false);
         return;
       }
@@ -43,8 +43,8 @@ export default function ReviewPage({ params }: ReviewPageProps) {
           db,
           "users",
           user.uid,
-          "locations",
-          currentLocation.id,
+          "businesses",
+          currentBusiness.id,
           "reviews",
           reviewId
         );
@@ -67,21 +67,21 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       }
     }
 
-    if (!locationLoading && reviewId) {
+    if (!businessLoading && reviewId) {
       loadReview();
     }
-  }, [currentLocation, user, reviewId, locationLoading]);
+  }, [currentBusiness, user, reviewId, businessLoading]);
 
   const handleUpdate = async () => {
-    if (!db || !currentLocation || !user || !reviewId) return;
+    if (!db || !currentBusiness || !user || !reviewId) return;
 
     try {
       const reviewRef = doc(
         db,
         "users",
         user.uid,
-        "locations",
-        currentLocation.id,
+        "businesses",
+        currentBusiness.id,
         "reviews",
         reviewId
       );
@@ -99,7 +99,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
     }
   };
 
-  if (locationLoading || isLoading) {
+  if (businessLoading || isLoading) {
     return (
       <PageContainer>
         <Loading fullScreen text="טוען ביקורת..." />
@@ -128,14 +128,14 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       </div>
       <PageHeader
         title={`ביקורת מאת ${review.name}`}
-        description={currentLocation?.name}
+        description={currentBusiness?.name}
       />
 
       <div className="mt-6">
         <ReviewCard
           review={review}
           userId={user!.uid}
-          locationId={currentLocation!.id}
+          businessId={currentBusiness!.id}
           onUpdate={handleUpdate}
         />
       </div>

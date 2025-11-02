@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { GoogleBusinessProfileLocation } from "@/types/database";
+import { GoogleBusinessProfileBusiness } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import {
   DashboardCard,
@@ -14,25 +14,25 @@ import { Loading } from "@/components/ui/loading";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
-interface LocationSelectorProps {
-  locations: GoogleBusinessProfileLocation[];
+interface BusinessSelectorProps {
+  businesses: GoogleBusinessProfileBusiness[];
   loading?: boolean;
   error?: string | null;
-  onSelect: (location: GoogleBusinessProfileLocation) => void;
+  onSelect: (business: GoogleBusinessProfileBusiness) => void;
   onRetry: () => void;
   connecting?: boolean;
 }
 
-export function LocationSelector({
-  locations,
+export function BusinessSelector({
+  businesses,
   loading,
   error,
   onSelect,
   onRetry,
   connecting,
-}: LocationSelectorProps) {
+}: BusinessSelectorProps) {
   const [selected, setSelected] =
-    useState<GoogleBusinessProfileLocation | null>(null);
+    useState<GoogleBusinessProfileBusiness | null>(null);
 
   const handleConnect = () => {
     if (selected) onSelect(selected);
@@ -45,15 +45,15 @@ export function LocationSelector({
         <div className="text-sm text-muted-foreground">
           {loading ? (
             <Loading size="md" text="טוען עסקים..." />
-          ) : locations.length > 0 ? (
-            `בחר את העסק שברצונך לחבר (נמצאו ${locations.length} עסקים)`
+          ) : businesses.length > 0 ? (
+            `בחר את העסק שברצונך לחבר (נמצאו ${businesses.length} עסקים)`
           ) : (
             "בחר את העסק שברצונך לחבר מרשימת העסקים שלך"
           )}
         </div>
       </DashboardCardHeader>
       <DashboardCardContent>
-        {!loading && error && locations.length === 0 && (
+        {!loading && error && businesses.length === 0 && (
           <div className="text-center py-8">
             <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
             <p className="text-muted-foreground mb-4">{error}</p>
@@ -63,43 +63,43 @@ export function LocationSelector({
           </div>
         )}
 
-        {!loading && locations.length > 0 && (
+        {!loading && businesses.length > 0 && (
           <>
             <RadioGroup
               value={selected?.id || ""}
               onValueChange={(value) => {
-                const location = locations.find((loc) => loc.id === value);
-                setSelected(location || null);
+                const business = businesses.find((loc) => loc.id === value);
+                setSelected(business || null);
               }}
               className="gap-3"
               dir="rtl"
             >
-              {locations.map((location) => (
+              {businesses.map((business) => (
                 <div
-                  key={location.id}
+                  key={business.id}
                   className={`relative flex items-start gap-3 rounded-lg border p-4 transition-colors ${
-                    selected?.id === location.id
+                    selected?.id === business.id
                       ? "border-primary bg-primary/5"
                       : "border-border hover:border-primary/50"
                   }`}
                 >
                   <RadioGroupItem
-                    value={location.id}
-                    id={location.id}
+                    value={business.id}
+                    id={business.id}
                     className="mt-1"
                   />
                   <Label
-                    htmlFor={location.id}
+                    htmlFor={business.id}
                     className="flex-1 cursor-pointer space-y-1"
                   >
                     <div className="flex items-center gap-2">
                       <Building2 className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-semibold">{location.name}</span>
+                      <span className="font-semibold">{business.name}</span>
                     </div>
-                    {location.address && (
+                    {business.address && (
                       <div className="flex items-start gap-2 text-sm text-muted-foreground">
                         <MapPin className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
-                        <span>{location.address}</span>
+                        <span>{business.address}</span>
                       </div>
                     )}
                   </Label>

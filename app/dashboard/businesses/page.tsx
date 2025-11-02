@@ -1,8 +1,8 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { useLocation } from "@/contexts/LocationContext";
-import { deleteLocation } from "@/lib/firebase/locations";
+import { useBusiness } from "@/contexts/BusinessContext";
+import { deleteBusiness } from "@/lib/firebase/business";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,34 +11,34 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
-import LocationDetailsCard from "@/components/dashboard/locations/LocationDetailsCard";
+import BusinessDetailsCard from "@/components/dashboard/businesses/BusinessDetailsCard";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
 
-export default function LocationsPage() {
+export default function BusinessesPage() {
   const { user, loading: authLoading } = useAuth();
   const {
-    currentLocation,
-    locations,
-    loading: locationLoading,
-    refreshLocations,
-  } = useLocation();
+    currentBusiness,
+    businesses,
+    loading: businessLoading,
+    refreshBusinesses,
+  } = useBusiness();
   const { limits } = useSubscription();
 
   const handleDelete = async () => {
-    if (!currentLocation || !user) return;
+    if (!currentBusiness || !user) return;
 
     try {
-      await deleteLocation(user.uid, currentLocation.id);
-      await refreshLocations();
+      await deleteBusiness(user.uid, currentBusiness.id);
+      await refreshBusinesses();
     } catch (error) {
-      console.error("Error deleting location:", error);
+      console.error("Error deleting business:", error);
     }
   };
 
-  const maxLocations = limits.locations;
-  const canAddMore = locations.length < maxLocations;
+  const maxBusinesses = limits.businesses;
+  const canAddMore = businesses.length < maxBusinesses;
 
-  if (authLoading || locationLoading) {
+  if (authLoading || businessLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Loading size="md" />
@@ -46,7 +46,7 @@ export default function LocationsPage() {
     );
   }
 
-  if (locations.length === 0 || !currentLocation) {
+  if (businesses.length === 0 || !currentBusiness) {
     return (
       <PageContainer>
         <PageHeader
@@ -61,17 +61,17 @@ export default function LocationsPage() {
   return (
     <PageContainer>
       <PageHeader
-        title={currentLocation.name}
-        description={currentLocation.address}
+        title={currentBusiness.name}
+        description={currentBusiness.address}
         icon={
-          !currentLocation.connected && <Badge variant="secondary">מנותק</Badge>
+          !currentBusiness.connected && <Badge variant="secondary">מנותק</Badge>
         }
         actions={
           <>
             <DeleteConfirmation
               title="מחיקת עסק"
-              description={`פעולה זו תמחק את העסק "${currentLocation.name}" לצמיתות!`}
-              confirmationText={currentLocation.name}
+              description={`פעולה זו תמחק את העסק "${currentBusiness.name}" לצמיתות!`}
+              confirmationText={currentBusiness.name}
               confirmationLabel="כדי לאשר, הקלד את שם העסק:"
               confirmationPlaceholder="שם העסק"
               onDelete={handleDelete}
@@ -79,17 +79,17 @@ export default function LocationsPage() {
               variant="inline"
             />
             <Button asChild disabled={!canAddMore} variant="outline" size="sm">
-              <Link href="/dashboard/locations/connect">הוסף עסק</Link>
+              <Link href="/dashboard/businesses/connect">הוסף עסק</Link>
             </Button>
           </>
         }
       />
 
-      <LocationDetailsCard
-        location={currentLocation}
+      <BusinessDetailsCard
+        business={currentBusiness}
         userId={user!.uid}
-        loading={locationLoading}
-        onUpdate={refreshLocations}
+        loading={businessLoading}
+        onUpdate={refreshBusinesses}
       />
     </PageContainer>
   );

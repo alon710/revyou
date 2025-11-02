@@ -20,17 +20,17 @@ import {
 interface SubscriptionInfoProps {
   limits: PlanLimits;
   subscription: Subscription | null;
-  currentLocations: number;
+  currentBusiness: number;
   currentReviews: number;
 }
 
 export function SubscriptionInfo({
   limits,
-  currentLocations,
+  currentBusiness,
   currentReviews,
 }: SubscriptionInfoProps) {
-  const { locationsPercent, reviewsPercent } = getUsagePercentages(
-    currentLocations,
+  const { businessesPercent, reviewsPercent } = getUsagePercentages(
+    currentBusiness,
     currentReviews,
     limits
   );
@@ -50,13 +50,13 @@ export function SubscriptionInfo({
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium">
-                  {currentLocations} מתוך {limits.locations} עסקים
+                  {currentBusiness} מתוך {limits.businesses} עסקים
                 </span>
                 <span className="text-muted-foreground">
-                  {locationsPercent}%
+                  {businessesPercent}%
                 </span>
               </div>
-              <Progress value={locationsPercent} />
+              <Progress value={businessesPercent} />
             </div>
           </DashboardCardField>
 

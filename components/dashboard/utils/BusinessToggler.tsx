@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocation } from "@/contexts/LocationContext";
+import { useBusiness } from "@/contexts/BusinessContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,22 +12,22 @@ import { Building2, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export function LocationToggler() {
+export function BusinessToggler() {
   const router = useRouter();
-  const { locations, selectedLocationId, selectLocation, loading } =
-    useLocation();
+  const { businesses, selectedBusinessId, selectBusiness, loading } =
+    useBusiness();
 
-  const handleLocationChange = (locationId: string) => {
-    selectLocation(locationId);
+  const handleBusinessChange = (businessId: string) => {
+    selectBusiness(businessId);
   };
 
   useEffect(() => {
-    if (!loading && locations.length === 0) {
-      router.push("/dashboard/locations/connect");
+    if (!loading && businesses.length === 0) {
+      router.push("/dashboard/businesses/connect");
     }
-  }, [loading, locations.length, router]);
+  }, [loading, businesses.length, router]);
 
-  if (loading || locations.length <= 1) {
+  if (loading || businesses.length <= 1) {
     return null;
   }
 
@@ -36,22 +36,22 @@ export function LocationToggler() {
       <DropdownMenuTrigger asChild>
         <IconButton
           icon={Building2}
-          aria-label="Switch location"
+          aria-label="Switch business"
           variant="ghost"
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {locations.map((location) => (
+        {businesses.map((business) => (
           <DropdownMenuItem
-            key={location.id}
-            onClick={() => handleLocationChange(location.id)}
+            key={business.id}
+            onClick={() => handleBusinessChange(business.id)}
             className="cursor-pointer"
           >
             <div className="flex items-center gap-3 w-full">
-              {selectedLocationId === location.id && (
+              {selectedBusinessId === business.id && (
                 <Check className="h-4 w-4 shrink-0 text-primary" />
               )}
-              <span className="truncate">{location.name}</span>
+              <span className="truncate">{business.name}</span>
             </div>
           </DropdownMenuItem>
         ))}

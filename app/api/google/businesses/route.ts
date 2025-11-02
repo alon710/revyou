@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getUserGoogleRefreshToken } from "@/lib/firebase/admin-users";
-import { listAllLocations, decryptToken } from "@/lib/google/business-profile";
+import { listAllBusinesses, decryptToken } from "@/lib/google/business-profile";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 
 export const runtime = "nodejs";
@@ -25,11 +25,11 @@ export async function GET() {
     }
 
     const refreshToken = await decryptToken(encryptedRefreshToken);
-    const locations = await listAllLocations(refreshToken);
+    const businesses = await listAllBusinesses(refreshToken);
 
-    return NextResponse.json({ locations });
+    return NextResponse.json({ businesses });
   } catch (error) {
-    console.error("Error fetching locations:", error);
+    console.error("Error fetching businesses:", error);
 
     if (error instanceof Error) {
       if (error.message.includes("quota") || error.message.includes("429")) {

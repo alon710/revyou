@@ -72,11 +72,11 @@ async function seedDatabase() {
       });
     console.log("✅ User created\n");
 
-    console.log("🏢 Creating location documents...");
+    console.log("🏢 Creating business documents...");
 
-    const businessLocation1 = {
+    const business1 = {
       googleAccountId: "google_account_123",
-      googleLocationId: "location_123",
+      googleBusinessId: "bsuiness_123",
       name: "מסעדת חמישים ושמונה",
       address: "רחוב הרצל 58, תל אביב",
       photoUrl: "https://example.com/photos/restaurant_58.jpg",
@@ -84,7 +84,7 @@ async function seedDatabase() {
       connectedAt: Timestamp.fromDate(new Date("2024-01-15")),
       emailOnNewReview: true,
       config: {
-        locationDescription: "מסעדה איטלקית משפחתית המגישה פיצות ופסטות טריות",
+        businessDescription: "מסעדה איטלקית משפחתית המגישה פיצות ופסטות טריות",
         toneOfVoice: "friendly",
         useEmojis: true,
         languageMode: "hebrew",
@@ -114,9 +114,9 @@ async function seedDatabase() {
       },
     };
 
-    const businessLocation2 = {
+    const business2 = {
       googleAccountId: "google_account_456",
-      googleLocationId: "location_456",
+      googleBusinessId: "business_456",
       name: "בית קפה המלך ג'ורג'",
       address: "רחוב המלך ג'ורג' 25, ירושלים",
       photoUrl: "https://example.com/photos/king_george_cafe.jpg",
@@ -124,7 +124,7 @@ async function seedDatabase() {
       connectedAt: Timestamp.fromDate(new Date("2024-02-01")),
       emailOnNewReview: true,
       config: {
-        locationDescription: "בית קפה בוטיק עם קפה איכותי ועוגות תוצרת בית",
+        businessDescription: "בית קפה בוטיק עם קפה איכותי ועוגות תוצרת בית",
         toneOfVoice: "professional",
         useEmojis: false,
         languageMode: "hebrew",
@@ -156,18 +156,18 @@ async function seedDatabase() {
     await db
       .collection("users")
       .doc(USER_ID)
-      .collection("locations")
-      .doc("location_test_001")
-      .set(businessLocation1);
-    console.log("✅ Location 1 created: מסעדת חמישים ושמונה");
+      .collection("businesses")
+      .doc("business_test_001")
+      .set(business1);
+    console.log("✅ Business 1 created: מסעדת חמישים ושמונה");
 
     await db
       .collection("users")
       .doc(USER_ID)
-      .collection("locations")
-      .doc("location_test_002")
-      .set(businessLocation2);
-    console.log("✅ Location 2 created: בית קפה המלך ג'ורג'\n");
+      .collection("businesses")
+      .doc("business_test_002")
+      .set(business2);
+    console.log("✅ Business 2 created: בית קפה המלך ג'ורג'\n");
 
     console.log("⭐ Creating review documents...");
 
@@ -354,7 +354,7 @@ async function seedDatabase() {
       },
     ];
 
-    const location1Reviews = reviews.filter((r) =>
+    const business1Reviews = reviews.filter((r) =>
       [
         "google_review_123",
         "google_review_124",
@@ -367,13 +367,13 @@ async function seedDatabase() {
       ].includes(r.id)
     );
 
-    for (const review of location1Reviews) {
+    for (const review of business1Reviews) {
       const { id, ...reviewData } = review;
       await db
         .collection("users")
         .doc(USER_ID)
-        .collection("locations")
-        .doc("location_test_001")
+        .collection("businesses")
+        .doc("business_test_001")
         .collection("reviews")
         .doc(id)
         .set(reviewData);
@@ -382,7 +382,7 @@ async function seedDatabase() {
       );
     }
 
-    const location2Reviews = reviews.filter((r) =>
+    const business2Reviews = reviews.filter((r) =>
       [
         "google_review_201",
         "google_review_202",
@@ -390,13 +390,13 @@ async function seedDatabase() {
       ].includes(r.id)
     );
 
-    for (const review of location2Reviews) {
+    for (const review of business2Reviews) {
       const { id, ...reviewData } = review;
       await db
         .collection("users")
         .doc(USER_ID)
-        .collection("locations")
-        .doc("location_test_002")
+        .collection("businesses")
+        .doc("business_test_002")
         .collection("reviews")
         .doc(id)
         .set(reviewData);
@@ -409,7 +409,7 @@ async function seedDatabase() {
     console.log("✨ Database seeding completed successfully!\n");
     console.log("📊 Summary:");
     console.log("  - 1 User (Free Tier)");
-    console.log("  - 2 Locations");
+    console.log("  - 2 Businesses");
     console.log("  - 11 Reviews total:");
     console.log("    - 8 with existing AI replies (manual flow test data)");
     console.log(
@@ -428,7 +428,7 @@ async function seedDatabase() {
     console.log(
       "  - google_review_auto_003: 4-star review (Café) - will auto-generate AI reply"
     );
-    console.log("\n📧 Both locations have emailOnNewReview: true");
+    console.log("\n📧 Both businesses have emailOnNewReview: true");
     console.log(
       "   Email notifications will be sent when AI replies are generated."
     );

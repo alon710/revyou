@@ -19,20 +19,20 @@ export async function getReviewCountThisMonth(): Promise<number> {
     const userId = auth.currentUser.uid;
     const startDate = startOfMonth(new Date());
 
-    const locationsQuery = query(
-      collection(db, "users", userId, "locations"),
+    const businessesQuery = query(
+      collection(db, "users", userId, "businesses"),
       where("connected", "==", true)
     );
-    const locationsSnapshot = await getDocs(locationsQuery);
-    const locationIds = locationsSnapshot.docs.map((doc) => doc.id);
+    const businessesSnapshot = await getDocs(businessesQuery);
+    const businessIds = businessesSnapshot.docs.map((doc) => doc.id);
 
-    if (locationIds.length === 0) {
+    if (businessIds.length === 0) {
       return 0;
     }
 
-    const reviewCountPromises = locationIds.map(async (locationId) => {
+    const reviewCountPromises = businessIds.map(async (businessId) => {
       const reviewsQuery = query(
-        collection(db!, "users", userId, "locations", locationId, "reviews"),
+        collection(db!, "users", userId, "businesses", businessId, "reviews"),
         where("receivedAt", ">=", Timestamp.fromDate(startDate))
       );
       const snapshot = await getDocs(reviewsQuery);
@@ -48,16 +48,16 @@ export async function getReviewCountThisMonth(): Promise<number> {
 }
 
 export function getUsagePercentages(
-  currentLocations: number,
+  currentBusiness: number,
   currentReviews: number,
   limits: PlanLimits
 ): {
-  locationsPercent: number;
+  businessesPercent: number;
   reviewsPercent: number;
 } {
-  const locationsPercent = Math.min(
+  const businessesPercent = Math.min(
     100,
-    Math.round((currentLocations / limits.locations) * 100)
+    Math.round((currentBusiness / limits.businesses) * 100)
   );
 
   const reviewsPercent = Math.min(
@@ -66,7 +66,7 @@ export function getUsagePercentages(
   );
 
   return {
-    locationsPercent,
+    businessesPercent,
     reviewsPercent,
   };
 }

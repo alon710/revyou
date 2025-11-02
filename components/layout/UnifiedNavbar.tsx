@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 import { NavbarContainer } from "./NavbarContainer";
-import { LocationToggler } from "@/components/dashboard/utils/LocationToggler";
+import { BusinessToggler } from "@/components/dashboard/utils/BusinessToggler";
 import { useNavigation } from "@/hooks/useNavigation";
 import { AuthButton } from "@/components/auth/AuthButton";
 
@@ -17,7 +17,7 @@ export function UnifiedNavbar({
   return (
     <NavbarContainer>
       <div className="shrink-0 pl-2">
-        <Logo href={user ? "/dashboard/locations" : "/"} />
+        <Logo href={user ? "/dashboard/businesses" : "/"} />
       </div>
 
       <nav className="hidden md:flex items-center flex-1 justify-center h-full gap-1">
@@ -58,7 +58,7 @@ export function UnifiedNavbar({
       </nav>
 
       <div className="flex items-center gap-2 shrink-0 pr-2">
-        {variant === "dashboard" && user && <LocationToggler />}
+        {variant === "dashboard" && user && <BusinessToggler />}
         <AuthButton showAccountButton={variant === "landing"} />
       </div>
     </NavbarContainer>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Location } from "@/types/database";
+import { Business } from "@/types/database";
 import {
   DashboardCard,
   DashboardCardContent,
@@ -11,17 +11,17 @@ import {
 import { Building2, MapPin, Plus } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
 
-interface ConnectedLocationsListProps {
-  locations: Location[];
+interface ConnectedBusinessesListProps {
+  businesses: Business[];
   onAddNew: () => void;
   loading?: boolean;
 }
 
-export function ConnectedLocationsList({
-  locations,
+export function ConnectedBusinessesList({
+  businesses,
   onAddNew,
   loading,
-}: ConnectedLocationsListProps) {
+}: ConnectedBusinessesListProps) {
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -29,7 +29,7 @@ export function ConnectedLocationsList({
           <div>
             <DashboardCardTitle>העסקים המחוברים שלך</DashboardCardTitle>
             <DashboardCardDescription>
-              {locations.length} עסקים מחוברים
+              {businesses.length} עסקים מחוברים
             </DashboardCardDescription>
           </div>
           <IconButton
@@ -44,18 +44,18 @@ export function ConnectedLocationsList({
       </DashboardCardHeader>
       <DashboardCardContent>
         <div className="space-y-3" dir="rtl">
-          {locations.map((location) => (
+          {businesses.map((business) => (
             <div
-              key={location.id}
+              key={business.id}
               className="flex items-start gap-3 rounded-lg border p-4 transition-colors hover:bg-accent/50"
             >
               <Building2 className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="flex-1 space-y-1">
-                <h4 className="font-semibold">{location.name}</h4>
-                {location.address && (
+                <h4 className="font-semibold">{business.name}</h4>
+                {business.address && (
                   <div className="flex items-start gap-2 text-sm text-muted-foreground">
                     <MapPin className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
-                    <span>{location.address}</span>
+                    <span>{business.address}</span>
                   </div>
                 )}
               </div>

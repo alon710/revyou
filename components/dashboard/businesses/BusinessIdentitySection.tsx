@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Location, LocationConfig } from "@/types/database";
+import { Business, BusinessConfig } from "@/types/database";
 import {
   DashboardCard,
   DashboardCardHeader,
@@ -12,21 +12,21 @@ import {
 } from "@/components/ui/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { Building2, Settings } from "lucide-react";
-import { LocationIdentityEditModal } from "@/components/dashboard/locations/LocationIdentityEditModal";
+import { BusinessIdentityEditModal } from "@/components/dashboard/businesses/BusinessIdentityEditModal";
 
-interface LocationIdentitySectionProps {
-  config: LocationConfig;
-  location: Location;
+interface BusinessIdentitySectionProps {
+  config: BusinessConfig;
+  business: Business;
   loading?: boolean;
-  onSave: (config: Partial<LocationConfig>) => Promise<void>;
+  onSave: (config: Partial<BusinessConfig>) => Promise<void>;
 }
 
-export default function LocationIdentitySection({
+export default function BusinessIdentitySection({
   config,
-  location,
+  business,
   loading,
   onSave,
-}: LocationIdentitySectionProps) {
+}: BusinessIdentitySectionProps) {
   const [showEditModal, setShowEditModal] = useState(false);
 
   return (
@@ -56,7 +56,7 @@ export default function LocationIdentitySection({
         <DashboardCardContent className="space-y-6">
           <DashboardCardField label="שם העסק">
             <p className="text-sm font-medium">
-              {config.name || location.name}
+              {config.name || business.name}
             </p>
           </DashboardCardField>
 
@@ -72,8 +72,8 @@ export default function LocationIdentitySection({
         </DashboardCardContent>
       </DashboardCard>
 
-      <LocationIdentityEditModal
-        location={location}
+      <BusinessIdentityEditModal
+        business={business}
         open={showEditModal}
         onClose={() => setShowEditModal(false)}
         onSave={onSave}

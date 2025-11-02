@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LocationConfig } from "@/types/database";
+import { BusinessConfig } from "@/types/database";
 import {
   DashboardCard,
   DashboardCardHeader,
@@ -13,12 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star, Settings } from "lucide-react";
 import { StarRating } from "@/components/ui/StarRating";
-import { StarRatingConfigEditModal } from "@/components/dashboard/locations/StarRatingConfigEditModal";
+import { StarRatingConfigEditModal } from "@/components/dashboard/businesses/StarRatingConfigEditModal";
 
 interface StarRatingConfigSectionProps {
-  starConfigs: LocationConfig["starConfigs"];
+  starConfigs: BusinessConfig["starConfigs"];
   loading?: boolean;
-  onSave: (starConfigs: LocationConfig["starConfigs"]) => Promise<void>;
+  onSave: (starConfigs: BusinessConfig["starConfigs"]) => Promise<void>;
 }
 
 export default function StarRatingConfigSection({

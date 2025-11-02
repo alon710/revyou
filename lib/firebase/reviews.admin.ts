@@ -4,15 +4,15 @@ import { reviewSchemaAdmin } from "@/lib/validation/database.admin";
 
 export async function getReviewAdmin(
   userId: string,
-  locationId: string,
+  businessId: string,
   reviewId: string
 ): Promise<Review | null> {
   try {
     const reviewRef = adminDb
       .collection("users")
       .doc(userId)
-      .collection("locations")
-      .doc(locationId)
+      .collection("businesses")
+      .doc(businessId)
       .collection("reviews")
       .doc(reviewId);
     const reviewSnap = await reviewRef.get();
@@ -38,7 +38,7 @@ export async function getReviewAdmin(
 
 export async function updateReviewReplyAdmin(
   userId: string,
-  locationId: string,
+  businessId: string,
   reviewId: string,
   reply: string
 ): Promise<Review> {
@@ -46,8 +46,8 @@ export async function updateReviewReplyAdmin(
     const reviewRef = adminDb
       .collection("users")
       .doc(userId)
-      .collection("locations")
-      .doc(locationId)
+      .collection("businesses")
+      .doc(businessId)
       .collection("reviews")
       .doc(reviewId);
     const updateData: Record<string, unknown> = {
@@ -57,7 +57,7 @@ export async function updateReviewReplyAdmin(
 
     await reviewRef.update(updateData);
 
-    return (await getReviewAdmin(userId, locationId, reviewId)) as Review;
+    return (await getReviewAdmin(userId, businessId, reviewId)) as Review;
   } catch (error) {
     console.error("Error updating review reply (admin)", error);
     throw new Error("לא ניתן לעדכן את התגובה");

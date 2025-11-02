@@ -1,6 +1,6 @@
 import { OAuth2Client } from "google-auth-library";
 import * as Iron from "@hapi/iron";
-import { GoogleBusinessProfileLocation } from "@/types/database";
+import { GoogleBusinessProfileBusiness } from "@/types/database";
 
 const GOOGLE_MY_BUSINESS_API_BASE =
   "https://mybusinessbusinessinformation.googleapis.com/v1";
@@ -11,7 +11,7 @@ interface GoogleAccount {
   type: string;
 }
 
-interface GoogleLocation {
+interface GoogleBusinessProfile {
   name: string;
   title: string;
   storefrontAddress?: {
@@ -38,8 +38,8 @@ interface AccountsResponse {
   accounts: GoogleAccount[];
 }
 
-interface LocationsResponse {
-  locations: GoogleLocation[];
+interface BusinessesResponse {
+  businesses: GoogleBusinessProfile[];
   nextPageToken?: string;
 }
 
@@ -106,17 +106,17 @@ async function listAccounts(accessToken: string): Promise<GoogleAccount[]> {
   }
 }
 
-async function listLocationsForAccount(
+async function listBusinessesForAccount(
   accountName: string,
   accessToken: string
-): Promise<GoogleLocation[]> {
+): Promise<GoogleBusinessProfile[]> {
   try {
-    const allLocations: GoogleLocation[] = [];
+    const allBusinesses: GoogleBusinessProfile[] = [];
     let pageToken: string | undefined = undefined;
 
     do {
       const url = new URL(
-        `${GOOGLE_MY_BUSINESS_API_BASE}/${accountName}/locations`
+        `${GOOGLE_MY_BUSINESS_API_BASE}/${accountName}/businesses`
       );
       url.searchParams.set(
         "readMask",
@@ -126,27 +126,27 @@ async function listLocationsForAccount(
         url.searchParams.set("pageToken", pageToken);
       }
 
-      const data = await makeAuthorizedRequest<LocationsResponse>(
+      const data = await makeAuthorizedRequest<BusinessesResponse>(
         url.toString(),
         accessToken
       );
 
-      if (data.locations) {
-        allLocations.push(...data.locations);
+      if (data.businesses) {
+        allBusinesses.push(...data.businesses);
       }
 
       pageToken = data.nextPageToken;
     } while (pageToken);
 
-    return allLocations;
+    return allBusinesses;
   } catch (error) {
-    console.error("Error listing locations for account:", accountName, error);
-    throw new Error("Failed to fetch locations from Google Business Profile");
+    console.error("Error listing businesses for account:", accountName, error);
+    throw new Error("Failed to fetch businesses from Google Business Profile");
   }
 }
 
-function formatAddress(location: GoogleLocation): string {
-  const address = location.storefrontAddress;
+function formatAddress(business: GoogleBusinessProfile): string {
+  const address = business.storefrontAddress;
   if (!address) return "";
 
   const parts: string[] = [];
@@ -170,9 +170,9 @@ function formatAddress(location: GoogleLocation): string {
   return parts.join(", ");
 }
 
-export async function listAllLocations(
+export async function listAllBusinesses(
   refreshToken: string
-): Promise<GoogleBusinessProfileLocation[]> {
+): Promise<GoogleBusinessProfileBusiness[]> {
   try {
     const accessToken = await getAccessTokenFromRefreshToken(refreshToken);
     const accounts = await listAccounts(accessToken);
@@ -181,32 +181,32 @@ export async function listAllLocations(
       return [];
     }
 
-    const allLocations: GoogleBusinessProfileLocation[] = [];
+    const allBusinesses: GoogleBusinessProfileBusiness[] = [];
 
     for (const account of accounts) {
-      const locations = await listLocationsForAccount(
+      const businesses = await listBusinessesForAccount(
         account.name,
         accessToken
       );
 
-      for (const location of locations) {
-        allLocations.push({
+      for (const business of businesses) {
+        allBusinesses.push({
           accountId: account.name,
-          id: location.name,
-          name: location.title,
-          address: formatAddress(location),
-          phoneNumber: location.phoneNumbers?.primaryPhone,
-          websiteUrl: location.websiteUri,
-          mapsUrl: location.metadata?.mapsUri,
-          description: location.profile?.description,
+          id: business.name,
+          name: business.title,
+          address: formatAddress(business),
+          phoneNumber: business.phoneNumbers?.primaryPhone,
+          websiteUrl: business.websiteUri,
+          mapsUrl: business.metadata?.mapsUri,
+          description: business.profile?.description,
         });
       }
     }
 
-    return allLocations;
+    return allBusinesses;
   } catch (error) {
-    console.error("Error listing all locations:", error);
-    throw new Error("Failed to fetch locations from Google Business Profile");
+    console.error("Error listing all businesses:", error);
+    throw new Error("Failed to fetch businesses from Google Business Profile");
   }
 }
 
