@@ -11,7 +11,6 @@
     "lint:fix": "eslint . --fix",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "format:staged": "prettier --write",
     "seed": "tsx scripts/seed-database.ts",
     "seed:review": "tsx scripts/seed-review.ts",
     "knip": "knip"
@@ -38,6 +37,7 @@
     "firebase-admin": "^13.5.0",
     "framer-motion": "^12.23.24",
     "google-auth-library": "^10.4.1",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.546.0",
     "mustache": "^4.2.0",
     "next": "15.5.6",
