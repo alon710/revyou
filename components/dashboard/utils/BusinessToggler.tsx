@@ -9,11 +9,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IconButton } from "@/components/ui/icon-button";
 import { Building2, Check } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export function BusinessToggler() {
-  const router = useRouter();
   const { businesses, selectedBusinessId, selectBusiness, loading } =
     useBusiness();
 
@@ -21,14 +18,7 @@ export function BusinessToggler() {
     selectBusiness(businessId);
   };
 
-  useEffect(() => {
-    if (!loading && businesses.length === 0) {
-      router.push("/dashboard/businesses/connect");
-    }
-  }, [loading, businesses.length, router]);
-
   if (loading || businesses.length <= 1) {
-    return null;
   }
 
   return (
