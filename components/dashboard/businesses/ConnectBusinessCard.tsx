@@ -9,6 +9,8 @@ import { Loading } from "@/components/ui/loading";
 import { ConnectedBusinessesList } from "./ConnectedBusinessesList";
 import { OAuthPrompt } from "./OAuthPrompt";
 import { BusinessSelector } from "./BusinessSelector";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface ConnectBusinessCardProps {
   userId: string;
@@ -166,6 +168,14 @@ export function ConnectBusinessCard({
 
   return (
     <div className="space-y-4">
+      {error && step === "auth" && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>שגיאה</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
       {existingBusinesses.length > 0 && step === "auth" && (
         <ConnectedBusinessesList
           businesses={existingBusinesses}
