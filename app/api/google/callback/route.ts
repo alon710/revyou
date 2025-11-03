@@ -6,7 +6,7 @@ import { getAuthenticatedUserId } from "@/lib/api/auth";
 export const runtime = "nodejs";
 
 const redirectToBusinesses = () => {
-  const url = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/businesses`;
+  const url = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/businesses/connect?success=true`;
   return NextResponse.redirect(url);
 };
 

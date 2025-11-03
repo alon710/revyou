@@ -39,7 +39,7 @@ interface AccountsResponse {
 }
 
 interface BusinessesResponse {
-  businesses: GoogleBusinessProfile[];
+  locations: GoogleBusinessProfile[];
   nextPageToken?: string;
 }
 
@@ -116,7 +116,7 @@ async function listBusinessesForAccount(
 
     do {
       const url = new URL(
-        `${GOOGLE_MY_BUSINESS_API_BASE}/${accountName}/businesses`
+        `${GOOGLE_MY_BUSINESS_API_BASE}/${accountName}/locations`
       );
       url.searchParams.set(
         "readMask",
@@ -131,8 +131,8 @@ async function listBusinessesForAccount(
         accessToken
       );
 
-      if (data.businesses) {
-        allBusinesses.push(...data.businesses);
+      if (data.locations) {
+        allBusinesses.push(...data.locations);
       }
 
       pageToken = data.nextPageToken;

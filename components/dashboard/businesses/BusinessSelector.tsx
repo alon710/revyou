@@ -68,7 +68,7 @@ export function BusinessSelector({
             <RadioGroup
               value={selected?.id || ""}
               onValueChange={(value) => {
-                const business = businesses.find((loc) => loc.id === value);
+                const business = businesses.find((b) => b.id === value);
                 setSelected(business || null);
               }}
               className="gap-3"

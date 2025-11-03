@@ -31,15 +31,6 @@ export async function GET() {
   } catch (error) {
     console.error("Error fetching businesses:", error);
 
-    if (error instanceof Error) {
-      if (error.message.includes("quota") || error.message.includes("429")) {
-        return NextResponse.json(
-          { error: "Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב." },
-          { status: 429 }
-        );
-      }
-    }
-
     return NextResponse.json(
       { error: "לא ניתן לטעון עסקים מ-Google Business Profile" },
       { status: 500 }
