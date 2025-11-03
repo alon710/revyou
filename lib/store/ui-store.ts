@@ -7,9 +7,6 @@ interface UIState {
   upgradeBannerDismissedAt: number | null;
   dismissUpgradeBanner: () => void;
   shouldShowUpgradeBanner: () => boolean;
-  selectedBusinessId: string | null;
-  setSelectedBusinessId: (id: string | null) => void;
-  clearSelectedBusinessId: () => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -27,16 +24,6 @@ export const useUIStore = create<UIState>()(
 
         const now = Date.now();
         return now - dismissedAt >= DISMISS_DURATION;
-      },
-
-      selectedBusinessId: null,
-
-      setSelectedBusinessId: (id: string | null) => {
-        set({ selectedBusinessId: id });
-      },
-
-      clearSelectedBusinessId: () => {
-        set({ selectedBusinessId: null });
       },
     }),
     {

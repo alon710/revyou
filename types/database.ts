@@ -5,10 +5,14 @@ export type LanguageMode = "hebrew" | "english" | "auto-detect";
 
 export type ReplyStatus = "pending" | "rejected" | "posted" | "failed";
 
+export type SubscriptionTier = "free" | "basic" | "pro" | "enterprise";
+
 export interface User {
   uid: string;
   email: string;
-  displayName?: string;
+  displayName: string;
+  photoURL: string;
+  subscriptionTier: SubscriptionTier;
   createdAt: Timestamp;
   stripeCustomerId?: string;
   googleRefreshToken?: string;

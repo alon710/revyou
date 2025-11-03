@@ -125,6 +125,7 @@ service cloud.firestore {
         (!('websiteUrl' in request.resource.data) || validStringLength(request.resource.data.websiteUrl, 1, 200)) &&
         (!('mapsUrl' in request.resource.data) || validStringLength(request.resource.data.mapsUrl, 1, 2000)) &&
         (!('description' in request.resource.data) || validStringLength(request.resource.data.description, 0, 5000)) &&
+        (!('photoUrl' in request.resource.data) || validStringLength(request.resource.data.photoUrl, 1, 2000)) &&
         // Validate config structure
         request.resource.data.config.keys().hasAll(['name', 'toneOfVoice', 'useEmojis', 'languageMode', 'starConfigs']) &&
         validStringLength(request.resource.data.config.name, 1, 200) &&
@@ -172,6 +173,7 @@ service cloud.firestore {
           validStringLength(request.resource.data.name, 1, 200) &&
           isValidRating(request.resource.data.rating) &&
           (!('text' in request.resource.data) || validStringLength(request.resource.data.text, 0, 5000)) &&
+          (!('photoUrl' in request.resource.data) || validStringLength(request.resource.data.photoUrl, 1, 2000)) &&
           isValidReplyStatus(request.resource.data.replyStatus);
 
           // Users and Cloud Functions can update reviews
@@ -181,7 +183,10 @@ service cloud.firestore {
           isValidReplyStatus(request.resource.data.replyStatus)) &&
           // Validate aiReply length if provided
           (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['aiReply']) ||
-          (request.resource.data.aiReply == null || validStringLength(request.resource.data.aiReply, 0, 2000)));
+          (request.resource.data.aiReply == null || validStringLength(request.resource.data.aiReply, 0, 2000))) &&
+          // Validate postedReply length if provided
+          (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['postedReply']) ||
+          (request.resource.data.postedReply == null || validStringLength(request.resource.data.postedReply, 0, 2000)));
 
           // Reviews should not be deleted directly (keep for history)
           allow delete: if false;

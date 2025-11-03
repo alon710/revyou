@@ -1,18 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { Business, BusinessConfig } from "@/types/database";
-import {
-  DashboardCard,
-  DashboardCardHeader,
-  DashboardCardTitle,
-  DashboardCardDescription,
-  DashboardCardContent,
-  DashboardCardField,
-} from "@/components/ui/dashboard-card";
-import { Button } from "@/components/ui/button";
-import { Building2, Settings } from "lucide-react";
-import { BusinessIdentityEditModal } from "@/components/dashboard/businesses/BusinessIdentityEditModal";
+import { DashboardCardField } from "@/components/ui/dashboard-card";
+import { Building2 } from "lucide-react";
+import EditableSection from "@/components/dashboard/shared/EditableSection";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface BusinessIdentitySectionProps {
   config: BusinessConfig;
@@ -21,39 +15,36 @@ interface BusinessIdentitySectionProps {
   onSave: (config: Partial<BusinessConfig>) => Promise<void>;
 }
 
+interface BusinessIdentityFormData {
+  name: string;
+  description: string;
+  phoneNumber: string;
+}
+
 export default function BusinessIdentitySection({
   config,
   business,
   loading,
   onSave,
 }: BusinessIdentitySectionProps) {
-  const [showEditModal, setShowEditModal] = useState(false);
+  const formData: BusinessIdentityFormData = {
+    name: config.name || "",
+    description: config.description || "",
+    phoneNumber: config.phoneNumber || "",
+  };
 
   return (
-    <>
-      <DashboardCard>
-        <DashboardCardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <DashboardCardTitle icon={<Building2 className="h-5 w-5" />}>
-                פרטי עסק
-              </DashboardCardTitle>
-              <DashboardCardDescription>
-                פרטי זהות העסק לשימוש בתגובות AI
-              </DashboardCardDescription>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowEditModal(true)}
-              disabled={loading}
-            >
-              <Settings className="ml-2 h-4 w-4" />
-              עריכה
-            </Button>
-          </div>
-        </DashboardCardHeader>
-        <DashboardCardContent className="space-y-6">
+    <EditableSection
+      title="פרטי עסק"
+      description="פרטי זהות העסק לשימוש בתגובות AI"
+      icon={<Building2 className="h-5 w-5" />}
+      modalTitle="עריכת פרטי עסק"
+      modalDescription="ערוך את פרטי זהות העסק לשימוש בתגובות AI"
+      loading={loading}
+      data={formData}
+      onSave={onSave}
+      renderDisplay={() => (
+        <>
           <DashboardCardField label="שם העסק">
             <p className="text-sm font-medium">
               {config.name || business.name}
@@ -69,15 +60,63 @@ export default function BusinessIdentitySection({
           <DashboardCardField label="טלפון ליצירת קשר (לביקורות שליליות)">
             <p className="text-sm font-medium">{config.phoneNumber}</p>
           </DashboardCardField>
-        </DashboardCardContent>
-      </DashboardCard>
+        </>
+      )}
+      renderForm={({ data, isLoading, onChange }) => (
+        <>
+          <div className="space-y-2">
+            <Label htmlFor="businessName" className="text-right block">
+              שם העסק
+            </Label>
+            <Input
+              id="businessName"
+              type="text"
+              value={data.name}
+              onChange={(e) => onChange("name", e.target.value)}
+              placeholder={business.name}
+              disabled={isLoading}
+            />
+            <p className="text-xs text-muted-foreground text-right">
+              השאר ריק כדי להשתמש בשם מ-Google: {business.name}
+            </p>
+          </div>
 
-      <BusinessIdentityEditModal
-        business={business}
-        open={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        onSave={onSave}
-      />
-    </>
+          <div className="space-y-2">
+            <Label htmlFor="businessDescription" className="text-right block">
+              תיאור העסק
+            </Label>
+            <Textarea
+              id="businessDescription"
+              value={data.description}
+              onChange={(e) => onChange("description", e.target.value)}
+              placeholder="תאר את העסק שלך, את השירותים שאתה מספק..."
+              rows={4}
+              disabled={isLoading}
+              className="resize-none"
+            />
+            <p className="text-xs text-muted-foreground text-right">
+              תיאור זה יעזור ל-AI ליצור תשובות מותאמות יותר
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="businessPhone" className="text-right block">
+              טלפון ליצירת קשר (לביקורות שליליות)
+            </Label>
+            <Input
+              id="businessPhone"
+              type="tel"
+              value={data.phoneNumber}
+              onChange={(e) => onChange("phoneNumber", e.target.value)}
+              placeholder="039025977"
+              disabled={isLoading}
+            />
+            <p className="text-xs text-muted-foreground text-right">
+              מספר טלפון שיופיע בתגובות שליליות (1-2 כוכבים)
+            </p>
+          </div>
+        </>
+      )}
+    />
   );
 }

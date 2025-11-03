@@ -23,6 +23,20 @@ const languageModeSchema = z.enum(["hebrew", "english", "auto-detect"]);
 
 const replyStatusSchema = z.enum(["pending", "rejected", "posted", "failed"]);
 
+const subscriptionTierSchema = z.enum(["free", "basic", "pro", "enterprise"]);
+
+export const userSchemaAdmin = z.object({
+  uid: z.string().min(1),
+  email: z.string().email(),
+  displayName: z.string().min(1).max(200),
+  photoURL: z.string().url(),
+  subscriptionTier: subscriptionTierSchema,
+  createdAt: timestampSchemaAdmin,
+  stripeCustomerId: z.string().optional(),
+  googleRefreshToken: z.string().optional(),
+  selectedBusinessId: z.string().optional(),
+});
+
 const starConfigSchema = z.object({
   customInstructions: z.string().max(1000),
   autoReply: z.boolean(),
@@ -37,7 +51,7 @@ const BusinessConfigSchema = z.object({
   languageMode: languageModeSchema,
   languageInstructions: z.string().max(100).optional(),
   maxSentences: z.number().min(1).max(5).optional(),
-  allowedEmojis: z.array(z.string()).optional(),
+  allowedEmojis: z.array(z.string()).max(50).optional(),
   signature: z.string().max(100).optional(),
   starConfigs: z.object({
     1: starConfigSchema,
@@ -58,12 +72,14 @@ export const businessSchemaAdmin = z.object({
   websiteUrl: z
     .string()
     .url()
+    .max(200)
     .optional()
     .or(z.literal(""))
     .transform((val) => (val === "" ? undefined : val)),
   mapsUrl: z
     .string()
     .url()
+    .max(2000)
     .optional()
     .or(z.literal(""))
     .transform((val) => (val === "" ? undefined : val)),
@@ -71,6 +87,7 @@ export const businessSchemaAdmin = z.object({
   photoUrl: z
     .string()
     .url()
+    .max(2000)
     .optional()
     .or(z.literal(""))
     .transform((val) => (val === "" ? undefined : val)),
