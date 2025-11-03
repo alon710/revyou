@@ -40,6 +40,6 @@ export async function getBusinessAdmin(
         console.error("Validation error:", JSON.stringify(error, null, 2));
       }
     }
-    throw new Error("לא ניתן לטעון את פרטי המיקום");
+    throw new Error("לא ניתן לטעון את פרטי העסק");
   }
 }
