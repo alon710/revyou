@@ -26,7 +26,10 @@ export async function GET(request: NextRequest) {
     const error = searchParams.get("error");
 
     if (error || !code || !state) {
-      return redirectToBusinesses(false, "אירעה שגיאה באימות Google. אנא נסה שוב.");
+      return redirectToBusinesses(
+        false,
+        "אירעה שגיאה באימות Google. אנא נסה שוב."
+      );
     }
 
     const stateData = JSON.parse(Buffer.from(state, "base64").toString());
@@ -38,20 +41,29 @@ export async function GET(request: NextRequest) {
 
     const authResult = await getAuthenticatedUserId();
     if (authResult instanceof NextResponse) {
-      return redirectToBusinesses(false, "לא מחובר למערכת. אנא התחבר ונסה שוב.");
+      return redirectToBusinesses(
+        false,
+        "לא מחובר למערכת. אנא התחבר ונסה שוב."
+      );
     }
 
     const { userId: authenticatedUserId } = authResult;
 
     if (stateUserId !== authenticatedUserId) {
       console.error("State userId mismatch with authenticated user");
-      return redirectToBusinesses(false, "חוסר התאמה במזהה משתמש. אנא נסה שוב.");
+      return redirectToBusinesses(
+        false,
+        "חוסר התאמה במזהה משתמש. אנא נסה שוב."
+      );
     }
 
     const tokens = await exchangeCodeForTokens(code);
 
     if (!tokens.refresh_token) {
-      return redirectToBusinesses(false, "לא התקבל אסימון רענון מ-Google. אנא נסה שוב.");
+      return redirectToBusinesses(
+        false,
+        "לא התקבל אסימון רענון מ-Google. אנא נסה שוב."
+      );
     }
 
     const encryptedToken = await encryptToken(tokens.refresh_token);
@@ -60,6 +72,9 @@ export async function GET(request: NextRequest) {
     return redirectToBusinesses(true);
   } catch (error) {
     console.error("Error in OAuth callback", error);
-    return redirectToBusinesses(false, "אירעה שגיאה בחיבור ל-Google. אנא נסה שוב.");
+    return redirectToBusinesses(
+      false,
+      "אירעה שגיאה בחיבור ל-Google. אנא נסה שוב."
+    );
   }
 }
