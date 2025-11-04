@@ -7,7 +7,6 @@ import { BusinessProvider } from "@/contexts/BusinessContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { UpgradeBanner } from "@/components/dashboard/utils/UpgradeBanner";
 import { Loading } from "@/components/ui/loading";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export default function DashboardLayout({
   children,
@@ -35,10 +34,8 @@ export default function DashboardLayout({
   return (
     <BusinessProvider>
       <AppLayout variant="dashboard">
-        <ErrorBoundary>
-          {children}
-          <UpgradeBanner />
-        </ErrorBoundary>
+        {children}
+        <UpgradeBanner />
       </AppLayout>
     </BusinessProvider>
   );
