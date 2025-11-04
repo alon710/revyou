@@ -14,8 +14,12 @@ import { IconButton } from "@/components/ui/icon-button";
 import { Briefcase, Check } from "lucide-react";
 
 export function AccountBusinessSwitcher() {
-  const { accounts, currentAccount, selectAccount, loading: accountsLoading } =
-    useAccount();
+  const {
+    accounts,
+    currentAccount,
+    selectAccount,
+    loading: accountsLoading,
+  } = useAccount();
   const {
     businesses,
     selectedBusinessId,
