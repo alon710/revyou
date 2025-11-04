@@ -22,8 +22,8 @@ export function SidebarHeader() {
   return (
     <div
       className={cn(
-        "flex items-center border-b transition-all",
-        isCollapsed ? "justify-center p-3" : "justify-between px-4 py-3"
+        "flex items-center border-b transition-all h-14",
+        isCollapsed ? "justify-center px-3" : "justify-between px-4"
       )}
     >
       {!isCollapsed && <Logo href="/dashboard" />}

@@ -45,9 +45,8 @@ export function SidebarSelector<T>({
 }: SidebarSelectorProps<T>) {
   if (loading) {
     return (
-      <Button variant="outline" className="w-full justify-center" disabled>
-        <Loader2 className="h-4 w-4 animate-spin ml-2" />
-        <span>{loadingMessage}</span>
+      <Button variant="outline" disabled dir="rtl">
+        <span className="text-right">{loadingMessage}</span>
       </Button>
     );
   }
