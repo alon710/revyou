@@ -70,7 +70,7 @@ export function EditableFormModal<T>({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={(open) => !open && handleCancel()}>
       <DialogContent className="sm:max-w-[600px]" dir="rtl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
