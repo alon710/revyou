@@ -9,7 +9,7 @@ import {
 import { db } from "@/lib/firebase/config";
 import { type PlanLimits, getPlanLimits } from "@/lib/stripe/entitlements";
 import { enrichProduct } from "@/lib/stripe/product-parser";
-import { getUserBusinesses } from "@/lib/firebase/business";
+import { getAllUserBusinesses } from "@/lib/firebase/business";
 
 async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
   if (!db) {
@@ -99,7 +99,7 @@ async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
 export async function checkBusinessLimit(userId: string): Promise<boolean> {
   try {
     const limits = await getUserPlanLimits(userId);
-    const businesses = await getUserBusinesses(userId);
+    const businesses = await getAllUserBusinesses(userId);
     return businesses.length < limits.businesses;
   } catch (error) {
     console.error("Error checking business limit:", error);

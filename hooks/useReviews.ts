@@ -12,19 +12,19 @@ interface UseReviewsReturn {
   refetch: () => Promise<void>;
 }
 
-/**
- * Custom hook to fetch and manage reviews for the current business
- * Automatically refetches when business or user changes
- */
 export function useReviews(): UseReviewsReturn {
   const { user } = useAuth();
-  const { currentBusiness, loading: businessLoading } = useBusiness();
+  const {
+    currentAccount,
+    currentBusiness,
+    loading: businessLoading,
+  } = useBusiness();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchReviews = useCallback(async () => {
-    if (!db || !currentBusiness || !user) {
+    if (!db || !currentBusiness || !currentAccount || !user) {
       setReviews([]);
       setLoading(false);
       return;
@@ -39,6 +39,8 @@ export function useReviews(): UseReviewsReturn {
           db,
           "users",
           user.uid,
+          "accounts",
+          currentAccount.id,
           "businesses",
           currentBusiness.id,
           "reviews"
@@ -63,7 +65,7 @@ export function useReviews(): UseReviewsReturn {
     } finally {
       setLoading(false);
     }
-  }, [currentBusiness, user]);
+  }, [currentBusiness, currentAccount, user]);
 
   useEffect(() => {
     if (!businessLoading) {

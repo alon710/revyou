@@ -5,6 +5,19 @@ export type LanguageMode = "hebrew" | "english" | "auto-detect";
 
 export type ReplyStatus = "pending" | "rejected" | "posted" | "failed";
 
+export interface Account {
+  id: string;
+  email: string;
+  accountName: string;
+  googleRefreshToken: string;
+  connectedAt: Timestamp;
+  lastSynced?: Timestamp;
+}
+
+export interface AccountWithBusinesses extends Account {
+  businesses: Business[];
+}
+
 export interface User {
   uid: string;
   email: string;
@@ -13,7 +26,7 @@ export interface User {
   createdAt: Timestamp;
   stripeId?: string;
   stripeLink?: string;
-  googleRefreshToken?: string;
+  selectedAccountId?: string;
   selectedBusinessId?: string;
 }
 
@@ -58,7 +71,6 @@ export interface GoogleBusinessProfileBusiness {
 
 export interface Business {
   id: string;
-  googleAccountId: string;
   googleBusinessId: string;
   name: string;
   address: string;

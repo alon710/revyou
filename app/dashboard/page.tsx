@@ -20,7 +20,6 @@ import {
 } from "@/components/dashboard/charts/DashboardChart";
 import { type ChartConfig } from "@/components/ui/chart";
 import { toast } from "sonner";
-import { BarChart3 } from "lucide-react";
 
 const chartConfig = {
   count: { label: "כמות" },
@@ -74,7 +73,6 @@ export default function DashboardPage() {
         <PageHeader
           title="לוח בקרה"
           description="סקירה כללית של הביקורות שלך"
-          icon={<BarChart3 className="h-8 w-8" />}
         />
         <EmptyState />
       </PageContainer>
@@ -90,11 +88,6 @@ export default function DashboardPage() {
 
       {statsLoading ? (
         <Loading text="טוען נתונים..." />
-      ) : stats.totalReviews === 0 ? (
-        <div className="text-center text-muted-foreground py-12">
-          אין ביקורות עדיין. הביקורות של {currentBusiness.name} יופיעו כאן ברגע
-          שהן יגיעו מגוגל
-        </div>
       ) : (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

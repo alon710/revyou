@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
 import { useSubscription } from "@/lib/hooks/useSubscription";
+import { useUserStats } from "@/hooks/useUserStats";
 import { getUser } from "@/lib/firebase/users";
-import { getReviewCountThisMonth } from "@/lib/subscription/usage-stats";
 import { User } from "@/types/database";
 import { AccountInfo } from "@/components/dashboard/settings/AccountInfo";
 import { SubscriptionInfo } from "@/components/dashboard/settings/SubscriptionInfo";
@@ -21,9 +21,9 @@ export default function SettingsPage() {
     limits,
     loading: subscriptionLoading,
   } = useSubscription();
+  const { reviewCount, loading: reviewCountLoading } = useUserStats();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [reviewCount, setReviewCount] = useState(0);
 
   const loadUserData = useCallback(async () => {
     if (!authUser) return;
@@ -32,8 +32,6 @@ export default function SettingsPage() {
       setLoading(true);
       const data = await getUser(authUser.uid);
       setUserData(data);
-      const count = await getReviewCountThisMonth();
-      setReviewCount(count);
     } catch (error) {
       console.error("Error loading user data:", error);
     } finally {
@@ -47,7 +45,7 @@ export default function SettingsPage() {
     }
   }, [authUser, authLoading, loadUserData]);
 
-  if (authLoading || loading || subscriptionLoading) {
+  if (authLoading || loading || subscriptionLoading || reviewCountLoading) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loading size="md" />

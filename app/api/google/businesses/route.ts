@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
-import { getUserGoogleRefreshToken } from "@/lib/firebase/admin-users";
+import {
+  getAccountGoogleRefreshToken,
+  getUserSelectedAccountId,
+} from "@/lib/firebase/admin-accounts";
 import { listAllBusinesses, decryptToken } from "@/lib/google/business-profile";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const authResult = await getAuthenticatedUserId();
     if (authResult instanceof NextResponse) {
@@ -14,8 +17,24 @@ export async function GET() {
 
     const { userId: authenticatedUserId } = authResult;
 
-    const encryptedRefreshToken =
-      await getUserGoogleRefreshToken(authenticatedUserId);
+    const { searchParams } = new URL(request.url);
+    let accountId = searchParams.get("accountId");
+
+    if (!accountId) {
+      accountId = await getUserSelectedAccountId(authenticatedUserId);
+    }
+
+    if (!accountId) {
+      return NextResponse.json(
+        { error: "לא נמצא חשבון פעיל. אנא התחבר מחדש." },
+        { status: 404 }
+      );
+    }
+
+    const encryptedRefreshToken = await getAccountGoogleRefreshToken(
+      authenticatedUserId,
+      accountId
+    );
 
     if (!encryptedRefreshToken) {
       return NextResponse.json(

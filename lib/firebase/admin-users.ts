@@ -1,36 +1,33 @@
 import { adminDb } from "@/lib/firebase/admin";
 
-export async function updateUserGoogleRefreshToken(
+export async function updateUserSelectedAccount(
   uid: string,
-  googleRefreshToken: string
+  accountId: string | null
 ): Promise<void> {
   try {
     const userRef = adminDb.collection("users").doc(uid);
     await userRef.update({
-      googleRefreshToken,
+      selectedAccountId: accountId,
       updatedAt: new Date(),
     });
   } catch (error) {
-    console.error("Error updating Google refresh token:", error);
-    throw new Error("לא ניתן לעדכן את חיבור Google");
+    console.error("Error updating selected account:", error);
+    throw new Error("לא ניתן לעדכן את החשבון הנבחר");
   }
 }
 
-export async function getUserGoogleRefreshToken(
-  uid: string
-): Promise<string | null> {
+export async function updateUserSelectedBusiness(
+  uid: string,
+  businessId: string | null
+): Promise<void> {
   try {
     const userRef = adminDb.collection("users").doc(uid);
-    const userDoc = await userRef.get();
-
-    if (!userDoc.exists) {
-      return null;
-    }
-
-    const data = userDoc.data();
-    return data?.googleRefreshToken || null;
+    await userRef.update({
+      selectedBusinessId: businessId,
+      updatedAt: new Date(),
+    });
   } catch (error) {
-    console.error("Error getting Google refresh token:", error);
-    throw new Error("לא ניתן לטעון את חיבור Google");
+    console.error("Error updating selected business:", error);
+    throw new Error("לא ניתן לעדכן את העסק הנבחר");
   }
 }

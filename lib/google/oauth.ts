@@ -3,6 +3,8 @@ import * as Iron from "@hapi/iron";
 
 const GOOGLE_BUSINESS_PROFILE_API_SCOPES = [
   "https://www.googleapis.com/auth/business.manage",
+  "https://www.googleapis.com/auth/userinfo.email",
+  "https://www.googleapis.com/auth/userinfo.profile",
 ];
 
 function createOAuthClient(): OAuth2Client {
@@ -54,5 +56,34 @@ export async function encryptToken(token: string): Promise<string> {
   } catch (error) {
     console.error("Error encrypting token:", error);
     throw new Error("Failed to encrypt token");
+  }
+}
+
+export async function getUserInfo(accessToken: string): Promise<{
+  email: string;
+  name: string;
+}> {
+  try {
+    const response = await fetch(
+      "https://www.googleapis.com/oauth2/v2/userinfo",
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user info from Google");
+    }
+
+    const data = await response.json();
+    return {
+      email: data.email,
+      name: data.name || data.email,
+    };
+  } catch (error) {
+    console.error("Error fetching user info:", error);
+    throw new Error("Failed to get Google account information");
   }
 }

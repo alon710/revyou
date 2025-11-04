@@ -22,17 +22,20 @@ const fromEmail = defineString("FROM_EMAIL");
 
 async function getBusiness(
   userId: string,
+  accountId: string,
   businessId: string
 ): Promise<Business | null> {
   const businessDoc = await db
     .collection("users")
     .doc(userId)
+    .collection("accounts")
+    .doc(accountId)
     .collection("businesses")
     .doc(businessId)
     .get();
 
   if (!businessDoc.exists) {
-    console.error("Business not found", { businessId });
+    console.error("Business not found", { accountId, businessId });
     return null;
   }
 
@@ -172,7 +175,8 @@ async function sendEmailNotification(
 
 export const onReviewCreate = onDocumentCreated(
   {
-    document: "users/{userId}/businesses/{businessId}/reviews/{reviewId}",
+    document:
+      "users/{userId}/accounts/{accountId}/businesses/{businessId}/reviews/{reviewId}",
     secrets: [geminiApiKey],
     timeoutSeconds: 300,
     minInstances: 0,
@@ -186,12 +190,17 @@ export const onReviewCreate = onDocumentCreated(
       return;
     }
 
-    const { userId, businessId, reviewId } = event.params;
-    console.log("Processing new review", { userId, businessId, reviewId });
+    const { userId, accountId, businessId, reviewId } = event.params;
+    console.log("Processing new review", {
+      userId,
+      accountId,
+      businessId,
+      reviewId,
+    });
 
     try {
       const review = eventData.data() as Review;
-      const business = await getBusiness(userId, businessId);
+      const business = await getBusiness(userId, accountId, businessId);
       if (!business) return;
 
       const starConfig: StarConfig =

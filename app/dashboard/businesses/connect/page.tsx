@@ -39,6 +39,7 @@ export default function ConnectBusinessPage() {
         userId={user.uid}
         successParam={searchParams.get("success")}
         errorParam={searchParams.get("error")}
+        accountIdParam={searchParams.get("accountId")}
       />
     </PageContainer>
   );

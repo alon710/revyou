@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { createBusiness, getUserBusinesses } from "@/lib/firebase/business";
+import { createBusiness, getAllUserBusinesses } from "@/lib/firebase/business";
 import { checkBusinessLimit } from "@/lib/firebase/business-limits";
 import { GoogleBusinessProfileBusiness, Business } from "@/types/database";
 import { Loading } from "@/components/ui/loading";
@@ -11,12 +11,14 @@ import { OAuthPrompt } from "./OAuthPrompt";
 import { BusinessSelector } from "./BusinessSelector";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { useAccount } from "@/contexts/AccountContext";
 
 interface ConnectBusinessCardProps {
   userId: string;
   onSuccess?: () => void;
   successParam?: string | null;
   errorParam?: string | null;
+  accountIdParam?: string | null;
 }
 
 export function ConnectBusinessCard({
@@ -24,8 +26,10 @@ export function ConnectBusinessCard({
   onSuccess,
   successParam,
   errorParam,
+  accountIdParam,
 }: ConnectBusinessCardProps) {
   const router = useRouter();
+  const { currentAccount } = useAccount();
 
   const [step, setStep] = useState<"auth" | "select">("auth");
   const [existingBusinesses, setExistingBusinesses] = useState<Business[]>([]);
@@ -41,7 +45,7 @@ export function ConnectBusinessCard({
   const loadExistingBusinesses = useCallback(async () => {
     try {
       setLoadingExisting(true);
-      const businesses = await getUserBusinesses(userId);
+      const businesses = await getAllUserBusinesses(userId);
       setExistingBusinesses(businesses);
     } catch (err) {
       console.error("Error loading existing businesses:", err);
@@ -125,6 +129,13 @@ export function ConnectBusinessCard({
       setConnecting(true);
       setError(null);
 
+      // Use accountId from URL param or current account
+      const accountId = accountIdParam || currentAccount?.id;
+      if (!accountId) {
+        setError("לא נמצא חשבון פעיל. אנא התחבר מחדש.");
+        return;
+      }
+
       const canAdd = await checkBusinessLimit(userId);
       if (!canAdd) {
         setError("הגעת למגבלת העסקים בחבילת המינוי שלך");
@@ -133,7 +144,7 @@ export function ConnectBusinessCard({
 
       await createBusiness({
         userId,
-        googleAccountId: business.accountId,
+        accountId,
         googleBusinessId: business.id,
         name: business.name,
         address: business.address,

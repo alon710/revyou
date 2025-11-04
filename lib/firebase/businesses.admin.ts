@@ -1,15 +1,19 @@
 import { adminDb } from "@/lib/firebase/admin";
 import { Business } from "@/types/database";
 import { businessSchemaAdmin } from "@/lib/validation/database.admin";
+import { Timestamp as ClientTimestamp } from "firebase/firestore";
 
 export async function getBusinessAdmin(
   userId: string,
+  accountId: string,
   businessId: string
 ): Promise<Business | null> {
   try {
     const businessRef = adminDb
       .collection("users")
       .doc(userId)
+      .collection("accounts")
+      .doc(accountId)
       .collection("businesses")
       .doc(businessId);
     const businessSnap = await businessRef.get();
@@ -28,7 +32,19 @@ export async function getBusinessAdmin(
         id: businessSnap.id,
         ...cleanedData,
       });
-      return validated as Business;
+
+      // Convert admin Timestamp/Date to client Timestamp
+      const connectedAtDate =
+        validated.connectedAt instanceof Date
+          ? validated.connectedAt
+          : validated.connectedAt.toDate();
+
+      const business: Business = {
+        ...validated,
+        connectedAt: ClientTimestamp.fromDate(connectedAtDate),
+      };
+
+      return business;
     }
 
     return null;

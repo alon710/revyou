@@ -22,14 +22,24 @@ import {
 import { checkBusinessLimit } from "@/lib/firebase/business-limits";
 import { getDefaultBusinessConfig } from "@/lib/firebase/business-config";
 
-export async function getUserBusinesses(userId: string): Promise<Business[]> {
+export async function getAccountBusinesses(
+  userId: string,
+  accountId: string
+): Promise<Business[]> {
   if (!db) {
     console.error("Firestore not initialized");
     return [];
   }
 
   try {
-    const businessesRef = collection(db, "users", userId, "businesses");
+    const businessesRef = collection(
+      db,
+      "users",
+      userId,
+      "accounts",
+      accountId,
+      "businesses"
+    );
     const q = query(businessesRef, orderBy("connectedAt", "desc"));
 
     const querySnapshot = await getDocs(q);
@@ -52,8 +62,35 @@ export async function getUserBusinesses(userId: string): Promise<Business[]> {
   }
 }
 
+export async function getAllUserBusinesses(
+  userId: string
+): Promise<Business[]> {
+  if (!db) {
+    console.error("Firestore not initialized");
+    return [];
+  }
+
+  try {
+    const accountsRef = collection(db, "users", userId, "accounts");
+    const accountsSnapshot = await getDocs(accountsRef);
+
+    const allBusinesses: Business[] = [];
+
+    for (const accountDoc of accountsSnapshot.docs) {
+      const businesses = await getAccountBusinesses(userId, accountDoc.id);
+      allBusinesses.push(...businesses);
+    }
+
+    return allBusinesses;
+  } catch (error) {
+    console.error("Error fetching all businesses:", error);
+    throw new Error("לא ניתן לטעון את העסקים");
+  }
+}
+
 export async function getBusiness(
   userId: string,
+  accountId: string,
   businessId: string
 ): Promise<Business | null> {
   if (!db) {
@@ -62,7 +99,15 @@ export async function getBusiness(
   }
 
   try {
-    const businessRef = doc(db, "users", userId, "businesses", businessId);
+    const businessRef = doc(
+      db,
+      "users",
+      userId,
+      "accounts",
+      accountId,
+      "businesses",
+      businessId
+    );
     const businessSnap = await getDoc(businessRef);
 
     if (businessSnap.exists()) {
@@ -84,6 +129,7 @@ export async function createBusiness(
     "config" | "connectedAt" | "connected" | "emailOnNewReview"
   > & {
     userId: string;
+    accountId: string;
     config?: Partial<BusinessConfig>;
     emailOnNewReview?: boolean;
   }
@@ -107,26 +153,32 @@ export async function createBusiness(
       phoneNumber: data.config?.phoneNumber || data.phoneNumber,
     };
 
-    const { userId, ...businessDataWithoutUserId } = data;
+    const { userId, accountId, ...businessDataWithoutUserIdAndAccountId } =
+      data;
 
     const businessData = {
-      ...businessDataWithoutUserId,
+      ...businessDataWithoutUserIdAndAccountId,
       config: BusinessConfig,
       connected: true,
       connectedAt: serverTimestamp(),
       emailOnNewReview: data.emailOnNewReview ?? true,
     };
 
-    // Skip validation for connectedAt since serverTimestamp() is a sentinel value
-    // that becomes a Timestamp only after Firestore processes it
     // eslint-disable-next-line unused-imports/no-unused-vars
     const { connectedAt, ...validationData } = businessData;
     businessCreateSchema.omit({ connectedAt: true }).parse(validationData);
 
-    const businessesRef = collection(db, "users", userId, "businesses");
+    const businessesRef = collection(
+      db,
+      "users",
+      userId,
+      "accounts",
+      accountId,
+      "businesses"
+    );
     const docRef = await addDoc(businessesRef, businessData);
 
-    return (await getBusiness(userId, docRef.id)) as Business;
+    return (await getBusiness(userId, accountId, docRef.id)) as Business;
   } catch (error) {
     console.error("Error creating business:", error);
     if (error instanceof Error && error.message.includes("מגבלת")) {
@@ -138,6 +190,7 @@ export async function createBusiness(
 
 export async function updateBusiness(
   userId: string,
+  accountId: string,
   businessId: string,
   data: BusinessUpdateInput
 ): Promise<Business> {
@@ -148,10 +201,18 @@ export async function updateBusiness(
   try {
     const validatedData = businessUpdateSchema.parse(data);
 
-    const businessRef = doc(db, "users", userId, "businesses", businessId);
+    const businessRef = doc(
+      db,
+      "users",
+      userId,
+      "accounts",
+      accountId,
+      "businesses",
+      businessId
+    );
     await updateDoc(businessRef, validatedData);
 
-    return (await getBusiness(userId, businessId)) as Business;
+    return (await getBusiness(userId, accountId, businessId)) as Business;
   } catch (error) {
     console.error("Error updating business:", error);
     throw new Error("לא ניתן לעדכן את העסק");
@@ -160,6 +221,7 @@ export async function updateBusiness(
 
 export async function deleteBusiness(
   userId: string,
+  accountId: string,
   businessId: string
 ): Promise<void> {
   if (!db) {
@@ -167,7 +229,15 @@ export async function deleteBusiness(
   }
 
   try {
-    const businessRef = doc(db, "users", userId, "businesses", businessId);
+    const businessRef = doc(
+      db,
+      "users",
+      userId,
+      "accounts",
+      accountId,
+      "businesses",
+      businessId
+    );
     await deleteDoc(businessRef);
   } catch (error) {
     console.error("Error deleting business:", error);

@@ -8,11 +8,13 @@ import React, {
   useCallback,
   ReactNode,
 } from "react";
-import { Business } from "@/types/database";
-import { getBusiness, getUserBusinesses } from "@/lib/firebase/business";
+import { Business, Account } from "@/types/database";
+import { getBusiness, getAccountBusinesses } from "@/lib/firebase/business";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAccount } from "@/contexts/AccountContext";
 
 interface BusinessContextType {
+  currentAccount: Account | null;
   currentBusiness: Business | null;
   businesses: Business[];
   selectedBusinessId: string | null;
@@ -30,6 +32,7 @@ const STORAGE_KEY = "selectedBusinessId";
 
 export function BusinessProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
+  const { currentAccount } = useAccount();
   const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(
     () => {
       if (typeof window !== "undefined") {
@@ -42,7 +45,6 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Persist selectedBusinessId to localStorage
   useEffect(() => {
     if (selectedBusinessId) {
       localStorage.setItem(STORAGE_KEY, selectedBusinessId);
@@ -60,11 +62,18 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loadBusinesses = useCallback(async () => {
-    if (!user) return;
+    if (!user || !currentAccount) {
+      setBusinesses([]);
+      setLoading(false);
+      return;
+    }
 
     try {
       setLoading(true);
-      const fetchedBusinesses = await getUserBusinesses(user.uid);
+      const fetchedBusinesses = await getAccountBusinesses(
+        user.uid,
+        currentAccount.id
+      );
       const connected = fetchedBusinesses.filter((l) => l.connected);
       setBusinesses(connected);
 
@@ -85,20 +94,30 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [user, selectedBusinessId, selectBusiness, clearSelectedBusinessId]);
+  }, [
+    user,
+    currentAccount,
+    selectedBusinessId,
+    selectBusiness,
+    clearSelectedBusinessId,
+  ]);
 
   const loadCurrentBusiness = useCallback(
     async (businessId: string) => {
-      if (!user) return;
+      if (!user || !currentAccount) return;
       try {
-        const business = await getBusiness(user.uid, businessId);
+        const business = await getBusiness(
+          user.uid,
+          currentAccount.id,
+          businessId
+        );
         setCurrentBusiness(business);
       } catch (_error) {
         console.error("Failed to load current business:", _error);
         setCurrentBusiness(null);
       }
     },
-    [user]
+    [user, currentAccount]
   );
 
   const clearBusiness = useCallback(() => {
@@ -107,15 +126,17 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   }, [clearSelectedBusinessId]);
 
   useEffect(() => {
-    if (user) {
+    if (user && currentAccount) {
       loadBusinesses();
     } else {
       setBusinesses([]);
       setCurrentBusiness(null);
-      clearSelectedBusinessId();
+      if (!user) {
+        clearSelectedBusinessId();
+      }
       setLoading(false);
     }
-  }, [user, loadBusinesses, clearSelectedBusinessId]);
+  }, [user, currentAccount, loadBusinesses, clearSelectedBusinessId]);
 
   useEffect(() => {
     if (selectedBusinessId && user) {
@@ -135,6 +156,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   return (
     <BusinessContext.Provider
       value={{
+        currentAccount,
         currentBusiness,
         businesses,
         selectedBusinessId,

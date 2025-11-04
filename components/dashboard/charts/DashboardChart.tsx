@@ -7,6 +7,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
+import { BarChart3 } from "lucide-react";
 
 export interface ChartDataItem {
   label: string;
@@ -20,6 +21,19 @@ interface DashboardChartProps {
 }
 
 export function DashboardChart({ data, config }: DashboardChartProps) {
+  const isEmpty = data.length === 0 || data.every((item) => item.count === 0);
+
+  if (isEmpty) {
+    return (
+      <div className="h-[300px] w-full flex items-center justify-center">
+        <div className="text-center text-muted-foreground">
+          <BarChart3 className="mx-auto h-12 w-12 mb-2 opacity-50" />
+          <p>אין נתונים להצגה</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <ChartContainer config={config} className="h-[300px] w-full">
       <BarChart data={data} accessibilityLayer>
