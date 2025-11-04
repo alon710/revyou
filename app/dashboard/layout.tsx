@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { AccountProvider } from "@/contexts/AccountContext";
 import { BusinessProvider } from "@/contexts/BusinessContext";
-import { SidebarProvider, Sidebar, useSidebar } from "@/components/layout/Sidebar/Sidebar";
+import {
+  SidebarProvider,
+  Sidebar,
+  useSidebar,
+} from "@/components/layout/Sidebar/Sidebar";
 import { DashboardHeader } from "@/components/layout/DashboardHeader";
 import { Loading } from "@/components/ui/loading";
 import { cn } from "@/lib/utils";
@@ -18,9 +22,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       <Sidebar />
 
       <div className="flex flex-col flex-1">
-        <div className={cn(
-          !isMobile && (isCollapsed ? "mr-16" : "mr-64")
-        )}>
+        <div className={cn(!isMobile && (isCollapsed ? "mr-16" : "mr-64"))}>
           <DashboardHeader />
         </div>
 

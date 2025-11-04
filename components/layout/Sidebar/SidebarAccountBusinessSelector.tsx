@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronDown, Loader2, Building2 } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { getAccountBusinesses } from "@/lib/firebase/business";
 import type { AccountWithBusinesses } from "@/types/database";
 
@@ -41,7 +41,10 @@ export function SidebarAccountBusinessSelector() {
           const businesses = await getAccountBusinesses(user.uid, account.id);
           return { ...account, businesses };
         } catch (error) {
-          console.error(`Error loading businesses for account ${account.id}:`, error);
+          console.error(
+            `Error loading businesses for account ${account.id}:`,
+            error
+          );
           return { ...account, businesses: [] };
         }
       });
@@ -58,20 +61,20 @@ export function SidebarAccountBusinessSelector() {
     loadBusinessesForAccounts();
   }, [loadBusinessesForAccounts]);
 
-  const handleBusinessSelect = async (accountId: string, businessId: string) => {
-    // Switch account if different
+  const handleBusinessSelect = async (
+    accountId: string,
+    businessId: string
+  ) => {
     if (currentAccount?.id !== accountId) {
       await selectAccount(accountId);
     }
-    // Then switch business
     await selectBusiness(businessId);
   };
 
   if (loading) {
     return (
-      <Button variant="outline" className="w-full justify-center" disabled>
-        <Loader2 className="h-4 w-4 animate-spin ml-2" />
-        <span>טוען...</span>
+      <Button variant="outline" className="w-full justify-start " disabled>
+        <span className="px-2">טוען...</span>
       </Button>
     );
   }
@@ -80,87 +83,85 @@ export function SidebarAccountBusinessSelector() {
     return (
       <Button
         variant="outline"
-        className="w-full justify-center text-muted-foreground cursor-default"
+        className="w-full justify-start text-muted-foreground cursor-default"
         disabled
       >
-        <Building2 className="h-4 w-4 ml-2" />
         <span>אין חשבונות מחוברים</span>
       </Button>
     );
   }
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            className="w-full justify-between text-right [direction:rtl]"
-          >
-            <span className="font-medium truncate text-sm flex-1 text-right">
-              {currentBusiness?.name || "בחר עסק"}
-            </span>
-            <ChevronDown className="h-4 w-4 shrink-0 opacity-50 mr-2" />
-          </Button>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent
-          align="end"
-          className="w-[280px] [direction:rtl]"
-          sideOffset={5}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          className="w-full justify-between text-right [direction:rtl]"
         >
-          {accountsWithBusinesses.map((account, accountIndex) => (
-            <div key={account.id}>
-              {accountIndex > 0 && <DropdownMenuSeparator />}
+          <span className="font-medium truncate text-sm flex-1 text-right">
+            {currentBusiness?.name || "בחר עסק"}
+          </span>
+          <ChevronDown className="h-4 w-4 shrink-0 opacity-50 mr-2" />
+        </Button>
+      </DropdownMenuTrigger>
 
-              {/* Account Header (non-clickable label) */}
-              <DropdownMenuLabel className="text-right font-semibold text-foreground px-2 py-2">
-                {account.accountName}
-              </DropdownMenuLabel>
+      <DropdownMenuContent
+        align="end"
+        className="w-[280px] [direction:rtl]"
+        sideOffset={5}
+      >
+        {accountsWithBusinesses.map((account, accountIndex) => (
+          <div key={account.id}>
+            {accountIndex > 0 && <DropdownMenuSeparator />}
 
-              {/* Businesses under this account */}
-              {account.businesses.length > 0 ? (
-                account.businesses.map((business) => {
-                  const isSelected =
-                    currentAccount?.id === account.id &&
-                    currentBusiness?.id === business.id;
+            <DropdownMenuLabel className="text-right font-semibold text-foreground px-2 py-2">
+              {account.accountName}
+            </DropdownMenuLabel>
 
-                  return (
-                    <DropdownMenuItem
-                      key={business.id}
-                      onClick={() => handleBusinessSelect(account.id, business.id)}
-                      className="cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2 w-full flex-row-reverse">
-                        <span className="truncate text-right flex-1">
-                          {business.name}
-                        </span>
-                        {isSelected && (
-                          <Check className="h-4 w-4 shrink-0 text-primary" />
-                        )}
-                      </div>
-                    </DropdownMenuItem>
-                  );
-                })
-              ) : (
-                <div className="px-2 py-1.5 text-sm text-muted-foreground text-right">
-                  אין עסקים מחוברים
-                </div>
-              )}
-            </div>
-          ))}
+            {account.businesses.length > 0 ? (
+              account.businesses.map((business) => {
+                const isSelected =
+                  currentAccount?.id === account.id &&
+                  currentBusiness?.id === business.id;
 
-          <DropdownMenuSeparator />
+                return (
+                  <DropdownMenuItem
+                    key={business.id}
+                    onClick={() =>
+                      handleBusinessSelect(account.id, business.id)
+                    }
+                    className="cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 w-full flex-row-reverse">
+                      <span className="truncate text-right flex-1">
+                        {business.name}
+                      </span>
+                      {isSelected && (
+                        <Check className="h-4 w-4 shrink-0 text-primary" />
+                      )}
+                    </div>
+                  </DropdownMenuItem>
+                );
+              })
+            ) : (
+              <div className="px-2 py-1.5 text-sm text-muted-foreground text-right">
+                אין עסקים מחוברים
+              </div>
+            )}
+          </div>
+        ))}
 
-          {/* Add Business */}
-          <DropdownMenuItem
-            onClick={() => router.push("/dashboard/businesses/connect")}
-            className="cursor-pointer text-right"
-          >
-            <span className="font-medium text-primary w-full text-right">הוסף עסק</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem
+          onClick={() => router.push("/dashboard/businesses/connect")}
+          className="cursor-pointer text-right"
+        >
+          <span className="font-medium text-primary w-full text-right">
+            הוסף עסק
+          </span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

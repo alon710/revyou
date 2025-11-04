@@ -5,6 +5,8 @@ interface LoadingProps {
   className?: string;
   size?: "sm" | "md" | "lg";
   fullScreen?: boolean;
+  title?: string;
+  description?: string;
   text?: string;
 }
 
@@ -18,13 +20,19 @@ export function Loading({
   className,
   size = "md",
   fullScreen = false,
+  title,
+  description,
   text,
 }: LoadingProps) {
-  const spinner = (
-    <div className="flex flex-col items-center gap-2">
+  const content = (
+    <div className="flex flex-col items-center gap-4">
       <Loader2
         className={cn("animate-spin text-primary", sizeMap[size], className)}
       />
+      {title && <h2 className="text-2xl font-semibold">{title}</h2>}
+      {description && (
+        <p className="text-muted-foreground">{description}</p>
+      )}
       {text && <p className="text-sm text-muted-foreground">{text}</p>}
     </div>
   );
@@ -32,10 +40,10 @@ export function Loading({
   if (fullScreen) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
-        {spinner}
+        {content}
       </div>
     );
   }
 
-  return spinner;
+  return content;
 }

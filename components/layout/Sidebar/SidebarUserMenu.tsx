@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Unplug, LogOut, ChevronDown, User } from "lucide-react";
+import { Unplug, LogOut, ChevronDown, User, Settings } from "lucide-react";
 import { signOut } from "@/lib/firebase/auth";
 import { DisconnectAccountsDialog } from "@/components/dashboard/accounts/DisconnectAccountsDialog";
 import { useSidebar } from "./Sidebar";
@@ -30,7 +30,6 @@ export function SidebarUserMenu() {
 
   if (!user) return null;
 
-  // Collapsed: icon only
   if (isCollapsed) {
     return (
       <>
@@ -60,6 +59,17 @@ export function SidebarUserMenu() {
             side="left"
             className="w-[200px] [direction:rtl]"
           >
+            <DropdownMenuItem
+              dir="rtl"
+              onClick={() => router.push("/dashboard/settings")}
+              className="cursor-pointer"
+            >
+              <div className="flex items-center gap-2 w-full flex-row-reverse">
+                <span>הגדרות חשבון</span>
+                <Settings className="h-4 w-4" />
+              </div>
+            </DropdownMenuItem>
+
             <DropdownMenuItem
               dir="rtl"
               onClick={() => setDisconnectDialogOpen(true)}
@@ -94,7 +104,6 @@ export function SidebarUserMenu() {
     );
   }
 
-  // Expanded: full button with user info
   return (
     <>
       <DropdownMenu>
@@ -138,6 +147,16 @@ export function SidebarUserMenu() {
           side="top"
           className="w-[220px] [direction:rtl]"
         >
+          <DropdownMenuItem
+            onClick={() => router.push("/dashboard/settings")}
+            className="cursor-pointer"
+          >
+            <div className="flex items-center gap-2 w-full flex-row-reverse">
+              <span>הגדרות חשבון</span>
+              <Settings className="h-4 w-4" />
+            </div>
+          </DropdownMenuItem>
+
           <DropdownMenuItem
             onClick={() => setDisconnectDialogOpen(true)}
             className="cursor-pointer"
