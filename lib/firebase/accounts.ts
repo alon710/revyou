@@ -13,9 +13,6 @@ import {
 import { db } from "@/lib/firebase/config";
 import type { Account } from "@/types/database";
 
-/**
- * Create a new Google account for a user
- */
 export async function createAccount(
   userId: string,
   accountData: {
@@ -40,9 +37,6 @@ export async function createAccount(
   return newAccountRef.id;
 }
 
-/**
- * Get all accounts for a user
- */
 export async function getUserAccounts(userId: string): Promise<Account[]> {
   if (!db) {
     throw new Error("Firestore not initialized");
@@ -58,9 +52,6 @@ export async function getUserAccounts(userId: string): Promise<Account[]> {
   })) as Account[];
 }
 
-/**
- * Get a specific account
- */
 export async function getAccount(
   userId: string,
   accountId: string
@@ -82,9 +73,6 @@ export async function getAccount(
   } as Account;
 }
 
-/**
- * Update an account
- */
 export async function updateAccount(
   userId: string,
   accountId: string,
@@ -101,9 +89,6 @@ export async function updateAccount(
   });
 }
 
-/**
- * Delete an account and all its businesses and reviews
- */
 export async function deleteAccount(
   userId: string,
   accountId: string
@@ -125,7 +110,6 @@ export async function deleteAccount(
 
   const batch = writeBatch(db);
 
-  // Delete all reviews for each business
   for (const businessDoc of businessesSnapshot.docs) {
     const reviewsRef = collection(
       db,
@@ -139,25 +123,19 @@ export async function deleteAccount(
     );
     const reviewsSnapshot = await getDocs(reviewsRef);
 
-    // Delete all reviews
     reviewsSnapshot.docs.forEach((reviewDoc) => {
       batch.delete(reviewDoc.ref);
     });
 
-    // Delete business
     batch.delete(businessDoc.ref);
   }
 
-  // Delete the account itself
   const accountRef = doc(db, "users", userId, "accounts", accountId);
   batch.delete(accountRef);
 
   await batch.commit();
 }
 
-/**
- * Get the Google refresh token for an account
- */
 export async function getAccountGoogleRefreshToken(
   userId: string,
   accountId: string
@@ -166,9 +144,6 @@ export async function getAccountGoogleRefreshToken(
   return account?.googleRefreshToken || null;
 }
 
-/**
- * Update the Google refresh token for an account
- */
 export async function updateAccountGoogleRefreshToken(
   userId: string,
   accountId: string,

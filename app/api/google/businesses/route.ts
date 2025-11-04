@@ -17,12 +17,10 @@ export async function GET(request: Request) {
 
     const { userId: authenticatedUserId } = authResult;
 
-    // Get accountId from query params or use selected account
     const { searchParams } = new URL(request.url);
     let accountId = searchParams.get("accountId");
 
     if (!accountId) {
-      // Fall back to user's selected account
       accountId = await getUserSelectedAccountId(authenticatedUserId);
     }
 

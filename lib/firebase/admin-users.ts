@@ -1,8 +1,5 @@
 import { adminDb } from "@/lib/firebase/admin";
 
-/**
- * Update user's selected account
- */
 export async function updateUserSelectedAccount(
   uid: string,
   accountId: string | null
@@ -19,9 +16,6 @@ export async function updateUserSelectedAccount(
   }
 }
 
-/**
- * Update user's selected business
- */
 export async function updateUserSelectedBusiness(
   uid: string,
   businessId: string | null

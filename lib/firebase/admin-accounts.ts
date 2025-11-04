@@ -1,9 +1,6 @@
 import { adminDb } from "@/lib/firebase/admin";
 import { Timestamp } from "firebase-admin/firestore";
 
-/**
- * Create a new Google account for a user (Admin SDK version)
- */
 export async function createAccount(
   userId: string,
   accountData: {
@@ -27,9 +24,6 @@ export async function createAccount(
   return newAccountRef.id;
 }
 
-/**
- * Update an account (Admin SDK version)
- */
 export async function updateAccount(
   userId: string,
   accountId: string,
@@ -50,9 +44,6 @@ export async function updateAccount(
   });
 }
 
-/**
- * Get account (Admin SDK version)
- */
 export async function getAccount(
   userId: string,
   accountId: string
@@ -75,9 +66,6 @@ export async function getAccount(
   };
 }
 
-/**
- * Get account's Google refresh token (Admin SDK version)
- */
 export async function getAccountGoogleRefreshToken(
   userId: string,
   accountId: string
@@ -86,9 +74,6 @@ export async function getAccountGoogleRefreshToken(
   return account?.googleRefreshToken || null;
 }
 
-/**
- * Get user's selected account ID
- */
 export async function getUserSelectedAccountId(
   userId: string
 ): Promise<string | null> {

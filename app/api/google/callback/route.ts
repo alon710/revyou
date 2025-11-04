@@ -91,13 +91,11 @@ export async function GET(request: NextRequest) {
     let accountId: string;
 
     if (reconnect && existingAccountId) {
-      // Reconnecting existing account - update refresh token
       await updateAccount(authenticatedUserId, existingAccountId, {
         googleRefreshToken: encryptedToken,
       });
       accountId = existingAccountId;
     } else {
-      // New account - get user info and create account
       const userInfo = await getUserInfo(tokens.access_token);
 
       accountId = await createAccount(authenticatedUserId, {
@@ -106,7 +104,6 @@ export async function GET(request: NextRequest) {
         googleRefreshToken: encryptedToken,
       });
 
-      // Set as selected account
       await updateUserSelectedAccount(authenticatedUserId, accountId);
     }
 

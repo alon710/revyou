@@ -39,7 +39,6 @@ export function AccountProvider({ children }: { children: ReactNode }) {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Persist selectedAccountId to localStorage
   useEffect(() => {
     if (selectedAccountId) {
       localStorage.setItem(STORAGE_KEY, selectedAccountId);
@@ -64,19 +63,15 @@ export function AccountProvider({ children }: { children: ReactNode }) {
       const fetchedAccounts = await getUserAccounts(user.uid);
       setAccounts(fetchedAccounts);
 
-      // Auto-select first account if none selected
       if (!selectedAccountId && fetchedAccounts.length > 0) {
         selectAccount(fetchedAccounts[0].id);
       } else if (selectedAccountId) {
-        // Check if selected account still exists
         const stillExists = fetchedAccounts.find(
           (acc) => acc.id === selectedAccountId
         );
         if (!stillExists && fetchedAccounts.length > 0) {
-          // Selected account no longer exists, select first one
           selectAccount(fetchedAccounts[0].id);
         } else if (!stillExists) {
-          // No accounts at all
           clearSelectedAccountId();
           setCurrentAccount(null);
         }
@@ -89,7 +84,6 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     }
   }, [user, selectedAccountId, selectAccount, clearSelectedAccountId]);
 
-  // Load current account when selection changes
   useEffect(() => {
     if (selectedAccountId && accounts.length > 0) {
       const account = accounts.find((acc) => acc.id === selectedAccountId);
@@ -99,7 +93,6 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     }
   }, [selectedAccountId, accounts]);
 
-  // Load accounts when user changes
   useEffect(() => {
     if (user) {
       loadAccounts();

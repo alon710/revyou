@@ -45,7 +45,6 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Persist selectedBusinessId to localStorage
   useEffect(() => {
     if (selectedBusinessId) {
       localStorage.setItem(STORAGE_KEY, selectedBusinessId);

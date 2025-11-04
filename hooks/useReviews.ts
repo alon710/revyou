@@ -12,10 +12,6 @@ interface UseReviewsReturn {
   refetch: () => Promise<void>;
 }
 
-/**
- * Custom hook to fetch and manage reviews for the current business
- * Automatically refetches when business or user changes
- */
 export function useReviews(): UseReviewsReturn {
   const { user } = useAuth();
   const {

@@ -68,7 +68,6 @@ const BusinessConfigSchema = z.object({
 
 export const businessSchemaAdmin = z.object({
   id: z.string().min(1),
-  googleAccountId: z.string().min(1),
   googleBusinessId: z.string().min(1),
   name: z.string().min(1).max(200),
   address: z.string().min(1).max(500),

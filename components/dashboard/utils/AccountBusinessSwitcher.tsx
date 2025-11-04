@@ -27,7 +27,6 @@ export function AccountBusinessSwitcher() {
   } = useAccount();
   const { selectedBusinessId, selectBusiness } = useBusiness();
 
-  // Store businesses for each account
   const [accountBusinessesMap, setAccountBusinessesMap] = useState<
     Record<string, Business[]>
   >({});
@@ -35,7 +34,6 @@ export function AccountBusinessSwitcher() {
     new Set()
   );
 
-  // Load businesses for all accounts
   useEffect(() => {
     const loadAllAccountBusinesses = async () => {
       if (!user || accounts.length === 0) return;
@@ -44,7 +42,6 @@ export function AccountBusinessSwitcher() {
       accounts.forEach((account) => newLoadingIds.add(account.id));
       setLoadingAccountIds(newLoadingIds);
 
-      // Fetch businesses for all accounts in parallel
       const businessPromises = accounts.map(async (account) => {
         try {
           const businesses = await getAccountBusinesses(user.uid, account.id);
@@ -60,7 +57,6 @@ export function AccountBusinessSwitcher() {
 
       const results = await Promise.all(businessPromises);
 
-      // Build the businesses map
       const businessesMap: Record<string, Business[]> = {};
       results.forEach(({ accountId, businesses }) => {
         businessesMap[accountId] = businesses;
@@ -114,7 +110,6 @@ export function AccountBusinessSwitcher() {
 
           return (
             <div key={account.id}>
-              {/* Account Header */}
               <DropdownMenuItem
                 onClick={() => handleAccountClick(account.id)}
                 className="cursor-pointer flex-col items-start py-3"
@@ -134,7 +129,6 @@ export function AccountBusinessSwitcher() {
                 </div>
               </DropdownMenuItem>
 
-              {/* Businesses under this account (always shown) */}
               {isLoadingBusinesses ? (
                 <div className="pl-6 pb-2 flex items-center gap-2 text-sm text-muted-foreground flex-row-reverse justify-end py-2">
                   <span>טוען עסקים...</span>
@@ -167,7 +161,6 @@ export function AccountBusinessSwitcher() {
                 </div>
               )}
 
-              {/* Separator between accounts (except last one) */}
               {index < accounts.length - 1 && <DropdownMenuSeparator />}
             </div>
           );

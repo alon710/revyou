@@ -22,9 +22,6 @@ import {
 import { checkBusinessLimit } from "@/lib/firebase/business-limits";
 import { getDefaultBusinessConfig } from "@/lib/firebase/business-config";
 
-/**
- * Get all businesses for a specific account
- */
 export async function getAccountBusinesses(
   userId: string,
   accountId: string
@@ -65,9 +62,6 @@ export async function getAccountBusinesses(
   }
 }
 
-/**
- * Get all businesses across all accounts for a user
- */
 export async function getAllUserBusinesses(
   userId: string
 ): Promise<Business[]> {
@@ -170,8 +164,6 @@ export async function createBusiness(
       emailOnNewReview: data.emailOnNewReview ?? true,
     };
 
-    // Skip validation for connectedAt since serverTimestamp() is a sentinel value
-    // that becomes a Timestamp only after Firestore processes it
     // eslint-disable-next-line unused-imports/no-unused-vars
     const { connectedAt, ...validationData } = businessData;
     businessCreateSchema.omit({ connectedAt: true }).parse(validationData);
