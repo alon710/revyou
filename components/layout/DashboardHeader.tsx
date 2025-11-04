@@ -9,7 +9,7 @@ export function DashboardHeader() {
   const { isMobile, setIsOpen } = useSidebar();
 
   return (
-    <header className="sticky top-0 z-50 h-14 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-60 h-14 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       {/* Mobile Layout */}
       {isMobile ? (
         <div className="flex items-center justify-between gap-3 px-4 h-full">

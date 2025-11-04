@@ -26,10 +26,6 @@ export default function ConnectBusinessPage() {
 
   return (
     <PageContainer>
-      <div className="flex items-center gap-4 mb-6">
-        <BackButton href="/dashboard/businesses" />
-      </div>
-
       <PageHeader
         title="חבר עסק חדש"
         description="חבר את חשבון Google Business Profile שלך"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccount } from "@/contexts/AccountContext";
 import { useBusiness } from "@/contexts/BusinessContext";
@@ -13,13 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronDown, Plus, Loader2, Building2 } from "lucide-react";
+import { Check, ChevronDown, Loader2, Building2 } from "lucide-react";
 import { getAccountBusinesses } from "@/lib/firebase/business";
-import { AddAccountDialog } from "@/components/dashboard/accounts/AddAccountDialog";
-import { AddBusinessDialog } from "@/components/dashboard/businesses/AddBusinessDialog";
 import type { AccountWithBusinesses } from "@/types/database";
 
 export function SidebarAccountBusinessSelector() {
+  const router = useRouter();
   const { user } = useAuth();
   const { accounts, currentAccount, selectAccount } = useAccount();
   const { currentBusiness, selectBusiness } = useBusiness();
@@ -27,8 +27,6 @@ export function SidebarAccountBusinessSelector() {
     AccountWithBusinesses[]
   >([]);
   const [loading, setLoading] = useState(true);
-  const [addAccountDialogOpen, setAddAccountDialogOpen] = useState(false);
-  const [addBusinessDialogOpen, setAddBusinessDialogOpen] = useState(false);
 
   const loadBusinessesForAccounts = useCallback(async () => {
     if (!user || accounts.length === 0) {
@@ -99,12 +97,9 @@ export function SidebarAccountBusinessSelector() {
             variant="outline"
             className="w-full justify-between text-right [direction:rtl]"
           >
-            <div className="flex flex-col items-end flex-1 min-w-0">
-              <span className="font-medium truncate text-sm">
-                {currentAccount?.accountName || "בחר חשבון"} /{" "}
-                {currentBusiness?.name || "בחר עסק"}
-              </span>
-            </div>
+            <span className="font-medium truncate text-sm flex-1 text-right">
+              {currentBusiness?.name || "בחר עסק"}
+            </span>
             <ChevronDown className="h-4 w-4 shrink-0 opacity-50 mr-2" />
           </Button>
         </DropdownMenuTrigger>
@@ -119,7 +114,7 @@ export function SidebarAccountBusinessSelector() {
               {accountIndex > 0 && <DropdownMenuSeparator />}
 
               {/* Account Header (non-clickable label) */}
-              <DropdownMenuLabel className="text-right font-semibold text-foreground">
+              <DropdownMenuLabel className="text-right font-semibold text-foreground px-2 py-2">
                 {account.accountName}
               </DropdownMenuLabel>
 
@@ -134,7 +129,7 @@ export function SidebarAccountBusinessSelector() {
                     <DropdownMenuItem
                       key={business.id}
                       onClick={() => handleBusinessSelect(account.id, business.id)}
-                      className="cursor-pointer pr-8"
+                      className="cursor-pointer"
                     >
                       <div className="flex items-center gap-2 w-full flex-row-reverse">
                         <span className="truncate text-right flex-1">
@@ -148,7 +143,7 @@ export function SidebarAccountBusinessSelector() {
                   );
                 })
               ) : (
-                <div className="px-2 py-1.5 text-sm text-muted-foreground text-right pr-8">
+                <div className="px-2 py-1.5 text-sm text-muted-foreground text-right">
                   אין עסקים מחוברים
                 </div>
               )}
@@ -159,37 +154,13 @@ export function SidebarAccountBusinessSelector() {
 
           {/* Add Business */}
           <DropdownMenuItem
-            onClick={() => setAddBusinessDialogOpen(true)}
-            className="cursor-pointer"
+            onClick={() => router.push("/dashboard/businesses/connect")}
+            className="cursor-pointer text-right"
           >
-            <div className="flex items-center gap-2 w-full flex-row-reverse text-primary">
-              <span className="font-medium">הוסף עסק</span>
-              <Plus className="h-4 w-4" />
-            </div>
-          </DropdownMenuItem>
-
-          {/* Add Account */}
-          <DropdownMenuItem
-            onClick={() => setAddAccountDialogOpen(true)}
-            className="cursor-pointer"
-          >
-            <div className="flex items-center gap-2 w-full flex-row-reverse text-primary">
-              <span className="font-medium">הוסף חשבון</span>
-              <Plus className="h-4 w-4" />
-            </div>
+            <span className="font-medium text-primary w-full text-right">הוסף עסק</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <AddAccountDialog
-        open={addAccountDialogOpen}
-        onOpenChange={setAddAccountDialogOpen}
-      />
-
-      <AddBusinessDialog
-        open={addBusinessDialogOpen}
-        onOpenChange={setAddBusinessDialogOpen}
-      />
     </>
   );
 }

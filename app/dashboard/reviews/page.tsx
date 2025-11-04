@@ -67,10 +67,10 @@ export default function ReviewsPage() {
         {isLoading && reviews.length === 0 ? (
           <Loading text="טוען ביקורות..." />
         ) : reviews.length === 0 ? (
-          <div className="text-center text-muted-foreground py-12">
-            אין ביקורות עדיין. הביקורות של {currentBusiness.name} יופיעו כאן
-            ברגע שהן יגיעו מגוגל
-          </div>
+          <EmptyState
+            title="אין ביקורות עדיין"
+            description={`הביקורות של ${currentBusiness.name} יופיעו כאן ברגע שהן יגיעו מגוגל`}
+          />
         ) : (
           reviews.map((review) => (
             <div

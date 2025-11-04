@@ -1,17 +1,34 @@
 import { Button } from "@/components/ui/button";
+import {
+  DashboardCard,
+  DashboardCardContent,
+} from "@/components/ui/dashboard-card";
 import Link from "next/link";
 
-export function EmptyState() {
+interface EmptyStateProps {
+  title?: string;
+  description?: string;
+  ctaText?: string;
+  ctaHref?: string;
+}
+
+export function EmptyState({
+  title = "עדיין לא חיברת עסקים",
+  description = "חבר את חשבון Google Business Profile שלך כדי להתחיל לקבל תשובות AI אוטומטיות לביקורות הלקוחות שלך",
+  ctaText,
+  ctaHref,
+}: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-center border rounded-lg">
-      <h3 className="text-lg font-semibold mb-2">עדיין לא חיברת עסקים</h3>
-      <p className="text-muted-foreground max-w-sm mb-4">
-        חבר את חשבון Google Business Profile שלך כדי להתחיל לקבל תשובות AI
-        אוטומטיות לביקורות הלקוחות שלך
-      </p>
-      <Button asChild>
-        <Link href="/dashboard/businesses/connect">חבר עסק ראשון</Link>
-      </Button>
-    </div>
+    <DashboardCard>
+      <DashboardCardContent className="flex flex-col items-center justify-center py-12 text-center">
+        <h3 className="text-lg font-semibold mb-2">{title}</h3>
+        <p className="text-muted-foreground max-w-sm mb-4">{description}</p>
+        {ctaText && ctaHref && (
+          <Button asChild>
+            <Link href={ctaHref}>{ctaText}</Link>
+          </Button>
+        )}
+      </DashboardCardContent>
+    </DashboardCard>
   );
 }
