@@ -17,9 +17,9 @@ export interface NavItem {
 
 export const dashboardNavItems: NavItem[] = [
   { href: "/dashboard", label: "לוח הבקרה", icon: LayoutDashboard },
-  { href: "/dashboard/businesses", label: "עסקים", icon: Home },
+  { href: "/dashboard/businesses", label: "הגדרות", icon: Home },
   { href: "/dashboard/reviews", label: "ביקורות", icon: MessageSquare },
-  { href: "/dashboard/settings", label: "הגדרות", icon: Settings },
+  { href: "/dashboard/settings", label: "חשבון", icon: Settings },
 ];
 
 export const landingNavItems: NavItem[] = [

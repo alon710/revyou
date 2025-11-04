@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { AccountProvider } from "@/contexts/AccountContext";
 import { BusinessProvider } from "@/contexts/BusinessContext";
-import { AppLayout } from "@/components/layout/AppLayout";
-import { UpgradeBanner } from "@/components/dashboard/utils/UpgradeBanner";
+import { SidebarProvider, Sidebar } from "@/components/layout/Sidebar/Sidebar";
+import { DashboardHeader } from "@/components/layout/DashboardHeader";
 import { Loading } from "@/components/ui/loading";
+import { cn } from "@/lib/utils";
 
 export default function DashboardLayout({
   children,
@@ -35,10 +36,27 @@ export default function DashboardLayout({
   return (
     <AccountProvider>
       <BusinessProvider>
-        <AppLayout variant="dashboard">
-          {children}
-          <UpgradeBanner />
-        </AppLayout>
+        <SidebarProvider>
+          <div className="flex h-screen w-full">
+            <Sidebar />
+
+            <div className="flex flex-col flex-1">
+              <DashboardHeader />
+
+              <main
+                className={cn(
+                  "flex-1 overflow-y-auto",
+                  "px-4 md:px-6 lg:px-8 pt-6 pb-6",
+                  "bg-gradient-to-br from-primary/20 via-white to-secondary/20",
+                  // Account for sidebar width on desktop
+                  "md:mr-64"
+                )}
+              >
+                {children}
+              </main>
+            </div>
+          </div>
+        </SidebarProvider>
       </BusinessProvider>
     </AccountProvider>
   );
