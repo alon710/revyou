@@ -19,11 +19,6 @@ service cloud.firestore {
       return str is string && str.size() >= min && str.size() <= max;
     }
 
-    // Validate subscription tier
-    function isValidTier(tier) {
-      return tier in ['free', 'basic', 'pro'];
-    }
-
     // Validate tone of voice
     function isValidTone(tone) {
       return tone in ['friendly', 'formal', 'humorous', 'professional'];
@@ -68,19 +63,17 @@ service cloud.firestore {
       allow read: if isOwner(userId);
 
       allow create: if isOwner(userId) &&
-      request.resource.data.keys().hasAll(['uid', 'email', 'displayName', 'createdAt', 'subscriptionTier']) &&
+      request.resource.data.keys().hasAll(['uid', 'email', 'displayName', 'createdAt']) &&
       request.resource.data.uid == userId &&
       request.resource.data.email is string &&
       validStringLength(request.resource.data.displayName, 1, 200) &&
       (!('photoURL' in request.resource.data) || request.resource.data.photoURL is string) &&
-      isValidTier(request.resource.data.subscriptionTier);
+      (!('stripeId' in request.resource.data) || request.resource.data.stripeId is string) &&
+      (!('stripeLink' in request.resource.data) || request.resource.data.stripeLink is string);
 
       allow update: if isOwner(userId) &&
       // Cannot change uid or createdAt
-      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['uid', 'createdAt'])) &&
-      // Validate subscription tier if changed
-      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['subscriptionTier']) ||
-      isValidTier(request.resource.data.subscriptionTier));
+      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['uid', 'createdAt']));
 
       allow delete: if false; // Users should not be deleted via Firestore
 

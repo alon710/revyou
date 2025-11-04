@@ -13,7 +13,6 @@ const toneOfVoiceSchema = z.enum([
 ]);
 const languageModeSchema = z.enum(["hebrew", "english", "auto-detect"]);
 const replyStatusSchema = z.enum(["pending", "rejected", "posted", "failed"]);
-export const subscriptionTierSchema = z.enum(["free", "basic", "pro"]);
 
 export const userSchema = z.object({
   uid: z.string().min(1),
@@ -26,9 +25,9 @@ export const userSchema = z.object({
     .optional()
     .or(z.literal(""))
     .transform((val) => (val === "" ? undefined : val)),
-  subscriptionTier: subscriptionTierSchema,
   createdAt: timestampSchema,
-  stripeCustomerId: z.string().optional(),
+  stripeId: z.string().optional(),
+  stripeLink: z.string().url().optional(),
   googleRefreshToken: z.string().optional(),
   selectedBusinessId: z.string().optional(),
 });

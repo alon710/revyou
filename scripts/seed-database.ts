@@ -69,7 +69,6 @@ async function seedDatabase() {
         email: "alon710@gmail.com",
         displayName: "Alon",
         photoURL: "https://lh3.googleusercontent.com/a/default-user",
-        subscriptionTier: "free",
         createdAt: Timestamp.fromDate(new Date("2024-01-01")),
       });
     console.log("✅ User created\n");
@@ -422,16 +421,14 @@ async function seedDatabase() {
 
     console.log("✨ Database seeding completed successfully!\n");
     console.log("📊 Summary:");
-    console.log("  - 1 User (Free Tier)");
+    console.log("  - 1 User");
     console.log("  - 2 Businesses");
     console.log("  - 11 Reviews total:");
     console.log("    - 8 with existing AI replies (manual flow test data)");
     console.log(
       "    - 3 WITHOUT AI replies (will trigger automation when Cloud Functions deployed)"
     );
-    console.log(
-      "\n💡 Note: User is on FREE tier. Subscribe via Stripe to upgrade to Basic/Pro."
-    );
+    console.log("\n💡 Note: Subscribe via Stripe to access premium features.");
     console.log("\n🤖 AUTOMATION TEST DATA:");
     console.log(
       "  - google_review_auto_001: 5-star review (Restaurant) - will auto-generate AI reply"
