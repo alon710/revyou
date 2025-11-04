@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
 import { useReviews } from "@/hooks/useReviews";
@@ -21,10 +22,11 @@ export default function ReviewsPage() {
   } = useBusiness();
   const { reviews, loading: reviewsLoading, error, refetch } = useReviews();
 
-  // Show error toast if there's an error
-  if (error) {
-    toast.error("שגיאה בטעינת ביקורות: " + error);
-  }
+  useEffect(() => {
+    if (error) {
+      toast.error("שגיאה בטעינת ביקורות: " + error);
+    }
+  }, [error]);
 
   const isLoading = reviewsLoading;
 
