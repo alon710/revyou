@@ -68,11 +68,11 @@ service cloud.firestore {
       allow read: if isOwner(userId);
 
       allow create: if isOwner(userId) &&
-      request.resource.data.keys().hasAll(['uid', 'email', 'displayName', 'photoURL', 'createdAt', 'subscriptionTier']) &&
+      request.resource.data.keys().hasAll(['uid', 'email', 'displayName', 'createdAt', 'subscriptionTier']) &&
       request.resource.data.uid == userId &&
       request.resource.data.email is string &&
       validStringLength(request.resource.data.displayName, 1, 200) &&
-      request.resource.data.photoURL is string &&
+      (!('photoURL' in request.resource.data) || request.resource.data.photoURL is string) &&
       isValidTier(request.resource.data.subscriptionTier);
 
       allow update: if isOwner(userId) &&

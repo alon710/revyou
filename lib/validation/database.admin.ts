@@ -28,7 +28,13 @@ export const userSchemaAdmin = z.object({
   uid: z.string().min(1),
   email: z.string().email(),
   displayName: z.string().min(1).max(200),
-  photoURL: z.string().url(),
+  photoURL: z
+    .string()
+    .url()
+    .max(2000)
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
   subscriptionTier: subscriptionTierSchema,
   createdAt: timestampSchemaAdmin,
   stripeCustomerId: z.string().optional(),
