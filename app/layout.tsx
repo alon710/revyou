@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Rubik, Nunito } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { Toaster } from "@/components/ui/sonner";
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -33,7 +34,10 @@ export default function RootLayout({
         className={`${rubik.variable} ${nunito.variable} font-rubik antialiased`}
         suppressHydrationWarning={true}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {children}
+          <Toaster dir="rtl" richColors />
+        </AuthProvider>
       </body>
     </html>
   );

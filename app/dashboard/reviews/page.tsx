@@ -1,17 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
-import { collection, query, orderBy, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
-import { Review } from "@/types/database";
+import { useReviews } from "@/hooks/useReviews";
 import { ReviewCard } from "@/components/dashboard/reviews/ReviewCard";
 import { Loading } from "@/components/ui/loading";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function ReviewsPage() {
   const router = useRouter();
@@ -21,54 +19,14 @@ export default function ReviewsPage() {
     businesses,
     loading: businessLoading,
   } = useBusiness();
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { reviews, loading: reviewsLoading, error, refetch } = useReviews();
 
-  const loadReviews = useCallback(async () => {
-    if (!db || !currentBusiness || !user) {
-      setIsLoading(false);
-      return;
-    }
+  // Show error toast if there's an error
+  if (error) {
+    toast.error("שגיאה בטעינת ביקורות: " + error);
+  }
 
-    try {
-      setIsLoading(true);
-
-      const q = query(
-        collection(
-          db,
-          "users",
-          user.uid,
-          "businesses",
-          currentBusiness.id,
-          "reviews"
-        ),
-        orderBy("receivedAt", "desc")
-      );
-
-      const snapshot = await getDocs(q);
-
-      const fetchedReviews = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Review[];
-
-      setReviews(fetchedReviews);
-    } catch (error) {
-      console.error("Error loading reviews:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentBusiness, user]);
-
-  useEffect(() => {
-    if (!businessLoading) {
-      loadReviews();
-    }
-  }, [businessLoading, loadReviews]);
-
-  const handleUpdate = () => {
-    loadReviews();
-  };
+  const isLoading = reviewsLoading;
 
   if (businessLoading) {
     return (
@@ -122,7 +80,7 @@ export default function ReviewsPage() {
                 review={review}
                 userId={user!.uid}
                 businessId={currentBusiness.id}
-                onUpdate={handleUpdate}
+                onUpdate={refetch}
               />
             </div>
           ))

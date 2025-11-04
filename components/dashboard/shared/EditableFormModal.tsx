@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FormRenderProps } from "./EditableSection";
+import { toast } from "sonner";
 
 interface EditableFormModalProps<T = any> {
   icon: ReactNode;
@@ -51,9 +52,13 @@ export function EditableFormModal<T>({
     try {
       setIsLoading(true);
       await onSave(formData);
+      toast.success("השינויים נשמרו בהצלחה");
       onClose();
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "אירעה שגיאה בשמירה";
       console.error("Error saving:", error);
+      toast.error("שגיאה: " + errorMessage);
     } finally {
       setIsLoading(false);
     }
