@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 import { EditableFormModal } from "./EditableFormModal";
 
-interface EditableSectionProps<T = any> {
+interface EditableSectionProps<T> {
   title: string;
   description: string;
   icon: ReactNode;
@@ -20,7 +20,7 @@ interface EditableSectionProps<T = any> {
   modalTitle: string;
   modalDescription: string;
   data: T;
-  onSave: (data: any) => Promise<void>;
+  onSave: (data: T) => Promise<void>;
   renderDisplay: () => ReactNode;
   renderForm: (props: FormRenderProps<T>) => ReactNode;
 }

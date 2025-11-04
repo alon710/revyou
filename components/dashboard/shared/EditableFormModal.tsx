@@ -13,14 +13,14 @@ import { Button } from "@/components/ui/button";
 import { FormRenderProps } from "./EditableSection";
 import { toast } from "sonner";
 
-interface EditableFormModalProps<T = any> {
+interface EditableFormModalProps<T> {
   icon: ReactNode;
   title: string;
   description: string;
   open: boolean;
   onClose: () => void;
   data: T;
-  onSave: (data: any) => Promise<void>;
+  onSave: (data: T) => Promise<void>;
   renderForm: (props: FormRenderProps<T>) => ReactNode;
 }
 
