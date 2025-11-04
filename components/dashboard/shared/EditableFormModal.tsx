@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -36,12 +36,14 @@ export function EditableFormModal<T>({
 }: EditableFormModalProps<T>) {
   const [formData, setFormData] = useState<T>(data);
   const [isLoading, setIsLoading] = useState(false);
+  const prevOpenRef = useRef(open);
 
   useEffect(() => {
-    if (open) {
+    if (open && !prevOpenRef.current) {
       setFormData(data);
     }
-  }, [open]);
+    prevOpenRef.current = open;
+  }, [open, data]);
 
   const handleChange = <K extends keyof T>(field: K, value: T[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

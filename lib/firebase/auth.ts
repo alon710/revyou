@@ -36,7 +36,6 @@ export async function signInWithGoogle() {
         email: user.email || "",
         displayName: user.displayName || "User",
         photoURL: user.photoURL || "",
-        subscriptionTier: "free" as const,
         createdAt: serverTimestamp(),
       };
 

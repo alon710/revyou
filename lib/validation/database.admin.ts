@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { Timestamp } from "firebase-admin/firestore";
-import { subscriptionTierSchema } from "@/lib/validation/database";
 
 const timestampSchemaAdmin = z.custom<Timestamp | Date>(
   (val) =>
@@ -35,9 +34,9 @@ export const userSchemaAdmin = z.object({
     .optional()
     .or(z.literal(""))
     .transform((val) => (val === "" ? undefined : val)),
-  subscriptionTier: subscriptionTierSchema,
   createdAt: timestampSchemaAdmin,
-  stripeCustomerId: z.string().optional(),
+  stripeId: z.string().optional(),
+  stripeLink: z.string().url().optional(),
   googleRefreshToken: z.string().optional(),
   selectedBusinessId: z.string().optional(),
 });
