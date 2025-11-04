@@ -41,6 +41,8 @@ export function EditableFormModal<T>({
   useEffect(() => {
     if (open && !prevOpenRef.current) {
       setFormData(data);
+    } else if (!open) {
+      setFormData(data);
     }
     prevOpenRef.current = open;
   }, [open, data]);
