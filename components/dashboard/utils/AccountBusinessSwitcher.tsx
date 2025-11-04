@@ -20,15 +20,9 @@ export function AccountBusinessSwitcher() {
     selectAccount,
     loading: accountsLoading,
   } = useAccount();
-  const {
-    businesses,
-    selectedBusinessId,
-    selectBusiness,
-    loading: businessesLoading,
-  } = useBusiness();
+  const { businesses, selectedBusinessId, selectBusiness } = useBusiness();
 
   const handleAccountClick = (accountId: string) => {
-    // Switch to this account (will automatically load its businesses)
     selectAccount(accountId);
   };
 
@@ -36,18 +30,14 @@ export function AccountBusinessSwitcher() {
     businessId: string,
     businessAccountId: string
   ) => {
-    // If business belongs to a different account, switch account first
     if (currentAccount?.id !== businessAccountId) {
       selectAccount(businessAccountId);
     }
-    // Then select the business
+
     selectBusiness(businessId);
   };
 
-  // Get businesses for a specific account
   const getAccountBusinesses = (accountId: string) => {
-    // Note: businesses array only contains businesses from currentAccount
-    // So we only show businesses when viewing that account
     if (currentAccount?.id === accountId) {
       return businesses;
     }
