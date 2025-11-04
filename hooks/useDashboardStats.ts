@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useReviews } from "./useReviews";
 import { ReplyStatus } from "@/types/database";
+import { STATUS_LABELS, STAR_LABELS } from "@/constants/dashboardConstants";
 
 export interface StatusDistribution {
   status: string;
@@ -27,21 +28,6 @@ interface UseDashboardStatsReturn {
   error: string | null;
   refetch: () => Promise<void>;
 }
-
-const STATUS_LABELS: Record<ReplyStatus, string> = {
-  pending: "ממתין",
-  posted: "פורסם",
-  rejected: "נדחה",
-  failed: "נכשל",
-};
-
-const STAR_LABELS: Record<number, string> = {
-  1: "★",
-  2: "★★",
-  3: "★★★",
-  4: "★★★★",
-  5: "★★★★★",
-};
 
 export function useDashboardStats(): UseDashboardStatsReturn {
   const { reviews, loading, error, refetch } = useReviews();

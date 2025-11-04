@@ -22,21 +22,8 @@ import { type ChartConfig } from "@/components/ui/chart";
 import { toast } from "sonner";
 import { BarChart3 } from "lucide-react";
 
-const statusChartConfig = {
+const chartConfig = {
   count: { label: "כמות" },
-  pending: { label: "ממתין", color: "oklch(0.60 0.23 285)" },
-  posted: { label: "פורסם", color: "oklch(0.60 0.23 285)" },
-  rejected: { label: "נדחה", color: "oklch(0.60 0.23 285)" },
-  failed: { label: "נכשל", color: "oklch(0.60 0.23 285)" },
-} satisfies ChartConfig;
-
-const starChartConfig = {
-  count: { label: "כמות" },
-  1: { label: "★", color: "oklch(0.60 0.23 285)" },
-  2: { label: "★★", color: "oklch(0.60 0.23 285)" },
-  3: { label: "★★★", color: "oklch(0.60 0.23 285)" },
-  4: { label: "★★★★", color: "oklch(0.60 0.23 285)" },
-  5: { label: "★★★★★", color: "oklch(0.60 0.23 285)" },
 } satisfies ChartConfig;
 
 export default function DashboardPage() {
@@ -55,35 +42,21 @@ export default function DashboardPage() {
 
   const statusChartData = useMemo<ChartDataItem[]>(
     () =>
-      stats.statusDistribution.map((item) => {
-        const configItem =
-          statusChartConfig[item.status as keyof typeof statusChartConfig];
-        return {
-          label: item.label,
-          count: item.count,
-          fill:
-            configItem && "color" in configItem
-              ? configItem.color
-              : "hsl(var(--chart-1))",
-        };
-      }),
+      stats.statusDistribution.map((item) => ({
+        label: item.label,
+        count: item.count,
+        fill: "oklch(0.5413 0.2466 293.01)",
+      })),
     [stats.statusDistribution]
   );
 
   const starChartData = useMemo<ChartDataItem[]>(
     () =>
-      stats.starDistribution.map((item) => {
-        const configItem =
-          starChartConfig[item.stars as keyof typeof starChartConfig];
-        return {
-          label: item.label,
-          count: item.count,
-          fill:
-            configItem && "color" in configItem
-              ? configItem.color
-              : "hsl(var(--chart-1))",
-        };
-      }),
+      stats.starDistribution.map((item) => ({
+        label: item.label,
+        count: item.count,
+        fill: "oklch(0.5413 0.2466 293.01)",
+      })),
     [stats.starDistribution]
   );
 
@@ -95,20 +68,7 @@ export default function DashboardPage() {
     );
   }
 
-  if (businesses.length === 0) {
-    return (
-      <PageContainer>
-        <PageHeader
-          title="לוח בקרה"
-          description="סקירה כללית של הביקורות שלך"
-          icon={<BarChart3 className="h-8 w-8" />}
-        />
-        <EmptyState />
-      </PageContainer>
-    );
-  }
-
-  if (!currentBusiness) {
+  if (businesses.length === 0 || !currentBusiness) {
     return (
       <PageContainer>
         <PageHeader
@@ -137,7 +97,6 @@ export default function DashboardPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <DashboardCard>
               <DashboardCardHeader>
@@ -172,7 +131,6 @@ export default function DashboardPage() {
             </DashboardCard>
           </div>
 
-          {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <DashboardCard>
               <DashboardCardHeader>
@@ -182,10 +140,7 @@ export default function DashboardPage() {
                 </DashboardCardDescription>
               </DashboardCardHeader>
               <DashboardCardContent>
-                <DashboardChart
-                  data={statusChartData}
-                  config={statusChartConfig}
-                />
+                <DashboardChart data={statusChartData} config={chartConfig} />
               </DashboardCardContent>
             </DashboardCard>
 
@@ -197,7 +152,7 @@ export default function DashboardPage() {
                 </DashboardCardDescription>
               </DashboardCardHeader>
               <DashboardCardContent>
-                <DashboardChart data={starChartData} config={starChartConfig} />
+                <DashboardChart data={starChartData} config={chartConfig} />
               </DashboardCardContent>
             </DashboardCard>
           </div>
