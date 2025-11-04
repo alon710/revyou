@@ -146,8 +146,7 @@
 │   └── dashboardConstants.ts     # Dashboard configuration
 │
 ├── public/                       # Static assets
-├── scripts/                      # Database seeding & utilities
-│   ├── seed-database.ts          # Main seeding script
+├── scripts/                      # Development utilities
 │   └── seed-review.ts            # Review seeding
 │
 ├── extensions/                   # Firebase extensions configuration
@@ -674,7 +673,6 @@ yarn format:write     # Auto-format with Prettier
 yarn knip             # Detect unused code
 
 # Database
-yarn seed             # Seed database with sample data
 yarn seed:review      # Seed a single review
 ```
 

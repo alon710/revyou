@@ -155,7 +155,6 @@ Hooks to update/create:
 
 ### Phase 10: Testing & Deployment (0% Complete)
 
-- [ ] Update [scripts/seed-database.ts](scripts/seed-database.ts)
 - [ ] Update [scripts/seed-review.ts](scripts/seed-review.ts)
 - [ ] Deploy Firestore security rules
 - [ ] Deploy Firestore indexes
