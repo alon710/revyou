@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useBusiness } from "@/contexts/BusinessContext";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { Loading } from "@/components/ui/loading";
@@ -14,10 +14,30 @@ import {
   DashboardCardDescription,
   DashboardCardContent,
 } from "@/components/ui/dashboard-card";
-import { ReviewsStatusChart } from "@/components/dashboard/charts/ReviewsStatusChart";
-import { StarDistributionChart } from "@/components/dashboard/charts/StarDistributionChart";
+import {
+  DashboardChart,
+  type ChartDataItem,
+} from "@/components/dashboard/charts/DashboardChart";
+import { type ChartConfig } from "@/components/ui/chart";
 import { toast } from "sonner";
 import { BarChart3 } from "lucide-react";
+
+const statusChartConfig = {
+  count: { label: "כמות" },
+  pending: { label: "ממתין", color: "oklch(0.60 0.23 285)" },
+  posted: { label: "פורסם", color: "oklch(0.60 0.23 285)" },
+  rejected: { label: "נדחה", color: "oklch(0.60 0.23 285)" },
+  failed: { label: "נכשל", color: "oklch(0.60 0.23 285)" },
+} satisfies ChartConfig;
+
+const starChartConfig = {
+  count: { label: "כמות" },
+  1: { label: "★", color: "oklch(0.60 0.23 285)" },
+  2: { label: "★★", color: "oklch(0.60 0.23 285)" },
+  3: { label: "★★★", color: "oklch(0.60 0.23 285)" },
+  4: { label: "★★★★", color: "oklch(0.60 0.23 285)" },
+  5: { label: "★★★★★", color: "oklch(0.60 0.23 285)" },
+} satisfies ChartConfig;
 
 export default function DashboardPage() {
   const {
@@ -32,6 +52,40 @@ export default function DashboardPage() {
       toast.error("שגיאה בטעינת נתונים: " + error);
     }
   }, [error]);
+
+  const statusChartData = useMemo<ChartDataItem[]>(
+    () =>
+      stats.statusDistribution.map((item) => {
+        const configItem =
+          statusChartConfig[item.status as keyof typeof statusChartConfig];
+        return {
+          label: item.label,
+          count: item.count,
+          fill:
+            configItem && "color" in configItem
+              ? configItem.color
+              : "hsl(var(--chart-1))",
+        };
+      }),
+    [stats.statusDistribution]
+  );
+
+  const starChartData = useMemo<ChartDataItem[]>(
+    () =>
+      stats.starDistribution.map((item) => {
+        const configItem =
+          starChartConfig[item.stars as keyof typeof starChartConfig];
+        return {
+          label: item.label,
+          count: item.count,
+          fill:
+            configItem && "color" in configItem
+              ? configItem.color
+              : "hsl(var(--chart-1))",
+        };
+      }),
+    [stats.starDistribution]
+  );
 
   if (businessLoading) {
     return (
@@ -128,7 +182,10 @@ export default function DashboardPage() {
                 </DashboardCardDescription>
               </DashboardCardHeader>
               <DashboardCardContent>
-                <ReviewsStatusChart data={stats.statusDistribution} />
+                <DashboardChart
+                  data={statusChartData}
+                  config={statusChartConfig}
+                />
               </DashboardCardContent>
             </DashboardCard>
 
@@ -140,7 +197,7 @@ export default function DashboardPage() {
                 </DashboardCardDescription>
               </DashboardCardHeader>
               <DashboardCardContent>
-                <StarDistributionChart data={stats.starDistribution} />
+                <DashboardChart data={starChartData} config={starChartConfig} />
               </DashboardCardContent>
             </DashboardCard>
           </div>
