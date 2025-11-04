@@ -1,19 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { Business } from "@/types/database";
-import {
-  DashboardCard,
-  DashboardCardHeader,
-  DashboardCardTitle,
-  DashboardCardDescription,
-  DashboardCardContent,
-  DashboardCardField,
-} from "@/components/ui/dashboard-card";
-import { Button } from "@/components/ui/button";
+import { DashboardCardField } from "@/components/ui/dashboard-card";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Settings } from "lucide-react";
-import { NotificationPreferencesEditModal } from "@/components/dashboard/settings/NotificationPreferencesEditModal";
+import { Bell } from "lucide-react";
+import EditableSection from "@/components/dashboard/shared/EditableSection";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface NotificationPreferencesSectionProps {
   business: Business;
@@ -21,59 +14,64 @@ interface NotificationPreferencesSectionProps {
   onSave: (data: { emailOnNewReview: boolean }) => Promise<void>;
 }
 
+interface NotificationPreferencesData {
+  emailOnNewReview: boolean;
+}
+
 export default function NotificationPreferencesSection({
   business,
   loading,
   onSave,
 }: NotificationPreferencesSectionProps) {
-  const [showEditModal, setShowEditModal] = useState(false);
+  const formData: NotificationPreferencesData = {
+    emailOnNewReview: business.emailOnNewReview,
+  };
 
   return (
-    <>
-      <DashboardCard>
-        <DashboardCardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <DashboardCardTitle icon={<Bell className="h-5 w-5" />}>
-                התראות אימייל
-              </DashboardCardTitle>
-              <DashboardCardDescription>
-                בחר אילו התראות תרצה לקבל באימייל עבור עסק זה
-              </DashboardCardDescription>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowEditModal(true)}
-              disabled={loading}
+    <EditableSection
+      title="התראות אימייל"
+      description="בחר אילו התראות תרצה לקבל באימייל עבור עסק זה"
+      icon={<Bell className="h-5 w-5" />}
+      modalTitle="עריכת התראות אימייל"
+      modalDescription="בחר אילו התראות תרצה לקבל באימייל"
+      loading={loading}
+      data={formData}
+      onSave={onSave}
+      renderDisplay={() => (
+        <DashboardCardField label="">
+          <div className="flex items-center justify-between w-full">
+            <p className="text-sm text-foreground">
+              קבל התראה באימייל כאשר מתקבלת ביקורת חדשה
+            </p>
+            <Badge
+              variant={business.emailOnNewReview ? "default" : "secondary"}
             >
-              <Settings className="ml-2 h-4 w-4" />
-              עריכה
-            </Button>
+              {business.emailOnNewReview ? "מופעל" : "כבוי"}
+            </Badge>
           </div>
-        </DashboardCardHeader>
-        <DashboardCardContent>
-          <DashboardCardField label="">
-            <div className="flex items-center justify-between w-full">
-              <p className="text-sm text-foreground">
-                קבל התראה באימייל כאשר מתקבלת ביקורת חדשה
-              </p>
-              <Badge
-                variant={business.emailOnNewReview ? "default" : "secondary"}
-              >
-                {business.emailOnNewReview ? "מופעל" : "כבוי"}
-              </Badge>
-            </div>
-          </DashboardCardField>
-        </DashboardCardContent>
-      </DashboardCard>
-
-      <NotificationPreferencesEditModal
-        emailOnNewReview={business.emailOnNewReview}
-        open={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        onSave={onSave}
-      />
-    </>
+        </DashboardCardField>
+      )}
+      renderForm={({ data, isLoading, onChange }) => (
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1 flex-1">
+            <Label
+              htmlFor="emailOnNewReview"
+              className="text-sm font-medium cursor-pointer"
+            >
+              ביקורת חדשה
+            </Label>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              קבל התראה באימייל כאשר מתקבלת ביקורת חדשה
+            </p>
+          </div>
+          <Switch
+            id="emailOnNewReview"
+            checked={data.emailOnNewReview}
+            onCheckedChange={(checked) => onChange("emailOnNewReview", checked)}
+            disabled={isLoading}
+          />
+        </div>
+      )}
+    />
   );
 }

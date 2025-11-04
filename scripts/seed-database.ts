@@ -68,6 +68,8 @@ async function seedDatabase() {
         uid: USER_ID,
         email: "alon710@gmail.com",
         displayName: "Alon",
+        photoURL: "https://lh3.googleusercontent.com/a/default-user",
+        subscriptionTier: "free",
         createdAt: Timestamp.fromDate(new Date("2024-01-01")),
       });
     console.log("✅ User created\n");

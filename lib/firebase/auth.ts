@@ -31,11 +31,24 @@ export async function signInWithGoogle() {
     const userDoc = await getDoc(userDocRef);
 
     if (!userDoc.exists()) {
-      await setDoc(userDocRef, {
+      const newUserData = {
         uid: user.uid,
-        email: user.email,
+        email: user.email || "",
+        displayName: user.displayName || "User",
+        photoURL: user.photoURL || "",
+        subscriptionTier: "free" as const,
         createdAt: serverTimestamp(),
-      });
+      };
+
+      console.log("Creating new user document with data:", newUserData);
+
+      try {
+        await setDoc(userDocRef, newUserData);
+        console.log("User document created successfully");
+      } catch (createError) {
+        console.error("Failed to create user document:", createError);
+        throw createError;
+      }
     }
 
     try {

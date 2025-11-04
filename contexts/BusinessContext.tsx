@@ -11,7 +11,6 @@ import React, {
 import { Business } from "@/types/database";
 import { getBusiness, getUserBusinesses } from "@/lib/firebase/business";
 import { useAuth } from "@/contexts/AuthContext";
-import { useUIStore } from "@/lib/store/ui-store";
 
 interface BusinessContextType {
   currentBusiness: Business | null;
@@ -27,20 +26,38 @@ const BusinessContext = createContext<BusinessContextType | undefined>(
   undefined
 );
 
+const STORAGE_KEY = "selectedBusinessId";
+
 export function BusinessProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const { selectedBusinessId, setSelectedBusinessId, clearSelectedBusinessId } =
-    useUIStore();
+  const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(
+    () => {
+      if (typeof window !== "undefined") {
+        return localStorage.getItem(STORAGE_KEY);
+      }
+      return null;
+    }
+  );
   const [currentBusiness, setCurrentBusiness] = useState<Business | null>(null);
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const selectBusiness = useCallback(
-    (businessId: string) => {
-      setSelectedBusinessId(businessId);
-    },
-    [setSelectedBusinessId]
-  );
+  // Persist selectedBusinessId to localStorage
+  useEffect(() => {
+    if (selectedBusinessId) {
+      localStorage.setItem(STORAGE_KEY, selectedBusinessId);
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [selectedBusinessId]);
+
+  const selectBusiness = useCallback((businessId: string) => {
+    setSelectedBusinessId(businessId);
+  }, []);
+
+  const clearSelectedBusinessId = useCallback(() => {
+    setSelectedBusinessId(null);
+  }, []);
 
   const loadBusinesses = useCallback(async () => {
     if (!user) return;

@@ -13,6 +13,25 @@ const toneOfVoiceSchema = z.enum([
 ]);
 const languageModeSchema = z.enum(["hebrew", "english", "auto-detect"]);
 const replyStatusSchema = z.enum(["pending", "rejected", "posted", "failed"]);
+export const subscriptionTierSchema = z.enum(["free", "basic", "pro"]);
+
+export const userSchema = z.object({
+  uid: z.string().min(1),
+  email: z.string().email(),
+  displayName: z.string().min(1).max(200),
+  photoURL: z
+    .string()
+    .url()
+    .max(2000)
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
+  subscriptionTier: subscriptionTierSchema,
+  createdAt: timestampSchema,
+  stripeCustomerId: z.string().optional(),
+  googleRefreshToken: z.string().optional(),
+  selectedBusinessId: z.string().optional(),
+});
 
 const starConfigSchema = z.object({
   customInstructions: z.string().max(1000).default(""),
@@ -29,7 +48,7 @@ export const BusinessConfigSchema = z.object({
   languageMode: languageModeSchema,
   languageInstructions: z.string().max(100).optional(),
   maxSentences: z.number().min(1).max(5).optional().default(2),
-  allowedEmojis: z.array(z.string()).optional().default([]),
+  allowedEmojis: z.array(z.string()).max(50).optional().default([]),
   signature: z.string().max(100).optional().default(""),
 
   starConfigs: z.object({
@@ -48,10 +67,10 @@ export const businessSchema = z.object({
   name: z.string().min(1).max(200),
   address: z.string().min(1).max(500),
   phoneNumber: z.string().max(50).optional(),
-  websiteUrl: z.string().url().optional(),
-  mapsUrl: z.string().url().optional(),
+  websiteUrl: z.string().url().max(200).optional(),
+  mapsUrl: z.string().url().max(2000).optional(),
   description: z.string().max(5000).optional(),
-  photoUrl: z.string().url().optional(),
+  photoUrl: z.string().url().max(2000).optional(),
   connected: z.boolean(),
   connectedAt: timestampSchema,
   config: BusinessConfigSchema,
