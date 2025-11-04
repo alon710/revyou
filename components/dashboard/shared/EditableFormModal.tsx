@@ -37,12 +37,11 @@ export function EditableFormModal<T>({
   const [formData, setFormData] = useState<T>(data);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Reset form data when modal opens or data changes
   useEffect(() => {
     if (open) {
       setFormData(data);
     }
-  }, [open, data]);
+  }, [open]);
 
   const handleChange = <K extends keyof T>(field: K, value: T[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
