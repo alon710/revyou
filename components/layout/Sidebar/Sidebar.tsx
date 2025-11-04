@@ -9,8 +9,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { SidebarHeader } from "./SidebarHeader";
-import { SidebarAccountSelector } from "./SidebarAccountSelector";
-import { SidebarBusinessSelector } from "./SidebarBusinessSelector";
+import { SidebarAccountBusinessSelector } from "./SidebarAccountBusinessSelector";
 import { SidebarNav } from "./SidebarNav";
 import { SidebarFooter } from "./SidebarFooter";
 
@@ -128,9 +127,8 @@ function SidebarContent() {
       <SidebarHeader />
 
       {!isCollapsed && (
-        <div className="px-3 py-2 space-y-2">
-          <SidebarAccountSelector />
-          <SidebarBusinessSelector />
+        <div className="px-3 py-2">
+          <SidebarAccountBusinessSelector />
         </div>
       )}
 

@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Settings, Unplug, LogOut, ChevronDown, User } from "lucide-react";
+import { Unplug, LogOut, ChevronDown, User } from "lucide-react";
 import { signOut } from "@/lib/firebase/auth";
 import { DisconnectAccountsDialog } from "@/components/dashboard/accounts/DisconnectAccountsDialog";
 import { useSidebar } from "./Sidebar";
@@ -61,16 +61,7 @@ export function SidebarUserMenu() {
             className="w-[200px] [direction:rtl]"
           >
             <DropdownMenuItem
-              onClick={() => router.push("/dashboard/settings")}
-              className="cursor-pointer"
-            >
-              <div className="flex items-center gap-2 w-full flex-row-reverse">
-                <span>הגדרות משתמש</span>
-                <Settings className="h-4 w-4" />
-              </div>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
+              dir="rtl"
               onClick={() => setDisconnectDialogOpen(true)}
               className="cursor-pointer"
             >
@@ -83,6 +74,7 @@ export function SidebarUserMenu() {
             <DropdownMenuSeparator />
 
             <DropdownMenuItem
+              dir="rtl"
               onClick={handleLogout}
               className="cursor-pointer text-destructive focus:text-destructive"
             >
@@ -146,16 +138,6 @@ export function SidebarUserMenu() {
           side="top"
           className="w-[220px] [direction:rtl]"
         >
-          <DropdownMenuItem
-            onClick={() => router.push("/dashboard/settings")}
-            className="cursor-pointer"
-          >
-            <div className="flex items-center gap-2 w-full flex-row-reverse">
-              <span>הגדרות משתמש</span>
-              <Settings className="h-4 w-4" />
-            </div>
-          </DropdownMenuItem>
-
           <DropdownMenuItem
             onClick={() => setDisconnectDialogOpen(true)}
             className="cursor-pointer"
