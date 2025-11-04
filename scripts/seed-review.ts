@@ -18,17 +18,14 @@ function addMinutes(date: Date, minutes: number): Date {
 }
 
 if (getApps().length === 0) {
-  const privateKey =
-    process.env.FIREBASE_ADMIN_PRIVATE_KEY || process.env.FIREBASE_PRIVATE_KEY;
+  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
 
   if (!privateKey) {
     console.error("⚠️  Missing FIREBASE_ADMIN_PRIVATE_KEY in .env.local");
     process.exit(1);
   }
 
-  const clientEmail =
-    process.env.FIREBASE_ADMIN_CLIENT_EMAIL ||
-    process.env.FIREBASE_CLIENT_EMAIL;
+  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
 
   if (!clientEmail) {
     console.error("⚠️  Missing FIREBASE_ADMIN_CLIENT_EMAIL in .env.local");
@@ -47,6 +44,7 @@ if (getApps().length === 0) {
 const db = getFirestore();
 
 const USER_ID = process.env.SEED_REVIEW_USER_ID || "";
+const ACCOUNT_ID = process.env.SEED_REVIEW_ACCOUNT_ID || "";
 const BUSINESS_ID = process.env.SEED_REVIEW_BUSINESS_ID || "";
 const RATING = process.env.SEED_REVIEW_RATING;
 const REVIEW_TEXT = process.env.SEED_REVIEW_TEXT || "";
@@ -57,6 +55,14 @@ if (!USER_ID) {
   console.error("⚠️  Missing SEED_REVIEW_USER_ID in .env.local");
   console.error(
     "   Please set SEED_REVIEW_USER_ID to a valid Firebase Auth user ID"
+  );
+  process.exit(1);
+}
+
+if (!ACCOUNT_ID) {
+  console.error("⚠️  Missing SEED_REVIEW_ACCOUNT_ID in .env.local");
+  console.error(
+    "   Please set SEED_REVIEW_ACCOUNT_ID (e.g., account_test_001)"
   );
   process.exit(1);
 }
@@ -104,17 +110,40 @@ async function seedReview() {
   console.log("🌱 Starting review seeding...\n");
 
   try {
+    console.log(`🔍 Verifying account ${ACCOUNT_ID}...`);
+    const accountRef = db
+      .collection("users")
+      .doc(USER_ID)
+      .collection("accounts")
+      .doc(ACCOUNT_ID);
+
+    const accountDoc = await accountRef.get();
+    if (!accountDoc.exists) {
+      console.error(
+        `⚠️  Account ${ACCOUNT_ID} does not exist for user ${USER_ID}`
+      );
+      console.error(
+        "   Please ensure the account exists or run seed-database.ts first"
+      );
+      process.exit(1);
+    }
+
+    const accountData = accountDoc.data();
+    console.log(`✅ Account found: ${accountData?.accountName || ACCOUNT_ID}`);
+
     console.log(`🔍 Verifying business ${BUSINESS_ID}...`);
     const businessRef = db
       .collection("users")
       .doc(USER_ID)
+      .collection("accounts")
+      .doc(ACCOUNT_ID)
       .collection("businesses")
       .doc(BUSINESS_ID);
 
     const businessDoc = await businessRef.get();
     if (!businessDoc.exists) {
       console.error(
-        `⚠️  Business ${BUSINESS_ID} does not exist for user ${USER_ID}`
+        `⚠️  Business ${BUSINESS_ID} does not exist in account ${ACCOUNT_ID}`
       );
       console.error(
         "   Please ensure the business exists or run seed-database.ts first"
@@ -149,6 +178,8 @@ async function seedReview() {
     await db
       .collection("users")
       .doc(USER_ID)
+      .collection("accounts")
+      .doc(ACCOUNT_ID)
       .collection("businesses")
       .doc(BUSINESS_ID)
       .collection("reviews")

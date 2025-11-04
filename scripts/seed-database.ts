@@ -16,17 +16,14 @@ function addMinutes(date: Date, minutes: number): Date {
 }
 
 if (getApps().length === 0) {
-  const privateKey =
-    process.env.FIREBASE_ADMIN_PRIVATE_KEY || process.env.FIREBASE_PRIVATE_KEY;
+  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
 
   if (!privateKey) {
     console.error("⚠️  Missing FIREBASE_ADMIN_PRIVATE_KEY in .env.local");
     process.exit(1);
   }
 
-  const clientEmail =
-    process.env.FIREBASE_ADMIN_CLIENT_EMAIL ||
-    process.env.FIREBASE_CLIENT_EMAIL;
+  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
 
   if (!clientEmail) {
     console.error("⚠️  Missing FIREBASE_ADMIN_CLIENT_EMAIL in .env.local");
@@ -44,14 +41,36 @@ if (getApps().length === 0) {
 
 const db = getFirestore();
 
-const USER_ID = process.env.TEST_USER_ID || "YOUR_USER_UID";
+const USER_ID = process.env.SEED_DATABASE_USER_ID || "YOUR_USER_UID";
+const ACCOUNT_EMAIL =
+  process.env.SEED_DATABASE_ACCOUNT_EMAIL || "YOUR_ACCOUNT_EMAIL";
+const ACCOUNT_NAME =
+  process.env.SEED_DATABASE_ACCOUNT_NAME || "YOUR_ACCOUNT_NAME";
 
 if (USER_ID === "YOUR_USER_UID") {
   console.error(
-    "⚠️  Please set TEST_USER_ID environment variable in .env.local"
+    "⚠️  Please set SEED_DATABASE_USER_ID environment variable in .env.local"
   );
   console.error(
     "   You can find your user ID in Firebase Auth console or by logging in"
+  );
+  process.exit(1);
+}
+
+if (ACCOUNT_EMAIL === "YOUR_ACCOUNT_EMAIL") {
+  console.error(
+    "⚠️  Please set SEED_DATABASE_ACCOUNT_EMAIL environment variable in .env.local"
+  );
+  console.error("   This should be the Google account email used for GMB");
+  process.exit(1);
+}
+
+if (ACCOUNT_NAME === "YOUR_ACCOUNT_NAME") {
+  console.error(
+    "⚠️  Please set SEED_DATABASE_ACCOUNT_NAME environment variable in .env.local"
+  );
+  console.error(
+    "   This can be any friendly name for the account (e.g., 'Main Account')"
   );
   process.exit(1);
 }
@@ -72,6 +91,21 @@ async function seedDatabase() {
         createdAt: Timestamp.fromDate(new Date("2024-01-01")),
       });
     console.log("✅ User created\n");
+
+    console.log("📧 Creating account document...");
+    const accountId = "account_test_001";
+    await db
+      .collection("users")
+      .doc(USER_ID)
+      .collection("accounts")
+      .doc(accountId)
+      .set({
+        email: ACCOUNT_EMAIL,
+        accountName: ACCOUNT_NAME,
+        googleRefreshToken: "mock_refresh_token_for_testing",
+        createdAt: Timestamp.fromDate(new Date("2024-01-01")),
+      });
+    console.log(`✅ Account created: ${ACCOUNT_NAME} (${ACCOUNT_EMAIL})\n`);
 
     console.log("🏢 Creating business documents...");
 
@@ -169,6 +203,8 @@ async function seedDatabase() {
     await db
       .collection("users")
       .doc(USER_ID)
+      .collection("accounts")
+      .doc(accountId)
       .collection("businesses")
       .doc("business_test_001")
       .set(business1);
@@ -177,6 +213,8 @@ async function seedDatabase() {
     await db
       .collection("users")
       .doc(USER_ID)
+      .collection("accounts")
+      .doc(accountId)
       .collection("businesses")
       .doc("business_test_002")
       .set(business2);
@@ -385,6 +423,8 @@ async function seedDatabase() {
       await db
         .collection("users")
         .doc(USER_ID)
+        .collection("accounts")
+        .doc(accountId)
         .collection("businesses")
         .doc("business_test_001")
         .collection("reviews")
@@ -408,6 +448,8 @@ async function seedDatabase() {
       await db
         .collection("users")
         .doc(USER_ID)
+        .collection("accounts")
+        .doc(accountId)
         .collection("businesses")
         .doc("business_test_002")
         .collection("reviews")
@@ -422,6 +464,7 @@ async function seedDatabase() {
     console.log("✨ Database seeding completed successfully!\n");
     console.log("📊 Summary:");
     console.log("  - 1 User");
+    console.log("  - 1 Account");
     console.log("  - 2 Businesses");
     console.log("  - 11 Reviews total:");
     console.log("    - 8 with existing AI replies (manual flow test data)");
