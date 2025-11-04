@@ -1,10 +1,12 @@
 import {
   Home,
   MessageSquare,
+  SettingsIcon,
   PiggyBank,
   ShieldQuestionMarkIcon,
   Rocket,
   LayoutDashboard,
+  HomeIcon,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -15,8 +17,8 @@ export interface NavItem {
 }
 
 export const dashboardNavItems: NavItem[] = [
-  { href: "/dashboard", label: "לוח הבקרה", icon: LayoutDashboard },
-  { href: "/dashboard/businesses", label: "הגדרות", icon: Home },
+  { href: "/dashboard", label: "לוח הבקרה", icon: HomeIcon },
+  { href: "/dashboard/businesses", label: "הגדרות", icon: SettingsIcon },
   { href: "/dashboard/reviews", label: "ביקורות", icon: MessageSquare },
 ];
 

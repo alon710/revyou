@@ -64,7 +64,7 @@ export function SidebarUserMenu() {
               onClick={() => router.push("/dashboard/settings")}
               className="cursor-pointer"
             >
-              <div className="flex items-center gap-2 w-full flex-row-reverse">
+              <div className="flex items-center justify-between w-full">
                 <span>הגדרות חשבון</span>
                 <Settings className="h-4 w-4" />
               </div>
@@ -75,7 +75,7 @@ export function SidebarUserMenu() {
               onClick={() => setDisconnectDialogOpen(true)}
               className="cursor-pointer"
             >
-              <div className="flex items-center gap-2 w-full flex-row-reverse">
+              <div className="flex items-center justify-between w-full">
                 <span>ניתוק חשבונות</span>
                 <Unplug className="h-4 w-4" />
               </div>
@@ -88,7 +88,7 @@ export function SidebarUserMenu() {
               onClick={handleLogout}
               className="cursor-pointer text-destructive focus:text-destructive"
             >
-              <div className="flex items-center gap-2 w-full flex-row-reverse">
+              <div className="flex items-center justify-between w-full">
                 <span>התנתק</span>
                 <LogOut className="h-4 w-4" />
               </div>
@@ -151,7 +151,7 @@ export function SidebarUserMenu() {
             onClick={() => router.push("/dashboard/settings")}
             className="cursor-pointer"
           >
-            <div className="flex items-center gap-2 w-full flex-row-reverse">
+            <div className="flex items-center justify-between w-full">
               <span>הגדרות חשבון</span>
               <Settings className="h-4 w-4" />
             </div>
@@ -161,7 +161,7 @@ export function SidebarUserMenu() {
             onClick={() => setDisconnectDialogOpen(true)}
             className="cursor-pointer"
           >
-            <div className="flex items-center gap-2 w-full flex-row-reverse">
+            <div className="flex items-center justify-between w-full">
               <span>ניתוק חשבונות</span>
               <Unplug className="h-4 w-4" />
             </div>
@@ -173,7 +173,7 @@ export function SidebarUserMenu() {
             onClick={handleLogout}
             className="cursor-pointer text-destructive focus:text-destructive"
           >
-            <div className="flex items-center gap-2 w-full flex-row-reverse">
+            <div className="flex items-center justify-between w-full">
               <span>התנתק</span>
               <LogOut className="h-4 w-4" />
             </div>
