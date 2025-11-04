@@ -14,13 +14,21 @@ export async function POST(
     const authResult = await getAuthenticatedUserId();
     const { userId: authenticatedUserId } = authResult;
     const { id: reviewId } = await params;
-    const { userId: requestUserId, businessId: businessId } = await req.json();
+    const { userId: requestUserId, accountId, businessId } = await req.json();
     if (requestUserId !== authenticatedUserId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    if (!accountId) {
+      return NextResponse.json(
+        { error: "Account ID is required" },
+        { status: 400 }
+      );
+    }
+
     const review = await getReviewAdmin(
       authenticatedUserId,
+      accountId,
       businessId,
       reviewId
     );
@@ -29,7 +37,11 @@ export async function POST(
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    const business = await getBusinessAdmin(authenticatedUserId, businessId);
+    const business = await getBusinessAdmin(
+      authenticatedUserId,
+      accountId,
+      businessId
+    );
 
     if (!business) {
       return NextResponse.json(
@@ -49,6 +61,7 @@ export async function POST(
 
     await updateReviewReplyAdmin(
       authenticatedUserId,
+      accountId,
       businessId,
       reviewId,
       aiReply

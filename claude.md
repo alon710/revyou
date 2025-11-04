@@ -251,17 +251,20 @@
 ### 6. Dashboard & Analytics
 
 **Real-time Statistics**:
+
 - Total reviews count
 - Average rating across all reviews
 - Pending replies count
 - Active businesses count
 
 **Data Visualizations** (Recharts):
+
 - Reply status distribution (pie chart)
 - Star rating distribution (bar chart)
 - Review trends over time
 
 **Business Management**:
+
 - Add/remove businesses
 - Configure AI preferences
 - View business-specific analytics
@@ -303,6 +306,7 @@
 ```
 
 **Subcollections**:
+
 - `subscriptions/{subscriptionId}` - Stripe subscriptions (extension managed)
 - `checkout_sessions/{sessionId}` - Stripe checkout sessions (extension managed)
 - `payments/{paymentId}` - Payment history (extension managed)
@@ -387,6 +391,7 @@
 ### Firestore Security Rules
 
 Key rules enforced:
+
 - Users can only read/write their own data
 - Stripe subcollections managed by extension only
 - Validation for enum fields (toneOfVoice, languageMode, replyStatus)
@@ -396,6 +401,7 @@ Key rules enforced:
 ### Firestore Indexes
 
 Composite indexes configured for optimized queries:
+
 - Businesses by `connectedAt` and `__name__`
 - Reviews by multiple field combinations
 
@@ -467,6 +473,7 @@ Composite indexes configured for optimized queries:
 ### Authentication
 
 **`/api/auth/session`**
+
 - **Methods**: GET
 - **Purpose**: Retrieve current user session
 - **Returns**: User data or null
@@ -474,17 +481,20 @@ Composite indexes configured for optimized queries:
 ### Google OAuth
 
 **`/api/google/auth`**
+
 - **Methods**: GET
 - **Purpose**: Initiate Google OAuth flow
 - **Returns**: Redirect to Google consent screen
 
 **`/api/google/callback`**
+
 - **Methods**: GET
 - **Purpose**: Handle OAuth callback
 - **Params**: `code` (authorization code)
 - **Returns**: Redirect to dashboard with session
 
 **`/api/google/businesses`**
+
 - **Methods**: GET
 - **Purpose**: Fetch user's Google Business Profile accounts
 - **Auth**: Required
@@ -493,6 +503,7 @@ Composite indexes configured for optimized queries:
 ### Reviews
 
 **`/api/reviews/[id]/generate`**
+
 - **Methods**: POST
 - **Purpose**: Generate AI reply for a specific review
 - **Params**: `id` (review ID)
@@ -519,7 +530,7 @@ type User = {
   stripeLink?: string;
   googleRefreshToken?: string;
   selectedBusinessId?: string;
-}
+};
 
 // Business type
 type Business = {
@@ -537,7 +548,7 @@ type Business = {
   connectedAt: Timestamp;
   config: BusinessConfig;
   emailOnNewReview: boolean;
-}
+};
 
 // Review type
 type Review = {
@@ -551,16 +562,16 @@ type Review = {
   receivedAt: Timestamp;
   aiReply?: string;
   aiReplyGeneratedAt?: Timestamp;
-  replyStatus: 'pending' | 'rejected' | 'posted' | 'failed';
+  replyStatus: "pending" | "rejected" | "posted" | "failed";
   postedReply?: string | null;
   postedAt?: Timestamp | null;
   postedBy?: string | null;
-}
+};
 
 // Enums
-type ToneOfVoice = 'friendly' | 'formal' | 'humorous' | 'professional';
-type LanguageMode = 'hebrew' | 'english' | 'auto-detect';
-type ReplyStatus = 'pending' | 'rejected' | 'posted' | 'failed';
+type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";
+type LanguageMode = "hebrew" | "english" | "auto-detect";
+type ReplyStatus = "pending" | "rejected" | "posted" | "failed";
 ```
 
 ### Subscription & Feature Types
@@ -568,14 +579,14 @@ type ReplyStatus = 'pending' | 'rejected' | 'posted' | 'failed';
 Located in [`lib/stripe/entitlements.ts`](lib/stripe/entitlements.ts):
 
 ```typescript
-type PlanType = 'free' | 'basic' | 'pro';
-type BillingPeriod = 'monthly' | 'yearly';
+type PlanType = "free" | "basic" | "pro";
+type BillingPeriod = "monthly" | "yearly";
 
 interface PlanLimits {
-  businesses: number;           // Max businesses allowed
-  reviewsPerMonth: number;      // Monthly review limit
-  autoPost: boolean;            // Auto-posting enabled
-  requireApproval: boolean;     // Manual approval required
+  businesses: number; // Max businesses allowed
+  reviewsPerMonth: number; // Monthly review limit
+  autoPost: boolean; // Auto-posting enabled
+  requireApproval: boolean; // Manual approval required
 }
 ```
 
@@ -585,12 +596,12 @@ Located in [`lib/stripe/feature-config.ts`](lib/stripe/feature-config.ts):
 
 ```typescript
 const FEATURE_KEYS = {
-  MAX_BUSINESSES: 'max_businesses',
-  MONTHLY_REVIEWS: 'monthly_reviews',
-  MANUAL_APPROVAL: 'manual_approval',
-  AUTO_PUBLISH: 'auto_publish',
-  WHATSAPP_SUPPORT: 'whatsapp_support',
-}
+  MAX_BUSINESSES: "max_businesses",
+  MONTHLY_REVIEWS: "monthly_reviews",
+  MANUAL_APPROVAL: "manual_approval",
+  AUTO_PUBLISH: "auto_publish",
+  WHATSAPP_SUPPORT: "whatsapp_support",
+};
 ```
 
 ---
@@ -695,12 +706,14 @@ yarn seed:review      # Seed a single review
 ### AI Integration ([`lib/ai/`](lib/ai/))
 
 **Gemini Client** (`gemini.ts`):
+
 - Google Generative AI SDK
 - Model: `gemini-1.5-flash`
 - Prompt building from business config
 - Retry logic and error handling
 
 **Prompt Templates** (`prompts/template.ts`):
+
 - Default business prompt structure
 - Dynamic variable injection (business name, tone, etc.)
 - Support for Hebrew and English
@@ -708,16 +721,19 @@ yarn seed:review      # Seed a single review
 ### Firebase Services ([`lib/firebase/`](lib/firebase/))
 
 **Authentication** (`auth.ts`):
+
 - Google OAuth token encryption/decryption
 - Session management
 - User CRUD operations
 
 **Business Management** (`business.ts`):
+
 - Firestore queries for businesses
 - Business connection/disconnection
 - Config updates
 
 **Review Operations** (`reviews.ts`):
+
 - Review fetching and filtering
 - Status updates
 - AI reply management
@@ -725,11 +741,13 @@ yarn seed:review      # Seed a single review
 ### Google APIs ([`lib/google/`](lib/google/))
 
 **OAuth Flow** (`auth.ts`):
+
 - Authorization URL generation
 - Token exchange
 - Refresh token handling
 
 **Business Profile API** (`business-profile.ts`):
+
 - Fetch business accounts
 - Sync business data
 - Post review replies
@@ -737,15 +755,18 @@ yarn seed:review      # Seed a single review
 ### Stripe Integration ([`lib/stripe/`](lib/stripe/))
 
 **Client** (`client.ts`):
+
 - Stripe SDK initialization
 - Payment method management
 
 **Entitlements** (`entitlements.ts`):
+
 - Feature flag parsing
 - Plan limit enforcement
 - Usage tracking
 
 **Feature Configuration** (`feature-config.ts`):
+
 - Metadata extraction from Stripe products
 - Type conversion (number, boolean, text)
 - Feature display formatting
@@ -777,6 +798,7 @@ yarn seed:review      # Seed a single review
 ### Environment Variables (Production)
 
 All environment variables must be set in Vercel dashboard:
+
 - Firebase configuration
 - Google OAuth credentials
 - Gemini API key
@@ -919,11 +941,13 @@ firebase emulators:start
 **Current Phase**: Production Ready (v0.1.0)
 
 **Active Development Areas**:
+
 - Dashboard analytics and visualizations
 - Business configuration UI improvements
 - Review management workflow enhancements
 
 **Recent Updates**:
+
 - Streamlined dashboard chart configurations (commit: 044a385)
 - Implemented dashboard statistics and visualizations (commit: 974da5e)
 - Improved form data reset logic (commit: 6722d89)
@@ -938,5 +962,58 @@ firebase emulators:start
 
 ---
 
-**Last Updated**: 2025-11-04
+## Multi-Account Architecture Migration (IN PROGRESS)
+
+**Status**: 🔄 Active Migration - Phase 2 of 10 (~25% Complete)
+
+The application is currently being migrated to support **multiple Google accounts per user**. See:
+
+- [MULTI_ACCOUNT_MIGRATION_PROGRESS.md](MULTI_ACCOUNT_MIGRATION_PROGRESS.md) - Detailed progress tracking
+- [MULTI_ACCOUNT_ARCHITECTURE.md](MULTI_ACCOUNT_ARCHITECTURE.md) - Architecture reference guide
+
+### New Database Structure
+
+```
+users/{userId}/
+  selectedAccountId: string
+  accounts/{accountId}/                    ← NEW LAYER
+    email: string
+    accountName: string
+    googleRefreshToken: string            ← MOVED FROM USER
+    connectedAt: Timestamp
+
+    businesses/{businessId}/               ← MOVED UNDER ACCOUNTS
+      reviews/{reviewId}/
+```
+
+### Migration Status
+
+**✅ Completed (Phase 1-2)**:
+
+- TypeScript types updated
+- Firestore security rules updated
+- Firestore indexes updated
+- Account operations created
+- Business operations updated
+
+**🔄 In Progress**:
+
+- User operations update
+- Review operations update
+
+**📋 Pending**:
+
+- OAuth flow changes
+- API endpoints
+- React contexts
+- UI components
+- Cloud Functions
+- Dashboard pages
+- Hooks updates
+
+See progress document for full details and next steps.
+
+---
+
+**Last Updated**: 2025-11-04 (Migration in Progress)
 **Generated By**: Claude (Anthropic) - claude-sonnet-4-5-20250929

@@ -5,23 +5,26 @@ import {
 
 export async function rejectReply(
   userId: string,
+  accountId: string,
   businessId: string,
   reviewId: string
 ): Promise<void> {
-  await rejectReplyFb(userId, businessId, reviewId);
+  await rejectReplyFb(userId, accountId, businessId, reviewId);
 }
 
 export async function editReply(
   userId: string,
+  accountId: string,
   businessId: string,
   reviewId: string,
   newReply: string
 ): Promise<void> {
-  await updateReviewReply(userId, businessId, reviewId, newReply);
+  await updateReviewReply(userId, accountId, businessId, reviewId, newReply);
 }
 
 export async function regenerateReply(
   userId: string,
+  accountId: string,
   businessId: string,
   reviewId: string,
   token: string
@@ -32,7 +35,7 @@ export async function regenerateReply(
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, businessId }),
+    body: JSON.stringify({ userId, accountId, businessId }),
   });
 
   if (!response.ok) {
@@ -46,6 +49,7 @@ export async function regenerateReply(
 
 export async function postReplyToGoogle(
   userId: string,
+  accountId: string,
   businessId: string,
   reviewId: string,
   token: string
@@ -56,7 +60,7 @@ export async function postReplyToGoogle(
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, businessId }),
+    body: JSON.stringify({ userId, accountId, businessId }),
   });
 
   if (!response.ok) {

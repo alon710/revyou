@@ -102,14 +102,34 @@ service cloud.firestore {
         allow write: if false;
       }
 
-      // ====== BUSINESSES SUBCOLLECTION ======
-      match /businesses/{businessId} {
-        // Users can read their own businesses (ownership implicit via path)
+      // ====== ACCOUNTS SUBCOLLECTION ======
+      match /accounts/{accountId} {
+        // Users can read their own accounts (ownership implicit via path)
         allow read: if isOwner(userId);
 
-        // Users can create businesses in their own subcollection
+        // Users can create accounts in their own subcollection
         allow create: if isOwner(userId) &&
-        request.resource.data.keys().hasAll(['googleAccountId', 'googleBusinessId', 'name', 'address', 'connected', 'connectedAt', 'config', 'emailOnNewReview']) &&
+        request.resource.data.keys().hasAll(['email', 'accountName', 'googleRefreshToken', 'connectedAt']) &&
+        validStringLength(request.resource.data.email, 3, 200) &&
+        validStringLength(request.resource.data.accountName, 1, 200) &&
+        validStringLength(request.resource.data.googleRefreshToken, 1, 10000) &&
+        (!('lastSynced' in request.resource.data) || request.resource.data.lastSynced is timestamp);
+
+        // Users can update their own accounts
+        allow update: if isOwner(userId) &&
+        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['connectedAt']));
+
+        // Users can delete their own accounts
+        allow delete: if isOwner(userId);
+
+        // ====== BUSINESSES SUBCOLLECTION (under accounts) ======
+        match /businesses/{businessId} {
+          // Users can read their own businesses (ownership implicit via path)
+          allow read: if isOwner(userId);
+
+          // Users can create businesses in their own subcollection
+          allow create: if isOwner(userId) &&
+          request.resource.data.keys().hasAll(['googleBusinessId', 'name', 'address', 'connected', 'connectedAt', 'config', 'emailOnNewReview']) &&
         validStringLength(request.resource.data.name, 1, 200) &&
         validStringLength(request.resource.data.address, 1, 500) &&
         request.resource.data.connected is bool &&
@@ -152,37 +172,38 @@ service cloud.firestore {
         // Validate starConfigs structure
         isValidStarConfigs(request.resource.data.config.starConfigs)));
 
-        // Users can delete their own businesses
-        allow delete: if isOwner(userId);
+          // Users can delete their own businesses
+          allow delete: if isOwner(userId);
 
-        // ====== REVIEWS SUBCOLLECTION ======
-        match /reviews/{reviewId} {
-          // Users can read reviews in their own businesses (ownership implicit via path)
-          allow read: if isOwner(userId);
+          // ====== REVIEWS SUBCOLLECTION (under businesses) ======
+          match /reviews/{reviewId} {
+            // Users can read reviews in their own businesses (ownership implicit via path)
+            allow read: if isOwner(userId);
 
-          // Cloud Functions and users can create reviews
-          allow create: if isOwner(userId) &&
-          request.resource.data.keys().hasAll(['googleReviewId', 'name', 'rating', 'date', 'receivedAt', 'replyStatus']) &&
-          validStringLength(request.resource.data.name, 1, 200) &&
-          isValidRating(request.resource.data.rating) &&
-          (!('text' in request.resource.data) || validStringLength(request.resource.data.text, 0, 5000)) &&
-          (!('photoUrl' in request.resource.data) || validStringLength(request.resource.data.photoUrl, 1, 2000)) &&
-          isValidReplyStatus(request.resource.data.replyStatus);
+            // Cloud Functions and users can create reviews
+            allow create: if isOwner(userId) &&
+            request.resource.data.keys().hasAll(['googleReviewId', 'name', 'rating', 'date', 'receivedAt', 'replyStatus']) &&
+            validStringLength(request.resource.data.name, 1, 200) &&
+            isValidRating(request.resource.data.rating) &&
+            (!('text' in request.resource.data) || validStringLength(request.resource.data.text, 0, 5000)) &&
+            (!('photoUrl' in request.resource.data) || validStringLength(request.resource.data.photoUrl, 1, 2000)) &&
+            isValidReplyStatus(request.resource.data.replyStatus);
 
-          // Users and Cloud Functions can update reviews
-          allow update: if isOwner(userId) &&
-          // Validate reply status if changed
-          (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['replyStatus']) ||
-          isValidReplyStatus(request.resource.data.replyStatus)) &&
-          // Validate aiReply length if provided
-          (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['aiReply']) ||
-          (request.resource.data.aiReply == null || validStringLength(request.resource.data.aiReply, 0, 2000))) &&
-          // Validate postedReply length if provided
-          (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['postedReply']) ||
-          (request.resource.data.postedReply == null || validStringLength(request.resource.data.postedReply, 0, 2000)));
+            // Users and Cloud Functions can update reviews
+            allow update: if isOwner(userId) &&
+            // Validate reply status if changed
+            (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['replyStatus']) ||
+            isValidReplyStatus(request.resource.data.replyStatus)) &&
+            // Validate aiReply length if provided
+            (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['aiReply']) ||
+            (request.resource.data.aiReply == null || validStringLength(request.resource.data.aiReply, 0, 2000))) &&
+            // Validate postedReply length if provided
+            (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['postedReply']) ||
+            (request.resource.data.postedReply == null || validStringLength(request.resource.data.postedReply, 0, 2000)));
 
-          // Reviews should not be deleted directly (keep for history)
-          allow delete: if false;
+            // Reviews should not be deleted directly (keep for history)
+            allow delete: if false;
+          }
         }
       }
     }

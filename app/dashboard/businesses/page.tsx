@@ -17,6 +17,7 @@ import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
 export default function BusinessesPage() {
   const { user, loading: authLoading } = useAuth();
   const {
+    currentAccount,
     currentBusiness,
     businesses,
     loading: businessLoading,
@@ -25,10 +26,10 @@ export default function BusinessesPage() {
   const { limits } = useSubscription();
 
   const handleDelete = async () => {
-    if (!currentBusiness || !user) return;
+    if (!currentBusiness || !currentAccount || !user) return;
 
     try {
-      await deleteBusiness(user.uid, currentBusiness.id);
+      await deleteBusiness(user.uid, currentAccount.id, currentBusiness.id);
       await refreshBusinesses();
     } catch (error) {
       console.error("Error deleting business:", error);

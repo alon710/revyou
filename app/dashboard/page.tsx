@@ -20,7 +20,6 @@ import {
 } from "@/components/dashboard/charts/DashboardChart";
 import { type ChartConfig } from "@/components/ui/chart";
 import { toast } from "sonner";
-import { BarChart3 } from "lucide-react";
 
 const chartConfig = {
   count: { label: "כמות" },
@@ -74,7 +73,6 @@ export default function DashboardPage() {
         <PageHeader
           title="לוח בקרה"
           description="סקירה כללית של הביקורות שלך"
-          icon={<BarChart3 className="h-8 w-8" />}
         />
         <EmptyState />
       </PageContainer>

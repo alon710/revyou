@@ -1,16 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { exchangeCodeForTokens, encryptToken } from "@/lib/google/oauth";
-import { updateUserGoogleRefreshToken } from "@/lib/firebase/admin-users";
+import {
+  exchangeCodeForTokens,
+  encryptToken,
+  getUserInfo,
+} from "@/lib/google/oauth";
+import { updateUserSelectedAccount } from "@/lib/firebase/admin-users";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
+import { createAccount, updateAccount } from "@/lib/firebase/admin-accounts";
 
 export const runtime = "nodejs";
 
-const redirectToBusinesses = (success?: boolean, errorMessage?: string) => {
+const redirectToBusinesses = (
+  success?: boolean,
+  errorMessage?: string,
+  accountId?: string
+) => {
   const baseUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/businesses/connect`;
   let url = baseUrl;
 
   if (success === true) {
-    url = `${baseUrl}?success=true`;
+    url = accountId
+      ? `${baseUrl}?success=true&accountId=${accountId}`
+      : `${baseUrl}?success=true`;
   } else if (errorMessage) {
     url = `${baseUrl}?error=${encodeURIComponent(errorMessage)}`;
   }
@@ -34,6 +45,8 @@ export async function GET(request: NextRequest) {
 
     const stateData = JSON.parse(Buffer.from(state, "base64").toString());
     const stateUserId = stateData?.userId;
+    const reconnect = stateData?.reconnect || false;
+    const existingAccountId = stateData?.accountId;
 
     if (!stateUserId) {
       return redirectToBusinesses(false, "מזהה משתמש לא תקין. אנא נסה שוב.");
@@ -66,10 +79,38 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const encryptedToken = await encryptToken(tokens.refresh_token);
-    await updateUserGoogleRefreshToken(authenticatedUserId, encryptedToken);
+    if (!tokens.access_token) {
+      return redirectToBusinesses(
+        false,
+        "לא התקבל אסימון גישה מ-Google. אנא נסה שוב."
+      );
+    }
 
-    return redirectToBusinesses(true);
+    const encryptedToken = await encryptToken(tokens.refresh_token);
+
+    let accountId: string;
+
+    if (reconnect && existingAccountId) {
+      // Reconnecting existing account - update refresh token
+      await updateAccount(authenticatedUserId, existingAccountId, {
+        googleRefreshToken: encryptedToken,
+      });
+      accountId = existingAccountId;
+    } else {
+      // New account - get user info and create account
+      const userInfo = await getUserInfo(tokens.access_token);
+
+      accountId = await createAccount(authenticatedUserId, {
+        email: userInfo.email,
+        accountName: userInfo.name,
+        googleRefreshToken: encryptedToken,
+      });
+
+      // Set as selected account
+      await updateUserSelectedAccount(authenticatedUserId, accountId);
+    }
+
+    return redirectToBusinesses(true, undefined, accountId);
   } catch (error) {
     console.error("Error in OAuth callback", error);
     return redirectToBusinesses(

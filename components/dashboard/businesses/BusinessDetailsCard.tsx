@@ -7,6 +7,7 @@ import BusinessIdentitySection from "@/components/dashboard/businesses/BusinessI
 import AIResponseSettingsSection from "@/components/dashboard/businesses/AIResponseSettingsSection";
 import StarRatingConfigSection from "@/components/dashboard/businesses/StarRatingConfigSection";
 import NotificationPreferencesSection from "@/components/dashboard/businesses/NotificationPreferencesSection";
+import { useBusiness } from "@/contexts/BusinessContext";
 
 interface BusinessDetailsCardProps {
   business: Business;
@@ -21,9 +22,21 @@ export default function BusinessDetailsCard({
   loading = false,
   onUpdate,
 }: BusinessDetailsCardProps) {
+  const { currentAccount } = useBusiness();
+
   const handleSaveSection = async (partialConfig: Partial<BusinessConfig>) => {
+    if (!currentAccount) {
+      console.error("No current account");
+      return;
+    }
+
     try {
-      await updateBusinessConfig(userId, business.id, partialConfig);
+      await updateBusinessConfig(
+        userId,
+        currentAccount.id,
+        business.id,
+        partialConfig
+      );
       await onUpdate();
     } catch (error) {
       console.error("Error saving config:", error);
@@ -40,8 +53,13 @@ export default function BusinessDetailsCard({
   const handleSaveNotificationPreferences = async (data: {
     emailOnNewReview: boolean;
   }) => {
+    if (!currentAccount) {
+      console.error("No current account");
+      return;
+    }
+
     try {
-      await updateBusiness(userId, business.id, data);
+      await updateBusiness(userId, currentAccount.id, business.id, data);
       await onUpdate();
     } catch (error) {
       console.error("Error saving notification preferences:", error);

@@ -1,16 +1,20 @@
 "use client";
 
 import { useBusiness } from "@/contexts/BusinessContext";
+import { useAccount } from "@/contexts/AccountContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconButton } from "@/components/ui/icon-button";
 import { Building2, Check } from "lucide-react";
 
 export function BusinessToggler() {
+  const { currentAccount } = useAccount();
   const { businesses, selectedBusinessId, selectBusiness, loading } =
     useBusiness();
 
@@ -32,6 +36,14 @@ export function BusinessToggler() {
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        {currentAccount && (
+          <>
+            <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">
+              {currentAccount.accountName}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+          </>
+        )}
         {businesses.map((business) => (
           <DropdownMenuItem
             key={business.id}

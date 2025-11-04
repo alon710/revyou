@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getAuthorizationUrl } from "@/lib/google/oauth";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const authResult = await getAuthenticatedUserId();
     if (authResult instanceof NextResponse) {
@@ -11,7 +11,18 @@ export async function GET() {
 
     const { userId } = authResult;
 
-    const state = Buffer.from(JSON.stringify({ userId })).toString("base64");
+    // Check if this is a reconnect request for an existing account
+    const { searchParams } = new URL(request.url);
+    const accountId = searchParams.get("accountId");
+    const reconnect = accountId !== null;
+
+    const state = Buffer.from(
+      JSON.stringify({
+        userId,
+        reconnect,
+        accountId: accountId || null,
+      })
+    ).toString("base64");
 
     const authUrl = getAuthorizationUrl(state);
 

@@ -52,6 +52,7 @@ export function getDefaultBusinessConfig(): BusinessConfig {
 
 export async function updateBusinessConfig(
   userId: string,
+  accountId: string,
   businessId: string,
   config: Partial<BusinessConfig>
 ): Promise<Business> {
@@ -60,7 +61,7 @@ export async function updateBusinessConfig(
   }
 
   try {
-    const business = await getBusiness(userId, businessId);
+    const business = await getBusiness(userId, accountId, businessId);
     if (!business) {
       throw new Error("המיקום לא נמצא");
     }
@@ -78,10 +79,18 @@ export async function updateBusinessConfig(
 
     const updatedConfig = { ...business.config, ...validationResult.data };
 
-    const businessRef = doc(db, "users", userId, "businesses", businessId);
+    const businessRef = doc(
+      db,
+      "users",
+      userId,
+      "accounts",
+      accountId,
+      "businesses",
+      businessId
+    );
     await updateDoc(businessRef, { config: updatedConfig });
 
-    return (await getBusiness(userId, businessId)) as Business;
+    return (await getBusiness(userId, accountId, businessId)) as Business;
   } catch (error) {
     console.error("Error updating business config:", error);
     throw new Error("לא ניתן לעדכן את הגדרות המיקום");
