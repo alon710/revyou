@@ -13,7 +13,7 @@ const toneOfVoiceSchema = z.enum([
 ]);
 const languageModeSchema = z.enum(["hebrew", "english", "auto-detect"]);
 const replyStatusSchema = z.enum(["pending", "rejected", "posted", "failed"]);
-const subscriptionTierSchema = z.enum(["free", "basic", "pro", "enterprise"]);
+export const subscriptionTierSchema = z.enum(["free", "basic", "pro"]);
 
 export const userSchema = z.object({
   uid: z.string().min(1),

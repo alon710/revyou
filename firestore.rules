@@ -21,7 +21,7 @@ service cloud.firestore {
 
     // Validate subscription tier
     function isValidTier(tier) {
-      return tier in ['free', 'basic', 'pro', 'enterprise'];
+      return tier in ['free', 'basic', 'pro'];
     }
 
     // Validate tone of voice

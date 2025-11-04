@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { Timestamp } from "firebase-admin/firestore";
+import { subscriptionTierSchema } from "@/lib/validation/database";
 
 const timestampSchemaAdmin = z.custom<Timestamp | Date>(
   (val) =>
@@ -23,8 +24,6 @@ const languageModeSchema = z.enum(["hebrew", "english", "auto-detect"]);
 
 const replyStatusSchema = z.enum(["pending", "rejected", "posted", "failed"]);
 
-const subscriptionTierSchema = z.enum(["free", "basic", "pro", "enterprise"]);
-
 export const userSchemaAdmin = z.object({
   uid: z.string().min(1),
   email: z.string().email(),
@@ -38,7 +37,7 @@ export const userSchemaAdmin = z.object({
 });
 
 const starConfigSchema = z.object({
-  customInstructions: z.string().max(1000),
+  customInstructions: z.string().max(1000).default(""),
   autoReply: z.boolean(),
 });
 
@@ -50,9 +49,9 @@ const BusinessConfigSchema = z.object({
   useEmojis: z.boolean(),
   languageMode: languageModeSchema,
   languageInstructions: z.string().max(100).optional(),
-  maxSentences: z.number().min(1).max(5).optional(),
-  allowedEmojis: z.array(z.string()).max(50).optional(),
-  signature: z.string().max(100).optional(),
+  maxSentences: z.number().min(1).max(5).optional().default(2),
+  allowedEmojis: z.array(z.string()).max(50).optional().default([]),
+  signature: z.string().max(100).optional().default(""),
   starConfigs: z.object({
     1: starConfigSchema,
     2: starConfigSchema,

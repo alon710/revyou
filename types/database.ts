@@ -5,7 +5,7 @@ export type LanguageMode = "hebrew" | "english" | "auto-detect";
 
 export type ReplyStatus = "pending" | "rejected" | "posted" | "failed";
 
-export type SubscriptionTier = "free" | "basic" | "pro" | "enterprise";
+export type SubscriptionTier = "free" | "basic" | "pro";
 
 export interface User {
   uid: string;
