@@ -35,7 +35,8 @@ export async function signInWithGoogle() {
         uid: user.uid,
         email: user.email || "",
         displayName: user.displayName || "User",
-        photoURL: user.photoURL || "https://lh3.googleusercontent.com/a/default-user",
+        photoURL:
+          user.photoURL || "https://lh3.googleusercontent.com/a/default-user",
         subscriptionTier: "free" as const,
         createdAt: serverTimestamp(),
       };
