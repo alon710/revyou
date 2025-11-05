@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { doc, onSnapshot } from "firebase/firestore";
 import { useAuth } from "@/lib/firebase/auth";
+import { db } from "@/lib/firebase/config";
 import {
   onSubscriptionChange,
   getAvailableProducts,
@@ -35,6 +37,7 @@ interface UseSubscriptionReturn {
   isTrial: boolean;
   planType: PlanType;
   limits: PlanLimits;
+  stripeLink: string | null;
 }
 
 export function useSubscription(): UseSubscriptionReturn {
@@ -49,6 +52,7 @@ export function useSubscription(): UseSubscriptionReturn {
     autoPost: false,
     requireApproval: true,
   });
+  const [stripeLink, setStripeLink] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -62,9 +66,35 @@ export function useSubscription(): UseSubscriptionReturn {
           autoPost: false,
           requireApproval: true,
         });
+        setStripeLink(null);
       }, 0);
       return () => clearTimeout(timer);
     }
+  }, [user]);
+
+  useEffect(() => {
+    if (!user || !db) {
+      return;
+    }
+
+    const userRef = doc(db, "users", user.uid);
+    const unsubscribe = onSnapshot(
+      userRef,
+      (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.data();
+          setStripeLink(data?.stripeLink || null);
+        } else {
+          setStripeLink(null);
+        }
+      },
+      (err) => {
+        console.error("Error fetching user data:", err);
+        setStripeLink(null);
+      }
+    );
+
+    return () => unsubscribe();
   }, [user]);
 
   useEffect(() => {
@@ -177,5 +207,6 @@ export function useSubscription(): UseSubscriptionReturn {
     isTrial,
     planType,
     limits,
+    stripeLink,
   };
 }

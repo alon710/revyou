@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Sparkles, Crown } from "lucide-react";
+import { Sparkles, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 
@@ -13,7 +13,7 @@ const PLAN_DISPLAY_NAMES = {
 
 export function SidebarUpgradeItem() {
   const router = useRouter();
-  const { planType, loading } = useSubscription();
+  const { planType, loading, stripeLink } = useSubscription();
 
   if (loading) {
     return null;
@@ -42,6 +42,27 @@ export function SidebarUpgradeItem() {
     );
   }
 
+  if (stripeLink) {
+    return (
+      <a
+        href={stripeLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cn(
+          "flex items-center justify-between w-full rounded-lg transition-colors",
+          "px-4 py-2.5 bg-primary/5 hover:bg-primary/10",
+          "text-primary font-medium",
+          "border border-primary/20 hover:border-primary/30 cursor-pointer"
+        )}
+      >
+        <div className="flex flex-col items-end gap-0.5">
+          <span className="text-sm">חבילה {planName}</span>
+        </div>
+        <Settings className="h-5 w-5 shrink-0" />
+      </a>
+    );
+  }
+
   return (
     <div
       className={cn(
@@ -54,7 +75,7 @@ export function SidebarUpgradeItem() {
       <div className="flex flex-col items-end gap-0.5">
         <span className="text-sm">חבילה {planName}</span>
       </div>
-      <Crown className="h-5 w-5 shrink-0" />
+      <Settings className="h-5 w-5 shrink-0" />
     </div>
   );
 }

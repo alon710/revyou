@@ -78,20 +78,15 @@ export async function revokeGoogleRefreshToken(
   encryptedToken: string
 ): Promise<void> {
   try {
-    // Decrypt the token first
     const refreshToken = await decryptToken(encryptedToken);
 
-    // Create OAuth client
     const oauth2Client = createOAuthClient();
 
-    // Revoke the token with Google
     await oauth2Client.revokeToken(refreshToken);
 
     console.log("Successfully revoked Google OAuth refresh token");
   } catch (error) {
     console.error("Error revoking Google OAuth token:", error);
-    // Don't throw - we want deletion to proceed even if revocation fails
-    // (token may already be invalid/revoked)
   }
 }
 

@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 export function LandingBottomNav() {
   const pathname = usePathname();
 
-  // Only show on landing page
   if (!pathname.startsWith("/") || pathname.startsWith("/dashboard")) {
     return null;
   }

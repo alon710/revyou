@@ -111,9 +111,8 @@ export function AccountBusinessManagement() {
 
       setAvailableBusinesses(data.businesses);
 
-      // Don't show error toast for empty businesses - let UI handle it gracefully
       if (data.businesses.length === 0) {
-        setShowBusinessSelector(true); // Keep selector open to show informative message
+        setShowBusinessSelector(true);
       }
     } catch (err) {
       console.error("Error loading available businesses:", err);
@@ -121,7 +120,7 @@ export function AccountBusinessManagement() {
         err instanceof Error ? err.message : "לא ניתן לטעון עסקים";
       toast.error(errorMessage);
       setShowBusinessSelector(false);
-      hasLoadedBusinesses.current = false; // Reset ref on error
+      hasLoadedBusinesses.current = false;
     } finally {
       setLoadingAvailableBusinesses(false);
     }
@@ -210,7 +209,7 @@ export function AccountBusinessManagement() {
       toast.success("העסק חובר בהצלחה");
       setShowBusinessSelector(false);
       setAccountIdForNewBusiness(null);
-      hasLoadedBusinesses.current = false; // Reset ref for future OAuth flows
+      hasLoadedBusinesses.current = false;
       await loadAccountsWithBusinesses();
       await refreshBusinesses();
     } catch (err) {
@@ -324,7 +323,7 @@ export function AccountBusinessManagement() {
                 variant="outline"
                 onClick={() => {
                   setShowBusinessSelector(false);
-                  hasLoadedBusinesses.current = false; // Reset ref when closing
+                  hasLoadedBusinesses.current = false;
                 }}
                 className="mt-4"
               >
@@ -363,7 +362,7 @@ export function AccountBusinessManagement() {
                 onClick={() => {
                   setShowBusinessSelector(false);
                   setAccountIdForNewBusiness(null);
-                  hasLoadedBusinesses.current = false; // Reset ref when closing
+                  hasLoadedBusinesses.current = false;
                 }}
                 className="w-full mt-4"
               >

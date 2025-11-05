@@ -41,7 +41,7 @@ export interface IconButtonProps
   icon: LucideIcon;
   asChild?: boolean;
   iconClassName?: string;
-  "aria-label": string; // Required for accessibility
+  "aria-label": string;
 }
 
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(

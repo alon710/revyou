@@ -164,7 +164,6 @@ export async function createBusiness(
       emailOnNewReview: data.emailOnNewReview ?? true,
     };
 
-    // eslint-disable-next-line unused-imports/no-unused-vars
     const { connectedAt, ...validationData } = businessData;
     businessCreateSchema.omit({ connectedAt: true }).parse(validationData);
 
@@ -231,7 +230,6 @@ export async function deleteBusiness(
   try {
     const batch = writeBatch(db);
 
-    // Get all reviews under this business
     const reviewsRef = collection(
       db,
       "users",
@@ -244,12 +242,10 @@ export async function deleteBusiness(
     );
     const reviewsSnapshot = await getDocs(reviewsRef);
 
-    // Delete all reviews
     reviewsSnapshot.docs.forEach((reviewDoc) => {
       batch.delete(reviewDoc.ref);
     });
 
-    // Delete the business document
     const businessRef = doc(
       db,
       "users",
@@ -261,7 +257,6 @@ export async function deleteBusiness(
     );
     batch.delete(businessRef);
 
-    // Commit all deletions
     await batch.commit();
   } catch (error) {
     console.error("Error deleting business:", error);

@@ -11,7 +11,6 @@ export async function GET(request: Request) {
 
     const { userId } = authResult;
 
-    // Check if this is a reconnect request for an existing account
     const { searchParams } = new URL(request.url);
     const accountId = searchParams.get("accountId");
     const reconnect = accountId !== null;

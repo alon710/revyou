@@ -3,7 +3,7 @@ import { adminAuth } from "@/lib/firebase/admin";
 import { cookies } from "next/headers";
 
 const SESSION_COOKIE_NAME = "session";
-const SESSION_DURATION = 60 * 60 * 24 * 5 * 1000; // 5 days in milliseconds
+const SESSION_DURATION = 60 * 60 * 24 * 5 * 1000;
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,18 +16,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify the ID token first
     const decodedToken = await adminAuth.verifyIdToken(idToken);
 
-    // Create session cookie (5 days)
     const sessionCookie = await adminAuth.createSessionCookie(idToken, {
       expiresIn: SESSION_DURATION,
     });
 
-    // Set the cookie
     const cookieStore = await cookies();
     cookieStore.set(SESSION_COOKIE_NAME, sessionCookie, {
-      maxAge: SESSION_DURATION / 1000, // maxAge is in seconds
+      maxAge: SESSION_DURATION / 1000,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

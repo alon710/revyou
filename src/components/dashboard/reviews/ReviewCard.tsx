@@ -87,7 +87,7 @@ export function ReviewCard({
       onUpdate?.();
     } catch (error) {
       console.error("Error publishing reply:", error);
-      throw error; // Re-throw to let dialog handle loading state
+      throw error;
     }
   };
 

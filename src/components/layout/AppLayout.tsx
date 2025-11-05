@@ -12,8 +12,6 @@ export function AppLayout({
   variant?: "landing" | "dashboard";
   className?: string;
 }) {
-  // AppLayout is now only used for landing pages
-  // Dashboard uses Sidebar layout directly in dashboard/layout.tsx
   return (
     <div className="flex flex-col h-screen">
       <LandingNavbar />

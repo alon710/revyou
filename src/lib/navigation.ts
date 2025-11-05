@@ -55,7 +55,6 @@ export function getIsActive(
     return pathname === "/" && !hash;
   }
 
-  // Special case for /dashboard - only match exact path
   if (href === "/dashboard") {
     return pathname === "/dashboard";
   }

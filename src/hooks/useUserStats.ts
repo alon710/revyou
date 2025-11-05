@@ -69,11 +69,9 @@ export function useUserStats(): UseUserStatsReturn {
       const userId = user.uid;
       const startDate = startOfMonth(new Date());
 
-      // Get all businesses across all accounts
       const allBusinesses = await getAllUserBusinesses(userId);
       setBusinessCount(allBusinesses.length);
 
-      // Get all accounts for the user
       const accountsRef = collection(db, "users", userId, "accounts");
       const accountsSnapshot = await getDocs(accountsRef);
 
@@ -85,7 +83,6 @@ export function useUserStats(): UseUserStatsReturn {
 
       let totalReviewCount = 0;
 
-      // For each account, get businesses and their reviews
       for (const accountDoc of accountsSnapshot.docs) {
         const accountId = accountDoc.id;
 
@@ -95,7 +92,6 @@ export function useUserStats(): UseUserStatsReturn {
         );
         const businessesSnapshot = await getDocs(businessesQuery);
 
-        // For each business, count reviews this month
         for (const businessDoc of businessesSnapshot.docs) {
           const reviewsQuery = query(
             collection(
