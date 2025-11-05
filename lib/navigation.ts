@@ -1,6 +1,5 @@
 import {
   Home,
-  MessageSquare,
   Settings,
   PiggyBank,
   ShieldQuestionMarkIcon,
@@ -18,7 +17,6 @@ export interface NavItem {
 export const dashboardNavItems: NavItem[] = [
   { href: "/dashboard", label: "לוח הבקרה", icon: LayoutDashboard },
   { href: "/dashboard/businesses", label: "עסקים", icon: Home },
-  { href: "/dashboard/reviews", label: "ביקורות", icon: MessageSquare },
   { href: "/dashboard/settings", label: "הגדרות", icon: Settings },
 ];
 

@@ -2,50 +2,28 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
-import { deleteBusiness } from "@/lib/firebase/business";
-import { useSubscription } from "@/lib/hooks/useSubscription";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
-import { EmptyState } from "@/components/ui/empty-state";
+import { IconButton } from "@/components/ui/icon-button";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
-import BusinessDetailsCard from "@/components/dashboard/businesses/BusinessDetailsCard";
-import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
-
-const EMPTY_STATE_PROPS = {
-  title: "עדיין לא חיברת עסקים",
-  description:
-    "חבר את חשבון Google Business Profile שלך כדי להתחיל לקבל תשובות AI אוטומטיות לביקורות הלקוחות שלך",
-  buttonText: "חבר עסק ראשון",
-  buttonLink: "/onboarding/step-2",
-};
+import { useSubscription } from "@/lib/hooks/useSubscription";
+import { Settings, MapPin, Plus, Link } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  DashboardCard,
+  DashboardCardHeader,
+  DashboardCardTitle,
+  DashboardCardContent,
+} from "@/components/ui/dashboard-card";
 
 export default function BusinessesPage() {
-  const { user, loading: authLoading } = useAuth();
-  const {
-    currentAccount,
-    currentBusiness,
-    businesses,
-    loading: businessLoading,
-    refreshBusinesses,
-  } = useBusiness();
+  const { loading: authLoading } = useAuth();
+  const { businesses, loading: businessLoading } = useBusiness();
   const { limits } = useSubscription();
-
-  const handleDelete = async () => {
-    if (!currentBusiness || !currentAccount || !user) return;
-
-    try {
-      await deleteBusiness(user.uid, currentAccount.id, currentBusiness.id);
-      await refreshBusinesses();
-    } catch (error) {
-      console.error("Error deleting business:", error);
-    }
-  };
+  const router = useRouter();
 
   const maxBusinesses = limits.businesses;
-  const canAddMore = businesses.length < maxBusinesses;
 
   if (authLoading || businessLoading) {
     return (
@@ -55,51 +33,86 @@ export default function BusinessesPage() {
     );
   }
 
-  if (businesses.length === 0 || !currentBusiness) {
-    return (
-      <PageContainer>
-        <PageHeader
-          title="העסקים שלי"
-          description="נהל את חשבונות Google Business Profile המחוברים שלך"
-        />
-        <EmptyState {...EMPTY_STATE_PROPS} />
-      </PageContainer>
-    );
-  }
+  const handleBusinessClick = (businessId: string) => {
+    router.push(`/dashboard/reviews?businessId=${businessId}`);
+  };
+
+  const handleSettingsClick = (e: React.MouseEvent, businessId: string) => {
+    e.stopPropagation();
+    router.push(`/dashboard/businesses/${businessId}/settings`);
+  };
 
   return (
     <PageContainer>
       <PageHeader
-        title={currentBusiness.name}
-        description={currentBusiness.address}
-        icon={
-          !currentBusiness.connected && <Badge variant="secondary">מנותק</Badge>
-        }
-        actions={
-          <>
-            <DeleteConfirmation
-              title="מחיקת עסק"
-              description={`פעולה זו תמחק את העסק "${currentBusiness.name}" לצמיתות!`}
-              confirmationText={currentBusiness.name}
-              confirmationLabel="כדי לאשר, הקלד את שם העסק:"
-              confirmationPlaceholder="שם העסק"
-              onDelete={handleDelete}
-              deleteButtonText="מחק עסק"
-              variant="inline"
-            />
-            <Button asChild disabled={!canAddMore} variant="outline" size="sm">
-              <Link href="/onboarding/step-2">הוסף עסק</Link>
-            </Button>
-          </>
-        }
+        title="העסקים שלי"
+        description="נהל את חשבונות Google Business Profile המחוברים שלך"
       />
 
-      <BusinessDetailsCard
-        business={currentBusiness}
-        userId={user!.uid}
-        loading={businessLoading}
-        onUpdate={refreshBusinesses}
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {businesses.map((business) => (
+          <DashboardCard
+            key={business.id}
+            className="cursor-pointer relative"
+            onClick={() => handleBusinessClick(business.id)}
+          >
+            <div className="absolute top-4 left-4 z-10">
+              <IconButton
+                icon={Settings}
+                variant="ghost"
+                size="sm"
+                aria-label="הגדרות עסק"
+                onClick={(e) => handleSettingsClick(e, business.id)}
+              />
+            </div>
+
+            <DashboardCardHeader>
+              {business.photoUrl && (
+                <img
+                  src={business.photoUrl}
+                  alt={business.name}
+                  className="w-full h-32 object-cover rounded-t-lg -mt-6 -mx-6 mb-4"
+                />
+              )}
+              <DashboardCardTitle>
+                <div className="flex items-center justify-between w-full">
+                  <span>{business.name}</span>
+                  {!business.connected && (
+                    <Badge variant="secondary">מנותק</Badge>
+                  )}
+                </div>
+              </DashboardCardTitle>
+            </DashboardCardHeader>
+
+            <DashboardCardContent>
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
+                <span>{business.address}</span>
+              </div>
+              {business.description && (
+                <div className="my-3 bg-primary/10 p-3 rounded-md whitespace-pre-wrap leading-relaxed text-sm text-muted-foreground">
+                  {business.description}
+                </div>
+              )}
+            </DashboardCardContent>
+          </DashboardCard>
+        ))}
+
+        <DashboardCard
+          className="cursor-pointer border-dashed border-2 hover:border-primary/50 hover:bg-accent/50 transition-all flex flex-col items-center justify-center h-full"
+          onClick={() => router.push("/onboarding/step-2")}
+        >
+          <div className="flex flex-col items-center justify-center text-center p-6">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Plus className="h-8 w-8 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold">הוסף עסק</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              חבר עסק נוסף מ-Google Business Profile
+            </p>
+          </div>
+        </DashboardCard>
+      </div>
     </PageContainer>
   );
 }

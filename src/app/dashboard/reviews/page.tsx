@@ -6,29 +6,34 @@ import { useBusiness } from "@/contexts/BusinessContext";
 import { useReviews } from "@/hooks/useReviews";
 import { ReviewCard } from "@/components/dashboard/reviews/ReviewCard";
 import { Loading } from "@/components/ui/loading";
-import { EmptyState } from "@/components/ui/empty-state";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-
-const EMPTY_STATE_PROPS = {
-  title: "עדיין לא חיברת עסקים",
-  description:
-    "חבר את חשבון Google Business Profile שלך כדי להתחיל לקבל תשובות AI אוטומטיות לביקורות הלקוחות שלך",
-  buttonText: "חבר עסק ראשון",
-  buttonLink: "/onboarding/step-2",
-};
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function ReviewsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
   const {
     currentBusiness,
     businesses,
     loading: businessLoading,
+    selectBusiness,
   } = useBusiness();
   const { reviews, loading: reviewsLoading, error, refetch } = useReviews();
+
+  // Handle businessId from query params (when navigating from business card)
+  useEffect(() => {
+    const businessId = searchParams.get("businessId");
+    if (businessId && businesses.length > 0) {
+      const business = businesses.find((b) => b.id === businessId);
+      if (business) {
+        selectBusiness(businessId);
+      }
+    }
+  }, [searchParams, businesses, selectBusiness]);
 
   useEffect(() => {
     if (error) {
@@ -46,20 +51,15 @@ export default function ReviewsPage() {
     );
   }
 
-  if (businesses.length === 0) {
-    return (
-      <PageContainer>
-        <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
-        <EmptyState {...EMPTY_STATE_PROPS} />
-      </PageContainer>
-    );
-  }
-
   if (!currentBusiness) {
     return (
       <PageContainer>
         <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
-        <EmptyState {...EMPTY_STATE_PROPS} />
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">
+            לא נבחר עסק. בחר עסק מרשימת העסקים.
+          </p>
+        </div>
       </PageContainer>
     );
   }
@@ -75,7 +75,12 @@ export default function ReviewsPage() {
         {isLoading && reviews.length === 0 ? (
           <Loading text="טוען ביקורות..." />
         ) : reviews.length === 0 ? (
-          <EmptyState {...EMPTY_STATE_PROPS} />
+          <EmptyState
+            title="אין ביקורות עדיין"
+            description="הביקורות יופיעו כאן ברגע שהן יגיעו מגוגל"
+            buttonText="חבר עסק"
+            buttonLink="/onboarding/step-2"
+          />
         ) : (
           reviews.map((review) => (
             <div
