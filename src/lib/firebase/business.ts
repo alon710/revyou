@@ -164,8 +164,7 @@ export async function createBusiness(
       emailOnNewReview: data.emailOnNewReview ?? true,
     };
 
-    const { connectedAt, ...validationData } = businessData;
-    businessCreateSchema.omit({ connectedAt: true }).parse(validationData);
+    businessCreateSchema.omit({ connectedAt: true }).parse(businessData);
 
     const businessesRef = collection(
       db,
