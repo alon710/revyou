@@ -33,7 +33,6 @@ export async function getBusinessAdmin(
         ...cleanedData,
       });
 
-      // Convert admin Timestamp/Date to client Timestamp
       const connectedAtDate =
         validated.connectedAt instanceof Date
           ? validated.connectedAt

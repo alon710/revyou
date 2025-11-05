@@ -164,7 +164,6 @@ export async function createBusiness(
       emailOnNewReview: data.emailOnNewReview ?? true,
     };
 
-    // eslint-disable-next-line unused-imports/no-unused-vars
     const { connectedAt, ...validationData } = businessData;
     businessCreateSchema.omit({ connectedAt: true }).parse(validationData);
 

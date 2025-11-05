@@ -97,7 +97,6 @@ export async function deleteAccount(
     throw new Error("Firestore not initialized");
   }
 
-  // Get all businesses under this account
   const businessesRef = collection(
     db,
     "users",

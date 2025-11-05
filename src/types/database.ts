@@ -62,11 +62,11 @@ export interface GoogleBusinessProfileBusiness {
   id: string;
   name: string;
   address: string;
-  phoneNumber?: string;
-  websiteUrl?: string;
-  mapsUrl?: string;
-  description?: string;
-  photoUrl?: string;
+  phoneNumber: string | null;
+  websiteUrl: string | null;
+  mapsUrl: string | null;
+  description: string | null;
+  photoUrl: string | null;
 }
 
 export interface Business {
@@ -74,11 +74,11 @@ export interface Business {
   googleBusinessId: string;
   name: string;
   address: string;
-  phoneNumber?: string;
-  websiteUrl?: string;
-  mapsUrl?: string;
-  description?: string;
-  photoUrl?: string;
+  phoneNumber: string | null;
+  websiteUrl: string | null;
+  mapsUrl: string | null;
+  description: string | null;
+  photoUrl: string | null;
   connected: boolean;
   connectedAt: Timestamp;
   config: BusinessConfig;
