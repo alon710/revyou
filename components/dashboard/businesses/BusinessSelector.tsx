@@ -9,7 +9,7 @@ import {
   DashboardCardHeader,
   DashboardCardTitle,
 } from "@/components/ui/dashboard-card";
-import { Building2, AlertCircle, MapPin } from "lucide-react";
+import { Building2, MapPin } from "lucide-react";
 import { Loading } from "@/components/ui/loading";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -17,7 +17,6 @@ import { Label } from "@/components/ui/label";
 interface BusinessSelectorProps {
   businesses: GoogleBusinessProfileBusiness[];
   loading?: boolean;
-  error?: string | null;
   onSelect: (business: GoogleBusinessProfileBusiness) => void;
   onRetry: () => void;
   connecting?: boolean;
@@ -26,7 +25,6 @@ interface BusinessSelectorProps {
 export function BusinessSelector({
   businesses,
   loading,
-  error,
   onSelect,
   onRetry,
   connecting,
@@ -53,16 +51,6 @@ export function BusinessSelector({
         </div>
       </DashboardCardHeader>
       <DashboardCardContent>
-        {!loading && error && businesses.length === 0 && (
-          <div className="text-center py-8">
-            <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-muted-foreground mb-4">{error}</p>
-            <Button onClick={onRetry} disabled={loading}>
-              נסה שוב
-            </Button>
-          </div>
-        )}
-
         {!loading && businesses.length > 0 && (
           <>
             <RadioGroup

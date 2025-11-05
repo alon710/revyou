@@ -9,8 +9,7 @@ import { Loading } from "@/components/ui/loading";
 import { ConnectedBusinessesList } from "./ConnectedBusinessesList";
 import { OAuthPrompt } from "./OAuthPrompt";
 import { BusinessSelector } from "./BusinessSelector";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 import { useAccount } from "@/contexts/AccountContext";
 
 interface ConnectBusinessCardProps {
@@ -39,7 +38,6 @@ export function ConnectBusinessCard({
   const [loading, setLoading] = useState(false);
   const [loadingExisting, setLoadingExisting] = useState(true);
   const [loadingAvailable, setLoadingAvailable] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
 
   const loadExistingBusinesses = useCallback(async () => {
@@ -57,31 +55,24 @@ export function ConnectBusinessCard({
   const loadAvailableBusinesses = useCallback(async () => {
     try {
       setLoadingAvailable(true);
-      setError(null);
 
       const response = await fetch("/api/google/businesses");
       const data = await response.json();
 
       if (!response.ok) {
-        if (response.status === 429) {
-          throw new Error(
-            data.error ||
-              "Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב."
-          );
-        }
-        throw new Error(data.error || "Failed to load businesses");
+        throw new Error(data.error || "לא ניתן לטעון עסקים");
       }
 
       setAvailableBusinesses(data.businesses);
 
       if (data.businesses.length === 0) {
-        setError("לא נמצאו עסקים בחשבון Google Business Profile שלך");
+        toast.error("לא נמצאו עסקים בחשבון Google Business Profile שלך");
       }
     } catch (err) {
       console.error("Error loading available businesses:", err);
       const errorMessage =
         err instanceof Error ? err.message : "לא ניתן לטעון עסקים";
-      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoadingAvailable(false);
     }
@@ -98,18 +89,17 @@ export function ConnectBusinessCard({
     }
 
     if (errorParam) {
-      setError(errorParam);
+      toast.error(errorParam);
     }
   }, [successParam, errorParam, loadAvailableBusinesses]);
 
   const handleStartOAuth = async () => {
     try {
       setLoading(true);
-      setError(null);
 
       const canAdd = await checkBusinessLimit(userId);
       if (!canAdd) {
-        setError(
+        toast.error(
           "הגעת למגבלת העסקים בחבילת המינוי שלך. שדרג כדי להוסיף עסקים נוספים."
         );
         return;
@@ -118,7 +108,7 @@ export function ConnectBusinessCard({
       window.location.href = "/api/google/auth";
     } catch (err) {
       console.error("Error starting OAuth:", err);
-      setError("לא ניתן להתחיל את תהליך ההזדהות");
+      toast.error("לא ניתן להתחיל את תהליך ההזדהות");
     } finally {
       setLoading(false);
     }
@@ -127,17 +117,16 @@ export function ConnectBusinessCard({
   const handleConnect = async (business: GoogleBusinessProfileBusiness) => {
     try {
       setConnecting(true);
-      setError(null);
 
       const accountId = accountIdParam || currentAccount?.id;
       if (!accountId) {
-        setError("לא נמצא חשבון פעיל. אנא התחבר מחדש.");
+        toast.error("לא נמצא חשבון פעיל. אנא התחבר מחדש.");
         return;
       }
 
       const canAdd = await checkBusinessLimit(userId);
       if (!canAdd) {
-        setError("הגעת למגבלת העסקים בחבילת המינוי שלך");
+        toast.error("הגעת למגבלת העסקים בחבילת המינוי שלך");
         return;
       }
 
@@ -162,7 +151,7 @@ export function ConnectBusinessCard({
       console.error("Error connecting business:", err);
       const errorMessage =
         err instanceof Error ? err.message : "לא ניתן לחבר את העסק";
-      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setConnecting(false);
     }
@@ -178,14 +167,6 @@ export function ConnectBusinessCard({
 
   return (
     <div className="space-y-4">
-      {error && step === "auth" && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>שגיאה</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
       {existingBusinesses.length > 0 && step === "auth" && (
         <ConnectedBusinessesList
           businesses={existingBusinesses}
@@ -202,7 +183,6 @@ export function ConnectBusinessCard({
         <BusinessSelector
           businesses={availableBusinesses}
           loading={loadingAvailable}
-          error={error}
           onSelect={handleConnect}
           onRetry={loadAvailableBusinesses}
           connecting={connecting}
