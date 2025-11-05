@@ -123,6 +123,25 @@ export async function getBusiness(
   }
 }
 
+export async function isBusinessAlreadyConnected(
+  userId: string,
+  googleBusinessId: string
+): Promise<boolean> {
+  if (!db) {
+    throw new Error("Firestore not initialized");
+  }
+
+  try {
+    const allBusinesses = await getAllUserBusinesses(userId);
+    return allBusinesses.some(
+      (business) => business.googleBusinessId === googleBusinessId
+    );
+  } catch (error) {
+    console.error("Error checking for duplicate business:", error);
+    throw new Error("לא ניתן לבדוק אם העסק כבר מחובר");
+  }
+}
+
 export async function createBusiness(
   data: Omit<
     BusinessCreateInput,

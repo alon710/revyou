@@ -3,7 +3,10 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { createBusiness } from "@/lib/firebase/business";
+import {
+  createBusiness,
+  isBusinessAlreadyConnected,
+} from "@/lib/firebase/business";
 import { completeOnboarding } from "@/lib/firebase/users";
 import { GoogleBusinessProfileBusiness } from "@/types/database";
 import { StepIndicator } from "@/components/onboarding/StepIndicator";
@@ -74,6 +77,15 @@ export default function OnboardingStep3() {
     try {
       setConnecting(true);
       setError(null);
+
+      const isDuplicate = await isBusinessAlreadyConnected(
+        user.uid,
+        business.id
+      );
+      if (isDuplicate) {
+        toast.error(`העסק "${business.name}" כבר מחובר לחשבון שלך`);
+        return;
+      }
 
       await createBusiness({
         userId: user.uid,
