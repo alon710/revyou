@@ -101,12 +101,6 @@ export function ConnectBusinessCard({
     }
   }, [successParam, errorParam, loadAvailableBusinesses]);
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
-
   const handleStartOAuth = async () => {
     try {
       setLoading(true);
@@ -114,7 +108,7 @@ export function ConnectBusinessCard({
 
       const canAdd = await checkBusinessLimit(userId);
       if (!canAdd) {
-        setError(
+        toast.error(
           "הגעת למגבלת העסקים בחבילת המינוי שלך. שדרג כדי להוסיף עסקים נוספים."
         );
         return;
@@ -123,7 +117,7 @@ export function ConnectBusinessCard({
       window.location.href = "/api/google/auth";
     } catch (err) {
       console.error("Error starting OAuth:", err);
-      setError("לא ניתן להתחיל את תהליך ההזדהות");
+      toast.error("לא ניתן להתחיל את תהליך ההזדהות");
     } finally {
       setLoading(false);
     }
@@ -136,13 +130,13 @@ export function ConnectBusinessCard({
 
       const accountId = accountIdParam || currentAccount?.id;
       if (!accountId) {
-        setError("לא נמצא חשבון פעיל. אנא התחבר מחדש.");
+        toast.error("לא נמצא חשבון פעיל. אנא התחבר מחדש.");
         return;
       }
 
       const canAdd = await checkBusinessLimit(userId);
       if (!canAdd) {
-        setError("הגעת למגבלת העסקים בחבילת המינוי שלך");
+        toast.error("הגעת למגבלת העסקים בחבילת המינוי שלך");
         return;
       }
 
@@ -168,7 +162,7 @@ export function ConnectBusinessCard({
       console.error("Error connecting business:", err);
       const errorMessage =
         err instanceof Error ? err.message : "לא ניתן לחבר את העסק";
-      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setConnecting(false);
     }
