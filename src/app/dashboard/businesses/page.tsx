@@ -14,6 +14,14 @@ import { Loading } from "@/components/ui/loading";
 import BusinessDetailsCard from "@/components/dashboard/businesses/BusinessDetailsCard";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
 
+const EMPTY_STATE_PROPS = {
+  title: "עדיין לא חיברת עסקים",
+  description:
+    "חבר את חשבון Google Business Profile שלך כדי להתחיל לקבל תשובות AI אוטומטיות לביקורות הלקוחות שלך",
+  buttonText: "חבר עסק ראשון",
+  buttonLink: "/onboarding/step-2",
+};
+
 export default function BusinessesPage() {
   const { user, loading: authLoading } = useAuth();
   const {
@@ -54,7 +62,7 @@ export default function BusinessesPage() {
           title="העסקים שלי"
           description="נהל את חשבונות Google Business Profile המחוברים שלך"
         />
-        <EmptyState />
+        <EmptyState {...EMPTY_STATE_PROPS} />
       </PageContainer>
     );
   }

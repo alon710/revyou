@@ -12,6 +12,14 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+const EMPTY_STATE_PROPS = {
+  title: "עדיין לא חיברת עסקים",
+  description:
+    "חבר את חשבון Google Business Profile שלך כדי להתחיל לקבל תשובות AI אוטומטיות לביקורות הלקוחות שלך",
+  buttonText: "חבר עסק ראשון",
+  buttonLink: "/onboarding/step-2",
+};
+
 export default function ReviewsPage() {
   const router = useRouter();
   const { user } = useAuth();
@@ -42,7 +50,7 @@ export default function ReviewsPage() {
     return (
       <PageContainer>
         <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
-        <EmptyState />
+        <EmptyState {...EMPTY_STATE_PROPS} />
       </PageContainer>
     );
   }
@@ -51,7 +59,7 @@ export default function ReviewsPage() {
     return (
       <PageContainer>
         <PageHeader title="ביקורות" description="כל הביקורות עבור העסקים שלך" />
-        <EmptyState />
+        <EmptyState {...EMPTY_STATE_PROPS} />
       </PageContainer>
     );
   }
@@ -67,10 +75,7 @@ export default function ReviewsPage() {
         {isLoading && reviews.length === 0 ? (
           <Loading text="טוען ביקורות..." />
         ) : reviews.length === 0 ? (
-          <div className="text-center text-muted-foreground py-12">
-            אין ביקורות עדיין. הביקורות של {currentBusiness.name} יופיעו כאן
-            ברגע שהן יגיעו מגוגל
-          </div>
+          <EmptyState {...EMPTY_STATE_PROPS} />
         ) : (
           reviews.map((review) => (
             <div

@@ -22,7 +22,6 @@ const redirectToBusinesses = (
     return NextResponse.redirect(url);
   }
 
-  // Default redirect to dashboard businesses page
   const baseUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/businesses/connect`;
   let url = baseUrl;
 
