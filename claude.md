@@ -220,6 +220,7 @@
   - Track connection timestamps
 
 **Database Hierarchy**:
+
 ```
 users/{userId}/
   ├── selectedAccountId: string
@@ -635,7 +636,7 @@ type User = {
   createdAt: Timestamp;
   stripeId?: string;
   stripeLink?: string;
-  selectedAccountId?: string;      // ✨ Account selection
+  selectedAccountId?: string; // ✨ Account selection
   selectedBusinessId?: string;
 };
 
@@ -644,7 +645,7 @@ type Account = {
   id: string;
   email: string;
   accountName: string;
-  googleRefreshToken: string;      // Encrypted OAuth token
+  googleRefreshToken: string; // Encrypted OAuth token
   connectedAt: Timestamp;
   lastSynced?: Timestamp;
 };
@@ -652,7 +653,7 @@ type Account = {
 // Business type
 type Business = {
   id: string;
-  googleBusinessId: string;        // No longer has googleAccountId
+  googleBusinessId: string; // No longer has googleAccountId
   name: string;
   address: string;
   phoneNumber?: string;
@@ -730,6 +731,7 @@ The application uses a three-tier context hierarchy for state management:
 
 **Purpose**: User authentication state
 **Provides**:
+
 - `user`: Current Firebase user
 - `loading`: Auth loading state
 - `signIn()`: Google OAuth sign-in
@@ -739,6 +741,7 @@ The application uses a three-tier context hierarchy for state management:
 
 **Purpose**: Multi-account management and selection
 **Provides**:
+
 - `selectedAccount`: Currently selected Google account
 - `accounts`: All user accounts
 - `setSelectedAccount()`: Switch accounts
@@ -752,6 +755,7 @@ The application uses a three-tier context hierarchy for state management:
 
 **Purpose**: Business selection within selected account
 **Provides**:
+
 - `selectedBusiness`: Currently selected business
 - `businesses`: Businesses for selected account
 - `setSelectedBusiness()`: Switch businesses

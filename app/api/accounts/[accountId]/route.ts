@@ -22,10 +22,7 @@ export async function DELETE(
     const accountDoc = await accountRef.get();
 
     if (!accountDoc.exists) {
-      return NextResponse.json(
-        { error: "Account not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Account not found" }, { status: 404 });
     }
 
     const accountData = accountDoc.data();

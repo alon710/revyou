@@ -22,7 +22,7 @@ import {
   createBusiness,
 } from "@/lib/firebase/business";
 import { checkBusinessLimit } from "@/lib/firebase/business-limits";
-import { Building2, Trash2, AlertTriangle, Plus, MapPin } from "lucide-react";
+import { Building2, Trash2, AlertTriangle, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import type {
   Account,

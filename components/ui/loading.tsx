@@ -30,9 +30,7 @@ export function Loading({
         className={cn("animate-spin text-primary", sizeMap[size], className)}
       />
       {title && <h2 className="text-2xl font-semibold">{title}</h2>}
-      {description && (
-        <p className="text-muted-foreground">{description}</p>
-      )}
+      {description && <p className="text-muted-foreground">{description}</p>}
       {text && <p className="text-sm text-muted-foreground">{text}</p>}
     </div>
   );
