@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAuthorizationUrl } from "@/lib/google/oauth";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
+import { adminDb } from "@/lib/firebase/admin";
 
 export async function GET(request: Request) {
   try {
@@ -15,6 +16,9 @@ export async function GET(request: Request) {
     const accountId = searchParams.get("accountId");
     const reconnect = accountId !== null;
 
+    const userDoc = await adminDb.collection("users").doc(userId).get();
+    const userEmail = userDoc.data()?.email;
+
     const state = Buffer.from(
       JSON.stringify({
         userId,
@@ -23,7 +27,7 @@ export async function GET(request: Request) {
       })
     ).toString("base64");
 
-    const authUrl = getAuthorizationUrl(state);
+    const authUrl = getAuthorizationUrl(state, userEmail);
 
     return NextResponse.redirect(authUrl);
   } catch (error) {

@@ -19,7 +19,10 @@ function createOAuthClient(): OAuth2Client {
   return new OAuth2Client(clientId, clientSecret, redirectUri);
 }
 
-export function getAuthorizationUrl(state?: string): string {
+export function getAuthorizationUrl(
+  state?: string,
+  loginHint?: string
+): string {
   const oauth2Client = createOAuthClient();
 
   const authUrl = oauth2Client.generateAuthUrl({
@@ -27,6 +30,7 @@ export function getAuthorizationUrl(state?: string): string {
     scope: GOOGLE_BUSINESS_PROFILE_API_SCOPES,
     state: state || "",
     prompt: "consent",
+    ...(loginHint && { login_hint: loginHint }),
   });
 
   return authUrl;
