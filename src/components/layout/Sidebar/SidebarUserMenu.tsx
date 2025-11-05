@@ -18,9 +18,10 @@ import Image from "next/image";
 export function SidebarUserMenu() {
   const { user } = useAuth();
   const router = useRouter();
-  const { isCollapsed } = useSidebar();
+  const { isCollapsed, isMobile, setIsOpen } = useSidebar();
 
   const handleLogout = async () => {
+    if (isMobile) setIsOpen(false);
     await signOut();
     router.push("/");
   };
@@ -57,7 +58,10 @@ export function SidebarUserMenu() {
         >
           <DropdownMenuItem
             dir="rtl"
-            onClick={() => router.push("/dashboard/settings")}
+            onClick={() => {
+              if (isMobile) setIsOpen(false);
+              router.push("/dashboard/settings");
+            }}
             className="cursor-pointer"
           >
             <div className="flex items-center justify-between w-full">
@@ -126,7 +130,10 @@ export function SidebarUserMenu() {
         className="w-[220px] [direction:rtl]"
       >
         <DropdownMenuItem
-          onClick={() => router.push("/dashboard/settings")}
+          onClick={() => {
+            if (isMobile) setIsOpen(false);
+            router.push("/dashboard/settings");
+          }}
           className="cursor-pointer"
         >
           <div className="flex items-center justify-between w-full">

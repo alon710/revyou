@@ -17,12 +17,14 @@ import { Button } from "@/components/ui/button";
 import { Check, ChevronDown } from "lucide-react";
 import { getAccountBusinesses } from "@/lib/firebase/business";
 import type { AccountWithBusinesses } from "@/types/database";
+import { useSidebar } from "./Sidebar";
 
 export function SidebarAccountBusinessSelector() {
   const router = useRouter();
   const { user } = useAuth();
   const { accounts, currentAccount, selectAccount } = useAccount();
   const { currentBusiness, selectBusiness } = useBusiness();
+  const { isMobile, setIsOpen } = useSidebar();
   const [accountsWithBusinesses, setAccountsWithBusinesses] = useState<
     AccountWithBusinesses[]
   >([]);
@@ -69,6 +71,10 @@ export function SidebarAccountBusinessSelector() {
       await selectAccount(accountId);
     }
     await selectBusiness(businessId);
+
+    if (isMobile) {
+      setIsOpen(false);
+    }
   };
 
   if (loading) {
@@ -84,7 +90,10 @@ export function SidebarAccountBusinessSelector() {
       <Button
         variant="default"
         className="w-full cursor-pointer text-right"
-        onClick={() => router.push("/dashboard/settings")}
+        onClick={() => {
+          if (isMobile) setIsOpen(false);
+          router.push("/dashboard/settings");
+        }}
       >
         <span className="px-2">חבר חשבון ראשון</span>
       </Button>
@@ -100,7 +109,10 @@ export function SidebarAccountBusinessSelector() {
       <Button
         variant="default"
         className="w-full cursor-pointer text-right"
-        onClick={() => router.push("/dashboard/settings")}
+        onClick={() => {
+          if (isMobile) setIsOpen(false);
+          router.push("/dashboard/settings");
+        }}
       >
         <span className="px-2">הוסף עסק ראשון</span>
       </Button>
