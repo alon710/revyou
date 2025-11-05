@@ -60,7 +60,9 @@ export async function signInWithGoogle() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(`Session creation failed: ${errorData.error || response.statusText}`);
+        throw new Error(
+          `Session creation failed: ${errorData.error || response.statusText}`
+        );
       }
 
       await response.json();
@@ -70,7 +72,8 @@ export async function signInWithGoogle() {
 
     return { user, error: null };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "אירעה שגיאה בהתחברות עם גוגל";
+    const errorMessage =
+      error instanceof Error ? error.message : "אירעה שגיאה בהתחברות עם גוגל";
     return { user: null, error: errorMessage };
   }
 }

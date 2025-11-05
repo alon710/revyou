@@ -17,9 +17,8 @@ const redirectToBusinesses = (
   accountId?: string,
   onboarding?: boolean
 ) => {
-  // If in onboarding mode, redirect to onboarding step-2
   if (onboarding && success && accountId) {
-    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/step-2?accountId=${accountId}`;
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/step-3?accountId=${accountId}`;
     return NextResponse.redirect(url);
   }
 

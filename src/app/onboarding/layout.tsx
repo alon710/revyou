@@ -32,8 +32,11 @@ export default function OnboardingLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted" dir="rtl">
-      <div className="container max-w-3xl mx-auto py-12 px-4">
+    <div
+      className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted"
+      dir="rtl"
+    >
+      <div className="container max-w-3xl mx-auto py-12 px-4 w-full">
         {children}
       </div>
     </div>

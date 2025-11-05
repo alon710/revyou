@@ -1,122 +1,99 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { createBusiness } from "@/lib/firebase/business";
-import { GoogleBusinessProfileBusiness } from "@/types/database";
+import { getUserAccounts } from "@/lib/firebase/accounts";
 import { StepIndicator } from "@/components/onboarding/StepIndicator";
-import { BusinessSelector } from "@/components/dashboard/businesses/BusinessSelector";
+import { Button } from "@/components/ui/button";
+import {
+  DashboardCard,
+  DashboardCardContent,
+  DashboardCardDescription,
+  DashboardCardHeader,
+  DashboardCardTitle,
+} from "@/components/ui/dashboard-card";
+import { Building2 } from "lucide-react";
 import { Loading } from "@/components/ui/loading";
-import { toast } from "sonner";
 
 export default function OnboardingStep2() {
   const { user } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [availableBusinesses, setAvailableBusinesses] = useState<
-    GoogleBusinessProfileBusiness[]
-  >([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
 
-  const accountId = searchParams.get("accountId");
-
   useEffect(() => {
-    if (!accountId) {
-      // No account ID provided, redirect back to step 1
-      router.push("/onboarding/step-1");
-    }
-  }, [accountId, router]);
+    async function checkAccounts() {
+      if (!user) return;
 
-  const loadAvailableBusinesses = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await fetch("/api/google/businesses");
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          throw new Error(
-            data.error ||
-              "Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב."
-          );
+      try {
+        const accounts = await getUserAccounts(user.uid);
+        if (accounts.length > 0) {
+          router.push(`/onboarding/step-3?accountId=${accounts[0].id}`);
         }
-        throw new Error(data.error || "Failed to load businesses");
+      } catch (error) {
+        console.error("Error checking accounts:", error);
+      } finally {
+        setLoading(false);
       }
-
-      setAvailableBusinesses(data.businesses);
-
-      if (data.businesses.length === 0) {
-        setError("לא נמצאו עסקים בחשבון Google Business Profile שלך");
-      }
-    } catch (err) {
-      console.error("Error loading available businesses:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "לא ניתן לטעון עסקים";
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
     }
-  }, []);
 
-  useEffect(() => {
-    if (accountId) {
-      loadAvailableBusinesses();
-    }
-  }, [accountId, loadAvailableBusinesses]);
+    checkAccounts();
+  }, [user, router]);
 
-  const handleConnect = async (business: GoogleBusinessProfileBusiness) => {
-    if (!user || !accountId) return;
-
-    try {
-      setConnecting(true);
-      setError(null);
-
-      await createBusiness({
-        userId: user.uid,
-        accountId,
-        googleBusinessId: business.id,
-        name: business.name,
-        address: business.address,
-        phoneNumber: business.phoneNumber,
-        websiteUrl: business.websiteUrl,
-        mapsUrl: business.mapsUrl,
-        description: business.description,
-        photoUrl: business.photoUrl,
-      });
-
-      toast.success("העסק חובר בהצלחה!");
-      router.push("/onboarding/step-3");
-    } catch (err) {
-      console.error("Error connecting business:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "לא ניתן לחבר את העסק";
-      toast.error(errorMessage);
-    } finally {
-      setConnecting(false);
-    }
+  const handleConnect = () => {
+    setConnecting(true);
+    window.location.href = "/api/google/auth?onboarding=true";
   };
 
-  if (!accountId) {
-    return null;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loading />
+      </div>
+    );
   }
 
   return (
     <div>
       <StepIndicator currentStep={2} />
 
-      <BusinessSelector
-        businesses={availableBusinesses}
-        loading={loading}
-        error={error}
-        onSelect={handleConnect}
-        onRetry={loadAvailableBusinesses}
-        connecting={connecting}
-      />
+      <DashboardCard>
+        <DashboardCardHeader>
+          <DashboardCardTitle>התחבר לחשבון Google שלך</DashboardCardTitle>
+          <DashboardCardDescription>
+            התחל בחיבור חשבון Google Business Profile כדי לנהל תשובות לביקורות
+            באמצעות AI
+          </DashboardCardDescription>
+        </DashboardCardHeader>
+        <DashboardCardContent className="space-y-4">
+          <div className="bg-muted p-4 rounded-lg" dir="rtl">
+            <h4 className="font-semibold mb-2">מה נבקש גישה אליו:</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2">
+                <Building2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <span>רשימת העסקים שלך ב-Google Business Profile</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Building2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <span>קריאת ביקורות לקוחות</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Building2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <span>פרסום תשובות לביקורות</span>
+              </li>
+            </ul>
+          </div>
+
+          <Button
+            onClick={handleConnect}
+            disabled={connecting}
+            className="w-full"
+          >
+            {connecting ? "מתחבר..." : "התחבר עם Google"}
+          </Button>
+        </DashboardCardContent>
+      </DashboardCard>
     </div>
   );
 }

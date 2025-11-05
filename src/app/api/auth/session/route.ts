@@ -36,7 +36,8 @@ export async function POST(request: NextRequest) {
       userId: decodedToken.uid,
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
       { error: `Failed to create session: ${errorMessage}` },
       { status: 401 }
