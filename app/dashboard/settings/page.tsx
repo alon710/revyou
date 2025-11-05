@@ -7,6 +7,7 @@ import { useSubscription } from "@/lib/hooks/useSubscription";
 import { useUserStats } from "@/hooks/useUserStats";
 import { getUser } from "@/lib/firebase/users";
 import { User } from "@/types/database";
+import { AccountBusinessManagement } from "@/components/dashboard/settings/AccountBusinessManagement";
 import { AccountInfo } from "@/components/dashboard/settings/AccountInfo";
 import { SubscriptionInfo } from "@/components/dashboard/settings/SubscriptionInfo";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -21,7 +22,7 @@ export default function SettingsPage() {
     limits,
     loading: subscriptionLoading,
   } = useSubscription();
-  const { reviewCount, loading: reviewCountLoading } = useUserStats();
+  const { reviewCount, loading: statsLoading } = useUserStats();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,7 +46,7 @@ export default function SettingsPage() {
     }
   }, [authUser, authLoading, loadUserData]);
 
-  if (authLoading || loading || subscriptionLoading || reviewCountLoading) {
+  if (authLoading || loading || subscriptionLoading || statsLoading) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loading size="md" />
@@ -63,6 +64,8 @@ export default function SettingsPage() {
         title="הגדרות חשבון"
         description="נהל את הגדרות החשבון והתראות האימייל שלך"
       />
+
+      <AccountBusinessManagement />
 
       <AccountInfo
         displayName={authUser.displayName}

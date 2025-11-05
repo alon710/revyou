@@ -6,6 +6,7 @@ import {
   setDoc,
   updateDoc,
   query,
+  where,
   orderBy,
   Timestamp,
   writeBatch,
@@ -70,6 +71,29 @@ export async function getAccount(
   return {
     id: snapshot.id,
     ...snapshot.data(),
+  } as Account;
+}
+
+export async function getAccountByEmail(
+  userId: string,
+  email: string
+): Promise<Account | null> {
+  if (!db) {
+    throw new Error("Firestore not initialized");
+  }
+
+  const accountsRef = collection(db, "users", userId, "accounts");
+  const q = query(accountsRef, where("email", "==", email));
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    return null;
+  }
+
+  const doc = snapshot.docs[0];
+  return {
+    id: doc.id,
+    ...doc.data(),
   } as Account;
 }
 

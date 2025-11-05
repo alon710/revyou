@@ -27,7 +27,7 @@ export function OAuthPrompt({ onConnect, loading }: OAuthPromptProps) {
       </DashboardCardHeader>
       <DashboardCardContent className="space-y-4">
         <div className="bg-muted p-4 rounded-lg" dir="rtl">
-          <h4 className="font-semibold mb-2">מה נבקש גישה אליו:</h4>
+          <h4 className="font-semibold mb-2">נבקש גישה להרשאות הבאות</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li className="flex items-start gap-2">
               <Building2 className="h-4 w-4 mt-0.5 flex-shrink-0" />

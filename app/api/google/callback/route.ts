@@ -6,16 +6,20 @@ import {
 } from "@/lib/google/oauth";
 import { updateUserSelectedAccount } from "@/lib/firebase/admin-users";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
-import { createAccount, updateAccount } from "@/lib/firebase/admin-accounts";
+import {
+  createAccount,
+  updateAccount,
+  getAccountByEmail,
+} from "@/lib/firebase/admin-accounts";
 
 export const runtime = "nodejs";
 
-const redirectToBusinesses = (
+const redirectToSettings = (
   success?: boolean,
   errorMessage?: string,
   accountId?: string
 ) => {
-  const baseUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/businesses/connect`;
+  const baseUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings`;
   let url = baseUrl;
 
   if (success === true) {
@@ -37,7 +41,7 @@ export async function GET(request: NextRequest) {
     const error = searchParams.get("error");
 
     if (error || !code || !state) {
-      return redirectToBusinesses(
+      return redirectToSettings(
         false,
         "אירעה שגיאה באימות Google. אנא נסה שוב."
       );
@@ -49,38 +53,32 @@ export async function GET(request: NextRequest) {
     const existingAccountId = stateData?.accountId;
 
     if (!stateUserId) {
-      return redirectToBusinesses(false, "מזהה משתמש לא תקין. אנא נסה שוב.");
+      return redirectToSettings(false, "מזהה משתמש לא תקין. אנא נסה שוב.");
     }
 
     const authResult = await getAuthenticatedUserId();
     if (authResult instanceof NextResponse) {
-      return redirectToBusinesses(
-        false,
-        "לא מחובר למערכת. אנא התחבר ונסה שוב."
-      );
+      return redirectToSettings(false, "לא מחובר למערכת. אנא התחבר ונסה שוב.");
     }
 
     const { userId: authenticatedUserId } = authResult;
 
     if (stateUserId !== authenticatedUserId) {
       console.error("State userId mismatch with authenticated user");
-      return redirectToBusinesses(
-        false,
-        "חוסר התאמה במזהה משתמש. אנא נסה שוב."
-      );
+      return redirectToSettings(false, "חוסר התאמה במזהה משתמש. אנא נסה שוב.");
     }
 
     const tokens = await exchangeCodeForTokens(code);
 
     if (!tokens.refresh_token) {
-      return redirectToBusinesses(
+      return redirectToSettings(
         false,
         "לא התקבל אסימון רענון מ-Google. אנא נסה שוב."
       );
     }
 
     if (!tokens.access_token) {
-      return redirectToBusinesses(
+      return redirectToSettings(
         false,
         "לא התקבל אסימון גישה מ-Google. אנא נסה שוב."
       );
@@ -98,19 +96,31 @@ export async function GET(request: NextRequest) {
     } else {
       const userInfo = await getUserInfo(tokens.access_token);
 
-      accountId = await createAccount(authenticatedUserId, {
-        email: userInfo.email,
-        accountName: userInfo.name,
-        googleRefreshToken: encryptedToken,
-      });
+      const existingAccount = await getAccountByEmail(
+        authenticatedUserId,
+        userInfo.email
+      );
+
+      if (existingAccount) {
+        await updateAccount(authenticatedUserId, existingAccount.id, {
+          googleRefreshToken: encryptedToken,
+        });
+        accountId = existingAccount.id;
+      } else {
+        accountId = await createAccount(authenticatedUserId, {
+          email: userInfo.email,
+          accountName: userInfo.name,
+          googleRefreshToken: encryptedToken,
+        });
+      }
 
       await updateUserSelectedAccount(authenticatedUserId, accountId);
     }
 
-    return redirectToBusinesses(true, undefined, accountId);
+    return redirectToSettings(true, undefined, accountId);
   } catch (error) {
     console.error("Error in OAuth callback", error);
-    return redirectToBusinesses(
+    return redirectToSettings(
       false,
       "אירעה שגיאה בחיבור ל-Google. אנא נסה שוב."
     );

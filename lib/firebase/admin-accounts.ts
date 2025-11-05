@@ -66,6 +66,28 @@ export async function getAccount(
   };
 }
 
+export async function getAccountByEmail(
+  userId: string,
+  email: string
+): Promise<any | null> {
+  const accountsRef = adminDb
+    .collection("users")
+    .doc(userId)
+    .collection("accounts");
+
+  const snapshot = await accountsRef.where("email", "==", email).get();
+
+  if (snapshot.empty) {
+    return null;
+  }
+
+  const doc = snapshot.docs[0];
+  return {
+    id: doc.id,
+    ...doc.data(),
+  };
+}
+
 export async function getAccountGoogleRefreshToken(
   userId: string,
   accountId: string

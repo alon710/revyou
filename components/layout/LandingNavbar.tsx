@@ -39,7 +39,7 @@ export function LandingNavbar() {
         <div className="flex items-center gap-4">
           {user ? (
             <Button asChild>
-              <Link href="/dashboard">לוח הבקרה</Link>
+              <Link href="/dashboard">החשבון שלי</Link>
             </Button>
           ) : (
             <Button asChild>

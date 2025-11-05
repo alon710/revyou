@@ -5,7 +5,6 @@ import {
   PiggyBank,
   ShieldQuestionMarkIcon,
   Rocket,
-  LayoutDashboard,
   HomeIcon,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";

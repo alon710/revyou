@@ -84,9 +84,26 @@ export function SidebarAccountBusinessSelector() {
       <Button
         variant="default"
         className="w-full cursor-pointer text-right"
-        onClick={() => router.push("/dashboard/businesses/connect")}
+        onClick={() => router.push("/dashboard/settings")}
       >
         <span className="px-2">חבר חשבון ראשון</span>
+      </Button>
+    );
+  }
+
+  // Check if there are any businesses at all
+  const hasBusinesses = accountsWithBusinesses.some(
+    (account) => account.businesses.length > 0
+  );
+
+  if (!hasBusinesses) {
+    return (
+      <Button
+        variant="default"
+        className="w-full cursor-pointer text-right"
+        onClick={() => router.push("/dashboard/settings")}
+      >
+        <span className="px-2">הוסף עסק ראשון</span>
       </Button>
     );
   }
@@ -150,17 +167,6 @@ export function SidebarAccountBusinessSelector() {
             )}
           </div>
         ))}
-
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          onClick={() => router.push("/dashboard/businesses/connect")}
-          className="cursor-pointer text-right"
-        >
-          <span className="font-medium text-primary w-full text-right">
-            הוסף עסק
-          </span>
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
