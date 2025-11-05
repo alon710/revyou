@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { getUser } from "@/lib/firebase/users";
 import { AccountProvider } from "@/contexts/AccountContext";
 import { BusinessProvider } from "@/contexts/BusinessContext";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -16,15 +17,37 @@ export default function DashboardLayout({
 }) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
 
   useEffect(() => {
-    if (!loading && !user) {
-      const currentPath = window.location.pathname;
-      router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
+    async function checkAuth() {
+      if (!loading && !user) {
+        const currentPath = window.location.pathname;
+        router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
+        return;
+      }
+
+      if (!loading && user) {
+        try {
+          const userData = await getUser(user.uid);
+
+          // Check if onboarding is completed
+          if (!userData?.onboardingCompleted) {
+            router.push("/onboarding/step-1");
+            return;
+          }
+        } catch (error) {
+          console.error("Error checking onboarding status:", error);
+        } finally {
+          setCheckingOnboarding(false);
+        }
+      }
     }
+
+    checkAuth();
   }, [user, loading, router]);
 
-  if (loading) {
+  if (loading || checkingOnboarding) {
     return <Loading fullScreen />;
   }
 

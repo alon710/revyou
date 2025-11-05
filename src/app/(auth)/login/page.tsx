@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithGoogle } from "@/lib/firebase/auth";
 import { useAuth } from "@/contexts/AuthContext";
+import { getUser } from "@/lib/firebase/users";
 import {
   DashboardCard,
   DashboardCardContent,
@@ -27,10 +28,30 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!authLoading && user) {
-      const redirect = searchParams.get("redirect") || "/dashboard";
-      router.push(redirect);
+    async function checkOnboardingStatus() {
+      if (!authLoading && user) {
+        try {
+          const userData = await getUser(user.uid);
+
+          // Check if onboarding is completed
+          if (!userData?.onboardingCompleted) {
+            router.push("/onboarding/step-1");
+            return;
+          }
+
+          // Onboarding completed, proceed with normal redirect
+          const redirect = searchParams.get("redirect") || "/dashboard";
+          router.push(redirect);
+        } catch (error) {
+          console.error("Error checking onboarding status:", error);
+          // On error, proceed to dashboard
+          const redirect = searchParams.get("redirect") || "/dashboard";
+          router.push(redirect);
+        }
+      }
     }
+
+    checkOnboardingStatus();
   }, [user, authLoading, router, searchParams]);
 
   useEffect(() => {
@@ -49,8 +70,24 @@ function LoginForm() {
       setError(error);
       setIsLoading(false);
     } else if (user) {
-      const redirect = searchParams.get("redirect") || "/dashboard";
-      router.push(redirect);
+      try {
+        const userData = await getUser(user.uid);
+
+        // Check if onboarding is completed
+        if (!userData?.onboardingCompleted) {
+          router.push("/onboarding/step-1");
+          return;
+        }
+
+        // Onboarding completed, proceed with normal redirect
+        const redirect = searchParams.get("redirect") || "/dashboard";
+        router.push(redirect);
+      } catch (err) {
+        console.error("Error checking onboarding status:", err);
+        // On error, proceed to dashboard
+        const redirect = searchParams.get("redirect") || "/dashboard";
+        router.push(redirect);
+      }
     }
   };
 

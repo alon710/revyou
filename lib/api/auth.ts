@@ -19,11 +19,6 @@ export async function getAuthenticatedUserId(): Promise<{ userId: string }> {
 
     return { userId: decodedClaims.uid };
   } catch (error) {
-    console.error(
-      "Error verifying session cookie:",
-      error instanceof Error ? error.message : "Unknown authentication error"
-    );
-
     throw new Error("Failed to authenticate user");
   }
 }

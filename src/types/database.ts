@@ -28,6 +28,7 @@ export interface User {
   stripeLink?: string;
   selectedAccountId?: string;
   selectedBusinessId?: string;
+  onboardingCompleted?: boolean;
 }
 
 export interface StarConfig {

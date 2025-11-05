@@ -15,6 +15,7 @@ function CheckoutForm() {
 
   const plan = searchParams.get("plan");
   const priceId = searchParams.get("priceId");
+  const onboarding = searchParams.get("onboarding") === "true";
   const missingPriceId = !authLoading && user && plan !== "free" && !priceId;
 
   useEffect(() => {
@@ -47,7 +48,14 @@ function CheckoutForm() {
     if (priceId && !error) {
       async function initiateCheckout() {
         try {
-          const session = await createSubscriptionCheckout(priceId!);
+          const options = onboarding
+            ? {
+                success_url: `${window.location.origin}/success?onboarding=true`,
+                cancel_url: `${window.location.origin}/onboarding/step-3`,
+              }
+            : undefined;
+
+          const session = await createSubscriptionCheckout(priceId!, options);
           window.location.assign(session.url);
         } catch (err) {
           console.error("Error creating checkout session:", err);
@@ -57,7 +65,7 @@ function CheckoutForm() {
 
       initiateCheckout();
     }
-  }, [user, authLoading, plan, priceId, router, error]);
+  }, [user, authLoading, plan, priceId, router, error, onboarding]);
 
   if (authLoading || (!error && priceId)) {
     return (

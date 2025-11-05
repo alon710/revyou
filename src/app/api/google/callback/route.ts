@@ -14,8 +14,16 @@ export const runtime = "nodejs";
 const redirectToBusinesses = (
   success?: boolean,
   errorMessage?: string,
-  accountId?: string
+  accountId?: string,
+  onboarding?: boolean
 ) => {
+  // If in onboarding mode, redirect to onboarding step-2
+  if (onboarding && success && accountId) {
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/step-2?accountId=${accountId}`;
+    return NextResponse.redirect(url);
+  }
+
+  // Default redirect to dashboard businesses page
   const baseUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/businesses/connect`;
   let url = baseUrl;
 
@@ -48,6 +56,7 @@ export async function GET(request: NextRequest) {
     const stateUserId = stateData?.userId;
     const reconnect = stateData?.reconnect || false;
     const existingAccountId = stateData?.accountId;
+    const onboarding = stateData?.onboarding || false;
 
     if (!stateUserId) {
       return redirectToBusinesses(false, "מזהה משתמש לא תקין. אנא נסה שוב.");
@@ -128,7 +137,7 @@ export async function GET(request: NextRequest) {
       await updateUserSelectedAccount(authenticatedUserId, accountId);
     }
 
-    return redirectToBusinesses(true, undefined, accountId);
+    return redirectToBusinesses(true, undefined, accountId, onboarding);
   } catch (error) {
     console.error("Error in OAuth callback", error);
     return redirectToBusinesses(
