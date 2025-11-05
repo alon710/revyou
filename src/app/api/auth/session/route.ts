@@ -52,6 +52,7 @@ export async function DELETE() {
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error("Failed to delete session:", error);
     return NextResponse.json(
       { error: "Failed to delete session" },
       { status: 500 }

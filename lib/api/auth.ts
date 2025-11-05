@@ -19,6 +19,7 @@ export async function getAuthenticatedUserId(): Promise<{ userId: string }> {
 
     return { userId: decodedClaims.uid };
   } catch (error) {
+    console.error("Failed to authenticate user:", error);
     throw new Error("Failed to authenticate user");
   }
 }

@@ -67,6 +67,7 @@ export async function signInWithGoogle() {
 
       await response.json();
     } catch (sessionError) {
+      console.error("Session creation error:", sessionError);
       throw new Error("לא ניתן ליצור הרשאה. אנא נסה להתחבר שוב.");
     }
 
@@ -95,12 +96,14 @@ export async function signOut() {
         sessionDeletionFailed = true;
       }
     } catch (sessionError) {
+      console.error("Session deletion error:", sessionError);
       sessionDeletionFailed = true;
     }
 
     await firebaseSignOut(auth);
     return { error: null, sessionDeletionFailed };
   } catch (error) {
+    console.error("Sign out error:", error);
     return { error: "אירעה שגיאה בהתנתקות", sessionDeletionFailed };
   }
 }
