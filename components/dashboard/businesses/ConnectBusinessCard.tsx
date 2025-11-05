@@ -129,7 +129,6 @@ export function ConnectBusinessCard({
       setConnecting(true);
       setError(null);
 
-      // Use accountId from URL param or current account
       const accountId = accountIdParam || currentAccount?.id;
       if (!accountId) {
         setError("לא נמצא חשבון פעיל. אנא התחבר מחדש.");

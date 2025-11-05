@@ -16,6 +16,7 @@ import { deleteAccount } from "@/lib/firebase/accounts";
 import { Mail, Calendar, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import type { Account } from "@/types/database";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface DisconnectAccountsDialogProps {
   open: boolean;
@@ -74,9 +75,10 @@ export function DisconnectAccountsDialog({
 
           <div className="space-y-3 mt-4">
             {accounts.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                אין חשבונות מחוברים
-              </div>
+              <EmptyState
+                title="אין חשבונות מחוברים"
+                description="כאן תוכל לנתק חשבונות Google המחוברים לפלטפורמה. ניתוק חשבון ימחק את כל העסקים והביקורות המקושרות אליו."
+              />
             ) : (
               accounts.map((account) => (
                 <div

@@ -82,11 +82,11 @@ export function SidebarAccountBusinessSelector() {
   if (accounts.length === 0) {
     return (
       <Button
-        variant="outline"
-        className="w-full justify-start text-muted-foreground cursor-default"
-        disabled
+        variant="default"
+        className="w-full cursor-pointer text-right"
+        onClick={() => router.push("/dashboard/businesses/connect")}
       >
-        <span>אין חשבונות מחוברים</span>
+        <span className="px-2">חבר חשבון ראשון</span>
       </Button>
     );
   }

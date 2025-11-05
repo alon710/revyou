@@ -9,7 +9,7 @@ import {
   DashboardCardTitle,
 } from "@/components/ui/dashboard-card";
 import { Building2, MapPin, Plus } from "lucide-react";
-import { IconButton } from "@/components/ui/icon-button";
+import { Button } from "@/components/ui/button";
 
 interface ConnectedBusinessesListProps {
   businesses: Business[];
@@ -32,14 +32,14 @@ export function ConnectedBusinessesList({
               {businesses.length} עסקים מחוברים
             </DashboardCardDescription>
           </div>
-          <IconButton
-            icon={Plus}
+          <Button
             aria-label="הוסף עסק חדש"
             variant="default"
-            size="default"
             onClick={onAddNew}
             disabled={loading}
-          />
+          >
+            <span className="px-2">הוסף עסק חדש</span>
+          </Button>
         </div>
       </DashboardCardHeader>
       <DashboardCardContent>
