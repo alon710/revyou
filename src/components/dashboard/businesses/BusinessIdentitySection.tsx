@@ -58,7 +58,9 @@ export default function BusinessIdentitySection({
           </DashboardCardField>
 
           <DashboardCardField label="טלפון ליצירת קשר (לביקורות שליליות)">
-            <p className="text-sm font-medium">{config.phoneNumber}</p>
+            <p className="text-sm font-medium">
+              {config.phoneNumber || "אין טלפון"}
+            </p>
           </DashboardCardField>
         </>
       )}
