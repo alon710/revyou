@@ -14,7 +14,7 @@ import { db } from "@/lib/firebase/config";
 import { Business, BusinessConfig } from "@/types/database";
 import {
   businessSchema,
-  businessCreateSchema,
+  businessServerCreateSchema,
   businessUpdateSchema,
   BusinessCreateInput,
   BusinessUpdateInput,
@@ -164,8 +164,7 @@ export async function createBusiness(
       emailOnNewReview: data.emailOnNewReview ?? true,
     };
 
-    const { connectedAt, ...validationData } = businessData;
-    businessCreateSchema.omit({ connectedAt: true }).parse(validationData);
+    businessServerCreateSchema.parse(businessData);
 
     const businessesRef = collection(
       db,

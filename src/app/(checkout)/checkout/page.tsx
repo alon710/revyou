@@ -5,8 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { createSubscriptionCheckout } from "@/lib/stripe/client";
 import { Loader2 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 function CheckoutForm() {
   const router = useRouter();
@@ -17,6 +16,19 @@ function CheckoutForm() {
   const plan = searchParams.get("plan");
   const priceId = searchParams.get("priceId");
   const missingPriceId = !authLoading && user && plan !== "free" && !priceId;
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (missingPriceId) {
+      toast.error("חסרים פרטי מחיר. אנא בחר תוכנית מעמוד התמחור.");
+      router.push("/");
+    }
+  }, [missingPriceId, router]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -57,33 +69,6 @@ function CheckoutForm() {
             <p className="text-muted-foreground">
               מעביר אותך לעמוד התשלום המאובטח
             </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (missingPriceId || error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="max-w-md w-full space-y-4">
-          <Alert variant="destructive">
-            <AlertTitle>שגיאה</AlertTitle>
-            <AlertDescription>
-              {error || "חסרים פרטי מחיר. אנא בחר תוכנית מעמוד התמחור."}
-            </AlertDescription>
-          </Alert>
-          <div className="flex gap-2">
-            <Button
-              onClick={() => router.push("/")}
-              variant="outline"
-              className="flex-1"
-            >
-              חזרה לדף הבית
-            </Button>
-            <Button onClick={() => router.back()} className="flex-1">
-              נסה שוב
-            </Button>
           </div>
         </div>
       </div>

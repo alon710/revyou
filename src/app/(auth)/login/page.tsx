@@ -15,6 +15,7 @@ import { Logo } from "@/components/ui/Logo";
 import { Loading } from "@/components/ui/loading";
 import { GoogleSsoButton } from "@/components/ui/google-sso-button";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,12 @@ function LoginForm() {
       router.push(redirect);
     }
   }, [user, authLoading, router, searchParams]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
@@ -76,13 +83,6 @@ function LoginForm() {
             </DashboardCardDescription>
           </DashboardCardHeader>
           <DashboardCardContent className="space-y-4">
-            {/* Error Message */}
-            {error && (
-              <div className="bg-destructive/10 border border-destructive/40 text-destructive px-4 py-3 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
-
             {/* Google Sign In Button */}
             <GoogleSsoButton
               onClick={handleGoogleSignIn}

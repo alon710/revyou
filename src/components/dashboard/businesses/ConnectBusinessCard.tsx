@@ -9,9 +9,8 @@ import { Loading } from "@/components/ui/loading";
 import { ConnectedBusinessesList } from "./ConnectedBusinessesList";
 import { OAuthPrompt } from "./OAuthPrompt";
 import { BusinessSelector } from "./BusinessSelector";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
 import { useAccount } from "@/contexts/AccountContext";
+import { toast } from "sonner";
 
 interface ConnectBusinessCardProps {
   userId: string;
@@ -102,6 +101,12 @@ export function ConnectBusinessCard({
     }
   }, [successParam, errorParam, loadAvailableBusinesses]);
 
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
   const handleStartOAuth = async () => {
     try {
       setLoading(true);
@@ -151,6 +156,7 @@ export function ConnectBusinessCard({
         websiteUrl: business.websiteUrl,
         mapsUrl: business.mapsUrl,
         description: business.description,
+        photoUrl: business.photoUrl,
       });
 
       if (onSuccess) {
@@ -178,14 +184,6 @@ export function ConnectBusinessCard({
 
   return (
     <div className="space-y-4">
-      {error && step === "auth" && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>שגיאה</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
       {existingBusinesses.length > 0 && step === "auth" && (
         <ConnectedBusinessesList
           businesses={existingBusinesses}

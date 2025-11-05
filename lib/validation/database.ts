@@ -77,6 +77,10 @@ export const businessSchema = z.object({
 
 export const businessCreateSchema = businessSchema.omit({ id: true });
 
+export const businessServerCreateSchema = businessCreateSchema.omit({
+  connectedAt: true,
+});
+
 export const businessUpdateSchema = businessSchema
   .partial()
   .omit({ id: true, connectedAt: true });

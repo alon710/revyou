@@ -71,29 +71,29 @@ export const businessSchemaAdmin = z.object({
   googleBusinessId: z.string().min(1),
   name: z.string().min(1).max(200),
   address: z.string().min(1).max(500),
-  phoneNumber: z.string().max(50).optional(),
+  phoneNumber: z.string().max(50).nullable(),
   websiteUrl: z
     .string()
     .url()
     .max(200)
-    .optional()
+    .nullable()
     .or(z.literal(""))
-    .transform((val) => (val === "" ? undefined : val)),
+    .transform((val) => (val === "" ? null : val)),
   mapsUrl: z
     .string()
     .url()
     .max(2000)
-    .optional()
+    .nullable()
     .or(z.literal(""))
-    .transform((val) => (val === "" ? undefined : val)),
-  description: z.string().max(5000).optional(),
+    .transform((val) => (val === "" ? null : val)),
+  description: z.string().max(5000).nullable(),
   photoUrl: z
     .string()
     .url()
     .max(2000)
-    .optional()
+    .nullable()
     .or(z.literal(""))
-    .transform((val) => (val === "" ? undefined : val)),
+    .transform((val) => (val === "" ? null : val)),
   connected: z.boolean(),
   connectedAt: timestampSchemaAdmin,
   config: BusinessConfigSchema,
