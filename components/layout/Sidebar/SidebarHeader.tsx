@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 export function SidebarHeader() {
   const { isCollapsed, toggleCollapsed, isMobile } = useSidebar();
 
-  // Mobile: show menu trigger
   if (isMobile) {
     return (
       <div className="flex items-center justify-between p-4 border-b">
@@ -18,7 +17,6 @@ export function SidebarHeader() {
     );
   }
 
-  // Desktop: show logo and collapse button
   return (
     <div
       className={cn(
@@ -40,7 +38,6 @@ export function SidebarHeader() {
   );
 }
 
-// Mobile trigger button (to be placed in layout)
 export function SidebarMobileTrigger() {
   const { setIsOpen, isMobile } = useSidebar();
 

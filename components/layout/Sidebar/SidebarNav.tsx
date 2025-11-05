@@ -12,7 +12,6 @@ export function SidebarNav() {
   const { isCollapsed, isMobile, setIsOpen } = useSidebar();
 
   const handleItemClick = () => {
-    // Close mobile sidebar after navigation
     if (isMobile) {
       setIsOpen(false);
     }
@@ -39,10 +38,8 @@ export function SidebarNav() {
             )}
           >
             {isCollapsed ? (
-              // Collapsed: icon only, centered
               <Icon className="h-5 w-5" />
             ) : (
-              // Expanded: text right, icon left, space-between
               <>
                 <span className="text-sm text-right">{item.label}</span>
                 <Icon className="h-5 w-5 shrink-0" />

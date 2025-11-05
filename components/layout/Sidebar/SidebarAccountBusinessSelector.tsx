@@ -91,7 +91,6 @@ export function SidebarAccountBusinessSelector() {
     );
   }
 
-  // Check if there are any businesses at all
   const hasBusinesses = accountsWithBusinesses.some(
     (account) => account.businesses.length > 0
   );

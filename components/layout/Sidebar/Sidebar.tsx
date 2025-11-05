@@ -37,7 +37,6 @@ interface SidebarProviderProps {
 
 export function SidebarProvider({ children }: SidebarProviderProps) {
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    // Lazy initialization from localStorage
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("sidebar-collapsed");
       return stored ? JSON.parse(stored) : false;
@@ -47,13 +46,11 @@ export function SidebarProvider({ children }: SidebarProviderProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Detect mobile/tablet screen size
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
 
-      // Auto-collapse on laptop screens
       if (window.innerWidth < 1280 && window.innerWidth >= 768) {
         setIsCollapsed(true);
       }
@@ -88,7 +85,6 @@ export function SidebarProvider({ children }: SidebarProviderProps) {
 export function Sidebar() {
   const { isCollapsed, isMobile, isOpen, setIsOpen } = useSidebar();
 
-  // Mobile: render as Sheet
   if (isMobile) {
     return (
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -105,7 +101,6 @@ export function Sidebar() {
     );
   }
 
-  // Desktop: render as fixed sidebar
   return (
     <aside
       className={cn(
