@@ -7,6 +7,7 @@ import {
 import { updateUserSelectedAccount } from "@/lib/firebase/admin-users";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { createAccount, updateAccount } from "@/lib/firebase/admin-accounts";
+import { adminDb } from "@/lib/firebase/admin";
 
 export const runtime = "nodejs";
 
@@ -97,6 +98,26 @@ export async function GET(request: NextRequest) {
       accountId = existingAccountId;
     } else {
       const userInfo = await getUserInfo(tokens.access_token);
+
+      const userDoc = await adminDb
+        .collection("users")
+        .doc(authenticatedUserId)
+        .get();
+      const userData = userDoc.data();
+
+      if (!userData?.email) {
+        return redirectToBusinesses(
+          false,
+          "לא נמצא מייל משתמש. אנא התחבר מחדש."
+        );
+      }
+
+      if (userInfo.email.toLowerCase() !== userData.email.toLowerCase()) {
+        return redirectToBusinesses(
+          false,
+          `חשבון Google לא תואם. יש להתחבר עם כתובת המייל שלך: ${userData.email}`
+        );
+      }
 
       accountId = await createAccount(authenticatedUserId, {
         email: userInfo.email,
