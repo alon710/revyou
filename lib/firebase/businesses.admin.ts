@@ -23,9 +23,13 @@ export async function getBusinessAdmin(
 
       const cleanedData = {
         ...data,
-        websiteUrl: data?.websiteUrl === "" ? undefined : data?.websiteUrl,
-        mapsUrl: data?.mapsUrl === "" ? undefined : data?.mapsUrl,
-        photoUrl: data?.photoUrl === "" ? undefined : data?.photoUrl,
+        phoneNumber:
+          data?.phoneNumber === "" ? null : (data?.phoneNumber ?? null),
+        websiteUrl: data?.websiteUrl === "" ? null : (data?.websiteUrl ?? null),
+        mapsUrl: data?.mapsUrl === "" ? null : (data?.mapsUrl ?? null),
+        description:
+          data?.description === "" ? null : (data?.description ?? null),
+        photoUrl: data?.photoUrl === "" ? null : (data?.photoUrl ?? null),
       };
 
       const validated = businessSchemaAdmin.parse({
@@ -33,7 +37,6 @@ export async function getBusinessAdmin(
         ...cleanedData,
       });
 
-      // Convert admin Timestamp/Date to client Timestamp
       const connectedAtDate =
         validated.connectedAt instanceof Date
           ? validated.connectedAt

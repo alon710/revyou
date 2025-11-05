@@ -195,10 +195,11 @@ export async function listAllBusinesses(
           id: business.name,
           name: business.title,
           address: formatAddress(business),
-          phoneNumber: business.phoneNumbers?.primaryPhone,
-          websiteUrl: business.websiteUri,
-          mapsUrl: business.metadata?.mapsUri,
-          description: business.profile?.description,
+          phoneNumber: business.phoneNumbers?.primaryPhone ?? null,
+          websiteUrl: business.websiteUri ?? null,
+          mapsUrl: business.metadata?.mapsUri ?? null,
+          description: business.profile?.description ?? null,
+          photoUrl: null,
         });
       }
     }

@@ -129,16 +129,16 @@ service cloud.firestore {
 
           // Users can create businesses in their own subcollection
           allow create: if isOwner(userId) &&
-          request.resource.data.keys().hasAll(['googleBusinessId', 'name', 'address', 'connected', 'connectedAt', 'config', 'emailOnNewReview']) &&
+          request.resource.data.keys().hasAll(['googleBusinessId', 'name', 'address', 'phoneNumber', 'websiteUrl', 'mapsUrl', 'description', 'photoUrl', 'connected', 'connectedAt', 'config', 'emailOnNewReview']) &&
         validStringLength(request.resource.data.name, 1, 200) &&
         validStringLength(request.resource.data.address, 1, 500) &&
         request.resource.data.connected is bool &&
         request.resource.data.emailOnNewReview is bool &&
-        (!('phoneNumber' in request.resource.data) || validStringLength(request.resource.data.phoneNumber, 0, 50)) &&
-        (!('websiteUrl' in request.resource.data) || validStringLength(request.resource.data.websiteUrl, 1, 200)) &&
-        (!('mapsUrl' in request.resource.data) || validStringLength(request.resource.data.mapsUrl, 1, 2000)) &&
-        (!('description' in request.resource.data) || validStringLength(request.resource.data.description, 0, 5000)) &&
-        (!('photoUrl' in request.resource.data) || validStringLength(request.resource.data.photoUrl, 1, 2000)) &&
+        (request.resource.data.phoneNumber == null || validStringLength(request.resource.data.phoneNumber, 0, 50)) &&
+        (request.resource.data.websiteUrl == null || validStringLength(request.resource.data.websiteUrl, 1, 200)) &&
+        (request.resource.data.mapsUrl == null || validStringLength(request.resource.data.mapsUrl, 1, 2000)) &&
+        (request.resource.data.description == null || validStringLength(request.resource.data.description, 0, 5000)) &&
+        (request.resource.data.photoUrl == null || validStringLength(request.resource.data.photoUrl, 1, 2000)) &&
         // Validate config structure
         request.resource.data.config.keys().hasAll(['name', 'toneOfVoice', 'useEmojis', 'languageMode', 'starConfigs']) &&
         validStringLength(request.resource.data.config.name, 1, 200) &&
