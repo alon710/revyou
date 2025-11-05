@@ -9,7 +9,6 @@ export function AppLayout({
   className,
 }: {
   children: React.ReactNode;
-  variant?: "landing" | "dashboard";
   className?: string;
 }) {
   return (
