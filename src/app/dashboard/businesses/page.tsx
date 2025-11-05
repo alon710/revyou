@@ -88,7 +88,7 @@ export default function BusinessesPage() {
               variant="inline"
             />
             <Button asChild disabled={!canAddMore} variant="outline" size="sm">
-              <Link href="/dashboard/businesses/connect">הוסף עסק</Link>
+              <Link href="/onboarding/step-2">הוסף עסק</Link>
             </Button>
           </>
         }

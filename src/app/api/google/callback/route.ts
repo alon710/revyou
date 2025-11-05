@@ -22,18 +22,19 @@ const redirectToBusinesses = (
     return NextResponse.redirect(url);
   }
 
-  const baseUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/businesses/connect`;
-  let url = baseUrl;
-
-  if (success === true) {
-    url = accountId
-      ? `${baseUrl}?success=true&accountId=${accountId}`
-      : `${baseUrl}?success=true`;
-  } else if (errorMessage) {
-    url = `${baseUrl}?error=${encodeURIComponent(errorMessage)}`;
+  if (success && accountId) {
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/step-3?accountId=${accountId}`;
+    return NextResponse.redirect(url);
   }
 
-  return NextResponse.redirect(url);
+  const baseUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`;
+  if (errorMessage) {
+    return NextResponse.redirect(
+      `${baseUrl}?error=${encodeURIComponent(errorMessage)}`
+    );
+  }
+
+  return NextResponse.redirect(baseUrl);
 };
 
 export async function GET(request: NextRequest) {
