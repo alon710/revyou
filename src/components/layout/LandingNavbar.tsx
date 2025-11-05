@@ -16,7 +16,6 @@ export function LandingNavbar() {
       <nav className="container flex h-16 items-center justify-between">
         <Logo href="/" />
 
-        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
           {landingNavItems.map((item) => {
             const isActive = getIsActive(pathname, item.href);
@@ -35,7 +34,6 @@ export function LandingNavbar() {
           })}
         </div>
 
-        {/* Auth Button */}
         <div className="flex items-center gap-4">
           {user ? (
             <Button asChild>

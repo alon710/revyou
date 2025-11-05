@@ -409,7 +409,6 @@ export function AccountBusinessManagement() {
         <DashboardCardContent className="space-y-6">
           {accountsWithBusinesses.map((account) => (
             <div key={account.id} className="space-y-3">
-              {/* Account Header */}
               <div className="border rounded-lg p-4 bg-muted/30">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
@@ -427,7 +426,6 @@ export function AccountBusinessManagement() {
                   </Button>
                 </div>
 
-                {/* Businesses under this account */}
                 {account.businesses.length > 0 && (
                   <div className="mt-4 space-y-2">
                     {account.businesses.map((business) => (
@@ -463,7 +461,6 @@ export function AccountBusinessManagement() {
         </DashboardCardContent>
       </DashboardCard>
 
-      {/* Confirmation Dialog for Account Deletion */}
       <ConfirmationDialog
         open={confirmAccountDelete}
         onOpenChange={setConfirmAccountDelete}
@@ -489,7 +486,6 @@ export function AccountBusinessManagement() {
         onConfirm={handleConfirmDisconnectAccount}
       />
 
-      {/* Confirmation Dialog for Business Deletion */}
       <ConfirmationDialog
         open={confirmBusinessDelete}
         onOpenChange={setConfirmBusinessDelete}

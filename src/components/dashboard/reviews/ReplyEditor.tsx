@@ -86,7 +86,6 @@ export function ReplyEditor({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Review Info */}
           <div className="rounded-md bg-muted p-3">
             <p className="text-sm font-medium mb-1 text-right">
               הביקורת המקורית:
@@ -96,7 +95,6 @@ export function ReplyEditor({
             </p>
           </div>
 
-          {/* Reply Textarea */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-right block">
               התגובה:

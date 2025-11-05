@@ -120,29 +120,24 @@ export function Pricing() {
     return (
       <div>
         <div className="container mx-auto px-6 sm:px-8 lg:px-12">
-          {/* Header skeleton */}
           <div className="text-center mb-12">
             <Skeleton className="h-12 w-96 mx-auto mb-4" />
             <Skeleton className="h-6 w-80 mx-auto mb-8" />
             <Skeleton className="h-10 w-48 mx-auto" />
           </div>
 
-          {/* 3 pricing cards skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {[1, 2, 3].map((i) => (
               <Card
                 key={i}
                 className="relative p-8 flex flex-col rounded-lg border border-border/40 shadow-sm"
               >
-                {/* Badge placeholder */}
                 <Skeleton className="h-6 w-16 mb-4" />
 
-                {/* Plan info */}
                 <div className="mb-6">
                   <Skeleton className="h-8 w-24 mb-2" />
                   <Skeleton className="h-4 w-full mb-4" />
 
-                  {/* Price section */}
                   <div className="flex flex-col gap-2">
                     <Skeleton className="h-4 w-20" />
                     <Skeleton className="h-12 w-32" />
@@ -150,7 +145,6 @@ export function Pricing() {
                   </div>
                 </div>
 
-                {/* Features list */}
                 <div className="space-y-3 mb-8 flex-grow">
                   {[1, 2, 3, 4, 5].map((j) => (
                     <div key={j} className="flex items-start gap-2">
@@ -160,7 +154,6 @@ export function Pricing() {
                   ))}
                 </div>
 
-                {/* CTA Button */}
                 <Skeleton className="h-10 w-full rounded-md" />
               </Card>
             ))}

@@ -65,7 +65,6 @@ function LoginForm() {
           </p>
         </div>
 
-        {/* Login Card */}
         <DashboardCard>
           <DashboardCardHeader className="text-center">
             <DashboardCardTitle className="justify-center">
@@ -76,14 +75,12 @@ function LoginForm() {
             </DashboardCardDescription>
           </DashboardCardHeader>
           <DashboardCardContent className="space-y-4">
-            {/* Error Message */}
             {error && (
               <div className="bg-destructive/10 border border-destructive/40 text-destructive px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
-            {/* Google Sign In Button */}
             <GoogleSsoButton
               onClick={handleGoogleSignIn}
               isLoading={isLoading}
@@ -91,7 +88,6 @@ function LoginForm() {
           </DashboardCardContent>
         </DashboardCard>
 
-        {/* Terms & Privacy */}
         <p className="text-center text-sm text-muted-foreground mt-6">
           בהתחברות, אתה מסכים ל
           <Link

@@ -5,7 +5,7 @@ import { LottiePlayer } from "@/components/ui/lottie-player";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import lottieJson from "@/../public/heroAnimation.json";
+import lottieJson from "@/assets/heroAnimation.json";
 
 export function Hero() {
   return (

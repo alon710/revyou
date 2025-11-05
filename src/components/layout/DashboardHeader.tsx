@@ -10,7 +10,6 @@ export function DashboardHeader() {
 
   return (
     <header className="sticky top-0 z-60 h-14 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      {/* Mobile Layout */}
       {isMobile ? (
         <div className="flex items-center justify-between gap-3 px-4 h-full">
           <Logo href="/dashboard" size="sm" />
@@ -24,7 +23,6 @@ export function DashboardHeader() {
           />
         </div>
       ) : (
-        /* Desktop Layout - Empty but maintains header space */
         <div className="flex items-center px-6 h-full" />
       )}
     </header>

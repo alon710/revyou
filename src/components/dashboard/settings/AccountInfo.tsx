@@ -26,13 +26,8 @@ export function AccountInfo({ displayName, email, uid }: AccountInfoProps) {
         <DashboardCardDescription>המידע שלך במערכת</DashboardCardDescription>
       </DashboardCardHeader>
       <DashboardCardContent className="space-y-4">
-        {/* Name */}
         {displayName && <DashboardCardField label="שם" value={displayName} />}
-
-        {/* Email */}
         {email && <DashboardCardField label="כתובת אימייל" value={email} />}
-
-        {/* User ID */}
         <DashboardCardField label="מזהה משתמש">
           <p className="text-sm font-mono text-muted-foreground/80 break-all bg-muted/50 p-2 rounded-md">
             {uid}
