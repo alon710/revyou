@@ -9,7 +9,6 @@ import {
   where,
   orderBy,
   Timestamp,
-  writeBatch,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import type { Account } from "@/types/database";
@@ -111,53 +110,6 @@ export async function updateAccount(
     ...data,
     lastSynced: Timestamp.now(),
   });
-}
-
-export async function deleteAccount(
-  userId: string,
-  accountId: string
-): Promise<void> {
-  if (!db) {
-    throw new Error("Firestore not initialized");
-  }
-
-  // Get all businesses under this account
-  const businessesRef = collection(
-    db,
-    "users",
-    userId,
-    "accounts",
-    accountId,
-    "businesses"
-  );
-  const businessesSnapshot = await getDocs(businessesRef);
-
-  const batch = writeBatch(db);
-
-  for (const businessDoc of businessesSnapshot.docs) {
-    const reviewsRef = collection(
-      db,
-      "users",
-      userId,
-      "accounts",
-      accountId,
-      "businesses",
-      businessDoc.id,
-      "reviews"
-    );
-    const reviewsSnapshot = await getDocs(reviewsRef);
-
-    reviewsSnapshot.docs.forEach((reviewDoc) => {
-      batch.delete(reviewDoc.ref);
-    });
-
-    batch.delete(businessDoc.ref);
-  }
-
-  const accountRef = doc(db, "users", userId, "accounts", accountId);
-  batch.delete(accountRef);
-
-  await batch.commit();
 }
 
 export async function getAccountGoogleRefreshToken(

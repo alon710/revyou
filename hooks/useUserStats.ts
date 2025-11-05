@@ -10,9 +10,11 @@ import {
 } from "firebase/firestore";
 import { startOfMonth } from "date-fns";
 import type { PlanLimits } from "@/lib/stripe/entitlements";
+import { getAllUserBusinesses } from "@/lib/firebase/business";
 
 interface UseUserStatsReturn {
   reviewCount: number;
+  businessCount: number;
   loading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
@@ -48,12 +50,14 @@ export function getUsagePercentages(
 export function useUserStats(): UseUserStatsReturn {
   const { user } = useAuth();
   const [reviewCount, setReviewCount] = useState<number>(0);
+  const [businessCount, setBusinessCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchReviewCount = useCallback(async () => {
+  const fetchStats = useCallback(async () => {
     if (!user || !db) {
       setReviewCount(0);
+      setBusinessCount(0);
       setLoading(false);
       return;
     }
@@ -64,6 +68,10 @@ export function useUserStats(): UseUserStatsReturn {
 
       const userId = user.uid;
       const startDate = startOfMonth(new Date());
+
+      // Get all businesses across all accounts
+      const allBusinesses = await getAllUserBusinesses(userId);
+      setBusinessCount(allBusinesses.length);
 
       // Get all accounts for the user
       const accountsRef = collection(db, "users", userId, "accounts");
@@ -109,24 +117,26 @@ export function useUserStats(): UseUserStatsReturn {
 
       setReviewCount(totalReviewCount);
     } catch (err) {
-      console.error("Error getting review count:", err);
+      console.error("Error getting user stats:", err);
       setError(
-        err instanceof Error ? err : new Error("Failed to fetch review count")
+        err instanceof Error ? err : new Error("Failed to fetch user stats")
       );
       setReviewCount(0);
+      setBusinessCount(0);
     } finally {
       setLoading(false);
     }
   }, [user]);
 
   useEffect(() => {
-    fetchReviewCount();
-  }, [fetchReviewCount]);
+    fetchStats();
+  }, [fetchStats]);
 
   return {
     reviewCount,
+    businessCount,
     loading,
     error,
-    refetch: fetchReviewCount,
+    refetch: fetchStats,
   };
 }

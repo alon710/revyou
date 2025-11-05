@@ -1,10 +1,12 @@
 # Revyou - Google Review AI Reply
 
-> **AI-Powered Google Business Review Management SaaS Platform**
+> **AI-Powered Google Business Review Management SaaS Platform with Multi-Account Support**
 
 ## Project Overview
 
 **Revyou** (formerly "Google Review AI Reply") is a comprehensive SaaS application that helps businesses manage and respond to Google Business Profile reviews using AI-powered reply generation. The platform integrates with Google Business Profile API, uses Google Gemini AI for generating contextual replies, and provides subscription-based access with Stripe payment processing.
+
+**Key Innovation**: Full multi-account architecture allowing users to connect and manage multiple Google accounts, each with multiple businesses, from a single dashboard.
 
 ### Quick Facts
 
@@ -14,6 +16,7 @@
 - **Primary Language**: TypeScript
 - **Package Manager**: Yarn 1.22.22
 - **Version**: 0.1.0
+- **Architecture**: Multi-account (completed ✅)
 
 ---
 
@@ -28,7 +31,7 @@
   - Tailwind CSS 4.1.16
 - **State Management**:
   - Zustand 5.0.8 (global UI state)
-  - React Context (AuthContext, BusinessContext)
+  - React Context (AuthContext, AccountContext, BusinessContext)
 - **Data Visualization**: Recharts 2.15.4
 - **Animation**: Framer Motion 12.23.24
 - **Icons**: Lucide React 0.552.0, Radix UI Icons
@@ -72,16 +75,29 @@
 │   ├── (checkout)/               # Checkout layout group
 │   │   └── checkout/             # Stripe checkout page
 │   ├── (landing)/                # Landing page layout group
-│   │   └── page.tsx              # Home/landing page
+│   │   ├── page.tsx              # Home/landing page
+│   │   ├── privacy/              # Privacy policy
+│   │   └── terms/                # Terms of service
 │   ├── api/                      # Next.js API routes
 │   │   ├── auth/                 # Session management
+│   │   │   └── session/          # Session retrieval
 │   │   ├── google/               # Google OAuth & Business API
-│   │   └── reviews/              # Review operations
+│   │   │   ├── auth/             # OAuth initiation
+│   │   │   ├── callback/         # OAuth callback (creates accounts)
+│   │   │   └── businesses/       # Fetch businesses
+│   │   ├── reviews/              # Review operations
+│   │   │   └── [id]/generate/    # Generate AI reply
+│   │   └── user/                 # User operations
 │   ├── dashboard/                # Protected dashboard pages
 │   │   ├── page.tsx              # Dashboard home (stats)
 │   │   ├── businesses/           # Business management
+│   │   │   └── page.tsx          # Businesses list
 │   │   ├── reviews/              # Review list & details
-│   │   └── settings/             # Account & subscription settings
+│   │   │   ├── page.tsx          # Reviews list
+│   │   │   └── [reviewId]/       # Individual review page
+│   │   ├── settings/             # Account & subscription settings
+│   │   │   └── page.tsx          # Settings page
+│   │   └── layout.tsx            # Dashboard layout with sidebar
 │   ├── layout.tsx                # Root layout
 │   └── globals.css               # Global styles
 │
@@ -91,29 +107,37 @@
 │   │   ├── businesses/           # Business management UI
 │   │   ├── charts/               # Data visualization components
 │   │   ├── reviews/              # Review display/editing
-│   │   ├── settings/             # Settings UI
+│   │   ├── settings/             # Settings UI (3 components)
+│   │   │   ├── AccountBusinessManagement.tsx
+│   │   │   ├── SubscriptionInfo.tsx
+│   │   │   └── UserSettings.tsx
 │   │   ├── shared/               # Shared dashboard utilities
 │   │   └── utils/                # Dashboard utility components
-│   ├── landing/                  # Landing page sections
-│   ├── layout/                   # Layout components (header, footer, etc.)
-│   └── ui/                       # Shadcn/ui components
+│   ├── landing/                  # Landing page sections (5 components)
+│   ├── layout/                   # Layout components
+│   │   ├── Sidebar/              # Dashboard sidebar with navigation
+│   │   ├── Header.tsx
+│   │   └── Footer.tsx
+│   └── ui/                       # Shadcn/ui components (32 components)
 │
 ├── contexts/                     # React Context providers
 │   ├── AuthContext.tsx           # User authentication state
+│   ├── AccountContext.tsx        # Selected account state (multi-account)
 │   └── BusinessContext.tsx       # Selected business state
 │
 ├── functions/                    # Firebase Cloud Functions
 │   ├── src/
 │   │   ├── functions/            # Function implementations
-│   │   │   └── onReviewCreate.ts # Main review handler
+│   │   │   └── onReviewCreate.ts # Main review handler (account-aware)
 │   │   ├── email-templates/      # Email HTML templates
-│   │   └── shared/               # Shared code with main app
+│   │   └── shared/               # Shared code with main app (build-time)
 │   ├── package.json              # Functions dependencies
 │   └── tsconfig.json             # Functions TypeScript config
 │
 ├── hooks/                        # Custom React hooks
 │   ├── useDashboardStats.ts      # Dashboard statistics
 │   ├── useReviews.ts             # Review data management
+│   ├── useUserStats.ts           # User statistics (account-aware)
 │   └── useNavigation.ts          # Navigation utilities
 │
 ├── lib/                          # Core libraries & services
@@ -123,24 +147,35 @@
 │   │   └── core/                 # AI utilities
 │   ├── api/                      # API utilities
 │   ├── firebase/                 # Firebase services
+│   │   ├── accounts.ts           # Account operations (client-side)
+│   │   ├── admin-accounts.ts     # Account operations (server-side)
+│   │   ├── admin-users.ts        # User operations (server-side)
 │   │   ├── auth.ts               # Authentication operations
-│   │   ├── business.ts           # Business operations
-│   │   ├── reviews.ts            # Review operations
+│   │   ├── business.ts           # Business operations (account-aware)
+│   │   ├── business-config.ts    # Business configuration helpers
+│   │   ├── business-limits.ts    # Business limits enforcement
+│   │   ├── businesses.admin.ts   # Business operations (server-side)
+│   │   ├── config.ts             # Firebase config
+│   │   ├── review-replies.ts     # Review reply operations
+│   │   ├── reviews.admin.ts      # Review operations (server-side)
+│   │   ├── reviews.ts            # Review operations (account-aware)
 │   │   └── users.ts              # User operations
 │   ├── google/                   # Google APIs integration
-│   │   ├── auth.ts               # OAuth flow
+│   │   ├── oauth.ts              # OAuth flow & user info
 │   │   └── business-profile.ts   # Business Profile API
 │   ├── reviews/                  # Review management logic
 │   ├── store/                    # Zustand state management
 │   ├── stripe/                   # Stripe integration
 │   │   ├── client.ts             # Stripe client
 │   │   ├── entitlements.ts       # Feature entitlements
-│   │   └── feature-config.ts     # Feature flags
+│   │   ├── feature-config.ts     # Feature flags
+│   │   ├── pricing.ts            # Pricing configuration
+│   │   └── product-parser.ts     # Product metadata parsing
 │   ├── subscription/             # Subscription logic
 │   └── validation/               # Data validation (Zod)
 │
 ├── types/                        # TypeScript type definitions
-│   └── database.ts               # Core database types
+│   └── database.ts               # Core database types (User, Account, Business, Review)
 │
 ├── constants/                    # Application constants
 │   └── dashboardConstants.ts     # Dashboard configuration
@@ -151,9 +186,10 @@
 │
 ├── extensions/                   # Firebase extensions configuration
 ├── firebase.json                 # Firebase configuration
-├── firestore.rules               # Firestore security rules
+├── firestore.rules               # Firestore security rules (account-aware)
 ├── firestore.indexes.json        # Firestore composite indexes
 ├── .firebaserc                   # Firebase project aliases
+├── .env.example                  # Environment variables template
 ├── next.config.ts                # Next.js configuration
 ├── tsconfig.json                 # TypeScript configuration
 ├── package.json                  # Project dependencies
@@ -164,17 +200,50 @@
 
 ## Core Features
 
-### 1. Authentication & User Management
+### 1. Multi-Account Management ✨
+
+**Full support for multiple Google accounts per user** - the platform's key architectural feature.
+
+- **Connect Multiple Google Accounts**: Users can link unlimited Google accounts to their profile
+- **Account Isolation**: Each account maintains its own:
+  - Google OAuth refresh token (encrypted)
+  - Business Profile connections
+  - Review data
+  - Sync settings
+- **Account Selection**: Persistent account selection with localStorage
+- **AccountContext Provider**: React context for account-wide state management
+- **Account Operations**:
+  - Create account on OAuth callback
+  - Update account information
+  - Delete account and all associated data
+  - List all user accounts
+  - Track connection timestamps
+
+**Database Hierarchy**:
+```
+users/{userId}/
+  ├── selectedAccountId: string
+  └── accounts/{accountId}/
+      ├── email: string
+      ├── accountName: string
+      ├── googleRefreshToken: string (encrypted)
+      └── businesses/{businessId}/
+          └── reviews/{reviewId}/
+```
+
+### 2. Authentication & User Management
 
 - **Google OAuth 2.0** integration for user login
 - Firebase Authentication for session management
-- Encrypted OAuth token storage using `@hapi/iron`
+- Encrypted OAuth token storage using `@hapi/iron` (per account)
 - API route-based session handling
 - User profile with Stripe customer integration
+- Account-level token management
+- Automatic account creation on OAuth flow completion
 
-### 2. Multi-Business Management
+### 3. Multi-Business Management
 
-- Connect multiple Google Business Profile accounts per user
+- Connect multiple Google Business Profile businesses **per account**
 - Sync business data from Google Business Profile API
 - Per-business configuration and settings
 - Business selection context throughout the app
@@ -182,8 +251,9 @@
   - Business name, address, phone, website
   - Business description and photos
   - Email notifications toggle
+  - Business limits based on subscription tier
 
-### 3. AI-Powered Review Reply Generation
+### 4. AI-Powered Review Reply Generation
 
 **Google Gemini Integration** for contextual reply generation with:
 
@@ -204,8 +274,9 @@
   - Automatic AI reply generation
   - Optional auto-posting based on star rating
   - Error handling and retry logic
+  - Account-aware function paths
 
-### 4. Review Management
+### 5. Review Management
 
 - Automatic review ingestion from Google Business Profile
 - Review display with:
@@ -220,8 +291,9 @@
   - `failed`: Failed to post
 - Manual review editing and approval
 - One-click posting to Google Business Profile
+- Account-scoped review queries
 
-### 5. Subscription & Payment Management
+### 6. Subscription & Payment Management
 
 **Stripe Integration** via Firebase Extension:
 
@@ -246,15 +318,17 @@
   - Customer portal for subscription management
   - Webhook handling for subscription events
   - Usage tracking and limits enforcement
+  - Business limits per subscription tier
 
-### 6. Dashboard & Analytics
+### 7. Dashboard & Analytics
 
-**Real-time Statistics**:
+**Real-time Statistics** (account-aware):
 
-- Total reviews count
+- Total reviews count across selected account
 - Average rating across all reviews
 - Pending replies count
 - Active businesses count
+- Stats filtering by account
 
 **Data Visualizations** (Recharts):
 
@@ -264,11 +338,12 @@
 
 **Business Management**:
 
-- Add/remove businesses
-- Configure AI preferences
+- Add/remove businesses per account
+- Configure AI preferences per business
 - View business-specific analytics
+- Account switching interface
 
-### 7. Email Notifications
+### 8. Email Notifications
 
 - **Review Received Notifications** via Resend
 - React Email templating system
@@ -283,8 +358,10 @@
 ### Collections Overview
 
 - `users/` - User accounts and profiles
+- `users/{userId}/accounts/` - Google account connections (multi-account layer)
+- `users/{userId}/accounts/{accountId}/businesses/` - Business profiles per account
+- `users/{userId}/accounts/{accountId}/businesses/{businessId}/reviews/` - Reviews per business
 - `products/` - Stripe product/pricing data (managed by extension)
-- `accounts/` - OAuth account connections
 
 ### Detailed Schema
 
@@ -299,23 +376,40 @@
   createdAt: Timestamp;           // Account creation time
   stripeId?: string;              // Stripe customer ID
   stripeLink?: string;            // Stripe portal link
-  googleRefreshToken?: string;    // Encrypted OAuth refresh token
+  selectedAccountId?: string;     // Currently selected Google account ID
   selectedBusinessId?: string;    // Currently selected business ID
 }
 ```
 
 **Subcollections**:
 
+- `accounts/{accountId}` - Google account connections (see below)
 - `subscriptions/{subscriptionId}` - Stripe subscriptions (extension managed)
 - `checkout_sessions/{sessionId}` - Stripe checkout sessions (extension managed)
 - `payments/{paymentId}` - Payment history (extension managed)
 
-#### `users/{userId}/businesses/{businessId}`
+#### `users/{userId}/accounts/{accountId}` ✨ NEW
+
+```typescript
+{
+  id: string;                     // Document ID (account ID)
+  email: string;                  // Google account email
+  accountName: string;            // Display name for account
+  googleRefreshToken: string;     // Encrypted OAuth refresh token
+  connectedAt: Timestamp;         // Connection timestamp
+  lastSynced?: Timestamp;         // Last sync timestamp
+}
+```
+
+**Subcollections**:
+
+- `businesses/{businessId}` - Businesses connected to this Google account
+
+#### `users/{userId}/accounts/{accountId}/businesses/{businessId}`
 
 ```typescript
 {
   id: string;                     // Document ID
-  googleAccountId: string;        // Google account ID
   googleBusinessId: string;       // Google Business Profile ID
   name: string;                   // Business name
   address: string;                // Business address
@@ -362,7 +456,7 @@
 }
 ```
 
-#### `users/{userId}/businesses/{businessId}/reviews/{reviewId}`
+#### `users/{userId}/accounts/{accountId}/businesses/{businessId}/reviews/{reviewId}`
 
 ```typescript
 {
@@ -392,17 +486,23 @@
 Key rules enforced:
 
 - Users can only read/write their own data
+- Account hierarchy enforced: `users/{userId}/accounts/{accountId}/businesses/{businessId}/reviews/{reviewId}`
 - Stripe subcollections managed by extension only
 - Validation for enum fields (toneOfVoice, languageMode, replyStatus)
 - Star rating validation (1-5)
 - User deletion prevention via Firestore
+- Account ownership validation through path parameters
 
 ### Firestore Indexes
 
 Composite indexes configured for optimized queries:
 
-- Businesses by `connectedAt` and `__name__`
-- Reviews by multiple field combinations
+- **Accounts**: `connectedAt` (DESC) + `__name__` (DESC)
+- **Businesses**: `connected` (ASC) + `connectedAt` (DESC)
+- **Reviews**:
+  - `replyStatus` (ASC) + `receivedAt` (DESC)
+  - `rating` (ASC) + `receivedAt` (DESC)
+  - `rating` (ASC) + `replyStatus` (ASC) + `receivedAt` (DESC)
 
 ---
 
@@ -423,7 +523,7 @@ Composite indexes configured for optimized queries:
 
 1. **onReviewCreate** (v2)
    - **Trigger**: Firestore document created
-   - **Path**: `users/{userId}/businesses/{businessId}/reviews/{reviewId}`
+   - **Path**: `users/{userId}/accounts/{accountId}/businesses/{businessId}/reviews/{reviewId}` ✨
    - **Runtime**: Node.js 22
    - **Memory**: 256MB
    - **Purpose**:
@@ -431,6 +531,7 @@ Composite indexes configured for optimized queries:
      - Auto-post if enabled for star rating
      - Send email notification
      - Handle errors
+     - Account-aware token retrieval
 
 #### Extension Functions (Stripe Payments)
 
@@ -490,6 +591,12 @@ Composite indexes configured for optimized queries:
 - **Methods**: GET
 - **Purpose**: Handle OAuth callback
 - **Params**: `code` (authorization code)
+- **Actions**:
+  - Exchange code for tokens
+  - Fetch user info from Google
+  - Create or update account in Firestore
+  - Store encrypted refresh token
+  - Set selected account
 - **Returns**: Redirect to dashboard with session
 
 **`/api/google/businesses`**
@@ -497,6 +604,7 @@ Composite indexes configured for optimized queries:
 - **Methods**: GET
 - **Purpose**: Fetch user's Google Business Profile accounts
 - **Auth**: Required
+- **Account**: Uses currently selected account's tokens
 - **Returns**: Array of businesses
 
 ### Reviews
@@ -515,7 +623,7 @@ Composite indexes configured for optimized queries:
 
 ### Core Database Types
 
-Located in [`types/database.ts`](types/database.ts):
+Located in [types/database.ts](types/database.ts):
 
 ```typescript
 // User type
@@ -527,15 +635,24 @@ type User = {
   createdAt: Timestamp;
   stripeId?: string;
   stripeLink?: string;
-  googleRefreshToken?: string;
+  selectedAccountId?: string;      // ✨ Account selection
   selectedBusinessId?: string;
+};
+
+// ✨ Account type (NEW)
+type Account = {
+  id: string;
+  email: string;
+  accountName: string;
+  googleRefreshToken: string;      // Encrypted OAuth token
+  connectedAt: Timestamp;
+  lastSynced?: Timestamp;
 };
 
 // Business type
 type Business = {
   id: string;
-  googleAccountId: string;
-  googleBusinessId: string;
+  googleBusinessId: string;        // No longer has googleAccountId
   name: string;
   address: string;
   phoneNumber?: string;
@@ -575,7 +692,7 @@ type ReplyStatus = "pending" | "rejected" | "posted" | "failed";
 
 ### Subscription & Feature Types
 
-Located in [`lib/stripe/entitlements.ts`](lib/stripe/entitlements.ts):
+Located in [lib/stripe/entitlements.ts](lib/stripe/entitlements.ts):
 
 ```typescript
 type PlanType = "free" | "basic" | "pro";
@@ -591,7 +708,7 @@ interface PlanLimits {
 
 ### Feature Configuration Keys
 
-Located in [`lib/stripe/feature-config.ts`](lib/stripe/feature-config.ts):
+Located in [lib/stripe/feature-config.ts](lib/stripe/feature-config.ts):
 
 ```typescript
 const FEATURE_KEYS = {
@@ -602,6 +719,45 @@ const FEATURE_KEYS = {
   WHATSAPP_SUPPORT: "whatsapp_support",
 };
 ```
+
+---
+
+## Context Providers
+
+The application uses a three-tier context hierarchy for state management:
+
+### 1. AuthContext
+
+**Purpose**: User authentication state
+**Provides**:
+- `user`: Current Firebase user
+- `loading`: Auth loading state
+- `signIn()`: Google OAuth sign-in
+- `signOut()`: User sign-out
+
+### 2. AccountContext ✨
+
+**Purpose**: Multi-account management and selection
+**Provides**:
+- `selectedAccount`: Currently selected Google account
+- `accounts`: All user accounts
+- `setSelectedAccount()`: Switch accounts
+- `createAccount()`: Add new account
+- `deleteAccount()`: Remove account
+- `loading`: Accounts loading state
+
+**Persistence**: Account selection stored in localStorage
+
+### 3. BusinessContext
+
+**Purpose**: Business selection within selected account
+**Provides**:
+- `selectedBusiness`: Currently selected business
+- `businesses`: Businesses for selected account
+- `setSelectedBusiness()`: Switch businesses
+- `loading`: Businesses loading state
+
+**Hierarchy**: BusinessContext depends on AccountContext
 
 ---
 
@@ -692,16 +848,21 @@ yarn seed:review      # Seed a single review
    - Constants: UPPER_SNAKE_CASE (`FEATURE_KEYS`)
 3. **Imports**: Use `@/` alias for absolute imports from root
 4. **State Management**:
-   - Use Context for auth/business state
+   - Use Context for auth/account/business state
    - Use Zustand for UI state
    - Use React Query patterns for server state
 5. **Styling**: Tailwind CSS utility classes with shadcn/ui components
+6. **Multi-Account Architecture**:
+   - Always include `accountId` in Firestore paths
+   - Use AccountContext to get current account
+   - Validate account ownership in security rules
+   - Server-side operations use admin SDK with account validation
 
 ---
 
 ## Key Libraries & Services
 
-### AI Integration ([`lib/ai/`](lib/ai/))
+### AI Integration ([lib/ai/](lib/ai/))
 
 **Gemini Client** (`gemini.ts`):
 
@@ -716,33 +877,43 @@ yarn seed:review      # Seed a single review
 - Dynamic variable injection (business name, tone, etc.)
 - Support for Hebrew and English
 
-### Firebase Services ([`lib/firebase/`](lib/firebase/))
+### Firebase Services ([lib/firebase/](lib/firebase/))
+
+**Account Operations** (`accounts.ts`, `admin-accounts.ts`):
+
+- Account CRUD operations
+- Token encryption/decryption per account
+- Account listing and selection
+- Server-side and client-side operations
 
 **Authentication** (`auth.ts`):
 
-- Google OAuth token encryption/decryption
+- Google OAuth integration
 - Session management
 - User CRUD operations
 
-**Business Management** (`business.ts`):
+**Business Management** (`business.ts`, `businesses.admin.ts`):
 
-- Firestore queries for businesses
+- Firestore queries for businesses (account-scoped)
 - Business connection/disconnection
 - Config updates
+- Server-side and client-side operations
 
-**Review Operations** (`reviews.ts`):
+**Review Operations** (`reviews.ts`, `reviews.admin.ts`):
 
-- Review fetching and filtering
+- Review fetching and filtering (account-scoped)
 - Status updates
 - AI reply management
+- Server-side and client-side operations
 
-### Google APIs ([`lib/google/`](lib/google/))
+### Google APIs ([lib/google/](lib/google/))
 
-**OAuth Flow** (`auth.ts`):
+**OAuth Flow** (`oauth.ts`):
 
 - Authorization URL generation
 - Token exchange
 - Refresh token handling
+- User info retrieval
 
 **Business Profile API** (`business-profile.ts`):
 
@@ -750,7 +921,7 @@ yarn seed:review      # Seed a single review
 - Sync business data
 - Post review replies
 
-### Stripe Integration ([`lib/stripe/`](lib/stripe/))
+### Stripe Integration ([lib/stripe/](lib/stripe/))
 
 **Client** (`client.ts`):
 
@@ -768,6 +939,11 @@ yarn seed:review      # Seed a single review
 - Metadata extraction from Stripe products
 - Type conversion (number, boolean, text)
 - Feature display formatting
+
+**Pricing** (`pricing.ts`):
+
+- Pricing tier configuration
+- Price ID management
 
 ---
 
@@ -807,20 +983,41 @@ All environment variables must be set in Vercel dashboard:
 
 ## Common Workflows
 
+### Working with Multi-Account Architecture
+
+**Adding a new feature that uses accounts**:
+
+1. Import AccountContext: `const { selectedAccount } = useAccount()`
+2. Construct Firestore path: `users/{userId}/accounts/{accountId}/businesses/...`
+3. Validate account ownership in security rules
+4. Update UI to handle account switching
+5. Test with multiple accounts
+
+**Creating account-scoped queries**:
+
+```typescript
+// Client-side
+const businesses = await getBusinessesForAccount(userId, accountId);
+
+// Server-side (Cloud Function)
+const account = await getAccount(userId, accountId);
+const token = await decryptToken(account.googleRefreshToken);
+```
+
 ### Adding a New Feature Flag
 
-1. Add key to `FEATURE_KEYS` in [`lib/stripe/feature-config.ts`](lib/stripe/feature-config.ts)
+1. Add key to `FEATURE_KEYS` in [lib/stripe/feature-config.ts](lib/stripe/feature-config.ts)
 2. Add config to `FEATURE_CONFIGS` array
 3. Update Stripe product metadata in Stripe dashboard
-4. Update `PlanLimits` type in [`lib/stripe/entitlements.ts`](lib/stripe/entitlements.ts)
+4. Update `PlanLimits` type in [lib/stripe/entitlements.ts](lib/stripe/entitlements.ts)
 5. Implement feature gating in UI/API
 
 ### Modifying AI Reply Generation
 
-1. Update prompt template in [`lib/ai/prompts/template.ts`](lib/ai/prompts/template.ts)
-2. Modify business config if needed in [`types/database.ts`](types/database.ts)
-3. Update UI in [`components/dashboard/businesses/`](components/dashboard/businesses/)
-4. Test with [`yarn seed:review`](scripts/seed-review.ts)
+1. Update prompt template in [lib/ai/prompts/template.ts](lib/ai/prompts/template.ts)
+2. Modify business config if needed in [types/database.ts](types/database.ts)
+3. Update UI in [components/dashboard/businesses/](components/dashboard/businesses/)
+4. Test with [yarn seed:review](scripts/seed-review.ts)
 5. Deploy updated Cloud Function
 
 ### Adding a New Subscription Tier
@@ -829,7 +1026,7 @@ All environment variables must be set in Vercel dashboard:
 2. Add monthly + yearly prices
 3. Set feature metadata on Stripe product
 4. Update environment variables with price IDs
-5. Add tier to UI in [`components/landing/`](components/landing/) pricing section
+5. Add tier to UI in [components/landing/](components/landing/) pricing section
 6. Test checkout flow
 
 ### Debugging Cloud Functions
@@ -849,6 +1046,14 @@ firebase emulators:start
 
 ## Important Notes & Gotchas
 
+### Multi-Account Architecture
+
+✨ **All Firestore paths must include account ID**: When querying businesses or reviews, always include the `accounts/{accountId}` segment in the path.
+
+✨ **Account switching**: UI must handle account switching gracefully. Components should re-fetch data when `selectedAccount` changes.
+
+✨ **Token management**: OAuth tokens are stored per account, not per user. Always retrieve tokens from the account document.
+
 ### Stripe Price IDs
 
 ⚠️ **Critical**: The `.env.local` file must contain real Stripe price IDs. Placeholder values will cause checkout to fail.
@@ -859,11 +1064,13 @@ firebase emulators:start
 
 ### Token Encryption
 
-🔐 OAuth refresh tokens are encrypted using `@hapi/iron` before storage in Firestore. The `TOKEN_ENCRYPTION_SECRET` must be at least 32 characters.
+🔐 OAuth refresh tokens are encrypted using `@hapi/iron` before storage in Firestore (per account). The `TOKEN_ENCRYPTION_SECRET` must be at least 32 characters.
 
 ### Firestore Security Rules
 
 🛡️ Security rules prevent users from deleting their own user document via Firestore. User deletion must be handled through Firebase Auth.
+
+🛡️ Account hierarchy is enforced in security rules. Users can only access their own accounts via the path `users/{userId}/accounts/{accountId}`.
 
 ### Hebrew Language Support
 
@@ -915,6 +1122,8 @@ firebase emulators:start
 - [ ] Bulk reply operations
 - [ ] Review templates library
 - [ ] Mobile app (React Native)
+- [ ] Account-level analytics dashboard
+- [ ] Cross-account reporting
 
 ### Performance Optimizations
 
@@ -923,6 +1132,7 @@ firebase emulators:start
 - [ ] Add pagination for large review lists
 - [ ] Implement incremental static regeneration (ISR)
 - [ ] Add service worker for offline support
+- [ ] Optimize account switching performance
 
 ### Developer Experience
 
@@ -936,19 +1146,35 @@ firebase emulators:start
 
 ## Project Status
 
-**Current Phase**: Production Ready (v0.1.0)
+**Current Phase**: Production Ready (v0.1.0) with Multi-Account Support ✨
+
+**Architecture Status**: Multi-account architecture **fully implemented** and operational
 
 **Active Development Areas**:
 
 - Dashboard analytics and visualizations
 - Business configuration UI improvements
 - Review management workflow enhancements
+- Account management UI refinements
 
 **Recent Updates**:
 
-- Streamlined dashboard chart configurations (commit: 044a385)
-- Implemented dashboard statistics and visualizations (commit: 974da5e)
-- Improved form data reset logic (commit: 6722d89)
+- d441e0b: Refactor Google OAuth callback and settings navigation
+- e96fad4: Simplify error handling and improve UI feedback in business connection components
+- b974f1c: Enhance UI components and improve user experience
+- 4001ea1: Update SidebarUpgradeItem styling for improved interactivity
+- 84258ff: Enhance SidebarUpgradeItem and SidebarUserMenu layout
+
+**Completed Milestones**:
+
+- ✅ Multi-account architecture migration (100% complete)
+- ✅ Account-level token management
+- ✅ AccountContext implementation
+- ✅ Database schema migration to account hierarchy
+- ✅ Firestore security rules update for accounts
+- ✅ Cloud Functions update for account paths
+- ✅ UI components update for account selection
+- ✅ OAuth flow integration with account creation
 
 ---
 
@@ -960,58 +1186,6 @@ firebase emulators:start
 
 ---
 
-## Multi-Account Architecture Migration (IN PROGRESS)
-
-**Status**: 🔄 Active Migration - Phase 2 of 10 (~25% Complete)
-
-The application is currently being migrated to support **multiple Google accounts per user**. See:
-
-- [MULTI_ACCOUNT_MIGRATION_PROGRESS.md](MULTI_ACCOUNT_MIGRATION_PROGRESS.md) - Detailed progress tracking
-- [MULTI_ACCOUNT_ARCHITECTURE.md](MULTI_ACCOUNT_ARCHITECTURE.md) - Architecture reference guide
-
-### New Database Structure
-
-```
-users/{userId}/
-  selectedAccountId: string
-  accounts/{accountId}/                    ← NEW LAYER
-    email: string
-    accountName: string
-    googleRefreshToken: string            ← MOVED FROM USER
-    connectedAt: Timestamp
-
-    businesses/{businessId}/               ← MOVED UNDER ACCOUNTS
-      reviews/{reviewId}/
-```
-
-### Migration Status
-
-**✅ Completed (Phase 1-2)**:
-
-- TypeScript types updated
-- Firestore security rules updated
-- Firestore indexes updated
-- Account operations created
-- Business operations updated
-
-**🔄 In Progress**:
-
-- User operations update
-- Review operations update
-
-**📋 Pending**:
-
-- OAuth flow changes
-- API endpoints
-- React contexts
-- UI components
-- Cloud Functions
-- Dashboard pages
-- Hooks updates
-
-See progress document for full details and next steps.
-
----
-
-**Last Updated**: 2025-11-04 (Migration in Progress)
+**Last Updated**: 2025-11-05
 **Generated By**: Claude (Anthropic) - claude-sonnet-4-5-20250929
+**Architecture**: Multi-Account (Completed ✅)

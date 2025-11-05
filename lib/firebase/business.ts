@@ -9,6 +9,7 @@ import {
   query,
   orderBy,
   serverTimestamp,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { Business, BusinessConfig } from "@/types/database";
@@ -229,6 +230,27 @@ export async function deleteBusiness(
   }
 
   try {
+    const batch = writeBatch(db);
+
+    // Get all reviews under this business
+    const reviewsRef = collection(
+      db,
+      "users",
+      userId,
+      "accounts",
+      accountId,
+      "businesses",
+      businessId,
+      "reviews"
+    );
+    const reviewsSnapshot = await getDocs(reviewsRef);
+
+    // Delete all reviews
+    reviewsSnapshot.docs.forEach((reviewDoc) => {
+      batch.delete(reviewDoc.ref);
+    });
+
+    // Delete the business document
     const businessRef = doc(
       db,
       "users",
@@ -238,7 +260,10 @@ export async function deleteBusiness(
       "businesses",
       businessId
     );
-    await deleteDoc(businessRef);
+    batch.delete(businessRef);
+
+    // Commit all deletions
+    await batch.commit();
   } catch (error) {
     console.error("Error deleting business:", error);
     throw new Error("לא ניתן למחוק את העסק");

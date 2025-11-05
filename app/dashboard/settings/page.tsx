@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useBusiness } from "@/contexts/BusinessContext";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { useUserStats } from "@/hooks/useUserStats";
 import { getUser } from "@/lib/firebase/users";
@@ -16,13 +15,12 @@ import { Loading } from "@/components/ui/loading";
 
 export default function SettingsPage() {
   const { user: authUser, loading: authLoading } = useAuth();
-  const { businesses } = useBusiness();
   const {
     subscription,
     limits,
     loading: subscriptionLoading,
   } = useSubscription();
-  const { reviewCount, loading: statsLoading } = useUserStats();
+  const { reviewCount, businessCount, loading: statsLoading } = useUserStats();
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -76,7 +74,7 @@ export default function SettingsPage() {
       <SubscriptionInfo
         limits={limits}
         subscription={subscription}
-        currentBusiness={businesses.length}
+        currentBusiness={businessCount}
         currentReviews={reviewCount}
       />
     </PageContainer>

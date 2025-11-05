@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAccount } from "@/contexts/AccountContext";
@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { OAuthPrompt } from "@/components/dashboard/businesses/OAuthPrompt";
 import { Loading } from "@/components/ui/loading";
-import { deleteAccount } from "@/lib/firebase/accounts";
 import {
   deleteBusiness,
   getAccountBusinesses,
@@ -58,6 +57,8 @@ export function AccountBusinessManagement() {
   const [accountIdForNewBusiness, setAccountIdForNewBusiness] = useState<
     string | null
   >(null);
+
+  const hasLoadedBusinesses = useRef(false);
 
   const [confirmAccountDelete, setConfirmAccountDelete] = useState(false);
   const [confirmBusinessDelete, setConfirmBusinessDelete] = useState(false);
@@ -110,9 +111,9 @@ export function AccountBusinessManagement() {
 
       setAvailableBusinesses(data.businesses);
 
+      // Don't show error toast for empty businesses - let UI handle it gracefully
       if (data.businesses.length === 0) {
-        toast.error("לא נמצאו עסקים בחשבון Google Business Profile שלך");
-        setShowBusinessSelector(false);
+        setShowBusinessSelector(true); // Keep selector open to show informative message
       }
     } catch (err) {
       console.error("Error loading available businesses:", err);
@@ -120,6 +121,7 @@ export function AccountBusinessManagement() {
         err instanceof Error ? err.message : "לא ניתן לטעון עסקים";
       toast.error(errorMessage);
       setShowBusinessSelector(false);
+      hasLoadedBusinesses.current = false; // Reset ref on error
     } finally {
       setLoadingAvailableBusinesses(false);
     }
@@ -134,7 +136,8 @@ export function AccountBusinessManagement() {
     const errorParam = searchParams.get("error");
     const accountIdParam = searchParams.get("accountId");
 
-    if (successParam === "true") {
+    if (successParam === "true" && !hasLoadedBusinesses.current) {
+      hasLoadedBusinesses.current = true;
       setShowBusinessSelector(true);
       setAccountIdForNewBusiness(accountIdParam);
       loadAvailableBusinesses();
@@ -207,6 +210,7 @@ export function AccountBusinessManagement() {
       toast.success("העסק חובר בהצלחה");
       setShowBusinessSelector(false);
       setAccountIdForNewBusiness(null);
+      hasLoadedBusinesses.current = false; // Reset ref for future OAuth flows
       await loadAccountsWithBusinesses();
       await refreshBusinesses();
     } catch (err) {
@@ -228,7 +232,15 @@ export function AccountBusinessManagement() {
     if (!user || !selectedAccount) return;
 
     try {
-      await deleteAccount(user.uid, selectedAccount.id);
+      const response = await fetch(`/api/accounts/${selectedAccount.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete account");
+      }
+
       toast.success("החשבון נמחק בהצלחה");
       await refreshAccounts();
       await refreshBusinesses();
@@ -298,14 +310,25 @@ export function AccountBusinessManagement() {
               <Loading size="md" />
             </div>
           ) : availableBusinesses.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">לא נמצאו עסקים</p>
+            <div className="text-center py-8 space-y-4">
+              <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                <Building2 className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="font-medium">לא נמצאו עסקים</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  החשבון שלך ב-Google Business Profile לא מכיל עסקים רשומים
+                </p>
+              </div>
               <Button
                 variant="outline"
-                onClick={() => setShowBusinessSelector(false)}
+                onClick={() => {
+                  setShowBusinessSelector(false);
+                  hasLoadedBusinesses.current = false; // Reset ref when closing
+                }}
                 className="mt-4"
               >
-                חזור
+                חזור להגדרות
               </Button>
             </div>
           ) : (
@@ -340,6 +363,7 @@ export function AccountBusinessManagement() {
                 onClick={() => {
                   setShowBusinessSelector(false);
                   setAccountIdForNewBusiness(null);
+                  hasLoadedBusinesses.current = false; // Reset ref when closing
                 }}
                 className="w-full mt-4"
               >
@@ -364,20 +388,24 @@ export function AccountBusinessManagement() {
     <>
       <DashboardCard>
         <DashboardCardHeader>
-          <DashboardCardTitle icon={<Building2 className="h-5 w-5" />}>
-            חשבונות ועסקים מחוברים
-          </DashboardCardTitle>
-          <DashboardCardDescription>
-            נהל את החשבונות והעסקים המחוברים לפלטפורמה
-          </DashboardCardDescription>
-          <Button
-            onClick={handleStartOAuth}
-            disabled={loadingOAuth}
-            variant="outline"
-            size="sm"
-          >
-            הוסף עסק
-          </Button>
+          <div className="flex items-center justify-between">
+            <div>
+              <DashboardCardTitle icon={<Building2 className="h-5 w-5" />}>
+                חשבונות ועסקים מחוברים
+              </DashboardCardTitle>
+              <DashboardCardDescription>
+                נהל את החשבונות והעסקים המחוברים לפלטפורמה
+              </DashboardCardDescription>
+            </div>
+            <Button
+              onClick={handleStartOAuth}
+              disabled={loadingOAuth}
+              variant="outline"
+              size="sm"
+            >
+              הוסף עסק
+            </Button>
+          </div>
         </DashboardCardHeader>
         <DashboardCardContent className="space-y-6">
           {accountsWithBusinesses.map((account) => (
@@ -402,7 +430,7 @@ export function AccountBusinessManagement() {
 
                 {/* Businesses under this account */}
                 {account.businesses.length > 0 && (
-                  <div className="mt-4 space-y-2 pr-4 border-r-2 border-muted-foreground/20">
+                  <div className="mt-4 space-y-2">
                     {account.businesses.map((business) => (
                       <div
                         key={business.id}

@@ -59,6 +59,42 @@ export async function encryptToken(token: string): Promise<string> {
   }
 }
 
+export async function decryptToken(encryptedToken: string): Promise<string> {
+  const secret = process.env.TOKEN_ENCRYPTION_SECRET;
+
+  if (!secret) {
+    throw new Error("TOKEN_ENCRYPTION_SECRET not configured");
+  }
+
+  try {
+    return await Iron.unseal(encryptedToken, secret, Iron.defaults);
+  } catch (error) {
+    console.error("Error decrypting token:", error);
+    throw new Error("Failed to decrypt token");
+  }
+}
+
+export async function revokeGoogleRefreshToken(
+  encryptedToken: string
+): Promise<void> {
+  try {
+    // Decrypt the token first
+    const refreshToken = await decryptToken(encryptedToken);
+
+    // Create OAuth client
+    const oauth2Client = createOAuthClient();
+
+    // Revoke the token with Google
+    await oauth2Client.revokeToken(refreshToken);
+
+    console.log("Successfully revoked Google OAuth refresh token");
+  } catch (error) {
+    console.error("Error revoking Google OAuth token:", error);
+    // Don't throw - we want deletion to proceed even if revocation fails
+    // (token may already be invalid/revoked)
+  }
+}
+
 export async function getUserInfo(accessToken: string): Promise<{
   email: string;
   name: string;
