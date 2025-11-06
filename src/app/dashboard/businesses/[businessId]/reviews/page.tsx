@@ -95,7 +95,14 @@ export default function BusinessReviewsPage({
   }
 
   if (error || !business || !user) {
-    notFound();
+    return (
+      <EmptyState
+        title="שגיאה"
+        description="שגיאה בטעינת הביקורות"
+        buttonText="חזור לעסקים"
+        buttonLink="/dashboard/businesses"
+      />
+    );
   }
 
   return (
