@@ -14,7 +14,6 @@ import { Loading } from "@/components/ui/loading";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { notFound } from "next/navigation";
 
 export default function BusinessReviewsPage({
   params,
