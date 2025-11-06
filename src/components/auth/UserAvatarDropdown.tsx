@@ -64,7 +64,7 @@ export function UserAvatarDropdown() {
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56" dir="rtl">
+      <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1 text-right">
             <p className="text-sm font-medium leading-none">

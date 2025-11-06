@@ -182,7 +182,10 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent", className)}
+    className={cn(
+      "-mx-1 my-1 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent",
+      className
+    )}
     {...props}
   />
 ));
@@ -194,7 +197,10 @@ const DropdownMenuShortcut = ({
 }: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
-      className={cn("ml-auto text-xs tracking-widest text-muted-foreground", className)}
+      className={cn(
+        "ml-auto text-xs tracking-widest text-muted-foreground",
+        className
+      )}
       {...props}
     />
   );

@@ -7,8 +7,7 @@ import { useSubscription } from "@/lib/hooks/useSubscription";
 import { useUserStats } from "@/hooks/useUserStats";
 import { getUser } from "@/lib/firebase/users";
 import { User } from "@/types/database";
-import { AccountInfo } from "@/components/dashboard/settings/AccountInfo";
-import { SubscriptionInfo } from "@/components/dashboard/settings/SubscriptionInfo";
+import { SubscriptionInfo } from "@/components/dashboard/dashboard/SubscriptionInfo";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
@@ -18,6 +17,7 @@ export default function DashboardPage() {
   const {
     subscription,
     limits,
+    planType,
     loading: subscriptionLoading,
   } = useSubscription();
   const { reviewCount, loading: reviewCountLoading } = useUserStats();
@@ -64,17 +64,12 @@ export default function DashboardPage() {
         description="נהל את העסקים שלך והביקורות שלך"
       />
 
-      <AccountInfo
-        displayName={authUser.displayName}
-        email={authUser.email}
-        uid={authUser.uid}
-      />
-
       <SubscriptionInfo
         limits={limits}
         subscription={subscription}
         currentBusiness={businessesCount}
         currentReviews={reviewCount}
+        planType={planType}
       />
     </PageContainer>
   );

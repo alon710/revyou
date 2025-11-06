@@ -33,6 +33,12 @@ export default function BusinessReviewsPage({
   const fetchData = useCallback(async () => {
     if (!user || !businessId) return;
 
+    if (!db) {
+      setError("שגיאה באתחול המערכת");
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -88,7 +94,7 @@ export default function BusinessReviewsPage({
     );
   }
 
-  if (error || !business) {
+  if (error || !business || !user) {
     notFound();
   }
 

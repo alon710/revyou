@@ -31,6 +31,12 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       return;
     }
 
+    if (!db) {
+      setError("שגיאה באתחול המערכת");
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -86,7 +92,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
     );
   }
 
-  if (error || !review || !business) {
+  if (error || !review || !business || !user) {
     return (
       <PageContainer>
         <div className="mb-6">
