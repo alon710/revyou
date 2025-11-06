@@ -7,9 +7,7 @@ export function Footer() {
   return (
     <footer className="bg-secondary/30 border-t border-border">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main Footer Content */}
         <div className="py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Company Info */}
           <div>
             <h3 className="text-lg font-bold text-foreground mb-4">
               תשובות AI
@@ -40,7 +38,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Product Links */}
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-4">
               המוצר
@@ -85,7 +82,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Resources */}
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-4">
               משאבים
@@ -102,7 +98,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal */}
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-4">
               מידע משפטי
@@ -128,7 +123,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="border-t border-border py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground">
