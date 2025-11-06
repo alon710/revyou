@@ -57,7 +57,7 @@ export function UnifiedNavbar({
       </nav>
 
       <div className="flex items-center gap-2 shrink-0 pr-2">
-        <AuthButton showAccountButton={variant === "landing"} />
+        <AuthButton variant={variant} />
       </div>
     </NavbarContainer>
   );

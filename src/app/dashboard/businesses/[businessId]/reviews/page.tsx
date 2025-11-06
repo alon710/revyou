@@ -14,6 +14,7 @@ import { Loading } from "@/components/ui/loading";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { notFound } from "next/navigation";
 
 export default function BusinessReviewsPage({
   params,
@@ -36,7 +37,6 @@ export default function BusinessReviewsPage({
       setLoading(true);
       setError(null);
 
-      // Fetch business details
       const biz = await getBusinessById(user.uid, businessId);
       if (!biz) {
         setError("לא נמצא עסק");
@@ -44,7 +44,6 @@ export default function BusinessReviewsPage({
       }
       setBusiness(biz);
 
-      // Fetch reviews
       const q = query(
         collection(
           db,
@@ -90,15 +89,7 @@ export default function BusinessReviewsPage({
   }
 
   if (error || !business) {
-    return (
-      <PageContainer>
-        <BackButton href="/dashboard/businesses" />
-        <PageHeader title="ביקורות" />
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">{error || "לא נמצא עסק"}</p>
-        </div>
-      </PageContainer>
-    );
+    notFound();
   }
 
   return (

@@ -1,6 +1,5 @@
 import {
   Home,
-  Settings,
   PiggyBank,
   ShieldQuestionMarkIcon,
   Rocket,
@@ -17,7 +16,6 @@ export interface NavItem {
 export const dashboardNavItems: NavItem[] = [
   { href: "/dashboard", label: "לוח הבקרה", icon: LayoutDashboard },
   { href: "/dashboard/businesses", label: "עסקים", icon: Home },
-  { href: "/dashboard/settings", label: "הגדרות", icon: Settings },
 ];
 
 export const landingNavItems: NavItem[] = [
