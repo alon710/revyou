@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { User } from "firebase/auth";
 import { signInWithGoogle } from "@/lib/firebase/auth";
@@ -28,29 +28,32 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function checkOnboardingAndRedirect(user?: User) {
-    if (!user) return;
+  const checkOnboardingAndRedirect = useCallback(
+    async (user?: User) => {
+      if (!user) return;
 
-    try {
-      const userData = await getUser(user.uid);
+      try {
+        const userData = await getUser(user.uid);
 
-      if (!userData?.onboardingCompleted) {
-        router.push("/onboarding/step-1");
-        return;
+        if (!userData?.onboardingCompleted) {
+          router.push("/onboarding/step-1");
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking onboarding status:", error);
       }
-    } catch (error) {
-      console.error("Error checking onboarding status:", error);
-    }
 
-    const redirect = searchParams.get("redirect") || "/dashboard";
-    router.push(redirect);
-  }
+      const redirect = searchParams.get("redirect") || "/dashboard";
+      router.push(redirect);
+    },
+    [router, searchParams]
+  );
 
   useEffect(() => {
     if (!authLoading && user) {
       checkOnboardingAndRedirect(user);
     }
-  }, [user, authLoading, router, searchParams]);
+  }, [user, authLoading, checkOnboardingAndRedirect]);
 
   useEffect(() => {
     if (error) {
