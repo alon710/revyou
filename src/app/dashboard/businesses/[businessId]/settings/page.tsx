@@ -84,18 +84,6 @@ export default function BusinessSettingsPage({
         title={business.name}
         description={business.address}
         icon={!business.connected && <Badge variant="secondary">מנותק</Badge>}
-        actions={
-          <DeleteConfirmation
-            title="מחיקת עסק"
-            description={`פעולה זו תמחק את העסק "${business.name}" לצמיתות!`}
-            confirmationText={business.name}
-            confirmationLabel="כדי לאשר, הקלד את שם העסק:"
-            confirmationPlaceholder="שם העסק"
-            onDelete={handleDelete}
-            deleteButtonText="מחק עסק"
-            variant="inline"
-          />
-        }
       />
 
       <BusinessDetailsCard
@@ -104,6 +92,16 @@ export default function BusinessSettingsPage({
         userId={user!.uid}
         loading={loading}
         onUpdate={fetchBusiness}
+      />
+
+      <DeleteConfirmation
+        title="מחיקת עסק"
+        description={`פעולה זו תמחק את העסק "${business.name}" לצמיתות!`}
+        confirmationText={business.name}
+        confirmationLabel="כדי לאשר, הקלד את שם העסק:"
+        confirmationPlaceholder="שם העסק"
+        onDelete={handleDelete}
+        deleteButtonText="מחק עסק"
       />
     </PageContainer>
   );
