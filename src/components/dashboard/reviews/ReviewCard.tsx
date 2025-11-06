@@ -18,13 +18,13 @@ import {
   regenerateReply,
 } from "@/lib/reviews/actions";
 import { useAuth } from "@/contexts/AuthContext";
-import { useBusiness } from "@/contexts/BusinessContext";
 import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { User } from "lucide-react";
 
 interface ReviewCardProps {
   review: Review;
+  accountId: string;
   userId: string;
   businessId: string;
   onUpdate?: () => void;
@@ -32,12 +32,12 @@ interface ReviewCardProps {
 
 export function ReviewCard({
   review,
+  accountId,
   userId,
   businessId,
   onUpdate,
 }: ReviewCardProps) {
   const { user } = useAuth();
-  const { currentAccount } = useBusiness();
   const [isLoading, setIsLoading] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [showPublishDialog, setShowPublishDialog] = useState(false);
@@ -56,14 +56,10 @@ export function ReviewCard({
 
   const handleReject = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!currentAccount) {
-      console.error("No current account");
-      return;
-    }
 
     try {
       setIsLoading(true);
-      await rejectReply(userId, currentAccount.id, businessId, review.id);
+      await rejectReply(userId, accountId, businessId, review.id);
       onUpdate?.();
     } catch (error) {
       console.error("Error rejecting reply:", error);
@@ -73,17 +69,11 @@ export function ReviewCard({
   };
 
   const handlePublishConfirm = async () => {
-    if (!user || !currentAccount) return;
+    if (!user) return;
 
     try {
       const token = await user.getIdToken();
-      await postReplyToGoogle(
-        userId,
-        currentAccount.id,
-        businessId,
-        review.id,
-        token
-      );
+      await postReplyToGoogle(userId, accountId, businessId, review.id, token);
       onUpdate?.();
     } catch (error) {
       console.error("Error publishing reply:", error);
@@ -93,18 +83,12 @@ export function ReviewCard({
 
   const handleRegenerate = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!user || !currentAccount) return;
+    if (!user) return;
 
     try {
       setIsLoading(true);
       const token = await user.getIdToken();
-      await regenerateReply(
-        userId,
-        currentAccount.id,
-        businessId,
-        review.id,
-        token
-      );
+      await regenerateReply(userId, accountId, businessId, review.id, token);
       onUpdate?.();
     } catch (error) {
       console.error("Error regenerating reply:", error);
@@ -203,6 +187,7 @@ export function ReviewCard({
 
       <ReplyEditor
         review={review}
+        accountId={accountId}
         userId={userId}
         businessId={businessId}
         open={showEditor}

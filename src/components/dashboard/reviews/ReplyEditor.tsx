@@ -14,10 +14,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { editReply } from "@/lib/reviews/actions";
 import { Edit } from "lucide-react";
-import { useBusiness } from "@/contexts/BusinessContext";
 
 interface ReplyEditorProps {
   review: Review;
+  accountId: string;
   userId: string;
   businessId: string;
   open: boolean;
@@ -29,6 +29,7 @@ interface ReplyEditorProps {
 
 export function ReplyEditor({
   review,
+  accountId,
   userId,
   businessId,
   open,
@@ -37,25 +38,13 @@ export function ReplyEditor({
   variant = "default",
   loadingText = "שומר...",
 }: ReplyEditorProps) {
-  const { currentAccount } = useBusiness();
   const [replyText, setReplyText] = useState(review.aiReply || "");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
-    if (!currentAccount) {
-      console.error("No current account");
-      return;
-    }
-
     try {
       setIsLoading(true);
-      await editReply(
-        userId,
-        currentAccount.id,
-        businessId,
-        review.id,
-        replyText
-      );
+      await editReply(userId, accountId, businessId, review.id, replyText);
       onSave();
     } catch (error) {
       console.error("Error saving reply:", error);

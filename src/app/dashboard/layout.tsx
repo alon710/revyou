@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { getUser } from "@/lib/firebase/users";
-import { AccountProvider } from "@/contexts/AccountContext";
-import { BusinessProvider } from "@/contexts/BusinessContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { UpgradeBanner } from "@/components/dashboard/utils/UpgradeBanner";
 import { Loading } from "@/components/ui/loading";
@@ -56,13 +54,9 @@ export default function DashboardLayout({
   }
 
   return (
-    <AccountProvider>
-      <BusinessProvider>
-        <AppLayout variant="dashboard">
-          {children}
-          <UpgradeBanner />
-        </AppLayout>
-      </BusinessProvider>
-    </AccountProvider>
+    <AppLayout variant="dashboard">
+      {children}
+      <UpgradeBanner />
+    </AppLayout>
   );
 }

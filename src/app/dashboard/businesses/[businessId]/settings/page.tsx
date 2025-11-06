@@ -1,8 +1,9 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useBusiness } from "@/contexts/BusinessContext";
+import { getBusinessById, deleteBusiness } from "@/lib/firebase/business";
+import type { Business } from "@/types/database";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
@@ -10,7 +11,6 @@ import BusinessDetailsCard from "@/components/dashboard/businesses/BusinessDetai
 import { BackButton } from "@/components/ui/back-button";
 import { Badge } from "@/components/ui/badge";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
-import { deleteBusiness } from "@/lib/firebase/business";
 import { useRouter } from "next/navigation";
 
 export default function BusinessSettingsPage({
@@ -19,30 +19,42 @@ export default function BusinessSettingsPage({
   params: Promise<{ businessId: string }>;
 }) {
   const { businessId } = use(params);
-  const { user, loading: authLoading } = useAuth();
-  const {
-    businesses,
-    loading: businessLoading,
-    refreshBusinesses,
-    currentAccount,
-  } = useBusiness();
+  const { user } = useAuth();
   const router = useRouter();
 
-  const business = businesses.find((b) => b.id === businessId);
+  const [business, setBusiness] = useState<Business | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleDelete = async () => {
-    if (!business || !currentAccount || !user) return;
+  const fetchBusiness = useCallback(async () => {
+    if (!user || !businessId) return;
 
     try {
-      await deleteBusiness(user.uid, currentAccount.id, business.id);
-      await refreshBusinesses();
+      setLoading(true);
+      const biz = await getBusinessById(user.uid, businessId);
+      setBusiness(biz);
+    } catch (error) {
+      console.error("Error fetching business:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [user, businessId]);
+
+  useEffect(() => {
+    fetchBusiness();
+  }, [fetchBusiness]);
+
+  const handleDelete = async () => {
+    if (!business || !user) return;
+
+    try {
+      await deleteBusiness(user.uid, business.accountId, business.id);
       router.push("/dashboard/businesses");
     } catch (error) {
       console.error("Error deleting business:", error);
     }
   };
 
-  if (authLoading || businessLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Loading size="md" />
@@ -88,9 +100,10 @@ export default function BusinessSettingsPage({
 
       <BusinessDetailsCard
         business={business}
+        accountId={business.accountId}
         userId={user!.uid}
-        loading={businessLoading}
-        onUpdate={refreshBusinesses}
+        loading={loading}
+        onUpdate={fetchBusiness}
       />
     </PageContainer>
   );

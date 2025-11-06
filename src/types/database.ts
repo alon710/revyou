@@ -72,6 +72,7 @@ export interface GoogleBusinessProfileBusiness {
 
 export interface Business {
   id: string;
+  accountId: string;
   googleBusinessId: string;
   name: string;
   address: string;

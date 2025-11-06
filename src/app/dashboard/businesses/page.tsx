@@ -1,14 +1,15 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useBusiness } from "@/contexts/BusinessContext";
+import { getAllUserBusinesses } from "@/lib/firebase/business";
+import type { Business } from "@/types/database";
 import { Badge } from "@/components/ui/badge";
 import { IconButton } from "@/components/ui/icon-button";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
-import { useSubscription } from "@/lib/hooks/useSubscription";
-import { Settings, MapPin, Plus, Link } from "lucide-react";
+import { Settings, MapPin, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   DashboardCard,
@@ -16,16 +17,33 @@ import {
   DashboardCardTitle,
   DashboardCardContent,
 } from "@/components/ui/dashboard-card";
+import Image from "next/image";
 
 export default function BusinessesPage() {
-  const { loading: authLoading } = useAuth();
-  const { businesses, loading: businessLoading } = useBusiness();
-  const { limits } = useSubscription();
+  const { user } = useAuth();
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const maxBusinesses = limits.businesses;
+  useEffect(() => {
+    async function fetchBusinesses() {
+      if (!user) return;
 
-  if (authLoading || businessLoading) {
+      try {
+        setLoading(true);
+        const bizList = await getAllUserBusinesses(user.uid);
+        setBusinesses(bizList);
+      } catch (error) {
+        console.error("Error fetching businesses:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchBusinesses();
+  }, [user]);
+
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Loading size="md" />
@@ -34,7 +52,7 @@ export default function BusinessesPage() {
   }
 
   const handleBusinessClick = (businessId: string) => {
-    router.push(`/dashboard/reviews?businessId=${businessId}`);
+    router.push(`/dashboard/businesses/${businessId}/reviews`);
   };
 
   const handleSettingsClick = (e: React.MouseEvent, businessId: string) => {
@@ -53,7 +71,7 @@ export default function BusinessesPage() {
         {businesses.map((business) => (
           <DashboardCard
             key={business.id}
-            className="cursor-pointer relative"
+            className="cursor-pointer relative min-h-[320px] flex flex-col"
             onClick={() => handleBusinessClick(business.id)}
           >
             <div className="absolute top-4 left-4 z-10">
@@ -68,17 +86,19 @@ export default function BusinessesPage() {
 
             <DashboardCardHeader>
               {business.photoUrl && (
-                <img
+                <Image
                   src={business.photoUrl}
                   alt={business.name}
                   className="w-full h-32 object-cover rounded-t-lg -mt-6 -mx-6 mb-4"
                 />
               )}
               <DashboardCardTitle>
-                <div className="flex items-center justify-between w-full">
-                  <span>{business.name}</span>
+                <div className="flex items-center justify-between w-full gap-2">
+                  <span className="truncate">{business.name}</span>
                   {!business.connected && (
-                    <Badge variant="secondary">מנותק</Badge>
+                    <Badge variant="secondary" className="shrink-0">
+                      מנותק
+                    </Badge>
                   )}
                 </div>
               </DashboardCardTitle>
@@ -87,19 +107,18 @@ export default function BusinessesPage() {
             <DashboardCardContent>
               <div className="flex items-start gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-                <span>{business.address}</span>
+                <span className="truncate">{business.address}</span>
               </div>
               {business.description && (
-                <div className="my-3 bg-primary/10 p-3 rounded-md whitespace-pre-wrap leading-relaxed text-sm text-muted-foreground">
+                <div className="my-3 bg-primary/10 p-3 rounded-md leading-relaxed text-sm text-muted-foreground line-clamp-3">
                   {business.description}
                 </div>
               )}
             </DashboardCardContent>
           </DashboardCard>
         ))}
-
         <DashboardCard
-          className="cursor-pointer border-dashed border-2 hover:border-primary/50 hover:bg-accent/50 transition-all flex flex-col items-center justify-center h-full"
+          className="cursor-pointer border-dashed border-2 hover:border-primary/50 hover:bg-accent/50 transition-all flex flex-col items-center justify-center min-h-[320px]"
           onClick={() => router.push("/onboarding/step-2")}
         >
           <div className="flex flex-col items-center justify-center text-center p-6">
