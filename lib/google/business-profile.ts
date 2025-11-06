@@ -1,6 +1,6 @@
 import { OAuth2Client } from "google-auth-library";
 import * as Iron from "@hapi/iron";
-import { GoogleBusinessProfileBusiness } from "@/types/database";
+import { GoogleBusinessProfileBusiness } from "../../types/database";
 
 const GOOGLE_MY_BUSINESS_API_BASE =
   "https://mybusinessbusinessinformation.googleapis.com/v1";
@@ -224,5 +224,165 @@ export async function decryptToken(encryptedToken: string): Promise<string> {
   } catch (error) {
     console.error("Error decrypting token:", error);
     throw new Error("Failed to decrypt token");
+  }
+}
+
+/**
+ * Notification types available in Google My Business API
+ */
+export type NotificationType =
+  | "GOOGLE_UPDATE"
+  | "NEW_REVIEW"
+  | "UPDATED_REVIEW"
+  | "NEW_CUSTOMER_MEDIA"
+  | "NEW_QUESTION"
+  | "UPDATED_QUESTION"
+  | "NEW_ANSWER"
+  | "UPDATED_ANSWER"
+  | "UPDATED_LOCATION_STATE";
+
+interface NotificationSettings {
+  name: string;
+  notificationTypes: NotificationType[];
+  pubsubTopic: string;
+}
+
+/**
+ * Subscribes to Google My Business notifications for an account
+ * @param accountName - Google account name (e.g., "accounts/123456")
+ * @param pubsubTopic - Full Pub/Sub topic name (e.g., "projects/my-project/topics/gmb-notifications")
+ * @param refreshToken - Encrypted refresh token
+ * @param notificationTypes - Types of notifications to receive (defaults to NEW_REVIEW and UPDATED_REVIEW)
+ */
+export async function subscribeToNotifications(
+  accountName: string,
+  pubsubTopic: string,
+  refreshToken: string,
+  notificationTypes: NotificationType[] = ["NEW_REVIEW", "UPDATED_REVIEW"]
+): Promise<void> {
+  try {
+    const accessToken = await getAccessTokenFromRefreshToken(refreshToken);
+    const url = `https://mybusinessnotifications.googleapis.com/v1/${accountName}/notificationSetting`;
+
+    const body = {
+      notificationTypes,
+      pubsubTopic,
+    };
+
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        "Error subscribing to notifications:",
+        response.status,
+        errorText
+      );
+      throw new Error(
+        `Failed to subscribe to notifications: ${response.status}`
+      );
+    }
+
+    console.log("Successfully subscribed to notifications for", accountName);
+  } catch (error) {
+    console.error("Error subscribing to notifications:", error);
+    throw new Error("Failed to subscribe to Google My Business notifications");
+  }
+}
+
+/**
+ * Unsubscribes from Google My Business notifications for an account
+ * @param accountName - Google account name (e.g., "accounts/123456")
+ * @param refreshToken - Encrypted refresh token
+ */
+export async function unsubscribeFromNotifications(
+  accountName: string,
+  refreshToken: string
+): Promise<void> {
+  try {
+    const accessToken = await getAccessTokenFromRefreshToken(refreshToken);
+    const url = `https://mybusinessnotifications.googleapis.com/v1/${accountName}/notificationSetting`;
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        "Error unsubscribing from notifications:",
+        response.status,
+        errorText
+      );
+      throw new Error(
+        `Failed to unsubscribe from notifications: ${response.status}`
+      );
+    }
+
+    console.log(
+      "Successfully unsubscribed from notifications for",
+      accountName
+    );
+  } catch (error) {
+    console.error("Error unsubscribing from notifications:", error);
+    throw new Error(
+      "Failed to unsubscribe from Google My Business notifications"
+    );
+  }
+}
+
+/**
+ * Gets the current notification settings for an account
+ * @param accountName - Google account name (e.g., "accounts/123456")
+ * @param refreshToken - Encrypted refresh token
+ * @returns Notification settings or null if not configured
+ */
+export async function getNotificationSettings(
+  accountName: string,
+  refreshToken: string
+): Promise<NotificationSettings | null> {
+  try {
+    const accessToken = await getAccessTokenFromRefreshToken(refreshToken);
+    const url = `https://mybusinessnotifications.googleapis.com/v1/${accountName}/notificationSetting`;
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.status === 404) {
+      // No notification settings configured
+      return null;
+    }
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        "Error getting notification settings:",
+        response.status,
+        errorText
+      );
+      throw new Error(
+        `Failed to get notification settings: ${response.status}`
+      );
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error getting notification settings:", error);
+    throw new Error("Failed to get Google My Business notification settings");
   }
 }

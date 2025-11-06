@@ -11,7 +11,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
-import { Business, BusinessConfig } from "@/types/database";
+import { Business, BusinessConfig } from "../../types/database";
 import {
   businessSchema,
   businessServerCreateSchema,

@@ -116,3 +116,13 @@ export const reviewSchemaAdmin = z.object({
   postedAt: timestampSchemaAdmin.nullable().optional(),
   postedBy: z.string().nullable().optional(),
 });
+
+export const accountSchemaAdmin = z.object({
+  id: z.string().min(1),
+  email: z.string().email(),
+  accountName: z.string().min(1).max(200),
+  googleRefreshToken: z.string().min(1),
+  connectedAt: timestampSchemaAdmin,
+  lastSynced: timestampSchemaAdmin.optional(),
+  googleAccountName: z.string().optional(),
+});

@@ -18,12 +18,12 @@ const redirectToBusinesses = (
   onboarding?: boolean
 ) => {
   if (onboarding && success && accountId) {
-    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/step-3?accountId=${accountId}`;
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/choose-business?accountId=${accountId}`;
     return NextResponse.redirect(url);
   }
 
   if (success && accountId) {
-    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/step-3?accountId=${accountId}`;
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/choose-business?accountId=${accountId}`;
     return NextResponse.redirect(url);
   }
 

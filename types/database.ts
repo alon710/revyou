@@ -12,6 +12,7 @@ export interface Account {
   googleRefreshToken: string;
   connectedAt: Timestamp;
   lastSynced?: Timestamp;
+  googleAccountName?: string;
 }
 
 export interface AccountWithBusinesses extends Account {
@@ -28,7 +29,6 @@ export interface User {
   stripeLink?: string;
   selectedAccountId?: string;
   selectedBusinessId?: string;
-  onboardingCompleted?: boolean;
 }
 
 export interface StarConfig {

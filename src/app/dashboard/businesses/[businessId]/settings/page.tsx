@@ -3,7 +3,7 @@
 import { use, useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getBusinessById, deleteBusiness } from "@/lib/firebase/business";
-import type { Business } from "@/types/database";
+import type { Business } from "../../../../../../types/database";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";

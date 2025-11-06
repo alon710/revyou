@@ -1,17 +1,14 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { completeOnboarding } from "@/lib/firebase/users";
 import { Loader2, CheckCircle2 } from "lucide-react";
 
 function SuccessContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
-  const [completing, setCompleting] = useState(true);
-  const onboarding = searchParams.get("onboarding") === "true";
+  const [redirecting, setRedirecting] = useState(true);
 
   useEffect(() => {
     async function handleSuccess() {
@@ -22,35 +19,19 @@ function SuccessContent() {
         return;
       }
 
-      if (onboarding) {
-        try {
-          // Complete onboarding for the user
-          await completeOnboarding(user.uid);
-          setCompleting(false);
-
-          // Wait a moment before redirecting to show success message
-          setTimeout(() => {
-            router.push("/dashboard");
-          }, 2000);
-        } catch (error) {
-          console.error("Error completing onboarding:", error);
-          // Even if there's an error, redirect to dashboard
-          setTimeout(() => {
-            router.push("/dashboard");
-          }, 2000);
-        }
-      } else {
-        // Not in onboarding mode, just redirect to dashboard
+      // Wait a moment before redirecting to show success message
+      setTimeout(() => {
+        setRedirecting(false);
         setTimeout(() => {
           router.push("/dashboard");
         }, 1500);
-      }
+      }, 500);
     }
 
     handleSuccess();
-  }, [user, authLoading, router, onboarding]);
+  }, [user, authLoading, router]);
 
-  if (authLoading || completing) {
+  if (authLoading || redirecting) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">

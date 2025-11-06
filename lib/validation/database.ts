@@ -102,5 +102,15 @@ export const reviewSchema = z.object({
   postedBy: z.string().nullable().optional(),
 });
 
+export const accountSchema = z.object({
+  id: z.string().min(1),
+  email: z.string().email(),
+  accountName: z.string().min(1).max(200),
+  googleRefreshToken: z.string().min(1),
+  connectedAt: timestampSchema,
+  lastSynced: timestampSchema.optional(),
+  googleAccountName: z.string().optional(),
+});
+
 export type BusinessCreateInput = z.infer<typeof businessCreateSchema>;
 export type BusinessUpdateInput = z.infer<typeof businessUpdateSchema>;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Business, BusinessConfig } from "@/types/database";
+import { Business, BusinessConfig } from "../../../../types/database";
 import { updateBusinessConfig } from "@/lib/firebase/business-config";
 import { updateBusiness } from "@/lib/firebase/business";
 import BusinessIdentitySection from "@/components/dashboard/businesses/BusinessIdentitySection";

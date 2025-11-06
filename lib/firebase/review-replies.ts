@@ -1,6 +1,6 @@
 import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
-import { Review } from "@/types/database";
+import { Review } from "../../types/database";
 import { getReview } from "@/lib/firebase/reviews";
 
 export async function updateReviewReply(

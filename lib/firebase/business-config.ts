@@ -5,7 +5,7 @@ import {
   BusinessConfig,
   ToneOfVoice,
   LanguageMode,
-} from "@/types/database";
+} from "../../types/database";
 import { getBusiness } from "@/lib/firebase/business";
 import { BusinessConfigSchema } from "@/lib/validation/database";
 

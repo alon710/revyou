@@ -69,14 +69,11 @@ service cloud.firestore {
       validStringLength(request.resource.data.displayName, 1, 200) &&
       (!('photoURL' in request.resource.data) || request.resource.data.photoURL is string) &&
       (!('stripeId' in request.resource.data) || request.resource.data.stripeId is string) &&
-      (!('stripeLink' in request.resource.data) || request.resource.data.stripeLink is string) &&
-      (!('onboardingCompleted' in request.resource.data) || request.resource.data.onboardingCompleted is bool);
+      (!('stripeLink' in request.resource.data) || request.resource.data.stripeLink is string);
 
       allow update: if isOwner(userId) &&
       // Cannot change uid or createdAt
-      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['uid', 'createdAt'])) &&
-      // Validate onboardingCompleted if present
-      (!('onboardingCompleted' in request.resource.data) || request.resource.data.onboardingCompleted is bool);
+      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['uid', 'createdAt']));
 
       allow delete: if false; // Users should not be deleted via Firestore
 

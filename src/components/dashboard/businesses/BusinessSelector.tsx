@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { GoogleBusinessProfileBusiness } from "@/types/database";
+import { GoogleBusinessProfileBusiness } from "../../../../types/database";
 import { Button } from "@/components/ui/button";
 import {
   DashboardCard,

@@ -11,7 +11,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
-import type { Account } from "@/types/database";
+import type { Account } from "../../types/database";
 
 export async function createAccount(
   userId: string,

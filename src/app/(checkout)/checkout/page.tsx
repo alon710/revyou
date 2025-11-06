@@ -61,7 +61,7 @@ function CheckoutForm() {
           } else if (onboarding) {
             options = {
               success_url: `${window.location.origin}/success?onboarding=true`,
-              cancel_url: `${window.location.origin}/onboarding/step-1`,
+              cancel_url: `${window.location.origin}/dashboard`,
             };
           }
 

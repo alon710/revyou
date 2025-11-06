@@ -80,8 +80,8 @@ export function UserAvatarDropdown() {
           onClick={handleSignOut}
           className="cursor-pointer flex justify-between"
         >
-          <span>התנתק</span>
           <LogOut className="h-4 w-4" />
+          <span>התנתק</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

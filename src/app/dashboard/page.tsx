@@ -6,7 +6,7 @@ import { getAllUserBusinesses } from "@/lib/firebase/business";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { useUserStats } from "@/hooks/useUserStats";
 import { getUser } from "@/lib/firebase/users";
-import { User } from "@/types/database";
+import { User } from "../../../types/database";
 import { SubscriptionInfo } from "@/components/dashboard/dashboard/SubscriptionInfo";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";

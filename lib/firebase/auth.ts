@@ -37,7 +37,6 @@ export async function signInWithGoogle() {
         displayName: user.displayName || "User",
         photoURL: user.photoURL || "",
         createdAt: serverTimestamp(),
-        onboardingCompleted: false,
       };
 
       try {
