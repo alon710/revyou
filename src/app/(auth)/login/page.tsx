@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { User } from "firebase/auth";
 import { signInWithGoogle } from "@/lib/firebase/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { getUser } from "@/lib/firebase/users";
@@ -27,31 +28,28 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function checkOnboardingStatus() {
-      if (!authLoading && user) {
-        try {
-          const userData = await getUser(user.uid);
+  async function checkOnboardingAndRedirect(user?: User) {
+    if (!user) return;
 
-          // Check if onboarding is completed
-          if (!userData?.onboardingCompleted) {
-            router.push("/onboarding/step-1");
-            return;
-          }
+    try {
+      const userData = await getUser(user.uid);
 
-          // Onboarding completed, proceed with normal redirect
-          const redirect = searchParams.get("redirect") || "/dashboard";
-          router.push(redirect);
-        } catch (error) {
-          console.error("Error checking onboarding status:", error);
-          // On error, proceed to dashboard
-          const redirect = searchParams.get("redirect") || "/dashboard";
-          router.push(redirect);
-        }
+      if (!userData?.onboardingCompleted) {
+        router.push("/onboarding/step-1");
+        return;
       }
+    } catch (error) {
+      console.error("Error checking onboarding status:", error);
     }
 
-    checkOnboardingStatus();
+    const redirect = searchParams.get("redirect") || "/dashboard";
+    router.push(redirect);
+  }
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      checkOnboardingAndRedirect(user);
+    }
   }, [user, authLoading, router, searchParams]);
 
   useEffect(() => {
@@ -70,24 +68,7 @@ function LoginForm() {
       setError(error);
       setIsLoading(false);
     } else if (user) {
-      try {
-        const userData = await getUser(user.uid);
-
-        // Check if onboarding is completed
-        if (!userData?.onboardingCompleted) {
-          router.push("/onboarding/step-1");
-          return;
-        }
-
-        // Onboarding completed, proceed with normal redirect
-        const redirect = searchParams.get("redirect") || "/dashboard";
-        router.push(redirect);
-      } catch (err) {
-        console.error("Error checking onboarding status:", err);
-        // On error, proceed to dashboard
-        const redirect = searchParams.get("redirect") || "/dashboard";
-        router.push(redirect);
-      }
+      await checkOnboardingAndRedirect(user);
     }
   };
 
@@ -100,7 +81,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-muted p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-b from-background to-muted p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Logo className="justify-center mb-4" href={"/"} size="xl" />
