@@ -1,5 +1,6 @@
 import * as admin from "firebase-admin";
 import { onMessagePublished } from "firebase-functions/v2/pubsub";
+import { defineSecret } from "firebase-functions/params";
 import {
   getReview,
   starRatingToNumber,
@@ -9,11 +10,14 @@ import { decryptToken } from "../shared/google/business-profile";
 import type { Review, Business } from "../shared/types/database";
 
 const db = admin.firestore();
+const tokenEncryptionSecret = defineSecret("TOKEN_ENCRYPTION_SECRET");
+const googleClientId = defineSecret("GOOGLE_CLIENT_ID");
+const googleClientSecret = defineSecret("GOOGLE_CLIENT_SECRET");
 
 interface PubSubNotificationData {
-  notificationType: "NEW_REVIEW" | "UPDATED_REVIEW";
-  reviewName: string; // Format: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
-  locationName: string; // Format: accounts/{accountId}/locations/{locationId}
+  type: "NEW_REVIEW";
+  review: string; // Format: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
+  location: string; // Format: accounts/{accountId}/locations/{locationId}
 }
 
 /**
@@ -106,6 +110,7 @@ async function getAccountRefreshToken(
 export const onGoogleReviewNotification = onMessagePublished(
   {
     topic: "gmb-review-notifications",
+    secrets: [tokenEncryptionSecret, googleClientId, googleClientSecret],
     timeoutSeconds: 300,
     minInstances: 0,
     maxInstances: 5,
@@ -123,14 +128,15 @@ export const onGoogleReviewNotification = onMessagePublished(
 
       console.log("Parsed notification:", notification);
 
-      const { notificationType, reviewName, locationName } = notification;
+      const {
+        type: notificationType,
+        review: reviewName,
+        location: locationName,
+      } = notification;
 
-      // Only process review notifications
-      if (
-        notificationType !== "NEW_REVIEW" &&
-        notificationType !== "UPDATED_REVIEW"
-      ) {
-        console.log("Ignoring non-review notification:", notificationType);
+      // Only process new review notifications
+      if (notificationType !== "NEW_REVIEW") {
+        console.log("Ignoring non-new-review notification:", notificationType);
         return;
       }
 
@@ -165,11 +171,19 @@ export const onGoogleReviewNotification = onMessagePublished(
       }
 
       // Decrypt the refresh token
-      const refreshToken = await decryptToken(encryptedToken);
+      const refreshToken = await decryptToken(
+        encryptedToken,
+        tokenEncryptionSecret.value()
+      );
 
       // Fetch the full review data from Google My Business API
       console.log("Fetching review from GMB API:", reviewName);
-      const googleReview = await getReview(reviewName, refreshToken);
+      const googleReview = await getReview(
+        reviewName,
+        refreshToken,
+        googleClientId.value(),
+        googleClientSecret.value()
+      );
       console.log("Fetched Google review:", googleReview);
 
       // Map Google review to our database structure
@@ -209,26 +223,16 @@ export const onGoogleReviewNotification = onMessagePublished(
         .get();
 
       if (!existingReviewSnapshot.empty) {
-        // Update existing review
+        // Review already exists, skip (duplicate NEW_REVIEW notification)
         const existingReviewDoc = existingReviewSnapshot.docs[0];
-        console.log("Updating existing review:", existingReviewDoc.id);
-
-        await existingReviewDoc.ref.update({
-          name: reviewData.name,
-          photoUrl: reviewData.photoUrl,
-          rating: reviewData.rating,
-          text: reviewData.text,
-          updateTime: reviewData.updateTime,
-          isAnonymous: reviewData.isAnonymous,
-        });
-
-        console.log("Review updated successfully:", existingReviewDoc.id);
-      } else {
-        // Create new review - this will trigger onReviewCreate function
-        console.log("Creating new review");
-        const newReviewRef = await reviewsRef.add(reviewData);
-        console.log("Review created successfully:", newReviewRef.id);
+        console.log("Review already exists, skipping:", existingReviewDoc.id);
+        return;
       }
+
+      // Create new review - this will trigger onReviewCreate function
+      console.log("Creating new review");
+      const newReviewRef = await reviewsRef.add(reviewData);
+      console.log("Review created successfully:", newReviewRef.id);
     } catch (error) {
       console.error("Error processing Google review notification:", error);
       throw error;

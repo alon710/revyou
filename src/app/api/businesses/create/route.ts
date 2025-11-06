@@ -7,6 +7,7 @@ import {
   decryptToken,
 } from "@/lib/google/business-profile";
 import { businessSchemaAdmin } from "@/lib/validation/database.admin";
+import { getDefaultBusinessConfig } from "@/lib/firebase/business-config";
 
 const db = getFirestore();
 
@@ -50,6 +51,15 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. Create business document in Firestore
+    // Build config with defaults
+    const defaultConfig = getDefaultBusinessConfig();
+    const businessConfig = {
+      ...defaultConfig,
+      name: body.name,
+      description: body.description ?? "",
+      phoneNumber: body.phoneNumber ?? "",
+    };
+
     const businessData = {
       googleBusinessId: body.googleBusinessId,
       name: body.name,
@@ -59,6 +69,8 @@ export async function POST(request: NextRequest) {
       mapsUrl: body.mapsUrl ?? null,
       description: body.description ?? null,
       photoUrl: body.photoUrl ?? null,
+      config: businessConfig,
+      emailOnNewReview: true,
       connectedAt: Timestamp.now(),
       connected: true,
     };

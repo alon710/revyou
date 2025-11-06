@@ -12,9 +12,11 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "seed:review": "tsx scripts/seed-review.ts",
+    "seed:pubsub": "tsx scripts/seed-pubsub-notification.ts",
     "knip": "knip"
   },
   "dependencies": {
+    "@google-cloud/pubsub": "^4.10.0",
     "@google/generative-ai": "^0.24.1",
     "@hapi/iron": "^7.0.1",
     "@invertase/firestore-stripe-payments": "^0.0.8",

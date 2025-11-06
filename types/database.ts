@@ -96,6 +96,8 @@ export interface Review {
   text?: string;
   date: Timestamp;
   receivedAt: Timestamp;
+  updateTime?: Timestamp;
+  isAnonymous?: boolean;
 
   aiReply?: string;
   aiReplyGeneratedAt?: Timestamp;

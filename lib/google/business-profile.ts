@@ -43,15 +43,19 @@ interface BusinessesResponse {
   nextPageToken?: string;
 }
 
-function createOAuthClient(accessToken: string): OAuth2Client {
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+function createOAuthClient(
+  accessToken: string,
+  clientId?: string,
+  clientSecret?: string
+): OAuth2Client {
+  const oauthClientId = clientId || process.env.GOOGLE_CLIENT_ID;
+  const oauthClientSecret = clientSecret || process.env.GOOGLE_CLIENT_SECRET;
 
-  if (!clientId || !clientSecret) {
+  if (!oauthClientId || !oauthClientSecret) {
     throw new Error("Google OAuth credentials not configured");
   }
 
-  const oauth2Client = new OAuth2Client(clientId, clientSecret);
+  const oauth2Client = new OAuth2Client(oauthClientId, oauthClientSecret);
   oauth2Client.setCredentials({ access_token: accessToken });
 
   return oauth2Client;
@@ -78,9 +82,11 @@ async function makeAuthorizedRequest<T>(
 }
 
 export async function getAccessTokenFromRefreshToken(
-  refreshToken: string
+  refreshToken: string,
+  clientId?: string,
+  clientSecret?: string
 ): Promise<string> {
-  const oauth2Client = createOAuthClient("");
+  const oauth2Client = createOAuthClient("", clientId, clientSecret);
   oauth2Client.setCredentials({ refresh_token: refreshToken });
 
   const { credentials } = await oauth2Client.refreshAccessToken();
@@ -190,9 +196,16 @@ export async function listAllBusinesses(
       );
 
       for (const business of businesses) {
+        // Ensure business ID has full resource path format
+        // Google API should return "accounts/{accountId}/locations/{locationId}"
+        // but may sometimes return just "locations/{locationId}"
+        const businessId = business.name.startsWith("accounts/")
+          ? business.name
+          : `${account.name}/${business.name}`;
+
         allBusinesses.push({
           accountId: account.name,
-          id: business.name,
+          id: businessId,
           name: business.title,
           address: formatAddress(business),
           phoneNumber: business.phoneNumbers?.primaryPhone ?? null,
@@ -211,15 +224,22 @@ export async function listAllBusinesses(
   }
 }
 
-export async function decryptToken(encryptedToken: string): Promise<string> {
-  const secret = process.env.TOKEN_ENCRYPTION_SECRET;
+export async function decryptToken(
+  encryptedToken: string,
+  secret?: string
+): Promise<string> {
+  const encryptionSecret = secret || process.env.TOKEN_ENCRYPTION_SECRET;
 
-  if (!secret) {
+  if (!encryptionSecret) {
     throw new Error("TOKEN_ENCRYPTION_SECRET not configured");
   }
 
   try {
-    const unsealed = await Iron.unseal(encryptedToken, secret, Iron.defaults);
+    const unsealed = await Iron.unseal(
+      encryptedToken,
+      encryptionSecret,
+      Iron.defaults
+    );
     return unsealed as string;
   } catch (error) {
     console.error("Error decrypting token:", error);
@@ -252,17 +272,17 @@ interface NotificationSettings {
  * @param accountName - Google account name (e.g., "accounts/123456")
  * @param pubsubTopic - Full Pub/Sub topic name (e.g., "projects/my-project/topics/gmb-notifications")
  * @param refreshToken - Encrypted refresh token
- * @param notificationTypes - Types of notifications to receive (defaults to NEW_REVIEW and UPDATED_REVIEW)
+ * @param notificationTypes - Types of notifications to receive (defaults to NEW_REVIEW only)
  */
 export async function subscribeToNotifications(
   accountName: string,
   pubsubTopic: string,
   refreshToken: string,
-  notificationTypes: NotificationType[] = ["NEW_REVIEW", "UPDATED_REVIEW"]
+  notificationTypes: NotificationType[] = ["NEW_REVIEW"]
 ): Promise<void> {
   try {
     const accessToken = await getAccessTokenFromRefreshToken(refreshToken);
-    const url = `https://mybusinessnotifications.googleapis.com/v1/${accountName}/notificationSetting`;
+    const url = `https://mybusinessnotifications.googleapis.com/v1/${accountName}/notificationSetting?updateMask=notificationTypes,pubsubTopic`;
 
     const body = {
       notificationTypes,

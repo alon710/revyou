@@ -4,7 +4,7 @@
   "description": "Firebase Cloud Functions for automated AI review workflow",
   "main": "lib/index.js",
   "scripts": {
-    "prebuild": "rm -rf src/shared && mkdir -p src/shared && cp -r ../lib/ai ../types src/shared/ && ([ -f src/shared/ai/prompts/builder.ts ] && sed -i.bak 's|@/types/database|../../types/database|g' src/shared/ai/prompts/builder.ts && rm -f src/shared/ai/prompts/builder.ts.bak || true) && ([ -f src/shared/types/database.ts ] && sed -i.bak 's|@/lib/ai/prompts/template|../ai/prompts/template|g' src/shared/types/database.ts && rm -f src/shared/types/database.ts.bak || true)",
+    "prebuild": "rm -rf src/shared && mkdir -p src/shared && cp -r ../lib/ai ../lib/google ../types src/shared/ && ([ -f src/shared/ai/prompts/builder.ts ] && sed -i.bak 's|\\.\\./\\.\\./\\.\\./types/database|../../types/database|g' src/shared/ai/prompts/builder.ts && rm -f src/shared/ai/prompts/builder.ts.bak || true) && ([ -f src/shared/types/database.ts ] && sed -i.bak -e 's|@/lib/ai/prompts/template|../ai/prompts/template|g' -e 's|firebase/firestore|firebase-admin/firestore|g' src/shared/types/database.ts && rm -f src/shared/types/database.ts.bak || true) && (find src/shared/google -name '*.ts' -exec sed -i.bak 's|../../types/database|../types/database|g' {} \\; && find src/shared/google -name '*.bak' -delete || true)",
     "build": "tsc",
     "postbuild": "rm -rf src/shared",
     "build:watch": "tsc --watch",
@@ -19,10 +19,12 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@hapi/iron": "^7.0.1",
     "@react-email/components": "^0.5.7",
     "@react-email/render": "^0.0.12",
     "firebase-admin": "^12.0.0",
     "firebase-functions": "^6.6.0",
+    "google-auth-library": "^9.0.0",
     "mustache": "^4.2.0",
     "react": "^18.2.0"
   },

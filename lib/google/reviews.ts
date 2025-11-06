@@ -71,10 +71,16 @@ async function makeAuthorizedRequest<T>(
  */
 export async function getReview(
   reviewName: string,
-  refreshToken: string
+  refreshToken: string,
+  clientId?: string,
+  clientSecret?: string
 ): Promise<GoogleReview> {
   try {
-    const accessToken = await getAccessTokenFromRefreshToken(refreshToken);
+    const accessToken = await getAccessTokenFromRefreshToken(
+      refreshToken,
+      clientId,
+      clientSecret
+    );
     const url = `${GOOGLE_MY_BUSINESS_API_BASE}/${reviewName}`;
 
     const review = await makeAuthorizedRequest<GoogleReview>(url, accessToken);
