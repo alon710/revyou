@@ -17,7 +17,7 @@ export function UnifiedNavbar({
   return (
     <NavbarContainer>
       <div className="shrink-0 pl-2">
-        <Logo href={user ? "/dashboard/businesses" : "/"} />
+        <Logo href="/dashboard" />
       </div>
 
       <nav className="hidden md:flex items-center flex-1 justify-center h-full gap-1">
