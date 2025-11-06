@@ -1,9 +1,11 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { User } from "firebase/auth";
 import { signInWithGoogle } from "@/lib/firebase/auth";
 import { useAuth } from "@/contexts/AuthContext";
+import { getUser } from "@/lib/firebase/users";
 import {
   DashboardCard,
   DashboardCardContent,
@@ -26,12 +28,32 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!authLoading && user) {
+  const checkOnboardingAndRedirect = useCallback(
+    async (user?: User) => {
+      if (!user) return;
+
+      try {
+        const userData = await getUser(user.uid);
+
+        if (!userData?.onboardingCompleted) {
+          router.push("/onboarding/step-1");
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking onboarding status:", error);
+      }
+
       const redirect = searchParams.get("redirect") || "/dashboard";
       router.push(redirect);
+    },
+    [router, searchParams]
+  );
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      checkOnboardingAndRedirect(user);
     }
-  }, [user, authLoading, router, searchParams]);
+  }, [user, authLoading, checkOnboardingAndRedirect]);
 
   useEffect(() => {
     if (error) {
@@ -49,8 +71,7 @@ function LoginForm() {
       setError(error);
       setIsLoading(false);
     } else if (user) {
-      const redirect = searchParams.get("redirect") || "/dashboard";
-      router.push(redirect);
+      await checkOnboardingAndRedirect(user);
     }
   };
 
@@ -63,7 +84,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-muted p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-b from-background to-muted p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Logo className="justify-center mb-4" href={"/"} size="xl" />
@@ -72,7 +93,6 @@ function LoginForm() {
           </p>
         </div>
 
-        {/* Login Card */}
         <DashboardCard>
           <DashboardCardHeader className="text-center">
             <DashboardCardTitle className="justify-center">
@@ -83,7 +103,6 @@ function LoginForm() {
             </DashboardCardDescription>
           </DashboardCardHeader>
           <DashboardCardContent className="space-y-4">
-            {/* Google Sign In Button */}
             <GoogleSsoButton
               onClick={handleGoogleSignIn}
               isLoading={isLoading}
@@ -91,7 +110,6 @@ function LoginForm() {
           </DashboardCardContent>
         </DashboardCard>
 
-        {/* Terms & Privacy */}
         <p className="text-center text-sm text-muted-foreground mt-6">
           בהתחברות, אתה מסכים ל
           <Link

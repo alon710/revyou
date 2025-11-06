@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 import { NavbarContainer } from "./NavbarContainer";
-import { AccountBusinessSwitcher } from "@/components/dashboard/utils/AccountBusinessSwitcher";
 import { useNavigation } from "@/hooks/useNavigation";
 import { AuthButton } from "@/components/auth/AuthButton";
 
@@ -12,12 +11,12 @@ export function UnifiedNavbar({
 }: {
   variant: "landing" | "dashboard";
 }) {
-  const { user, navItems, scrollToSection, isActive } = useNavigation(variant);
+  const { navItems, scrollToSection, isActive } = useNavigation(variant);
 
   return (
     <NavbarContainer>
       <div className="shrink-0 pl-2">
-        <Logo href={user ? "/dashboard/businesses" : "/"} />
+        <Logo href="/dashboard" />
       </div>
 
       <nav className="hidden md:flex items-center flex-1 justify-center h-full gap-1">
@@ -58,8 +57,7 @@ export function UnifiedNavbar({
       </nav>
 
       <div className="flex items-center gap-2 shrink-0 pr-2">
-        {variant === "dashboard" && user && <AccountBusinessSwitcher />}
-        <AuthButton showAccountButton={variant === "landing"} />
+        <AuthButton variant={variant} />
       </div>
     </NavbarContainer>
   );

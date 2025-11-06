@@ -14,6 +14,7 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const accountId = searchParams.get("accountId");
+    const onboarding = searchParams.get("onboarding") === "true";
     const reconnect = accountId !== null;
 
     const userDoc = await adminDb.collection("users").doc(userId).get();
@@ -24,6 +25,7 @@ export async function GET(request: Request) {
         userId,
         reconnect,
         accountId: accountId || null,
+        onboarding,
       })
     ).toString("base64");
 

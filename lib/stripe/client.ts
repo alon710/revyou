@@ -27,13 +27,19 @@ function getPayments(): StripePayments {
   return paymentsInstance;
 }
 
-export async function createSubscriptionCheckout(priceId: string) {
+export async function createSubscriptionCheckout(
+  priceId: string,
+  options?: {
+    success_url?: string;
+    cancel_url?: string;
+  }
+) {
   const payments = getPayments();
 
   return createCheckoutSession(payments, {
     price: priceId,
-    success_url: `${window.location.origin}/dashboard`,
-    cancel_url: `${window.location.origin}/`,
+    success_url: options?.success_url || `${window.location.origin}/dashboard`,
+    cancel_url: options?.cancel_url || `${window.location.origin}/`,
     allow_promotion_codes: true,
   });
 }

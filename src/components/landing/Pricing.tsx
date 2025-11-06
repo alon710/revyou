@@ -120,29 +120,24 @@ export function Pricing() {
     return (
       <div>
         <div className="container mx-auto px-6 sm:px-8 lg:px-12">
-          {/* Header skeleton */}
           <div className="text-center mb-12">
             <Skeleton className="h-12 w-96 mx-auto mb-4" />
             <Skeleton className="h-6 w-80 mx-auto mb-8" />
             <Skeleton className="h-10 w-48 mx-auto" />
           </div>
 
-          {/* 3 pricing cards skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {[1, 2, 3].map((i) => (
               <Card
                 key={i}
                 className="relative p-8 flex flex-col rounded-lg border border-border/40 shadow-sm"
               >
-                {/* Badge placeholder */}
                 <Skeleton className="h-6 w-16 mb-4" />
 
-                {/* Plan info */}
                 <div className="mb-6">
                   <Skeleton className="h-8 w-24 mb-2" />
                   <Skeleton className="h-4 w-full mb-4" />
 
-                  {/* Price section */}
                   <div className="flex flex-col gap-2">
                     <Skeleton className="h-4 w-20" />
                     <Skeleton className="h-12 w-32" />
@@ -150,17 +145,15 @@ export function Pricing() {
                   </div>
                 </div>
 
-                {/* Features list */}
-                <div className="space-y-3 mb-8 flex-grow">
+                <div className="space-y-3 mb-8 grow">
                   {[1, 2, 3, 4, 5].map((j) => (
                     <div key={j} className="flex items-start gap-2">
-                      <Skeleton className="h-5 w-5 rounded-full flex-shrink-0" />
+                      <Skeleton className="h-5 w-5 rounded-full shrink-0" />
                       <Skeleton className="h-4 flex-1" />
                     </div>
                   ))}
                 </div>
 
-                {/* CTA Button */}
                 <Skeleton className="h-10 w-full rounded-md" />
               </Card>
             ))}
@@ -215,7 +208,7 @@ export function Pricing() {
                   key={product.id}
                   className={`relative p-8 flex flex-col rounded-lg group text-card-foreground touch-manipulation ${
                     product.recommended
-                      ? "border-2 border-primary shadow-2xl bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5"
+                      ? "border-2 border-primary shadow-2xl bg-linear-to-br from-primary/15 via-primary/10 to-primary/5"
                       : "border border-border/40 shadow-lg bg-card"
                   }`}
                   initial={{ opacity: 0, y: 20, scale: 0.9 }}
@@ -244,8 +237,8 @@ export function Pricing() {
                   <motion.div
                     className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
                       product.recommended
-                        ? "bg-gradient-to-br from-primary/15 via-primary/8 to-primary/15"
-                        : "bg-gradient-to-br from-primary/5 via-transparent to-primary/10"
+                        ? "bg-linear-to-br from-primary/15 via-primary/8 to-primary/15"
+                        : "bg-linear-to-br from-primary/5 via-transparent to-primary/10"
                     }`}
                     initial={false}
                   />
@@ -313,7 +306,7 @@ export function Pricing() {
                     </motion.div>
                   </div>
 
-                  <ul className="space-y-3 mb-8 flex-grow">
+                  <ul className="space-y-3 mb-8 grow">
                     {FEATURE_CONFIGS.map((featureConfig, featureIndex) => {
                       const value = product.features[featureConfig.key];
                       const formattedValue = formatFeatureValue(
@@ -340,12 +333,12 @@ export function Pricing() {
                         >
                           {isBoolean ? (
                             isEnabled ? (
-                              <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                              <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                             ) : (
-                              <X className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                              <X className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                             )
                           ) : (
-                            <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                            <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                           )}
                           <span
                             className={`text-sm ${

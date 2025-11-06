@@ -78,7 +78,12 @@ export async function getAllUserBusinesses(
 
     for (const accountDoc of accountsSnapshot.docs) {
       const businesses = await getAccountBusinesses(userId, accountDoc.id);
-      allBusinesses.push(...businesses);
+      // Add accountId to each business
+      const businessesWithAccountId = businesses.map((business) => ({
+        ...business,
+        accountId: accountDoc.id,
+      }));
+      allBusinesses.push(...businessesWithAccountId);
     }
 
     return allBusinesses;
@@ -113,13 +118,52 @@ export async function getBusiness(
     if (businessSnap.exists()) {
       const data = businessSnap.data();
       const validated = businessSchema.parse({ id: businessSnap.id, ...data });
-      return validated as Business;
+      return { ...validated, accountId } as Business;
     }
 
     return null;
   } catch (error) {
     console.error("Error fetching business:", error);
     throw new Error("לא ניתן לטעון את פרטי העסק");
+  }
+}
+
+// Get business by ID (searches across all accounts)
+export async function getBusinessById(
+  userId: string,
+  businessId: string
+): Promise<Business | null> {
+  if (!db) {
+    console.error("Firestore not initialized");
+    return null;
+  }
+
+  try {
+    const businesses = await getAllUserBusinesses(userId);
+    const business = businesses.find((b) => b.id === businessId);
+    return business || null;
+  } catch (error) {
+    console.error("Error fetching business by ID:", error);
+    throw new Error("לא ניתן לטעון את פרטי העסק");
+  }
+}
+
+export async function isBusinessAlreadyConnected(
+  userId: string,
+  googleBusinessId: string
+): Promise<boolean> {
+  if (!db) {
+    throw new Error("Firestore not initialized");
+  }
+
+  try {
+    const allBusinesses = await getAllUserBusinesses(userId);
+    return allBusinesses.some(
+      (business) => business.googleBusinessId === googleBusinessId
+    );
+  } catch (error) {
+    console.error("Error checking for duplicate business:", error);
+    throw new Error("לא ניתן לבדוק אם העסק כבר מחובר");
   }
 }
 

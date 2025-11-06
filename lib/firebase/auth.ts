@@ -37,36 +37,45 @@ export async function signInWithGoogle() {
         displayName: user.displayName || "User",
         photoURL: user.photoURL || "",
         createdAt: serverTimestamp(),
+        onboardingCompleted: false,
       };
-
-      console.log("Creating new user document with data:", newUserData);
 
       try {
         await setDoc(userDocRef, newUserData);
-        console.log("User document created successfully");
       } catch (createError) {
-        console.error("Failed to create user document:", createError);
         throw createError;
       }
     }
 
     try {
       const idToken = await user.getIdToken();
-      await fetch("/api/auth/session", {
+
+      const response = await fetch("/api/auth/session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ idToken }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          `Session creation failed: ${errorData.error || response.statusText}`
+        );
+      }
+
+      await response.json();
     } catch (sessionError) {
-      console.error("Error creating session cookie:", sessionError);
+      console.error("Session creation error:", sessionError);
+      throw new Error("לא ניתן ליצור הרשאה. אנא נסה להתחבר שוב.");
     }
 
     return { user, error: null };
   } catch (error) {
-    console.error("Error signing in with Google:", error);
-    return { user: null, error: "אירעה שגיאה בהתחברות עם גוגל" };
+    const errorMessage =
+      error instanceof Error ? error.message : "אירעה שגיאה בהתחברות עם גוגל";
+    return { user: null, error: errorMessage };
   }
 }
 
@@ -85,34 +94,16 @@ export async function signOut() {
 
       if (!response.ok) {
         sessionDeletionFailed = true;
-        let responseBody;
-        try {
-          responseBody = await response.json();
-        } catch {
-          responseBody = await response.text();
-        }
-        console.error("Session deletion failed:", {
-          status: response.status,
-          statusText: response.statusText,
-          body: responseBody,
-        });
       }
     } catch (sessionError) {
+      console.error("Session deletion error:", sessionError);
       sessionDeletionFailed = true;
-      console.error("Session deletion request failed:", {
-        error: sessionError,
-        message:
-          sessionError instanceof Error
-            ? sessionError.message
-            : "Unknown error",
-        stack: sessionError instanceof Error ? sessionError.stack : undefined,
-      });
     }
 
     await firebaseSignOut(auth);
     return { error: null, sessionDeletionFailed };
   } catch (error) {
-    console.error("Error signing out:", error);
+    console.error("Sign out error:", error);
     return { error: "אירעה שגיאה בהתנתקות", sessionDeletionFailed };
   }
 }

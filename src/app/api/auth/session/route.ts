@@ -36,9 +36,10 @@ export async function POST(request: NextRequest) {
       userId: decodedToken.uid,
     });
   } catch (error) {
-    console.error("Error creating session cookie:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to create session" },
+      { error: `Failed to create session: ${errorMessage}` },
       { status: 401 }
     );
   }
@@ -51,7 +52,7 @@ export async function DELETE() {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting session cookie:", error);
+    console.error("Failed to delete session:", error);
     return NextResponse.json(
       { error: "Failed to delete session" },
       { status: 500 }

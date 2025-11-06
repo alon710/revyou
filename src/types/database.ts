@@ -28,6 +28,7 @@ export interface User {
   stripeLink?: string;
   selectedAccountId?: string;
   selectedBusinessId?: string;
+  onboardingCompleted?: boolean;
 }
 
 export interface StarConfig {
@@ -71,6 +72,7 @@ export interface GoogleBusinessProfileBusiness {
 
 export interface Business {
   id: string;
+  accountId: string;
   googleBusinessId: string;
   name: string;
   address: string;

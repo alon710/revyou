@@ -18,9 +18,6 @@ interface UseUserStatsReturn {
   refetch: () => Promise<void>;
 }
 
-/**
- * Calculate usage percentages for businesses and reviews
- */
 export function getUsagePercentages(
   currentBusiness: number,
   currentReviews: number,

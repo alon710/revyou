@@ -14,20 +14,27 @@ export const runtime = "nodejs";
 const redirectToBusinesses = (
   success?: boolean,
   errorMessage?: string,
-  accountId?: string
+  accountId?: string,
+  onboarding?: boolean
 ) => {
-  const baseUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/businesses/connect`;
-  let url = baseUrl;
-
-  if (success === true) {
-    url = accountId
-      ? `${baseUrl}?success=true&accountId=${accountId}`
-      : `${baseUrl}?success=true`;
-  } else if (errorMessage) {
-    url = `${baseUrl}?error=${encodeURIComponent(errorMessage)}`;
+  if (onboarding && success && accountId) {
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/step-3?accountId=${accountId}`;
+    return NextResponse.redirect(url);
   }
 
-  return NextResponse.redirect(url);
+  if (success && accountId) {
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/step-3?accountId=${accountId}`;
+    return NextResponse.redirect(url);
+  }
+
+  const baseUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`;
+  if (errorMessage) {
+    return NextResponse.redirect(
+      `${baseUrl}?error=${encodeURIComponent(errorMessage)}`
+    );
+  }
+
+  return NextResponse.redirect(baseUrl);
 };
 
 export async function GET(request: NextRequest) {
@@ -48,6 +55,7 @@ export async function GET(request: NextRequest) {
     const stateUserId = stateData?.userId;
     const reconnect = stateData?.reconnect || false;
     const existingAccountId = stateData?.accountId;
+    const onboarding = stateData?.onboarding || false;
 
     if (!stateUserId) {
       return redirectToBusinesses(false, "מזהה משתמש לא תקין. אנא נסה שוב.");
@@ -128,7 +136,7 @@ export async function GET(request: NextRequest) {
       await updateUserSelectedAccount(authenticatedUserId, accountId);
     }
 
-    return redirectToBusinesses(true, undefined, accountId);
+    return redirectToBusinesses(true, undefined, accountId, onboarding);
   } catch (error) {
     console.error("Error in OAuth callback", error);
     return redirectToBusinesses(
