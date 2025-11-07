@@ -83,7 +83,7 @@ if (!PROJECT_ID) {
 }
 
 interface PubSubNotificationData {
-  type: "NEW_REVIEW";
+  type: "NEW_REVIEW" | "UPDATED_REVIEW";
   review: string;
   location: string;
 }

@@ -15,7 +15,7 @@ const googleClientId = defineSecret("GOOGLE_CLIENT_ID");
 const googleClientSecret = defineSecret("GOOGLE_CLIENT_SECRET");
 
 interface PubSubNotificationData {
-  type: "NEW_REVIEW";
+  type: "NEW_REVIEW" | "UPDATED_REVIEW";
   review: string;
   location: string;
 }
@@ -111,8 +111,11 @@ export const onGoogleReviewNotification = onMessagePublished(
         location: locationName,
       } = notification;
 
-      if (notificationType !== "NEW_REVIEW") {
-        console.log("Ignoring non-new-review notification:", notificationType);
+      if (
+        notificationType !== "NEW_REVIEW" &&
+        notificationType !== "UPDATED_REVIEW"
+      ) {
+        console.log("Ignoring non-review notification:", notificationType);
         return;
       }
 

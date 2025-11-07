@@ -31,6 +31,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, alreadySubscribed: true });
     }
 
+    if (!account.googleRefreshToken) {
+      console.error("Missing Google refresh token for accountId:", accountId);
+      return NextResponse.json(
+        { error: "Missing Google refresh token" },
+        { status: 400 }
+      );
+    }
+
     const businesses = await getAccountBusinessesAdmin(userId, accountId);
     if (businesses.length === 0) {
       return NextResponse.json(
