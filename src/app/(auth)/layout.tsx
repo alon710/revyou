@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loading } from "@/components/ui/loading";
 
@@ -11,15 +11,13 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { user, loading } = useAuth();
 
   useEffect(() => {
     if (!loading && user) {
-      const redirect = searchParams.get("redirect") || "/dashboard";
-      router.push(redirect);
+      router.push("/dashboard");
     }
-  }, [user, loading, router, searchParams]);
+  }, [user, loading, router]);
 
   if (loading) {
     return <Loading fullScreen />;
