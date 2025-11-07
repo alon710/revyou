@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { ReviewsController } from "@/lib/controllers";
-import { BusinessesController } from "@/lib/controllers";
 import { AccountsController } from "@/lib/controllers";
 import { postReviewReply } from "@/lib/google/reviews";
 
@@ -61,10 +60,6 @@ export async function POST(
     // Get account for OAuth token
     const accountController = new AccountsController(userId);
     const account = await accountController.getAccount(accountId);
-
-    // Get business for Google Business ID
-    const businessController = new BusinessesController(userId, accountId);
-    const business = await businessController.getBusiness(businessId);
 
     // Post reply to Google
     await postReviewReply({

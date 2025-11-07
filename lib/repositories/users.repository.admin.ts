@@ -42,7 +42,7 @@ export class UsersRepositoryAdmin extends BaseRepository<
    * Create operation not typically used
    * Users are created through Firebase Auth
    */
-  async create(data: UserCreate): Promise<User> {
+  async create(_data: UserCreate): Promise<User> {
     throw new Error(
       "User creation should be handled by Firebase Auth, not directly"
     );
@@ -70,7 +70,7 @@ export class UsersRepositoryAdmin extends BaseRepository<
   /**
    * Delete operation not typically used for users
    */
-  async delete(userId: string): Promise<void> {
+  async delete(_userId: string): Promise<void> {
     throw new Error(
       "User deletion should be handled by Firebase Auth, not directly"
     );
