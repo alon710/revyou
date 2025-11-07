@@ -78,7 +78,7 @@ export async function getAllUserBusinesses(
 
     for (const accountDoc of accountsSnapshot.docs) {
       const businesses = await getAccountBusinesses(userId, accountDoc.id);
-      // Add accountId to each business
+
       const businessesWithAccountId = businesses.map((business) => ({
         ...business,
         accountId: accountDoc.id,
@@ -128,7 +128,6 @@ export async function getBusiness(
   }
 }
 
-// Get business by ID (searches across all accounts)
 export async function getBusinessById(
   userId: string,
   businessId: string

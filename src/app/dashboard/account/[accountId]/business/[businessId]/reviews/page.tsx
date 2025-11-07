@@ -35,7 +35,6 @@ export default function BusinessReviewsPage({
       setLoading(true);
       setError(null);
 
-      // Fetch business using new API
       const businessResponse = await fetch(
         `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`
       );
@@ -47,7 +46,6 @@ export default function BusinessReviewsPage({
       const { business: biz } = await businessResponse.json();
       setBusiness(biz);
 
-      // Fetch reviews using new API with filters
       const reviewsResponse = await fetch(
         `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}/reviews?orderBy=receivedAt&orderDirection=desc`
       );

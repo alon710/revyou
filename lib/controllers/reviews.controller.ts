@@ -7,10 +7,6 @@ import type {
 import { ReviewsRepositoryAdmin } from "@/lib/repositories/reviews.repository.admin";
 import { BaseController } from "./base.controller";
 
-/**
- * Reviews Controller
- * Handles business logic for review operations
- */
 export class ReviewsController extends BaseController<
   ReviewCreate,
   Review,
@@ -32,9 +28,6 @@ export class ReviewsController extends BaseController<
     this.businessId = businessId;
   }
 
-  /**
-   * Get reviews with optional filters
-   */
   async getReviews(filters: ReviewFilters = {}): Promise<Review[]> {
     return this.handleError(
       () => this.repository.list(filters),
@@ -42,16 +35,10 @@ export class ReviewsController extends BaseController<
     );
   }
 
-  /**
-   * Get a single review by ID
-   */
   async getReview(reviewId: string): Promise<Review> {
     return this.ensureExists(reviewId, "Review");
   }
 
-  /**
-   * Update a review
-   */
   async updateReview(reviewId: string, data: ReviewUpdate): Promise<Review> {
     return this.handleError(async () => {
       await this.ensureExists(reviewId, "Review");
@@ -59,9 +46,6 @@ export class ReviewsController extends BaseController<
     }, "Failed to update review");
   }
 
-  /**
-   * Update AI-generated reply for a review
-   */
   async updateAiReply(reviewId: string, aiReply: string): Promise<Review> {
     const repo = this.repository as ReviewsRepositoryAdmin;
     return this.handleError(
@@ -70,9 +54,6 @@ export class ReviewsController extends BaseController<
     );
   }
 
-  /**
-   * Mark review reply as posted
-   */
   async markAsPosted(
     reviewId: string,
     postedReply: string,
@@ -85,9 +66,6 @@ export class ReviewsController extends BaseController<
     );
   }
 
-  /**
-   * Mark review reply as rejected
-   */
   async markAsRejected(reviewId: string): Promise<Review> {
     const repo = this.repository as ReviewsRepositoryAdmin;
     return this.handleError(
@@ -96,17 +74,11 @@ export class ReviewsController extends BaseController<
     );
   }
 
-  /**
-   * Find review by Google review ID
-   */
   async findByGoogleReviewId(googleReviewId: string): Promise<Review | null> {
     const repo = this.repository as ReviewsRepositoryAdmin;
     return repo.findByGoogleReviewId(googleReviewId);
   }
 
-  /**
-   * Create a new review (typically called from webhooks/Cloud Functions)
-   */
   async createReview(data: ReviewCreate): Promise<Review> {
     return this.handleError(
       () => this.repository.create(data),

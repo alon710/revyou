@@ -2,10 +2,6 @@ import type { UserCreate, User, UserUpdate } from "@/lib/types";
 import { UsersRepositoryAdmin } from "@/lib/repositories/users.repository.admin";
 import { BaseController } from "./base.controller";
 
-/**
- * Users Controller
- * Handles business logic for user operations
- */
 export class UsersController extends BaseController<
   UserCreate,
   User,
@@ -16,16 +12,10 @@ export class UsersController extends BaseController<
     super(repository);
   }
 
-  /**
-   * Get a user by UID
-   */
   async getUser(userId: string): Promise<User> {
     return this.ensureExists(userId, "User");
   }
 
-  /**
-   * Update a user
-   */
   async updateUser(userId: string, data: UserUpdate): Promise<User> {
     return this.handleError(async () => {
       await this.ensureExists(userId, "User");
@@ -33,9 +23,6 @@ export class UsersController extends BaseController<
     }, "Failed to update user");
   }
 
-  /**
-   * Update selected account for a user
-   */
   async updateSelectedAccount(
     userId: string,
     accountId: string
@@ -47,9 +34,6 @@ export class UsersController extends BaseController<
     );
   }
 
-  /**
-   * Update selected business for a user
-   */
   async updateSelectedBusiness(
     userId: string,
     businessId: string

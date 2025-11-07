@@ -9,18 +9,6 @@ import type { BusinessCreate } from "@/lib/types";
 import { checkBusinessLimit } from "@/lib/firebase/business-limits";
 import { getDefaultBusinessConfig } from "@/lib/firebase/business-config";
 
-/**
- * GET /api/users/[userId]/accounts/[accountId]/businesses
- * List businesses with optional filtering
- *
- * Query parameters:
- * - ids: string[] - Filter by specific business IDs
- * - connected: boolean - Filter by connection status
- * - limit: number - Maximum number of businesses to return
- * - offset: number - Number of businesses to skip
- * - orderBy: BusinessSortField - Field to sort by (connectedAt, name)
- * - orderDirection: 'asc' | 'desc' - Sort direction
- */
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string; accountId: string }> }
@@ -36,7 +24,6 @@ export async function GET(
       );
     }
 
-    // Parse filters (ONE-LINER!)
     const filters = parseSearchParams(
       req.nextUrl.searchParams,
       businessFiltersSchema
@@ -61,17 +48,6 @@ export async function GET(
   }
 }
 
-/**
- * POST /api/users/[userId]/accounts/[accountId]/businesses
- * Create a new business
- *
- * Body: Partial<BusinessCreate> with required fields:
- * - googleBusinessId: string
- * - name: string
- * - address: string
- * - config?: Partial<BusinessConfig>
- * - emailOnNewReview?: boolean
- */
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string; accountId: string }> }
@@ -89,7 +65,6 @@ export async function POST(
 
     const body = await req.json();
 
-    // Check business limit (subscription-based)
     const canCreate = await checkBusinessLimit(userId);
     if (!canCreate) {
       return NextResponse.json(
@@ -101,7 +76,6 @@ export async function POST(
       );
     }
 
-    // Merge default config with provided config
     const defaultConfig = getDefaultBusinessConfig();
     const businessConfig = {
       ...defaultConfig,

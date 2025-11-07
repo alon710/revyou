@@ -1,13 +1,8 @@
-/**
- * Generic sort options structure
- * All sort options are always optional
- */
 export interface SortOptions<T extends string> {
   orderBy: T;
   orderDirection: "asc" | "desc";
 }
 
-// Entity-specific sort field types
 export type ReviewSortField = "receivedAt" | "rating" | "date";
 export type ReviewSortOptions = SortOptions<ReviewSortField>;
 

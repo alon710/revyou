@@ -9,11 +9,6 @@ import { firestorePaths } from "@/lib/utils/firestore-paths";
 import { AdminQueryBuilder } from "@/lib/utils/query-builder";
 import { BaseRepository } from "./base.repository";
 
-/**
- * Businesses Repository (Admin SDK)
- * Handles all business CRUD operations using Firebase Admin SDK
- * Used in API routes and Cloud Functions
- */
 export class BusinessesRepositoryAdmin extends BaseRepository<
   BusinessCreate,
   Business,
@@ -28,9 +23,6 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
     this.accountId = accountId;
   }
 
-  /**
-   * Get a single business by ID
-   */
   async get(businessId: string): Promise<Business | null> {
     const businessRef = adminDb.doc(`${this.basePath}/${businessId}`);
     const snapshot = await businessRef.get();
@@ -43,9 +35,6 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
     } as Business;
   }
 
-  /**
-   * List businesses with optional filtering
-   */
   async list(filters: BusinessFilters = {}): Promise<Business[]> {
     const collectionRef = adminDb.collection(this.basePath);
     const q = AdminQueryBuilder.buildBusinessQuery(collectionRef, filters);
@@ -56,7 +45,6 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
       ...doc.data(),
     })) as Business[];
 
-    // Apply client-side filters
     if (filters.ids) {
       const idSet = new Set(filters.ids);
       businesses = businesses.filter((b) => idSet.has(b.id));
@@ -69,13 +57,9 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
     return businesses;
   }
 
-  /**
-   * Create a new business
-   */
   async create(data: BusinessCreate): Promise<Business> {
     const collectionRef = adminDb.collection(this.basePath);
 
-    // Add system fields
     const businessData = {
       ...data,
       connected: true,
@@ -90,9 +74,6 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
     return created;
   }
 
-  /**
-   * Update an existing business
-   */
   async update(businessId: string, data: BusinessUpdate): Promise<Business> {
     const businessRef = adminDb.doc(`${this.basePath}/${businessId}`);
     await businessRef.update(data as { [key: string]: any });
@@ -103,25 +84,16 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
     return updated;
   }
 
-  /**
-   * Delete a business
-   */
   async delete(businessId: string): Promise<void> {
     const businessRef = adminDb.doc(`${this.basePath}/${businessId}`);
     await businessRef.delete();
   }
 
-  /**
-   * Check if a business with given googleBusinessId already exists
-   */
   async existsByGoogleId(googleBusinessId: string): Promise<boolean> {
     const businesses = await this.list({});
     return businesses.some((b) => b.googleBusinessId === googleBusinessId);
   }
 
-  /**
-   * Find business by Google Business ID
-   */
   async findByGoogleBusinessId(
     googleBusinessId: string
   ): Promise<Business | null> {
@@ -139,9 +111,6 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
     } as Business;
   }
 
-  /**
-   * Disconnect a business (mark as not connected)
-   */
   async disconnect(businessId: string): Promise<Business> {
     return this.update(businessId, {
       connected: false,

@@ -3,10 +3,6 @@ import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { AccountsController } from "@/lib/controllers";
 import type { AccountUpdate } from "@/lib/types";
 
-/**
- * GET /api/users/[userId]/accounts/[accountId]
- * Get a single account by ID
- */
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string; accountId: string }> }
@@ -43,12 +39,6 @@ export async function GET(
   }
 }
 
-/**
- * PUT /api/users/[userId]/accounts/[accountId]
- * Update an account
- *
- * Body: AccountUpdate
- */
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string; accountId: string }> }
@@ -82,11 +72,6 @@ export async function PUT(
   }
 }
 
-/**
- * DELETE /api/users/[userId]/accounts/[accountId]
- * Delete an account
- * Note: This will cascade delete all businesses and reviews
- */
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string; accountId: string }> }

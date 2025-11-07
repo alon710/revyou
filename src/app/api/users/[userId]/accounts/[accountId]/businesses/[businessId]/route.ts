@@ -3,10 +3,6 @@ import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { BusinessesController } from "@/lib/controllers";
 import type { BusinessUpdate } from "@/lib/types";
 
-/**
- * GET /api/users/[userId]/accounts/[accountId]/businesses/[businessId]
- * Get a single business by ID
- */
 export async function GET(
   req: NextRequest,
   {
@@ -47,12 +43,6 @@ export async function GET(
   }
 }
 
-/**
- * PUT /api/users/[userId]/accounts/[accountId]/businesses/[businessId]
- * Update a business
- *
- * Body: BusinessUpdate
- */
 export async function PUT(
   req: NextRequest,
   {
@@ -90,10 +80,6 @@ export async function PUT(
   }
 }
 
-/**
- * DELETE /api/users/[userId]/accounts/[accountId]/businesses/[businessId]
- * Delete a business
- */
 export async function DELETE(
   req: NextRequest,
   {

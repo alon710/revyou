@@ -2,11 +2,6 @@ import { adminDb } from "@/lib/firebase/admin";
 import type { UserCreate, User, UserUpdate } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 
-/**
- * Users Repository (Admin SDK)
- * Handles all user CRUD operations using Firebase Admin SDK
- * Used in API routes and Cloud Functions
- */
 export class UsersRepositoryAdmin extends BaseRepository<
   UserCreate,
   User,
@@ -16,9 +11,6 @@ export class UsersRepositoryAdmin extends BaseRepository<
     super("users");
   }
 
-  /**
-   * Get a single user by UID
-   */
   async get(userId: string): Promise<User | null> {
     const userRef = adminDb.doc(`${this.basePath}/${userId}`);
     const snapshot = await userRef.get();
@@ -31,26 +23,16 @@ export class UsersRepositoryAdmin extends BaseRepository<
     } as User;
   }
 
-  /**
-   * List operation not typically used for users
-   */
   async list(): Promise<User[]> {
     throw new Error("List operation not supported for users");
   }
 
-  /**
-   * Create operation not typically used
-   * Users are created through Firebase Auth
-   */
   async create(_data: UserCreate): Promise<User> {
     throw new Error(
       "User creation should be handled by Firebase Auth, not directly"
     );
   }
 
-  /**
-   * Update an existing user
-   */
   async update(userId: string, data: UserUpdate): Promise<User> {
     const userRef = adminDb.doc(`${this.basePath}/${userId}`);
 
@@ -67,18 +49,12 @@ export class UsersRepositoryAdmin extends BaseRepository<
     return updated;
   }
 
-  /**
-   * Delete operation not typically used for users
-   */
   async delete(_userId: string): Promise<void> {
     throw new Error(
       "User deletion should be handled by Firebase Auth, not directly"
     );
   }
 
-  /**
-   * Update selected account
-   */
   async updateSelectedAccount(
     userId: string,
     accountId: string
@@ -88,9 +64,6 @@ export class UsersRepositoryAdmin extends BaseRepository<
     });
   }
 
-  /**
-   * Update selected business
-   */
   async updateSelectedBusiness(
     userId: string,
     businessId: string

@@ -5,10 +5,6 @@ import { BusinessesController } from "@/lib/controllers";
 import { generateAIReply } from "@/lib/ai/gemini";
 import { buildReplyPrompt } from "@/lib/ai/prompts/builder";
 
-/**
- * POST /api/users/[userId]/accounts/[accountId]/businesses/[businessId]/reviews/[reviewId]/generate
- * Generate AI reply for a review
- */
 export async function POST(
   req: NextRequest,
   {
@@ -33,7 +29,6 @@ export async function POST(
       );
     }
 
-    // Get review
     const reviewController = new ReviewsController(
       userId,
       accountId,
@@ -41,11 +36,9 @@ export async function POST(
     );
     const review = await reviewController.getReview(reviewId);
 
-    // Get business config
     const businessController = new BusinessesController(userId, accountId);
     const business = await businessController.getBusiness(businessId);
 
-    // Build prompt and generate AI reply
     const prompt = buildReplyPrompt(
       business.config,
       review,
@@ -54,7 +47,6 @@ export async function POST(
     );
     const aiReply = await generateAIReply(prompt);
 
-    // Update review with AI reply
     const updatedReview = await reviewController.updateAiReply(
       reviewId,
       aiReply

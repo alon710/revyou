@@ -148,7 +148,6 @@ async function seedPubSubNotification() {
     const businessData = businessDoc.data();
     console.log(`✅ Business found: ${businessData?.name || BUSINESS_ID}`);
 
-    // Get the googleBusinessId (which is the locationName)
     const googleBusinessId = businessData?.googleBusinessId;
     if (!googleBusinessId) {
       console.error(

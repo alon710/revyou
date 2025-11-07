@@ -1,5 +1,3 @@
-// Business configuration types
-
 export type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";
 export type LanguageMode = "hebrew" | "english" | "auto-detect";
 

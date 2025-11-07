@@ -30,7 +30,6 @@ export default function BusinessSettingsPage({
     try {
       setLoading(true);
 
-      // Fetch business using new API
       const response = await fetch(
         `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`
       );

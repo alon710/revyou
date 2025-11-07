@@ -32,7 +32,6 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       setLoading(true);
       setError(null);
 
-      // Fetch business
       const businessResponse = await fetch(
         `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`
       );
@@ -44,7 +43,6 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       const { business: biz } = await businessResponse.json();
       setBusiness(biz);
 
-      // Fetch review
       const reviewResponse = await fetch(
         `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}/reviews/${reviewId}`
       );

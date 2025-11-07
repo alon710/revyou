@@ -2,8 +2,8 @@ import { Timestamp } from "firebase/firestore";
 import { BusinessConfig } from "./business-config.types";
 
 export interface BusinessCreate {
-  userId: string; // Parent reference
-  accountId: string; // Parent reference
+  userId: string;
+  accountId: string;
   googleBusinessId: string;
   name: string;
   address: string;
@@ -33,7 +33,6 @@ export interface BusinessUpdate {
   connected?: boolean;
 }
 
-// Google Business Profile API response type
 export interface GoogleBusinessProfileBusiness {
   accountId: string;
   id: string;

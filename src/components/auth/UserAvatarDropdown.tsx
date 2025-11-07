@@ -35,7 +35,6 @@ export function UserAvatarDropdown() {
     return null;
   }
 
-  // Get user initials from display name or email
   const getInitials = () => {
     if (user.displayName) {
       return user.displayName

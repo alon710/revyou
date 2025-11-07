@@ -1,22 +1,12 @@
 import { z } from "zod";
 import { ReviewFilters, BusinessFilters, AccountFilters } from "@/lib/types";
 
-/**
- * Parses and validates URLSearchParams using a Zod schema
- * Handles arrays, type coercion, and default values
- *
- * @example
- * // In API route:
- * const filters = parseSearchParams(req.nextUrl.searchParams, reviewFiltersSchema)
- * // Returns fully typed and validated ReviewFilters object
- */
 export function parseSearchParams<T>(
   params: URLSearchParams,
   schema: z.ZodType<T, any, any>
 ): T {
   const obj: Record<string, any> = {};
 
-  // Build object from URLSearchParams
   for (const key of Array.from(new Set(params.keys()))) {
     const values = params.getAll(key);
     obj[key] = values.length === 1 ? values[0] : values;
@@ -25,10 +15,6 @@ export function parseSearchParams<T>(
   return schema.parse(obj);
 }
 
-/**
- * Helper to normalize array values from query params
- * Converts single values to arrays, handles comma-separated strings
- */
 const arrayTransform = <T>(
   value: string | string[] | undefined,
   transform?: (v: string) => T
@@ -39,12 +25,6 @@ const arrayTransform = <T>(
   return transform ? arr.map(transform) : (arr as unknown as T[]);
 };
 
-/**
- * Zod schema for parsing review filter query parameters
- *
- * @example
- * GET /api/.../reviews?replyStatus=pending&replyStatus=posted&rating=1&rating=2&limit=20&orderBy=receivedAt&orderDirection=desc
- */
 export const reviewFiltersSchema = z
   .object({
     ids: z.union([z.string(), z.array(z.string())]).optional(),
@@ -65,24 +45,20 @@ export const reviewFiltersSchema = z
   .transform((data) => {
     const filters: ReviewFilters = {};
 
-    // Handle IDs
     if (data.ids) {
       filters.ids = arrayTransform(data.ids);
     }
 
-    // Handle reply status
     if (data.replyStatus) {
       filters.replyStatus = arrayTransform(
         data.replyStatus
       ) as ReviewFilters["replyStatus"];
     }
 
-    // Handle ratings (convert strings to numbers)
     if (data.rating) {
       filters.rating = arrayTransform(data.rating, (v) => parseInt(v, 10));
     }
 
-    // Handle dates
     if (data.dateFrom) {
       filters.dateFrom = new Date(data.dateFrom);
     }
@@ -90,7 +66,6 @@ export const reviewFiltersSchema = z
       filters.dateTo = new Date(data.dateTo);
     }
 
-    // Handle pagination
     if (data.limit) {
       filters.limit = parseInt(data.limit, 10);
     }
@@ -98,7 +73,6 @@ export const reviewFiltersSchema = z
       filters.offset = parseInt(data.offset, 10);
     }
 
-    // Handle sorting
     if (data.orderBy) {
       filters.sort = {
         orderBy: data.orderBy,
@@ -109,12 +83,6 @@ export const reviewFiltersSchema = z
     return filters;
   });
 
-/**
- * Zod schema for parsing business filter query parameters
- *
- * @example
- * GET /api/.../businesses?connected=true&limit=50&orderBy=name&orderDirection=asc
- */
 export const businessFiltersSchema = z
   .object({
     ids: z.union([z.string(), z.array(z.string())]).optional(),
@@ -153,12 +121,6 @@ export const businessFiltersSchema = z
     return filters;
   });
 
-/**
- * Zod schema for parsing account filter query parameters
- *
- * @example
- * GET /api/.../accounts?email=user@example.com&limit=50&orderBy=connectedAt&orderDirection=desc
- */
 export const accountFiltersSchema = z
   .object({
     ids: z.union([z.string(), z.array(z.string())]).optional(),

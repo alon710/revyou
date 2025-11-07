@@ -1,19 +1,10 @@
 import { BaseRepository } from "@/lib/repositories/base.repository";
 
-/**
- * Base Controller Pattern
- * Provides common business logic and error handling for all entities
- * Sits between API routes and repositories
- */
 export abstract class BaseController<TCreate, TEntity, TUpdate> {
   constructor(
     protected repository: BaseRepository<TCreate, TEntity, TUpdate>
   ) {}
 
-  /**
-   * Common error handler
-   * Wraps repository calls with consistent error handling
-   */
   protected async handleError<T>(
     operation: () => Promise<T>,
     errorMessage: string
@@ -26,10 +17,6 @@ export abstract class BaseController<TCreate, TEntity, TUpdate> {
     }
   }
 
-  /**
-   * Validate that an entity exists
-   * Throws error if not found
-   */
   protected async ensureExists(
     id: string,
     entityName: string

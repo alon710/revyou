@@ -3,10 +3,6 @@ import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { UsersController } from "@/lib/controllers";
 import type { UserUpdate } from "@/lib/types";
 
-/**
- * GET /api/users/[userId]
- * Get a user by ID
- */
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
@@ -42,12 +38,6 @@ export async function GET(
   }
 }
 
-/**
- * PUT /api/users/[userId]
- * Update a user
- *
- * Body: UserUpdate
- */
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }

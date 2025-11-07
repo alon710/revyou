@@ -7,18 +7,6 @@ import {
 } from "@/lib/utils/query-parser";
 import type { AccountCreate } from "@/lib/types";
 
-/**
- * GET /api/users/[userId]/accounts
- * List accounts with optional filtering
- *
- * Query parameters:
- * - ids: string[] - Filter by specific account IDs
- * - email: string - Filter by email address
- * - limit: number - Maximum number of accounts to return
- * - offset: number - Number of accounts to skip
- * - orderBy: AccountSortField - Field to sort by (connectedAt, email)
- * - orderDirection: 'asc' | 'desc' - Sort direction
- */
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
@@ -34,7 +22,6 @@ export async function GET(
       );
     }
 
-    // Parse filters (ONE-LINER!)
     const filters = parseSearchParams(
       req.nextUrl.searchParams,
       accountFiltersSchema
@@ -59,16 +46,6 @@ export async function GET(
   }
 }
 
-/**
- * POST /api/users/[userId]/accounts
- * Create a new account (typically during OAuth flow)
- *
- * Body: AccountCreate (without userId - will be added from params)
- * - email: string
- * - accountName: string
- * - googleRefreshToken: string
- * - googleAccountName?: string
- */
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }

@@ -9,11 +9,6 @@ import { firestorePaths } from "@/lib/utils/firestore-paths";
 import { AdminQueryBuilder } from "@/lib/utils/query-builder";
 import { BaseRepository } from "./base.repository";
 
-/**
- * Reviews Repository (Admin SDK)
- * Handles all review CRUD operations using Firebase Admin SDK
- * Used in API routes and Cloud Functions
- */
 export class ReviewsRepositoryAdmin extends BaseRepository<
   ReviewCreate,
   Review,
@@ -30,9 +25,6 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
     this.businessId = businessId;
   }
 
-  /**
-   * Get a single review by ID
-   */
   async get(reviewId: string): Promise<Review | null> {
     const reviewRef = adminDb.doc(`${this.basePath}/${reviewId}`);
     const snapshot = await reviewRef.get();
@@ -45,9 +37,6 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
     } as Review;
   }
 
-  /**
-   * List reviews with optional filtering
-   */
   async list(filters: ReviewFilters = {}): Promise<Review[]> {
     const collectionRef = adminDb.collection(this.basePath);
     const q = AdminQueryBuilder.buildReviewQuery(collectionRef, filters);
@@ -58,7 +47,6 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
       ...doc.data(),
     })) as Review[];
 
-    // Apply client-side filters
     if (filters.ids) {
       const idSet = new Set(filters.ids);
       reviews = reviews.filter((r) => idSet.has(r.id));
@@ -71,13 +59,9 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
     return reviews;
   }
 
-  /**
-   * Create a new review
-   */
   async create(data: ReviewCreate): Promise<Review> {
     const collectionRef = adminDb.collection(this.basePath);
 
-    // Add system fields
     const reviewData = {
       ...data,
       receivedAt: new Date(),
@@ -92,9 +76,6 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
     return created;
   }
 
-  /**
-   * Update an existing review
-   */
   async update(reviewId: string, data: ReviewUpdate): Promise<Review> {
     const reviewRef = adminDb.doc(`${this.basePath}/${reviewId}`);
     await reviewRef.update(data as { [key: string]: any });
@@ -105,17 +86,11 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
     return updated;
   }
 
-  /**
-   * Delete a review
-   */
   async delete(reviewId: string): Promise<void> {
     const reviewRef = adminDb.doc(`${this.basePath}/${reviewId}`);
     await reviewRef.delete();
   }
 
-  /**
-   * Update AI reply for a review
-   */
   async updateAiReply(reviewId: string, aiReply: string): Promise<Review> {
     return this.update(reviewId, {
       aiReply,
@@ -123,9 +98,6 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
     });
   }
 
-  /**
-   * Mark review reply as posted
-   */
   async markAsPosted(
     reviewId: string,
     postedReply: string,
@@ -139,18 +111,12 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
     });
   }
 
-  /**
-   * Mark review reply as rejected
-   */
   async markAsRejected(reviewId: string): Promise<Review> {
     return this.update(reviewId, {
       replyStatus: "rejected",
     });
   }
 
-  /**
-   * Find review by Google review ID
-   */
   async findByGoogleReviewId(googleReviewId: string): Promise<Review | null> {
     const collectionRef = adminDb.collection(this.basePath);
     const snapshot = await collectionRef

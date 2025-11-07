@@ -9,11 +9,6 @@ import { firestorePaths } from "@/lib/utils/firestore-paths";
 import { AdminQueryBuilder } from "@/lib/utils/query-builder";
 import { BaseRepository } from "./base.repository";
 
-/**
- * Accounts Repository (Admin SDK)
- * Handles all account CRUD operations using Firebase Admin SDK
- * Used in API routes and Cloud Functions
- */
 export class AccountsRepositoryAdmin extends BaseRepository<
   AccountCreate,
   Account,
@@ -26,9 +21,6 @@ export class AccountsRepositoryAdmin extends BaseRepository<
     this.userId = userId;
   }
 
-  /**
-   * Get a single account by ID
-   */
   async get(accountId: string): Promise<Account | null> {
     const accountRef = adminDb.doc(`${this.basePath}/${accountId}`);
     const snapshot = await accountRef.get();
@@ -41,9 +33,6 @@ export class AccountsRepositoryAdmin extends BaseRepository<
     } as Account;
   }
 
-  /**
-   * List accounts with optional filtering
-   */
   async list(filters: AccountFilters = {}): Promise<Account[]> {
     const collectionRef = adminDb.collection(this.basePath);
     const q = AdminQueryBuilder.buildAccountQuery(collectionRef, filters);
@@ -54,7 +43,6 @@ export class AccountsRepositoryAdmin extends BaseRepository<
       ...doc.data(),
     })) as Account[];
 
-    // Apply client-side filters
     if (filters.ids) {
       const idSet = new Set(filters.ids);
       accounts = accounts.filter((a) => idSet.has(a.id));
@@ -67,13 +55,9 @@ export class AccountsRepositoryAdmin extends BaseRepository<
     return accounts;
   }
 
-  /**
-   * Create a new account
-   */
   async create(data: AccountCreate): Promise<Account> {
     const collectionRef = adminDb.collection(this.basePath);
 
-    // Add system fields
     const accountData = {
       ...data,
       connectedAt: new Date(),
@@ -87,9 +71,6 @@ export class AccountsRepositoryAdmin extends BaseRepository<
     return created;
   }
 
-  /**
-   * Update an existing account
-   */
   async update(accountId: string, data: AccountUpdate): Promise<Account> {
     const accountRef = adminDb.doc(`${this.basePath}/${accountId}`);
     await accountRef.update(data as { [key: string]: any });
@@ -100,25 +81,16 @@ export class AccountsRepositoryAdmin extends BaseRepository<
     return updated;
   }
 
-  /**
-   * Delete an account
-   */
   async delete(accountId: string): Promise<void> {
     const accountRef = adminDb.doc(`${this.basePath}/${accountId}`);
     await accountRef.delete();
   }
 
-  /**
-   * Find account by email address
-   */
   async findByEmail(email: string): Promise<Account | null> {
     const accounts = await this.list({ email });
     return accounts.length > 0 ? accounts[0] : null;
   }
 
-  /**
-   * Update last synced timestamp
-   */
   async updateLastSynced(accountId: string): Promise<Account> {
     return this.update(accountId, {
       lastSynced: new Date() as any,

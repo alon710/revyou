@@ -88,7 +88,7 @@ export const businessUpdateSchema = businessSchema
 export const reviewSchema = z.object({
   id: z.string().min(1),
   googleReviewId: z.string().min(1),
-  googleReviewName: z.string().optional(), // Full Google resource path
+  googleReviewName: z.string().optional(),
   name: z.string().min(1).max(200),
   photoUrl: z.string().url().optional(),
   rating: z.number().int().min(1).max(5),

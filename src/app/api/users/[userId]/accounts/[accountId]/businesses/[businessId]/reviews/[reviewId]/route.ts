@@ -3,10 +3,6 @@ import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { ReviewsController } from "@/lib/controllers";
 import type { ReviewUpdate } from "@/lib/types";
 
-/**
- * GET /api/users/[userId]/accounts/[accountId]/businesses/[businessId]/reviews/[reviewId]
- * Get a single review by ID
- */
 export async function GET(
   req: NextRequest,
   {
@@ -52,12 +48,6 @@ export async function GET(
   }
 }
 
-/**
- * PUT /api/users/[userId]/accounts/[accountId]/businesses/[businessId]/reviews/[reviewId]
- * Update a review
- *
- * Body: ReviewUpdate
- */
 export async function PUT(
   req: NextRequest,
   {

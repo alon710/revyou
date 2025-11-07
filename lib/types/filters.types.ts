@@ -5,11 +5,6 @@ import {
   AccountSortOptions,
 } from "./sort.types";
 
-/**
- * Filter interfaces for querying entities
- * All filters are optional to support flexible querying
- */
-
 export interface ReviewFilters {
   ids?: string[];
   replyStatus?: ReplyStatus[];
@@ -18,7 +13,7 @@ export interface ReviewFilters {
   dateTo?: Date;
   limit?: number;
   offset?: number;
-  sort?: ReviewSortOptions; // Always optional
+  sort?: ReviewSortOptions;
 }
 
 export interface BusinessFilters {
@@ -26,7 +21,7 @@ export interface BusinessFilters {
   connected?: boolean;
   limit?: number;
   offset?: number;
-  sort?: BusinessSortOptions; // Always optional
+  sort?: BusinessSortOptions;
 }
 
 export interface AccountFilters {
@@ -34,5 +29,5 @@ export interface AccountFilters {
   email?: string;
   limit?: number;
   offset?: number;
-  sort?: AccountSortOptions; // Always optional
+  sort?: AccountSortOptions;
 }

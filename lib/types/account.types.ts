@@ -2,7 +2,7 @@ import { Timestamp } from "firebase/firestore";
 import { Business } from "./business.types";
 
 export interface AccountCreate {
-  userId: string; // Parent reference
+  userId: string;
   email: string;
   accountName: string;
   googleRefreshToken: string;
@@ -21,7 +21,6 @@ export interface AccountUpdate {
   googleAccountName?: string;
 }
 
-// Extended type with nested businesses (for frontend display)
 export interface AccountWithBusinesses extends Account {
   businesses: Business[];
 }

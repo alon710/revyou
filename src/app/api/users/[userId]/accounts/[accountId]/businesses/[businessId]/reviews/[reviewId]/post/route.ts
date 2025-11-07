@@ -4,12 +4,6 @@ import { ReviewsController } from "@/lib/controllers";
 import { AccountsController } from "@/lib/controllers";
 import { postReplyToGoogle } from "@/lib/google/reviews";
 
-/**
- * POST /api/users/[userId]/accounts/[accountId]/businesses/[businessId]/reviews/[reviewId]/post
- * Post AI reply to Google My Business
- *
- * Body: { reply?: string } - Optional custom reply (defaults to aiReply)
- */
 export async function POST(
   req: NextRequest,
   {
@@ -37,7 +31,6 @@ export async function POST(
     const body = await req.json();
     const customReply = body.reply;
 
-    // Get review
     const reviewController = new ReviewsController(
       userId,
       accountId,
@@ -45,7 +38,6 @@ export async function POST(
     );
     const review = await reviewController.getReview(reviewId);
 
-    // Determine which reply to post
     const replyToPost = customReply || review.aiReply;
     if (!replyToPost) {
       return NextResponse.json(
@@ -57,18 +49,15 @@ export async function POST(
       );
     }
 
-    // Get account for OAuth token
     const accountController = new AccountsController(userId);
     const account = await accountController.getAccount(accountId);
 
-    // Post reply to Google
     await postReplyToGoogle(
       review.googleReviewName || review.googleReviewId,
       replyToPost,
       account.googleRefreshToken
     );
 
-    // Mark review as posted
     const updatedReview = await reviewController.markAsPosted(
       reviewId,
       replyToPost,
@@ -82,7 +71,6 @@ export async function POST(
   } catch (error) {
     console.error("Error posting review reply:", error);
 
-    // Try to mark as failed
     try {
       const { userId, accountId, businessId, reviewId } = await params;
       const reviewController = new ReviewsController(

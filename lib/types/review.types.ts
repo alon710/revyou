@@ -3,25 +3,25 @@ import { Timestamp } from "firebase/firestore";
 export type ReplyStatus = "pending" | "rejected" | "posted" | "failed";
 
 export interface ReviewCreate {
-  userId: string; // Parent reference
-  accountId: string; // Parent reference
-  businessId: string; // Parent reference
+  userId: string;
+  accountId: string;
+  businessId: string;
   googleReviewId: string;
-  googleReviewName?: string; // Full Google resource path
+  googleReviewName?: string;
   name: string;
   photoUrl?: string;
   rating: number;
   text?: string;
   date: Timestamp;
   isAnonymous?: boolean;
-  replyStatus?: ReplyStatus; // Default will be 'pending'
+  replyStatus?: ReplyStatus;
 }
 
 export interface Review extends Omit<ReviewCreate, "replyStatus"> {
   id: string;
   receivedAt: Timestamp;
   updateTime?: Timestamp;
-  replyStatus: ReplyStatus; // Required in Review, optional in ReviewCreate
+  replyStatus: ReplyStatus;
   aiReply?: string;
   aiReplyGeneratedAt?: Timestamp;
   postedReply?: string | null;

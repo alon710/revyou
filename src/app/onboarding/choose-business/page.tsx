@@ -83,8 +83,6 @@ export default function OnboardingStep3() {
         return;
       }
 
-      // Use atomic API route that creates business AND subscribes to notifications
-      // If subscription fails, business creation will be rolled back
       const response = await fetch("/api/businesses/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
