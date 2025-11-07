@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithGoogle } from "@/lib/firebase/auth";
 import {
@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/dashboard-card";
 import { Logo } from "@/components/ui/Logo";
 import { GoogleSsoButton } from "@/components/ui/google-sso-button";
+import { Loading } from "@/components/ui/loading";
 import Link from "next/link";
 import { toast } from "sonner";
 
 export const dynamic = "force-dynamic";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -89,5 +90,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<Loading fullScreen />}>
+      <LoginForm />
+    </Suspense>
   );
 }
