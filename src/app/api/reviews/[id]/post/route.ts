@@ -28,6 +28,13 @@ export async function POST(
       );
     }
 
+    if (!businessId) {
+      return NextResponse.json(
+        { error: "Business ID is required" },
+        { status: 400 }
+      );
+    }
+
     const review = await getReviewAdmin(
       authenticatedUserId,
       accountId,
