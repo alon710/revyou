@@ -83,9 +83,9 @@ if (!PROJECT_ID) {
 }
 
 interface PubSubNotificationData {
-  notificationType: "NEW_REVIEW";
-  reviewName: string; // Format: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
-  locationName: string; // Format: accounts/{accountId}/locations/{locationId}
+  type: "NEW_REVIEW";
+  review: string; // Format: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
+  location: string; // Format: accounts/{accountId}/locations/{locationId}
 }
 
 async function seedPubSubNotification() {
@@ -181,15 +181,15 @@ async function seedPubSubNotification() {
     const reviewName = `${locationName}/reviews/${TEST_REVIEW_ID}`; // accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
 
     const notificationData: PubSubNotificationData = {
-      notificationType: "NEW_REVIEW",
-      reviewName,
-      locationName,
+      type: "NEW_REVIEW",
+      review: reviewName,
+      location: locationName,
     };
 
     console.log("📦 Notification Data:");
-    console.log(`  - Type: ${notificationData.notificationType}`);
-    console.log(`  - Review Name: ${notificationData.reviewName}`);
-    console.log(`  - Location Name: ${notificationData.locationName}\n`);
+    console.log(`  - Type: ${notificationData.type}`);
+    console.log(`  - Review: ${notificationData.review}`);
+    console.log(`  - Location: ${notificationData.location}\n`);
 
     // Initialize Pub/Sub client
     console.log("🔌 Initializing Pub/Sub client...");
