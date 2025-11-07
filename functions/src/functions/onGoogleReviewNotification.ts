@@ -16,14 +16,10 @@ const googleClientSecret = defineSecret("GOOGLE_CLIENT_SECRET");
 
 interface PubSubNotificationData {
   type: "NEW_REVIEW";
-  review: string; // Format: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
-  location: string; // Format: accounts/{accountId}/locations/{locationId}
+  review: string;
+  location: string;
 }
 
-/**
- * Extracts location ID from Google resource name
- * @param locationName - Format: accounts/{accountId}/locations/{locationId}
- */
 function extractLocationId(locationName: string): string {
   const parts = locationName.split("/");
   const locationIndex = parts.indexOf("locations");
@@ -33,9 +29,6 @@ function extractLocationId(locationName: string): string {
   return parts[locationIndex + 1];
 }
 
-/**
- * Finds the business in Firestore that matches the Google Business location
- */
 async function findBusinessByLocationId(locationName: string): Promise<{
   userId: string;
   accountId: string;
@@ -45,7 +38,6 @@ async function findBusinessByLocationId(locationName: string): Promise<{
     const locationId = extractLocationId(locationName);
     console.log("Searching for business with locationId:", locationId);
 
-    // Query all businesses with matching googleBusinessId
     const usersSnapshot = await db.collection("users").get();
 
     for (const userDoc of usersSnapshot.docs) {
@@ -76,9 +68,6 @@ async function findBusinessByLocationId(locationName: string): Promise<{
   }
 }
 
-/**
- * Gets the encrypted refresh token for an account
- */
 async function getAccountRefreshToken(
   userId: string,
   accountId: string
@@ -104,9 +93,6 @@ async function getAccountRefreshToken(
   }
 }
 
-/**
- * Cloud Function triggered by Pub/Sub messages from Google My Business
- */
 export const onGoogleReviewNotification = onMessagePublished(
   {
     topic: "gmb-review-notifications",
@@ -119,7 +105,6 @@ export const onGoogleReviewNotification = onMessagePublished(
     try {
       console.log("Received Pub/Sub notification:", event.data);
 
-      // Parse the notification data
       const messageData = event.data.message.data;
       const notificationJson = Buffer.from(messageData, "base64").toString(
         "utf-8"
@@ -134,13 +119,11 @@ export const onGoogleReviewNotification = onMessagePublished(
         location: locationName,
       } = notification;
 
-      // Only process new review notifications
       if (notificationType !== "NEW_REVIEW") {
         console.log("Ignoring non-new-review notification:", notificationType);
         return;
       }
 
-      // Find the business in our database
       const businessData = await findBusinessByLocationId(locationName);
       if (!businessData) {
         console.error("Business not found for location:", locationName);
@@ -154,7 +137,6 @@ export const onGoogleReviewNotification = onMessagePublished(
         businessId: business.id,
       });
 
-      // Only process notifications for connected businesses
       if (!business.connected) {
         console.log(
           "Business not connected, skipping notification:",
@@ -163,20 +145,17 @@ export const onGoogleReviewNotification = onMessagePublished(
         return;
       }
 
-      // Get the account's refresh token
       const encryptedToken = await getAccountRefreshToken(userId, accountId);
       if (!encryptedToken) {
         console.error("No refresh token found for account:", accountId);
         return;
       }
 
-      // Decrypt the refresh token
       const refreshToken = await decryptToken(
         encryptedToken,
         tokenEncryptionSecret.value()
       );
 
-      // Fetch the full review data from Google My Business API
       console.log("Fetching review from GMB API:", reviewName);
       const googleReview = await getReview(
         reviewName,
@@ -186,10 +165,9 @@ export const onGoogleReviewNotification = onMessagePublished(
       );
       console.log("Fetched Google review:", googleReview);
 
-      // Map Google review to our database structure
       const reviewData: Omit<Review, "id"> = {
         googleReviewId: googleReview.reviewId,
-        googleReviewName: googleReview.name, // Full Google resource path
+        googleReviewName: googleReview.name,
         name: googleReview.reviewer.displayName,
         photoUrl: googleReview.reviewer.profilePhotoUrl,
         rating: starRatingToNumber(googleReview.starRating),
@@ -208,7 +186,6 @@ export const onGoogleReviewNotification = onMessagePublished(
         postedBy: null,
       };
 
-      // Check if review already exists
       const reviewsRef = db
         .collection("users")
         .doc(userId)
@@ -224,13 +201,11 @@ export const onGoogleReviewNotification = onMessagePublished(
         .get();
 
       if (!existingReviewSnapshot.empty) {
-        // Review already exists, skip (duplicate NEW_REVIEW notification)
         const existingReviewDoc = existingReviewSnapshot.docs[0];
         console.log("Review already exists, skipping:", existingReviewDoc.id);
         return;
       }
 
-      // Create new review - this will trigger onReviewCreate function
       console.log("Creating new review");
       const newReviewRef = await reviewsRef.add(reviewData);
       console.log("Review created successfully:", newReviewRef.id);

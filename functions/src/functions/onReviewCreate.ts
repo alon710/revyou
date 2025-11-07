@@ -124,7 +124,6 @@ async function updateReplyStatus(
   const timestamp = admin.firestore.FieldValue.serverTimestamp();
 
   if (shouldAutoPost) {
-    // Try to post to Google My Business
     if (!refreshToken) {
       console.error("Cannot auto-post: no refresh token available");
       await eventData.ref.update({
@@ -136,7 +135,6 @@ async function updateReplyStatus(
     }
 
     try {
-      // Get the review name from the review document
       const reviewName = review.googleReviewName;
       if (!reviewName) {
         throw new Error(
@@ -144,13 +142,11 @@ async function updateReplyStatus(
         );
       }
 
-      // Decrypt the refresh token
       const decryptedToken = await decryptToken(
         refreshToken,
         tokenEncryptionSecret.value()
       );
 
-      // Post the reply to Google
       await postReplyToGoogle(
         reviewName,
         aiReply,
@@ -159,7 +155,6 @@ async function updateReplyStatus(
         googleClientSecret.value()
       );
 
-      // Success - update Firestore
       await eventData.ref.update({
         aiReply,
         aiReplyGeneratedAt: timestamp,
@@ -177,7 +172,6 @@ async function updateReplyStatus(
         error,
       });
 
-      // Failed to post - update status to failed
       await eventData.ref.update({
         aiReply,
         aiReplyGeneratedAt: timestamp,
@@ -188,7 +182,6 @@ async function updateReplyStatus(
     }
   }
 
-  // Not auto-posting - just save the AI reply
   await eventData.ref.update({
     aiReply,
     aiReplyGeneratedAt: timestamp,
@@ -307,7 +300,6 @@ export const onReviewCreate = onDocumentCreated(
 
       if (!aiReply) return;
 
-      // Get refresh token if auto-posting is enabled
       let refreshToken: string | null = null;
       if (starConfig.autoReply) {
         const encryptedToken = await getAccountRefreshToken(userId, accountId);

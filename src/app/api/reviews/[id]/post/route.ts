@@ -28,7 +28,6 @@ export async function POST(
       );
     }
 
-    // Get the review
     const review = await getReviewAdmin(
       authenticatedUserId,
       accountId,
@@ -40,7 +39,6 @@ export async function POST(
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    // Validate review has required fields
     if (!review.googleReviewName) {
       return NextResponse.json(
         {
@@ -58,7 +56,6 @@ export async function POST(
       );
     }
 
-    // Get the account's encrypted refresh token
     const encryptedToken = await getAccountGoogleRefreshToken(
       authenticatedUserId,
       accountId
@@ -71,17 +68,14 @@ export async function POST(
       );
     }
 
-    // Decrypt the refresh token
     const refreshToken = await decryptToken(encryptedToken);
 
-    // Post the reply to Google
     await postReplyToGoogle(
       review.googleReviewName,
       review.aiReply,
       refreshToken
     );
 
-    // Update the review status in Firestore
     const reviewRef = adminDb
       .collection("users")
       .doc(authenticatedUserId)

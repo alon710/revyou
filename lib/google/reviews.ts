@@ -1,7 +1,5 @@
 import { getAccessTokenFromRefreshToken } from "./business-profile";
 
-// Using My Business API v4 for reviews (still functional despite v4 being deprecated)
-// Reviews are not yet available in the newer Business Profile APIs
 const GOOGLE_MY_BUSINESS_API_BASE = "https://mybusiness.googleapis.com/v4";
 
 export enum StarRating {
@@ -16,7 +14,7 @@ export enum StarRating {
 interface GoogleReviewer {
   profilePhotoUrl?: string;
   displayName: string;
-  isAnonymous?: boolean; // Optional - Google API doesn't always return this field
+  isAnonymous?: boolean;
 }
 
 interface GoogleReviewReply {
@@ -53,7 +51,6 @@ async function makeAuthorizedRequest<T>(
     options.body = JSON.stringify(body);
   }
 
-  console.log(`Making ${method} request to: ${url}`);
   const response = await fetch(url, options);
 
   if (!response.ok) {
@@ -73,12 +70,6 @@ async function makeAuthorizedRequest<T>(
   return response.json();
 }
 
-/**
- * Fetches a single review from Google My Business API
- * @param reviewName - Full resource name: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
- * @param refreshToken - Encrypted refresh token
- * @returns Google Review object
- */
 export async function getReview(
   reviewName: string,
   refreshToken: string,
@@ -86,17 +77,14 @@ export async function getReview(
   clientSecret?: string
 ): Promise<GoogleReview> {
   try {
-    console.log("Fetching review:", reviewName);
     const accessToken = await getAccessTokenFromRefreshToken(
       refreshToken,
       clientId,
       clientSecret
     );
     const url = `${GOOGLE_MY_BUSINESS_API_BASE}/${reviewName}`;
-    console.log("Review API URL:", url);
 
     const review = await makeAuthorizedRequest<GoogleReview>(url, accessToken);
-    console.log("Successfully fetched review:", review.reviewId);
     return review;
   } catch (error) {
     console.error("Error fetching review:", {
@@ -107,15 +95,6 @@ export async function getReview(
   }
 }
 
-/**
- * Posts a reply to a review on Google My Business
- * @param reviewName - Full resource name: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
- * @param replyText - The text of the reply to post
- * @param refreshToken - OAuth refresh token
- * @param clientId - Optional OAuth client ID (for Cloud Functions)
- * @param clientSecret - Optional OAuth client secret (for Cloud Functions)
- * @returns The posted review reply
- */
 export async function postReplyToGoogle(
   reviewName: string,
   replyText: string,
@@ -124,14 +103,12 @@ export async function postReplyToGoogle(
   clientSecret?: string
 ): Promise<GoogleReviewReply> {
   try {
-    console.log("Posting reply to Google for review:", reviewName);
     const accessToken = await getAccessTokenFromRefreshToken(
       refreshToken,
       clientId,
       clientSecret
     );
     const url = `${GOOGLE_MY_BUSINESS_API_BASE}/${reviewName}/reply`;
-    console.log("Reply API URL:", url);
 
     const reply = await makeAuthorizedRequest<GoogleReviewReply>(
       url,
@@ -139,7 +116,6 @@ export async function postReplyToGoogle(
       "PUT",
       { comment: replyText }
     );
-    console.log("Successfully posted reply to Google");
     return reply;
   } catch (error) {
     console.error("Error posting reply to Google:", {
@@ -150,9 +126,6 @@ export async function postReplyToGoogle(
   }
 }
 
-/**
- * Converts GMB StarRating enum to numeric rating (1-5)
- */
 export function starRatingToNumber(starRating: StarRating): number {
   switch (starRating) {
     case StarRating.ONE:
@@ -170,9 +143,6 @@ export function starRatingToNumber(starRating: StarRating): number {
   }
 }
 
-/**
- * Parses ISO 8601 timestamp to JavaScript Date
- */
 export function parseGoogleTimestamp(timestamp: string): Date {
   return new Date(timestamp);
 }

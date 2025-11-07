@@ -196,9 +196,6 @@ export async function listAllBusinesses(
       );
 
       for (const business of businesses) {
-        // Ensure business ID has full resource path format
-        // Google API should return "accounts/{accountId}/locations/{locationId}"
-        // but may sometimes return just "locations/{locationId}"
         const businessId = business.name.startsWith("accounts/")
           ? business.name
           : `${account.name}/${business.name}`;
@@ -247,9 +244,6 @@ export async function decryptToken(
   }
 }
 
-/**
- * Notification types available in Google My Business API
- */
 export type NotificationType =
   | "GOOGLE_UPDATE"
   | "NEW_REVIEW"
@@ -267,13 +261,6 @@ interface NotificationSettings {
   pubsubTopic: string;
 }
 
-/**
- * Subscribes to Google My Business notifications for an account
- * @param accountName - Google account name (e.g., "accounts/123456")
- * @param pubsubTopic - Full Pub/Sub topic name (e.g., "projects/my-project/topics/gmb-notifications")
- * @param refreshToken - Encrypted refresh token
- * @param notificationTypes - Types of notifications to receive (defaults to NEW_REVIEW only)
- */
 export async function subscribeToNotifications(
   accountName: string,
   pubsubTopic: string,
@@ -317,11 +304,6 @@ export async function subscribeToNotifications(
   }
 }
 
-/**
- * Unsubscribes from Google My Business notifications for an account
- * @param accountName - Google account name (e.g., "accounts/123456")
- * @param refreshToken - Encrypted refresh token
- */
 export async function unsubscribeFromNotifications(
   accountName: string,
   refreshToken: string
@@ -362,12 +344,6 @@ export async function unsubscribeFromNotifications(
   }
 }
 
-/**
- * Gets the current notification settings for an account
- * @param accountName - Google account name (e.g., "accounts/123456")
- * @param refreshToken - Encrypted refresh token
- * @returns Notification settings or null if not configured
- */
 export async function getNotificationSettings(
   accountName: string,
   refreshToken: string
@@ -384,7 +360,6 @@ export async function getNotificationSettings(
     });
 
     if (response.status === 404) {
-      // No notification settings configured
       return null;
     }
 

@@ -32,7 +32,6 @@ if (getApps().length === 0) {
 
 const db = getFirestore();
 
-// Environment variables for the script
 const USER_ID = process.env.SEED_REVIEW_USER_ID || "";
 const ACCOUNT_ID = process.env.SEED_REVIEW_ACCOUNT_ID || "";
 const BUSINESS_ID = process.env.SEED_REVIEW_BUSINESS_ID || "";
@@ -43,7 +42,6 @@ const PROJECT_ID =
   "";
 const TOPIC_NAME = process.env.PUBSUB_TOPIC_NAME || "gmb-review-notifications";
 
-// Validation
 if (!USER_ID) {
   console.error("⚠️  Missing SEED_REVIEW_USER_ID in .env.local");
   console.error(
@@ -86,15 +84,14 @@ if (!PROJECT_ID) {
 
 interface PubSubNotificationData {
   type: "NEW_REVIEW";
-  review: string; // Format: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
-  location: string; // Format: accounts/{accountId}/locations/{locationId}
+  review: string;
+  location: string;
 }
 
 async function seedPubSubNotification() {
   console.log("🌱 Starting Pub/Sub notification seeding...\n");
 
   try {
-    // Verify user exists
     console.log(`🔍 Verifying user ${USER_ID}...`);
     const userRef = db.collection("users").doc(USER_ID);
     const userDoc = await userRef.get();
@@ -107,7 +104,6 @@ async function seedPubSubNotification() {
     }
     console.log(`✅ User found`);
 
-    // Verify account exists
     console.log(`🔍 Verifying account ${ACCOUNT_ID}...`);
     const accountRef = db
       .collection("users")
@@ -129,7 +125,6 @@ async function seedPubSubNotification() {
     const accountData = accountDoc.data();
     console.log(`✅ Account found: ${accountData?.accountName || ACCOUNT_ID}`);
 
-    // Verify business exists
     console.log(`🔍 Verifying business ${BUSINESS_ID}...`);
     const businessRef = db
       .collection("users")
@@ -165,8 +160,6 @@ async function seedPubSubNotification() {
 
     console.log(`📍 Google Business ID: ${googleBusinessId}`);
 
-    // Extract account name from googleBusinessId
-    // Format: accounts/{accountId}/locations/{locationId}
     const googleAccountName = googleBusinessId.split("/locations")[0];
     if (!googleAccountName) {
       console.error("⚠️  Invalid googleBusinessId format");
@@ -178,9 +171,8 @@ async function seedPubSubNotification() {
 
     console.log(`📍 Google Account Name: ${googleAccountName}\n`);
 
-    // Construct the notification data
-    const locationName = googleBusinessId; // accounts/{accountId}/locations/{locationId}
-    const reviewName = `${locationName}/reviews/${TEST_REVIEW_ID}`; // accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
+    const locationName = googleBusinessId;
+    const reviewName = `${locationName}/reviews/${TEST_REVIEW_ID}`;
 
     const notificationData: PubSubNotificationData = {
       type: "NEW_REVIEW",
@@ -193,12 +185,10 @@ async function seedPubSubNotification() {
     console.log(`  - Review: ${notificationData.review}`);
     console.log(`  - Location: ${notificationData.location}\n`);
 
-    // Initialize Pub/Sub client
     console.log("🔌 Initializing Pub/Sub client...");
     const pubSubClient = new PubSub({ projectId: PROJECT_ID });
     const topic = pubSubClient.topic(TOPIC_NAME);
 
-    // Check if topic exists
     console.log(`🔍 Checking if topic ${TOPIC_NAME} exists...`);
     const [topicExists] = await topic.exists();
     if (!topicExists) {
@@ -210,7 +200,6 @@ async function seedPubSubNotification() {
     }
     console.log(`✅ Topic exists\n`);
 
-    // Publish the message
     console.log("📤 Publishing notification to Pub/Sub...");
     const messageBuffer = Buffer.from(JSON.stringify(notificationData));
     const messageId = await topic.publishMessage({ data: messageBuffer });

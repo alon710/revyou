@@ -29,11 +29,9 @@ export async function POST(request: NextRequest) {
   let accountId: string | null = null;
 
   try {
-    // 1. Authenticate user
     const authResult = await getAuthenticatedUserId();
     userId = authResult.userId;
 
-    // 2. Parse and validate request body
     const body: CreateBusinessRequest = await request.json();
     accountId = body.accountId;
 
@@ -44,14 +42,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Get account details
     const account = await getAccount(userId, accountId);
     if (!account) {
       return NextResponse.json({ error: "Account not found" }, { status: 404 });
     }
 
-    // 4. Create business document in Firestore
-    // Build config with defaults
     const defaultConfig = getDefaultBusinessConfig();
     const businessConfig = {
       ...defaultConfig,
@@ -75,7 +70,6 @@ export async function POST(request: NextRequest) {
       connected: true,
     };
 
-    // Validate business data
     businessSchemaAdmin.parse({ id: "temp", ...businessData });
 
     const businessRef = await db
@@ -87,32 +81,24 @@ export async function POST(request: NextRequest) {
       .add(businessData);
 
     createdBusinessId = businessRef.id;
-    console.log("Business created:", createdBusinessId);
 
-    // 5. Subscribe to notifications
     try {
-      // Extract Google account name from business ID
-      // Format: accounts/{accountId}/locations/{locationId}
       const googleAccountName = body.googleBusinessId.split("/locations")[0];
 
-      // Construct Pub/Sub topic
       const projectId =
         process.env.NEXT_PUBLIC_GCP_PROJECT_ID || "review-ai-reply";
       const topicName =
         process.env.PUBSUB_TOPIC_NAME || "gmb-review-notifications";
       const pubsubTopic = `projects/${projectId}/topics/${topicName}`;
 
-      // Decrypt refresh token
       const refreshToken = await decryptToken(account.googleRefreshToken);
 
-      // Subscribe to notifications
       await subscribeToNotifications(
         googleAccountName,
         pubsubTopic,
         refreshToken
       );
 
-      // Update account with Google account name (if not already set)
       if (!account.googleAccountName) {
         await db
           .collection("users")
@@ -122,18 +108,11 @@ export async function POST(request: NextRequest) {
           .update({ googleAccountName });
       }
 
-      console.log(
-        "Successfully subscribed to notifications:",
-        googleAccountName
-      );
-
-      // 6. Return success
       return NextResponse.json({
         success: true,
         businessId: createdBusinessId,
       });
     } catch (subscriptionError) {
-      // Subscription failed - rollback business creation
       console.error(
         "Subscription failed, rolling back business:",
         subscriptionError
@@ -149,13 +128,11 @@ export async function POST(request: NextRequest) {
             .collection("businesses")
             .doc(createdBusinessId)
             .delete();
-          console.log("Business rolled back:", createdBusinessId);
         } catch (deleteError) {
           console.error("Failed to rollback business:", deleteError);
         }
       }
 
-      // Return subscription error to user
       return NextResponse.json(
         {
           error: "Failed to subscribe to notifications",
@@ -170,7 +147,6 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Business creation error:", error);
 
-    // If we created a business but failed elsewhere, clean it up
     if (createdBusinessId && userId && accountId) {
       try {
         await db
@@ -181,7 +157,6 @@ export async function POST(request: NextRequest) {
           .collection("businesses")
           .doc(createdBusinessId)
           .delete();
-        console.log("Business cleaned up after error:", createdBusinessId);
       } catch (deleteError) {
         console.error("Failed to clean up business:", deleteError);
       }
