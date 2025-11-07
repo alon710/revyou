@@ -1,7 +1,8 @@
 import { getAccessTokenFromRefreshToken } from "./business-profile";
 
-const GOOGLE_MY_BUSINESS_API_BASE =
-  "https://mybusinessbusinessinformation.googleapis.com/v1";
+// Using My Business API v4 for reviews (still functional despite v4 being deprecated)
+// Reviews are not yet available in the newer Business Profile APIs
+const GOOGLE_MY_BUSINESS_API_BASE = "https://mybusiness.googleapis.com/v4";
 
 export enum StarRating {
   STAR_RATING_UNSPECIFIED = "STAR_RATING_UNSPECIFIED",
@@ -52,12 +53,21 @@ async function makeAuthorizedRequest<T>(
     options.body = JSON.stringify(body);
   }
 
+  console.log(`Making ${method} request to: ${url}`);
   const response = await fetch(url, options);
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error("Google API error:", response.status, errorText);
-    throw new Error(`Google API request failed: ${response.status}`);
+    console.error("Google API error:", {
+      status: response.status,
+      statusText: response.statusText,
+      url,
+      method,
+      errorBody: errorText,
+    });
+    throw new Error(
+      `Google API request failed: ${response.status} ${response.statusText}`
+    );
   }
 
   return response.json();
@@ -76,18 +86,24 @@ export async function getReview(
   clientSecret?: string
 ): Promise<GoogleReview> {
   try {
+    console.log("Fetching review:", reviewName);
     const accessToken = await getAccessTokenFromRefreshToken(
       refreshToken,
       clientId,
       clientSecret
     );
     const url = `${GOOGLE_MY_BUSINESS_API_BASE}/${reviewName}`;
+    console.log("Review API URL:", url);
 
     const review = await makeAuthorizedRequest<GoogleReview>(url, accessToken);
+    console.log("Successfully fetched review:", review.reviewId);
     return review;
   } catch (error) {
-    console.error("Error fetching review:", reviewName, error);
-    throw new Error("Failed to fetch review from Google My Business API");
+    console.error("Error fetching review:", {
+      reviewName,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
   }
 }
 
