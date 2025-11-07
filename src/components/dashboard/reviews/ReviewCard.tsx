@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dashboard-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   rejectReply,
   postReplyToGoogle,
@@ -41,6 +42,15 @@ export function ReviewCard({
   const [isLoading, setIsLoading] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [showPublishDialog, setShowPublishDialog] = useState(false);
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   const getStatusBadge = (status: ReplyStatus) => {
     const statusMap = {
@@ -105,7 +115,21 @@ export function ReviewCard({
         <DashboardCardHeader className="pb-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <User className="h-4 w-4 text-muted-foreground shrink-0" />
+              <Avatar className="h-10 w-10 shrink-0">
+                <AvatarImage
+                  src={review.photoUrl || undefined}
+                  alt={`${review.name} profile`}
+                />
+                <AvatarFallback className="bg-muted">
+                  {review.photoUrl ? (
+                    <User className="h-5 w-5 text-muted-foreground" />
+                  ) : (
+                    <span className="text-sm font-medium text-muted-foreground">
+                      {getInitials(review.name)}
+                    </span>
+                  )}
+                </AvatarFallback>
+              </Avatar>
               <h3 className="font-semibold truncate">{review.name}</h3>
             </div>
             <StarRating rating={review.rating} size={18} />

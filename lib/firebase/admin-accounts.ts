@@ -24,6 +24,29 @@ export async function createAccount(
   return newAccountRef.id;
 }
 
+export async function findAccountByEmail(
+  userId: string,
+  email: string
+): Promise<string | null> {
+  const accountsRef = adminDb
+    .collection("users")
+    .doc(userId)
+    .collection("accounts");
+
+  const querySnapshot = await accountsRef.get();
+
+  if (querySnapshot.empty) {
+    return null;
+  }
+
+  const normalizedEmail = email.toLowerCase();
+  const matchingDoc = querySnapshot.docs.find(
+    (doc) => doc.data().email?.toLowerCase() === normalizedEmail
+  );
+
+  return matchingDoc ? matchingDoc.id : null;
+}
+
 export async function updateAccount(
   userId: string,
   accountId: string,
