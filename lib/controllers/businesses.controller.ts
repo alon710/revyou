@@ -37,8 +37,10 @@ export class BusinessesController extends BaseController<
     return this.handleError(async () => {
       const repo = this.repository as BusinessesRepositoryAdmin;
 
-      const exists = await repo.existsByGoogleId(data.googleBusinessId);
-      if (exists) {
+      const existingBusiness = await repo.findByGoogleBusinessId(
+        data.googleBusinessId
+      );
+      if (existingBusiness) {
         throw new Error("Business already connected to this account");
       }
 
@@ -73,7 +75,8 @@ export class BusinessesController extends BaseController<
 
   async checkExists(googleBusinessId: string): Promise<boolean> {
     const repo = this.repository as BusinessesRepositoryAdmin;
-    return repo.existsByGoogleId(googleBusinessId);
+    const business = await repo.findByGoogleBusinessId(googleBusinessId);
+    return business !== null;
   }
 
   async findByGoogleBusinessId(

@@ -89,11 +89,6 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
     await businessRef.delete();
   }
 
-  async existsByGoogleId(googleBusinessId: string): Promise<boolean> {
-    const businesses = await this.list({});
-    return businesses.some((b) => b.googleBusinessId === googleBusinessId);
-  }
-
   async findByGoogleBusinessId(
     googleBusinessId: string
   ): Promise<Business | null> {
