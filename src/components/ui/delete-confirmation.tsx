@@ -44,7 +44,7 @@ export function DeleteConfirmation({
 
   return (
     <>
-      <Card className={`border-destructive ${className}`}>
+      <Card className={`border-destructive/20 bg-destructive/10 ${className}`}>
         <CardHeader>
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
@@ -59,7 +59,7 @@ export function DeleteConfirmation({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="rounded-lg bg-destructive/10 p-4 border border-destructive/20">
+          <div className="rounded-lg bg-destructive/10 p-4 ">
             <h4 className="font-semibold text-destructive mb-2">{title}</h4>
             <p className="text-sm text-destructive mb-4">{description}</p>
 

@@ -1,9 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
-import { getUserAccounts } from "@/lib/firebase/accounts";
+import { useState } from "react";
 import { StepIndicator } from "@/components/onboarding/StepIndicator";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,49 +11,18 @@ import {
   DashboardCardTitle,
 } from "@/components/ui/dashboard-card";
 import { Building2 } from "lucide-react";
-import { Loading } from "@/components/ui/loading";
 
 export default function OnboardingStep2() {
-  const { user } = useAuth();
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
-
-  useEffect(() => {
-    async function checkAccounts() {
-      if (!user) return;
-
-      try {
-        const accounts = await getUserAccounts(user.uid);
-        if (accounts.length > 0) {
-          router.push(`/onboarding/step-3?accountId=${accounts[0].id}`);
-        }
-      } catch (error) {
-        console.error("Error checking accounts:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    checkAccounts();
-  }, [user, router]);
 
   const handleConnect = () => {
     setConnecting(true);
     window.location.href = "/api/google/auth?onboarding=true";
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loading />
-      </div>
-    );
-  }
-
   return (
     <div>
-      <StepIndicator currentStep={2} />
+      <StepIndicator currentStep={1} stepName="התחברות לחשבון Google" />
 
       <DashboardCard>
         <DashboardCardHeader>

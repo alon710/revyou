@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Review } from "@/types/database";
+import { Review } from "../../../../types/database";
 import {
   Dialog,
   DialogContent,

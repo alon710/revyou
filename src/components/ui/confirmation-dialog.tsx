@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertTriangle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ConfirmationDialogProps {
   open: boolean;
@@ -96,7 +97,13 @@ export function ConfirmationDialog({
           <DialogDescription asChild className="space-y-2 text-right">
             <div>
               {typeof description === "string" ? (
-                <p>{description}</p>
+                <p
+                  className={
+                    variant === "destructive" ? "text-destructive" : ""
+                  }
+                >
+                  {description}
+                </p>
               ) : (
                 description
               )}
@@ -110,33 +117,29 @@ export function ConfirmationDialog({
               {confirmationLabel && (
                 <Label
                   htmlFor="confirm-input"
-                  className="text-sm font-medium text-right"
+                  className={cn("text-sm text-primary font-medium text-right")}
                 >
                   {confirmationLabel}
                 </Label>
               )}
+
               <Input
                 id="confirm-input"
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder={confirmationPlaceholder}
+                placeholder={
+                  confirmationText ? confirmationText : confirmationPlaceholder
+                }
                 className="mt-2 text-right"
                 disabled={showLoading}
               />
-              {confirmationText && (
-                <div
-                  className="pt-2 ps-2 text-sm text-muted-foreground mb-2 text-right"
-                  dir="ltr"
-                >
-                  {confirmationText}
-                </div>
-              )}
             </div>
 
             {inputValue && !isConfirmValid && (
               <p className="text-sm text-destructive text-right">
-                הטקסט אינו תואם
+                הטקסט אינו תואם:{" "}
+                <span className="italic font-semibold">{confirmationText}</span>
               </p>
             )}
           </div>

@@ -5,6 +5,8 @@ import { render } from "@react-email/render";
 import { generateWithGemini } from "../shared/ai/core/gemini-client";
 import { buildReplyPrompt } from "../shared/ai/prompts/builder";
 import { ReviewNotificationEmail } from "../email-templates/review-notification";
+import { postReplyToGoogle } from "../shared/google/reviews";
+import { decryptToken } from "../shared/google/business-profile";
 import type {
   Review,
   BusinessConfig,
@@ -17,6 +19,9 @@ import type {
 const db = admin.firestore();
 
 const geminiApiKey = defineSecret("GEMINI_API_KEY");
+const tokenEncryptionSecret = defineSecret("TOKEN_ENCRYPTION_SECRET");
+const googleClientId = defineSecret("GOOGLE_CLIENT_ID");
+const googleClientSecret = defineSecret("GOOGLE_CLIENT_SECRET");
 const appBaseUrl = defineString("APP_BASE_URL");
 const fromEmail = defineString("FROM_EMAIL");
 
@@ -39,7 +44,7 @@ async function getBusiness(
     return null;
   }
 
-  return businessDoc.data() as Business;
+  return { id: businessDoc.id, ...businessDoc.data() } as Business;
 }
 
 async function getUser(userId: string): Promise<User | null> {
@@ -51,6 +56,31 @@ async function getUser(userId: string): Promise<User | null> {
   }
 
   return userDoc.data() as User;
+}
+
+async function getAccountRefreshToken(
+  userId: string,
+  accountId: string
+): Promise<string | null> {
+  try {
+    const accountDoc = await db
+      .collection("users")
+      .doc(userId)
+      .collection("accounts")
+      .doc(accountId)
+      .get();
+
+    if (!accountDoc.exists) {
+      console.error("Account not found", { userId, accountId });
+      return null;
+    }
+
+    const accountData = accountDoc.data();
+    return accountData?.googleRefreshToken || null;
+  } catch (error) {
+    console.error("Error fetching account refresh token:", error);
+    return null;
+  }
 }
 
 async function handleAIReply(
@@ -86,23 +116,70 @@ async function handleAIReply(
 
 async function updateReplyStatus(
   eventData: FirebaseFirestore.DocumentSnapshot,
+  review: Review,
   aiReply: string,
-  shouldAutoPost: boolean
+  shouldAutoPost: boolean,
+  refreshToken: string | null
 ): Promise<ReplyStatus> {
   const timestamp = admin.firestore.FieldValue.serverTimestamp();
 
   if (shouldAutoPost) {
-    await eventData.ref.update({
-      aiReply,
-      aiReplyGeneratedAt: timestamp,
-      replyStatus: "posted" as ReplyStatus,
-      postedReply: aiReply,
-      postedAt: timestamp,
-      postedBy: "system",
-    });
+    if (!refreshToken) {
+      console.error("Cannot auto-post: no refresh token available");
+      await eventData.ref.update({
+        aiReply,
+        aiReplyGeneratedAt: timestamp,
+        replyStatus: "failed" as ReplyStatus,
+      });
+      return "failed";
+    }
 
-    console.log("AI reply auto-posted", { reviewId: eventData.id });
-    return "posted";
+    try {
+      const reviewName = review.googleReviewName;
+      if (!reviewName) {
+        throw new Error(
+          "Google review name not found - review may not be from Google My Business"
+        );
+      }
+
+      const decryptedToken = await decryptToken(
+        refreshToken,
+        tokenEncryptionSecret.value()
+      );
+
+      await postReplyToGoogle(
+        reviewName,
+        aiReply,
+        decryptedToken,
+        googleClientId.value(),
+        googleClientSecret.value()
+      );
+
+      await eventData.ref.update({
+        aiReply,
+        aiReplyGeneratedAt: timestamp,
+        replyStatus: "posted" as ReplyStatus,
+        postedReply: aiReply,
+        postedAt: timestamp,
+        postedBy: "system",
+      });
+
+      console.log("AI reply auto-posted to Google", { reviewId: eventData.id });
+      return "posted";
+    } catch (error) {
+      console.error("Failed to post reply to Google:", {
+        reviewId: eventData.id,
+        error,
+      });
+
+      await eventData.ref.update({
+        aiReply,
+        aiReplyGeneratedAt: timestamp,
+        replyStatus: "failed" as ReplyStatus,
+      });
+
+      return "failed";
+    }
   }
 
   await eventData.ref.update({
@@ -145,6 +222,7 @@ async function sendEmailNotification(
       ReviewNotificationEmail({
         recipientName,
         businessName: business.name,
+        businessId: business.id,
         reviewerName: review.name,
         rating: review.rating,
         reviewText: review.text || "",
@@ -177,7 +255,12 @@ export const onReviewCreate = onDocumentCreated(
   {
     document:
       "users/{userId}/accounts/{accountId}/businesses/{businessId}/reviews/{reviewId}",
-    secrets: [geminiApiKey],
+    secrets: [
+      geminiApiKey,
+      tokenEncryptionSecret,
+      googleClientId,
+      googleClientSecret,
+    ],
     timeoutSeconds: 300,
     minInstances: 0,
     maxInstances: 3,
@@ -217,10 +300,18 @@ export const onReviewCreate = onDocumentCreated(
 
       if (!aiReply) return;
 
+      let refreshToken: string | null = null;
+      if (starConfig.autoReply) {
+        const encryptedToken = await getAccountRefreshToken(userId, accountId);
+        refreshToken = encryptedToken;
+      }
+
       const replyStatus = await updateReplyStatus(
         eventData,
+        review,
         aiReply,
-        starConfig.autoReply
+        starConfig.autoReply,
+        refreshToken
       );
 
       const user = await getUser(userId);

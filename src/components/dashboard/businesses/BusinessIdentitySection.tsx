@@ -1,6 +1,6 @@
 "use client";
 
-import { Business, BusinessConfig } from "@/types/database";
+import { Business, BusinessConfig } from "../../../../types/database";
 import { DashboardCardField } from "@/components/ui/dashboard-card";
 import { Building2 } from "lucide-react";
 import EditableSection from "@/components/dashboard/shared/EditableSection";

@@ -12,6 +12,7 @@ export interface Account {
   googleRefreshToken: string;
   connectedAt: Timestamp;
   lastSynced?: Timestamp;
+  googleAccountName?: string;
 }
 
 export interface AccountWithBusinesses extends Account {
@@ -28,7 +29,6 @@ export interface User {
   stripeLink?: string;
   selectedAccountId?: string;
   selectedBusinessId?: string;
-  onboardingCompleted?: boolean;
 }
 
 export interface StarConfig {
@@ -90,12 +90,15 @@ export interface Business {
 export interface Review {
   id: string;
   googleReviewId: string;
+  googleReviewName?: string; // Full Google resource path: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
   name: string;
   photoUrl?: string;
   rating: number;
   text?: string;
   date: Timestamp;
   receivedAt: Timestamp;
+  updateTime?: Timestamp;
+  isAnonymous?: boolean;
 
   aiReply?: string;
   aiReplyGeneratedAt?: Timestamp;

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getAllUserBusinesses } from "@/lib/firebase/business";
-import type { Business } from "@/types/database";
+import type { Business } from "../../../../types/database";
 import { Badge } from "@/components/ui/badge";
 import { IconButton } from "@/components/ui/icon-button";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -119,7 +119,7 @@ export default function BusinessesPage() {
         ))}
         <DashboardCard
           className="cursor-pointer border-dashed border-2 hover:border-primary/50 hover:bg-accent/50 transition-all flex flex-col items-center justify-center min-h-[320px]"
-          onClick={() => router.push("/onboarding/step-2")}
+          onClick={() => router.push("/onboarding/connect-account")}
         >
           <div className="flex flex-col items-center justify-center text-center p-6">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">

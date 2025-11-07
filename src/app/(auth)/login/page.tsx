@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { User } from "firebase/auth";
 import { signInWithGoogle } from "@/lib/firebase/auth";
 import { useAuth } from "@/contexts/AuthContext";
-import { getUser } from "@/lib/firebase/users";
 import {
   DashboardCard,
   DashboardCardContent,
@@ -28,20 +27,9 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const checkOnboardingAndRedirect = useCallback(
+  const redirectAfterLogin = useCallback(
     async (user?: User) => {
       if (!user) return;
-
-      try {
-        const userData = await getUser(user.uid);
-
-        if (!userData?.onboardingCompleted) {
-          router.push("/onboarding/step-1");
-          return;
-        }
-      } catch (error) {
-        console.error("Error checking onboarding status:", error);
-      }
 
       const redirect = searchParams.get("redirect") || "/dashboard";
       router.push(redirect);
@@ -51,9 +39,9 @@ function LoginForm() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      checkOnboardingAndRedirect(user);
+      redirectAfterLogin(user);
     }
-  }, [user, authLoading, checkOnboardingAndRedirect]);
+  }, [user, authLoading, redirectAfterLogin]);
 
   useEffect(() => {
     if (error) {
@@ -71,7 +59,7 @@ function LoginForm() {
       setError(error);
       setIsLoading(false);
     } else if (user) {
-      await checkOnboardingAndRedirect(user);
+      await redirectAfterLogin(user);
     }
   };
 

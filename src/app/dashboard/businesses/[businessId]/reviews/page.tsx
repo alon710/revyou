@@ -5,7 +5,7 @@ import { collection, query, orderBy, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { useAuth } from "@/contexts/AuthContext";
 import { getBusinessById } from "@/lib/firebase/business";
-import type { Business, Review } from "@/types/database";
+import type { Business, Review } from "../../../../../../types/database";
 import { ReviewCard } from "@/components/dashboard/reviews/ReviewCard";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";

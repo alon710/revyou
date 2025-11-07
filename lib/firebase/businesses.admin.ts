@@ -1,5 +1,5 @@
 import { adminDb } from "@/lib/firebase/admin";
-import { Business } from "@/types/database";
+import { Business } from "../../types/database";
 import { businessSchemaAdmin } from "@/lib/validation/database.admin";
 import { Timestamp as ClientTimestamp } from "firebase/firestore";
 
@@ -61,5 +61,63 @@ export async function getBusinessAdmin(
       }
     }
     throw new Error("לא ניתן לטעון את פרטי העסק");
+  }
+}
+
+export async function getAccountBusinessesAdmin(
+  userId: string,
+  accountId: string
+): Promise<Business[]> {
+  try {
+    const businessesSnapshot = await adminDb
+      .collection("users")
+      .doc(userId)
+      .collection("accounts")
+      .doc(accountId)
+      .collection("businesses")
+      .get();
+
+    if (businessesSnapshot.empty) {
+      return [];
+    }
+
+    return businessesSnapshot.docs.map((doc) => {
+      const data = doc.data();
+
+      const cleanedData = {
+        ...data,
+        phoneNumber:
+          data?.phoneNumber === "" ? null : (data?.phoneNumber ?? null),
+        websiteUrl: data?.websiteUrl === "" ? null : (data?.websiteUrl ?? null),
+        mapsUrl: data?.mapsUrl === "" ? null : (data?.mapsUrl ?? null),
+        description:
+          data?.description === "" ? null : (data?.description ?? null),
+        photoUrl: data?.photoUrl === "" ? null : (data?.photoUrl ?? null),
+      };
+
+      const validated = businessSchemaAdmin.parse({
+        id: doc.id,
+        ...cleanedData,
+      });
+
+      const connectedAtDate =
+        validated.connectedAt instanceof Date
+          ? validated.connectedAt
+          : validated.connectedAt.toDate();
+
+      const business: Business = {
+        ...validated,
+        accountId: accountId,
+        connectedAt: ClientTimestamp.fromDate(connectedAtDate),
+      };
+
+      return business;
+    });
+  } catch (error) {
+    console.error("Error fetching account businesses (admin):", error);
+    if (error instanceof Error) {
+      console.error("Error details:", error.message);
+    }
+    throw new Error("Failed to fetch businesses");
   }
 }

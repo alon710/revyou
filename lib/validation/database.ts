@@ -88,18 +88,31 @@ export const businessUpdateSchema = businessSchema
 export const reviewSchema = z.object({
   id: z.string().min(1),
   googleReviewId: z.string().min(1),
+  googleReviewName: z.string().optional(), // Full Google resource path
   name: z.string().min(1).max(200),
   photoUrl: z.string().url().optional(),
   rating: z.number().int().min(1).max(5),
   text: z.string().max(5000).optional(),
   date: timestampSchema,
   receivedAt: timestampSchema,
+  updateTime: timestampSchema.optional(),
+  isAnonymous: z.boolean().optional(),
   aiReply: z.string().max(2000).optional(),
   aiReplyGeneratedAt: timestampSchema.optional(),
   replyStatus: replyStatusSchema,
   postedReply: z.string().max(2000).nullable().optional(),
   postedAt: timestampSchema.nullable().optional(),
   postedBy: z.string().nullable().optional(),
+});
+
+export const accountSchema = z.object({
+  id: z.string().min(1),
+  email: z.string().email(),
+  accountName: z.string().min(1).max(200),
+  googleRefreshToken: z.string().min(1),
+  connectedAt: timestampSchema,
+  lastSynced: timestampSchema.optional(),
+  googleAccountName: z.string().optional(),
 });
 
 export type BusinessCreateInput = z.infer<typeof businessCreateSchema>;

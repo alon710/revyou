@@ -6,7 +6,11 @@ import {
 } from "@/lib/google/oauth";
 import { updateUserSelectedAccount } from "@/lib/firebase/admin-users";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
-import { createAccount, updateAccount } from "@/lib/firebase/admin-accounts";
+import {
+  createAccount,
+  updateAccount,
+  findAccountByEmail,
+} from "@/lib/firebase/admin-accounts";
 import { adminDb } from "@/lib/firebase/admin";
 
 export const runtime = "nodejs";
@@ -18,12 +22,12 @@ const redirectToBusinesses = (
   onboarding?: boolean
 ) => {
   if (onboarding && success && accountId) {
-    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/step-3?accountId=${accountId}`;
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/choose-business?accountId=${accountId}`;
     return NextResponse.redirect(url);
   }
 
   if (success && accountId) {
-    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/step-3?accountId=${accountId}`;
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/choose-business?accountId=${accountId}`;
     return NextResponse.redirect(url);
   }
 
@@ -127,11 +131,23 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      accountId = await createAccount(authenticatedUserId, {
-        email: userInfo.email,
-        accountName: userInfo.name,
-        googleRefreshToken: encryptedToken,
-      });
+      const existingAccountIdByEmail = await findAccountByEmail(
+        authenticatedUserId,
+        userInfo.email
+      );
+
+      if (existingAccountIdByEmail) {
+        await updateAccount(authenticatedUserId, existingAccountIdByEmail, {
+          googleRefreshToken: encryptedToken,
+        });
+        accountId = existingAccountIdByEmail;
+      } else {
+        accountId = await createAccount(authenticatedUserId, {
+          email: userInfo.email,
+          accountName: userInfo.name,
+          googleRefreshToken: encryptedToken,
+        });
+      }
 
       await updateUserSelectedAccount(authenticatedUserId, accountId);
     }

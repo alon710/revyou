@@ -3,12 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  createBusiness,
-  isBusinessAlreadyConnected,
-} from "@/lib/firebase/business";
-import { completeOnboarding } from "@/lib/firebase/users";
-import { GoogleBusinessProfileBusiness } from "@/types/database";
+import { isBusinessAlreadyConnected } from "@/lib/firebase/business";
+import { GoogleBusinessProfileBusiness } from "../../../../types/database";
 import { StepIndicator } from "@/components/onboarding/StepIndicator";
 import { BusinessSelector } from "@/components/dashboard/businesses/BusinessSelector";
 import { toast } from "sonner";
@@ -28,7 +24,7 @@ export default function OnboardingStep3() {
 
   useEffect(() => {
     if (!accountId) {
-      router.push("/onboarding/step-2");
+      router.push("/onboarding/connect-account");
     }
   }, [accountId, router]);
 
@@ -87,21 +83,31 @@ export default function OnboardingStep3() {
         return;
       }
 
-      await createBusiness({
-        userId: user.uid,
-        accountId,
-        googleBusinessId: business.id,
-        name: business.name,
-        address: business.address,
-        phoneNumber: business.phoneNumber,
-        websiteUrl: business.websiteUrl,
-        mapsUrl: business.mapsUrl,
-        description: business.description,
-        photoUrl: business.photoUrl,
+      // Use atomic API route that creates business AND subscribes to notifications
+      // If subscription fails, business creation will be rolled back
+      const response = await fetch("/api/businesses/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accountId,
+          googleBusinessId: business.id,
+          name: business.name,
+          address: business.address,
+          phoneNumber: business.phoneNumber,
+          websiteUrl: business.websiteUrl,
+          mapsUrl: business.mapsUrl,
+          description: business.description,
+          photoUrl: business.photoUrl,
+        }),
       });
 
-      await completeOnboarding(user.uid);
-      toast.success("ברוך הבא! החשבון שלך מוכן לשימוש");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create business");
+      }
+
+      toast.success("העסק התחבר בהצלחה");
       router.push("/dashboard");
     } catch (err) {
       console.error("Error connecting business:", err);
@@ -119,7 +125,7 @@ export default function OnboardingStep3() {
 
   return (
     <div>
-      <StepIndicator currentStep={3} />
+      <StepIndicator currentStep={2} stepName="בחירת עסק" />
 
       <BusinessSelector
         businesses={availableBusinesses}

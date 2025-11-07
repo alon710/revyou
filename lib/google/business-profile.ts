@@ -1,6 +1,6 @@
 import { OAuth2Client } from "google-auth-library";
 import * as Iron from "@hapi/iron";
-import { GoogleBusinessProfileBusiness } from "@/types/database";
+import { GoogleBusinessProfileBusiness } from "../../types/database";
 
 const GOOGLE_MY_BUSINESS_API_BASE =
   "https://mybusinessbusinessinformation.googleapis.com/v1";
@@ -43,15 +43,19 @@ interface BusinessesResponse {
   nextPageToken?: string;
 }
 
-function createOAuthClient(accessToken: string): OAuth2Client {
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+function createOAuthClient(
+  accessToken: string,
+  clientId?: string,
+  clientSecret?: string
+): OAuth2Client {
+  const oauthClientId = clientId || process.env.GOOGLE_CLIENT_ID;
+  const oauthClientSecret = clientSecret || process.env.GOOGLE_CLIENT_SECRET;
 
-  if (!clientId || !clientSecret) {
+  if (!oauthClientId || !oauthClientSecret) {
     throw new Error("Google OAuth credentials not configured");
   }
 
-  const oauth2Client = new OAuth2Client(clientId, clientSecret);
+  const oauth2Client = new OAuth2Client(oauthClientId, oauthClientSecret);
   oauth2Client.setCredentials({ access_token: accessToken });
 
   return oauth2Client;
@@ -78,9 +82,11 @@ async function makeAuthorizedRequest<T>(
 }
 
 export async function getAccessTokenFromRefreshToken(
-  refreshToken: string
+  refreshToken: string,
+  clientId?: string,
+  clientSecret?: string
 ): Promise<string> {
-  const oauth2Client = createOAuthClient("");
+  const oauth2Client = createOAuthClient("", clientId, clientSecret);
   oauth2Client.setCredentials({ refresh_token: refreshToken });
 
   const { credentials } = await oauth2Client.refreshAccessToken();
@@ -190,9 +196,13 @@ export async function listAllBusinesses(
       );
 
       for (const business of businesses) {
+        const businessId = business.name.startsWith("accounts/")
+          ? business.name
+          : `${account.name}/${business.name}`;
+
         allBusinesses.push({
           accountId: account.name,
-          id: business.name,
+          id: businessId,
           name: business.title,
           address: formatAddress(business),
           phoneNumber: business.phoneNumbers?.primaryPhone ?? null,
@@ -211,18 +221,163 @@ export async function listAllBusinesses(
   }
 }
 
-export async function decryptToken(encryptedToken: string): Promise<string> {
-  const secret = process.env.TOKEN_ENCRYPTION_SECRET;
+export async function decryptToken(
+  encryptedToken: string,
+  secret?: string
+): Promise<string> {
+  const encryptionSecret = secret || process.env.TOKEN_ENCRYPTION_SECRET;
 
-  if (!secret) {
+  if (!encryptionSecret) {
     throw new Error("TOKEN_ENCRYPTION_SECRET not configured");
   }
 
   try {
-    const unsealed = await Iron.unseal(encryptedToken, secret, Iron.defaults);
+    const unsealed = await Iron.unseal(
+      encryptedToken,
+      encryptionSecret,
+      Iron.defaults
+    );
     return unsealed as string;
   } catch (error) {
     console.error("Error decrypting token:", error);
     throw new Error("Failed to decrypt token");
+  }
+}
+
+export type NotificationType =
+  | "GOOGLE_UPDATE"
+  | "NEW_REVIEW"
+  | "UPDATED_REVIEW"
+  | "NEW_CUSTOMER_MEDIA"
+  | "NEW_QUESTION"
+  | "UPDATED_QUESTION"
+  | "NEW_ANSWER"
+  | "UPDATED_ANSWER"
+  | "UPDATED_LOCATION_STATE";
+
+interface NotificationSettings {
+  name: string;
+  notificationTypes: NotificationType[];
+  pubsubTopic: string;
+}
+
+export async function subscribeToNotifications(
+  accountName: string,
+  pubsubTopic: string,
+  refreshToken: string,
+  notificationTypes: NotificationType[] = ["NEW_REVIEW"]
+): Promise<void> {
+  try {
+    const accessToken = await getAccessTokenFromRefreshToken(refreshToken);
+    const url = `https://mybusinessnotifications.googleapis.com/v1/${accountName}/notificationSetting?updateMask=notificationTypes,pubsubTopic`;
+
+    const body = {
+      notificationTypes,
+      pubsubTopic,
+    };
+
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        "Error subscribing to notifications:",
+        response.status,
+        errorText
+      );
+      throw new Error(
+        `Failed to subscribe to notifications: ${response.status}`
+      );
+    }
+
+    console.log("Successfully subscribed to notifications for", accountName);
+  } catch (error) {
+    console.error("Error subscribing to notifications:", error);
+    throw new Error("Failed to subscribe to Google My Business notifications");
+  }
+}
+
+export async function unsubscribeFromNotifications(
+  accountName: string,
+  refreshToken: string
+): Promise<void> {
+  try {
+    const accessToken = await getAccessTokenFromRefreshToken(refreshToken);
+    const url = `https://mybusinessnotifications.googleapis.com/v1/${accountName}/notificationSetting`;
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        "Error unsubscribing from notifications:",
+        response.status,
+        errorText
+      );
+      throw new Error(
+        `Failed to unsubscribe from notifications: ${response.status}`
+      );
+    }
+
+    console.log(
+      "Successfully unsubscribed from notifications for",
+      accountName
+    );
+  } catch (error) {
+    console.error("Error unsubscribing from notifications:", error);
+    throw new Error(
+      "Failed to unsubscribe from Google My Business notifications"
+    );
+  }
+}
+
+export async function getNotificationSettings(
+  accountName: string,
+  refreshToken: string
+): Promise<NotificationSettings | null> {
+  try {
+    const accessToken = await getAccessTokenFromRefreshToken(refreshToken);
+    const url = `https://mybusinessnotifications.googleapis.com/v1/${accountName}/notificationSetting`;
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.status === 404) {
+      return null;
+    }
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        "Error getting notification settings:",
+        response.status,
+        errorText
+      );
+      throw new Error(
+        `Failed to get notification settings: ${response.status}`
+      );
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error getting notification settings:", error);
+    throw new Error("Failed to get Google My Business notification settings");
   }
 }
