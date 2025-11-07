@@ -54,7 +54,9 @@ if (!USER_ID) {
 
 if (!ACCOUNT_ID) {
   console.error("⚠️  Missing SEED_REVIEW_ACCOUNT_ID in .env.local");
-  console.error("   Please set SEED_REVIEW_ACCOUNT_ID (e.g., account_test_001)");
+  console.error(
+    "   Please set SEED_REVIEW_ACCOUNT_ID (e.g., account_test_001)"
+  );
   process.exit(1);
 }
 
@@ -241,7 +243,7 @@ async function seedPubSubNotification() {
         "   The Cloud Function will skip processing this notification"
       );
       console.warn(
-        '   Set business.connected = true to process notifications\n'
+        "   Set business.connected = true to process notifications\n"
       );
     }
 

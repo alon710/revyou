@@ -75,7 +75,11 @@ export async function POST(
     const refreshToken = await decryptToken(encryptedToken);
 
     // Post the reply to Google
-    await postReplyToGoogle(review.googleReviewName, review.aiReply, refreshToken);
+    await postReplyToGoogle(
+      review.googleReviewName,
+      review.aiReply,
+      refreshToken
+    );
 
     // Update the review status in Firestore
     const reviewRef = adminDb
