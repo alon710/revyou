@@ -103,12 +103,15 @@ export const businessSchemaAdmin = z.object({
 export const reviewSchemaAdmin = z.object({
   id: z.string().min(1),
   googleReviewId: z.string().min(1),
+  googleReviewName: z.string().optional(), // Full Google resource path
   name: z.string().min(1).max(200),
   photoUrl: z.string().url().optional(),
   rating: z.number().int().min(1).max(5),
   text: z.string().max(5000).optional(),
   date: timestampSchemaAdmin,
   receivedAt: timestampSchemaAdmin,
+  updateTime: timestampSchemaAdmin.optional(),
+  isAnonymous: z.boolean().optional(),
   aiReply: z.string().max(2000).optional(),
   aiReplyGeneratedAt: timestampSchemaAdmin.optional(),
   replyStatus: replyStatusSchema,

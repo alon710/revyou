@@ -90,6 +90,7 @@ export interface Business {
 export interface Review {
   id: string;
   googleReviewId: string;
+  googleReviewName?: string; // Full Google resource path: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
   name: string;
   photoUrl?: string;
   rating: number;

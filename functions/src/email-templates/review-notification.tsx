@@ -14,6 +14,7 @@ import {
 interface ReviewNotificationEmailProps {
   recipientName: string;
   businessName: string;
+  businessId: string;
   reviewerName: string;
   rating: number;
   reviewText: string;
@@ -26,6 +27,7 @@ interface ReviewNotificationEmailProps {
 export const ReviewNotificationEmail = ({
   recipientName = "בעל העסק",
   businessName = "העסק שלך",
+  businessId = "",
   reviewerName = "לקוח",
   rating = 5,
   reviewText = "",
@@ -36,7 +38,7 @@ export const ReviewNotificationEmail = ({
 }: ReviewNotificationEmailProps) => {
   const statusText = status === "pending" ? "ממתינה לאישור" : "פורסמה";
   const statusColor = status === "pending" ? "#f59e0b" : "#10b981";
-  const reviewPageUrl = `${appBaseUrl}/dashboard/reviews/${reviewId}`;
+  const reviewPageUrl = `${appBaseUrl}/dashboard/businesses/${businessId}/reviews/${reviewId}`;
 
   return (
     <Html lang="he" dir="rtl">

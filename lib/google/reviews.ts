@@ -108,6 +108,49 @@ export async function getReview(
 }
 
 /**
+ * Posts a reply to a review on Google My Business
+ * @param reviewName - Full resource name: accounts/{accountId}/locations/{locationId}/reviews/{reviewId}
+ * @param replyText - The text of the reply to post
+ * @param refreshToken - OAuth refresh token
+ * @param clientId - Optional OAuth client ID (for Cloud Functions)
+ * @param clientSecret - Optional OAuth client secret (for Cloud Functions)
+ * @returns The posted review reply
+ */
+export async function postReplyToGoogle(
+  reviewName: string,
+  replyText: string,
+  refreshToken: string,
+  clientId?: string,
+  clientSecret?: string
+): Promise<GoogleReviewReply> {
+  try {
+    console.log("Posting reply to Google for review:", reviewName);
+    const accessToken = await getAccessTokenFromRefreshToken(
+      refreshToken,
+      clientId,
+      clientSecret
+    );
+    const url = `${GOOGLE_MY_BUSINESS_API_BASE}/${reviewName}/reply`;
+    console.log("Reply API URL:", url);
+
+    const reply = await makeAuthorizedRequest<GoogleReviewReply>(
+      url,
+      accessToken,
+      "PUT",
+      { comment: replyText }
+    );
+    console.log("Successfully posted reply to Google");
+    return reply;
+  } catch (error) {
+    console.error("Error posting reply to Google:", {
+      reviewName,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
+  }
+}
+
+/**
  * Converts GMB StarRating enum to numeric rating (1-5)
  */
 export function starRatingToNumber(starRating: StarRating): number {

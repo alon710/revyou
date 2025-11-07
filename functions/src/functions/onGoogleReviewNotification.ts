@@ -189,6 +189,7 @@ export const onGoogleReviewNotification = onMessagePublished(
       // Map Google review to our database structure
       const reviewData: Omit<Review, "id"> = {
         googleReviewId: googleReview.reviewId,
+        googleReviewName: googleReview.name, // Full Google resource path
         name: googleReview.reviewer.displayName,
         photoUrl: googleReview.reviewer.profilePhotoUrl,
         rating: starRatingToNumber(googleReview.starRating),
