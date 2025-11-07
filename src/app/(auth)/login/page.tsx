@@ -1,10 +1,8 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { User } from "firebase/auth";
 import { signInWithGoogle } from "@/lib/firebase/auth";
-import { useAuth } from "@/contexts/AuthContext";
 import {
   DashboardCard,
   DashboardCardContent,
@@ -13,35 +11,17 @@ import {
   DashboardCardTitle,
 } from "@/components/ui/dashboard-card";
 import { Logo } from "@/components/ui/Logo";
-import { Loading } from "@/components/ui/loading";
 import { GoogleSsoButton } from "@/components/ui/google-sso-button";
 import Link from "next/link";
 import { toast } from "sonner";
 
 export const dynamic = "force-dynamic";
 
-function LoginForm() {
+export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, loading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const redirectAfterLogin = useCallback(
-    async (user?: User) => {
-      if (!user) return;
-
-      const redirect = searchParams.get("redirect") || "/dashboard";
-      router.push(redirect);
-    },
-    [router, searchParams]
-  );
-
-  useEffect(() => {
-    if (!authLoading && user) {
-      redirectAfterLogin(user);
-    }
-  }, [user, authLoading, redirectAfterLogin]);
 
   useEffect(() => {
     if (error) {
@@ -59,17 +39,10 @@ function LoginForm() {
       setError(error);
       setIsLoading(false);
     } else if (user) {
-      await redirectAfterLogin(user);
+      const redirect = searchParams.get("redirect") || "/dashboard";
+      router.push(redirect);
     }
   };
-
-  if (authLoading) {
-    return <Loading fullScreen />;
-  }
-
-  if (user) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-b from-background to-muted p-4">
@@ -116,13 +89,5 @@ function LoginForm() {
         </p>
       </div>
     </div>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={<Loading fullScreen />}>
-      <LoginForm />
-    </Suspense>
   );
 }
