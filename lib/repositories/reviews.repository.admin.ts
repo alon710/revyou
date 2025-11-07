@@ -97,7 +97,7 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
    */
   async update(reviewId: string, data: ReviewUpdate): Promise<Review> {
     const reviewRef = adminDb.doc(`${this.basePath}/${reviewId}`);
-    await reviewRef.update(data);
+    await reviewRef.update(data as { [key: string]: any });
 
     const updated = await this.get(reviewId);
     if (!updated) throw new Error("Review not found after update");

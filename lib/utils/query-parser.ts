@@ -12,7 +12,7 @@ import { ReviewFilters, BusinessFilters, AccountFilters } from "@/lib/types";
  */
 export function parseSearchParams<T>(
   params: URLSearchParams,
-  schema: z.ZodSchema<T>
+  schema: z.ZodType<T, any, any>
 ): T {
   const obj: Record<string, any> = {};
 

@@ -92,7 +92,7 @@ export class AccountsRepositoryAdmin extends BaseRepository<
    */
   async update(accountId: string, data: AccountUpdate): Promise<Account> {
     const accountRef = adminDb.doc(`${this.basePath}/${accountId}`);
-    await accountRef.update(data);
+    await accountRef.update(data as { [key: string]: any });
 
     const updated = await this.get(accountId);
     if (!updated) throw new Error("Account not found after update");

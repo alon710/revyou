@@ -59,7 +59,7 @@ export class UsersRepositoryAdmin extends BaseRepository<
       updatedAt: new Date(),
     };
 
-    await userRef.update(updateData);
+    await userRef.update(updateData as { [key: string]: any });
 
     const updated = await this.get(userId);
     if (!updated) throw new Error("User not found after update");

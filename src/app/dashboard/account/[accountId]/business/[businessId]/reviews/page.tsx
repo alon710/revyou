@@ -12,12 +12,14 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+interface BusinessReviewsPageProps {
+  params: Promise<{ accountId: string; businessId: string }>;
+}
+
 export default function BusinessReviewsPage({
   params,
-}: {
-  params: Promise<{ businessId: string }>;
-}) {
-  const { businessId } = use(params);
+}: BusinessReviewsPageProps) {
+  const { accountId, businessId } = use(params);
   const { user } = useAuth();
   const router = useRouter();
 
@@ -27,7 +29,7 @@ export default function BusinessReviewsPage({
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!user || !businessId) return;
+    if (!user || !businessId || !accountId) return;
 
     try {
       setLoading(true);
@@ -35,7 +37,7 @@ export default function BusinessReviewsPage({
 
       // Fetch business using new API
       const businessResponse = await fetch(
-        `/api/users/${user.uid}/accounts/${user.selectedAccountId}/businesses/${businessId}`
+        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`
       );
 
       if (!businessResponse.ok) {
@@ -47,7 +49,7 @@ export default function BusinessReviewsPage({
 
       // Fetch reviews using new API with filters
       const reviewsResponse = await fetch(
-        `/api/users/${user.uid}/accounts/${biz.accountId}/businesses/${businessId}/reviews?orderBy=receivedAt&orderDirection=desc`
+        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}/reviews?orderBy=receivedAt&orderDirection=desc`
       );
 
       if (!reviewsResponse.ok) {
@@ -65,64 +67,68 @@ export default function BusinessReviewsPage({
     } finally {
       setLoading(false);
     }
-  }, [user, businessId]);
+  }, [user, businessId, accountId]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  if (loading) {
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+    }
+  }, [user, router]);
+
+  if (!user || loading) {
     return (
       <PageContainer>
-        <Loading fullScreen text="טוען..." />
+        <Loading fullScreen text="טוען ביקורות..." />
       </PageContainer>
     );
   }
 
-  if (error || !business || !user) {
+  if (error || !business) {
     return (
-      <EmptyState
-        title="שגיאה"
-        description="שגיאה בטעינת הביקורות"
-        buttonText="חזור לעסקים"
-        buttonLink="/dashboard/businesses"
-      />
+      <PageContainer>
+        <div className="mb-6">
+          <BackButton href="/dashboard/businesses" />
+        </div>
+        <PageHeader title="ביקורות" description="כל הביקורות לעסק" />
+        <EmptyState
+          title="שגיאה בטעינת הביקורות"
+          description={error || "לא נמצא עסק"}
+          buttonText="חזרה לעסקים"
+          buttonLink="/dashboard/businesses"
+        />
+      </PageContainer>
     );
   }
 
   return (
     <PageContainer>
-      <div className="mb-4">
+      <div className="mb-6">
         <BackButton href="/dashboard/businesses" />
       </div>
 
       <PageHeader
-        title={`ביקורות - ${business.name}`}
-        description="כל הביקורות עבור עסק זה ממוינות מחדש לישן"
+        title={`ביקורות ${business.name}`}
+        description={`כל הביקורות לעסק שלך`}
       />
 
-      <div className="space-y-4">
+      <div className="space-y-4 mt-6">
         {reviews.length === 0 ? (
           <EmptyState
-            title="אין ביקורות עדיין"
-            description="הביקורות יופיעו כאן ברגע שהן יגיעו מגוגל"
-            buttonText="חזור לעסקים"
+            title="אין עדיין ביקורות"
+            description="כשיגיעו ביקורות חדשות, הן יופיעו כאן"
+            buttonText="חזרה לעסקים"
             buttonLink="/dashboard/businesses"
           />
         ) : (
           reviews.map((review) => (
-            <div
-              key={review.id}
-              onClick={() =>
-                router.push(
-                  `/dashboard/businesses/${businessId}/reviews/${review.id}`
-                )
-              }
-              className="cursor-pointer hover:opacity-90 transition-opacity"
-            >
+            <div key={review.id}>
               <ReviewCard
                 review={review}
-                accountId={business.accountId}
+                accountId={accountId}
                 businessId={businessId}
                 userId={user.uid}
                 onUpdate={fetchData}

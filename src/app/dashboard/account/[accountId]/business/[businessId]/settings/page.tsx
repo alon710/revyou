@@ -2,8 +2,7 @@
 
 import { use, useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { getBusinessById, deleteBusiness } from "@/lib/firebase/business";
-import type { Business } from "../../../../../../types/database";
+import type { Business } from "@/lib/types";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
@@ -16,9 +15,9 @@ import { useRouter } from "next/navigation";
 export default function BusinessSettingsPage({
   params,
 }: {
-  params: Promise<{ businessId: string }>;
+  params: Promise<{ accountId: string; businessId: string }>;
 }) {
-  const { businessId } = use(params);
+  const { accountId, businessId } = use(params);
   const { user } = useAuth();
   const router = useRouter();
 
@@ -26,18 +25,28 @@ export default function BusinessSettingsPage({
   const [loading, setLoading] = useState(true);
 
   const fetchBusiness = useCallback(async () => {
-    if (!user || !businessId) return;
+    if (!user || !accountId || !businessId) return;
 
     try {
       setLoading(true);
-      const biz = await getBusinessById(user.uid, businessId);
+
+      // Fetch business using new API
+      const response = await fetch(
+        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch business");
+      }
+
+      const { business: biz } = await response.json();
       setBusiness(biz);
     } catch (error) {
       console.error("Error fetching business:", error);
     } finally {
       setLoading(false);
     }
-  }, [user, businessId]);
+  }, [user, accountId, businessId]);
 
   useEffect(() => {
     fetchBusiness();
@@ -47,7 +56,17 @@ export default function BusinessSettingsPage({
     if (!business || !user) return;
 
     try {
-      await deleteBusiness(user.uid, business.accountId, business.id);
+      const response = await fetch(
+        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete business");
+      }
+
       router.push("/dashboard/businesses");
     } catch (error) {
       console.error("Error deleting business:", error);
@@ -88,7 +107,7 @@ export default function BusinessSettingsPage({
 
       <BusinessDetailsCard
         business={business}
-        accountId={business.accountId}
+        accountId={accountId}
         userId={user!.uid}
         loading={loading}
         onUpdate={fetchBusiness}

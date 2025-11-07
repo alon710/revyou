@@ -2,10 +2,7 @@
 
 import { use, useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { getBusinessById } from "@/lib/firebase/business";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
-import type { Business, Review } from "../../../../../../../types/database";
+import type { Business, Review } from "@/lib/types";
 import { ReviewCard } from "@/components/dashboard/reviews/ReviewCard";
 import { Loading } from "@/components/ui/loading";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -13,11 +10,11 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { BackButton } from "@/components/ui/back-button";
 
 interface ReviewPageProps {
-  params: Promise<{ businessId: string; reviewId: string }>;
+  params: Promise<{ accountId: string; businessId: string; reviewId: string }>;
 }
 
 export default function ReviewPage({ params }: ReviewPageProps) {
-  const { businessId, reviewId } = use(params);
+  const { accountId, businessId, reviewId } = use(params);
   const { user } = useAuth();
 
   const [business, setBusiness] = useState<Business | null>(null);
@@ -26,13 +23,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
   const [error, setError] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
-    if (!user || !businessId || !reviewId) {
-      setLoading(false);
-      return;
-    }
-
-    if (!db) {
-      setError("שגיאה באתחול המערכת");
+    if (!user || !accountId || !businessId || !reviewId) {
       setLoading(false);
       return;
     }
@@ -41,44 +32,36 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       setLoading(true);
       setError(null);
 
-      // Fetch business details
-      const biz = await getBusinessById(user.uid, businessId);
-      if (!biz) {
-        setError("העסק לא נמצא");
-        return;
+      // Fetch business
+      const businessResponse = await fetch(
+        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`
+      );
+
+      if (!businessResponse.ok) {
+        throw new Error("העסק לא נמצא");
       }
+
+      const { business: biz } = await businessResponse.json();
       setBusiness(biz);
 
       // Fetch review
-      const reviewRef = doc(
-        db,
-        "users",
-        user.uid,
-        "accounts",
-        biz.accountId,
-        "businesses",
-        businessId,
-        "reviews",
-        reviewId
+      const reviewResponse = await fetch(
+        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}/reviews/${reviewId}`
       );
 
-      const reviewSnap = await getDoc(reviewRef);
-
-      if (reviewSnap.exists()) {
-        setReview({
-          id: reviewSnap.id,
-          ...reviewSnap.data(),
-        } as Review);
-      } else {
-        setError("הביקורת לא נמצאה");
+      if (!reviewResponse.ok) {
+        throw new Error("הביקורת לא נמצאה");
       }
+
+      const { review: fetchedReview } = await reviewResponse.json();
+      setReview(fetchedReview);
     } catch (err) {
       console.error("Error loading data:", err);
-      setError("שגיאה בטעינת הביקורת");
+      setError(err instanceof Error ? err.message : "שגיאה בטעינת הביקורת");
     } finally {
       setLoading(false);
     }
-  }, [user, businessId, reviewId]);
+  }, [user, accountId, businessId, reviewId]);
 
   useEffect(() => {
     loadData();
@@ -96,7 +79,9 @@ export default function ReviewPage({ params }: ReviewPageProps) {
     return (
       <PageContainer>
         <div className="mb-6">
-          <BackButton href={`/dashboard/businesses/${businessId}/reviews`} />
+          <BackButton
+            href={`/dashboard/account/${accountId}/business/${businessId}/reviews`}
+          />
         </div>
         <PageHeader title="ביקורת" description="פרטי ביקורת" />
         <div className="text-center text-muted-foreground py-12">
@@ -109,7 +94,9 @@ export default function ReviewPage({ params }: ReviewPageProps) {
   return (
     <PageContainer>
       <div className="mb-6">
-        <BackButton href={`/dashboard/businesses/${businessId}/reviews`} />
+        <BackButton
+          href={`/dashboard/account/${accountId}/business/${businessId}/reviews`}
+        />
       </div>
       <PageHeader
         title={`ביקורת מאת ${review.name}`}
@@ -119,7 +106,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       <div className="mt-6">
         <ReviewCard
           review={review}
-          accountId={business.accountId}
+          accountId={accountId}
           businessId={businessId}
           userId={user.uid}
           onUpdate={loadData}

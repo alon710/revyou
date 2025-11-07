@@ -51,13 +51,17 @@ export default function BusinessesPage() {
     );
   }
 
-  const handleBusinessClick = (businessId: string) => {
-    router.push(`/dashboard/businesses/${businessId}/reviews`);
+  const handleBusinessClick = (business: Business) => {
+    router.push(
+      `/dashboard/account/${business.accountId}/business/${business.id}/reviews`
+    );
   };
 
-  const handleSettingsClick = (e: React.MouseEvent, businessId: string) => {
+  const handleSettingsClick = (e: React.MouseEvent, business: Business) => {
     e.stopPropagation();
-    router.push(`/dashboard/businesses/${businessId}/settings`);
+    router.push(
+      `/dashboard/account/${business.accountId}/business/${business.id}/settings`
+    );
   };
 
   return (
@@ -72,7 +76,7 @@ export default function BusinessesPage() {
           <DashboardCard
             key={business.id}
             className="cursor-pointer relative min-h-[320px] flex flex-col"
-            onClick={() => handleBusinessClick(business.id)}
+            onClick={() => handleBusinessClick(business)}
           >
             <div className="absolute top-4 left-4 z-10">
               <IconButton
@@ -80,7 +84,7 @@ export default function BusinessesPage() {
                 variant="ghost"
                 size="sm"
                 aria-label="הגדרות עסק"
-                onClick={(e) => handleSettingsClick(e, business.id)}
+                onClick={(e) => handleSettingsClick(e, business)}
               />
             </div>
 

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { ReviewsController } from "@/lib/controllers";
 import { BusinessesController } from "@/lib/controllers";
-import { generateReviewReply } from "@/lib/ai/gemini";
+import { generateAIReply } from "@/lib/ai/gemini";
+import { buildReplyPrompt } from "@/lib/ai/prompts/builder";
 
 /**
  * POST /api/users/[userId]/accounts/[accountId]/businesses/[businessId]/reviews/[reviewId]/generate
@@ -44,8 +45,14 @@ export async function POST(
     const businessController = new BusinessesController(userId, accountId);
     const business = await businessController.getBusiness(businessId);
 
-    // Generate AI reply
-    const aiReply = await generateReviewReply(review, business.config);
+    // Build prompt and generate AI reply
+    const prompt = buildReplyPrompt(
+      business.config,
+      review,
+      business.name,
+      business.config.phoneNumber
+    );
+    const aiReply = await generateAIReply(prompt);
 
     // Update review with AI reply
     const updatedReview = await reviewController.updateAiReply(

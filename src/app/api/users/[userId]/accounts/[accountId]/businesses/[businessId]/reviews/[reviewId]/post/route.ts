@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { ReviewsController } from "@/lib/controllers";
 import { AccountsController } from "@/lib/controllers";
-import { postReviewReply } from "@/lib/google/reviews";
+import { postReplyToGoogle } from "@/lib/google/reviews";
 
 /**
  * POST /api/users/[userId]/accounts/[accountId]/businesses/[businessId]/reviews/[reviewId]/post
@@ -62,11 +62,11 @@ export async function POST(
     const account = await accountController.getAccount(accountId);
 
     // Post reply to Google
-    await postReviewReply({
-      reviewName: review.googleReviewName || review.googleReviewId,
-      reply: replyToPost,
-      refreshToken: account.googleRefreshToken,
-    });
+    await postReplyToGoogle(
+      review.googleReviewName || review.googleReviewId,
+      replyToPost,
+      account.googleRefreshToken
+    );
 
     // Mark review as posted
     const updatedReview = await reviewController.markAsPosted(

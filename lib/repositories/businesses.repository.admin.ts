@@ -95,7 +95,7 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
    */
   async update(businessId: string, data: BusinessUpdate): Promise<Business> {
     const businessRef = adminDb.doc(`${this.basePath}/${businessId}`);
-    await businessRef.update(data);
+    await businessRef.update(data as { [key: string]: any });
 
     const updated = await this.get(businessId);
     if (!updated) throw new Error("Business not found after update");
