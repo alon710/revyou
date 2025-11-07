@@ -55,6 +55,7 @@ export function ReviewCard({
   };
 
   const handleReject = async (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
 
     try {
@@ -82,6 +83,7 @@ export function ReviewCard({
   };
 
   const handleRegenerate = async (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (!user) return;
 
@@ -143,6 +145,7 @@ export function ReviewCard({
           review.replyStatus === "failed") && (
           <DashboardCardFooter>
             <Button
+              type="button"
               onClick={handleReject}
               disabled={isLoading}
               variant="outline"
@@ -151,6 +154,7 @@ export function ReviewCard({
               דחה
             </Button>
             <Button
+              type="button"
               onClick={handleRegenerate}
               disabled={isLoading}
               size="sm"
@@ -159,7 +163,9 @@ export function ReviewCard({
               צור מחדש
             </Button>
             <Button
+              type="button"
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 setShowEditor(true);
               }}
@@ -170,7 +176,9 @@ export function ReviewCard({
               ערוך
             </Button>
             <Button
+              type="button"
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 setShowPublishDialog(true);
               }}
