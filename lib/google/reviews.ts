@@ -16,7 +16,7 @@ export enum StarRating {
 interface GoogleReviewer {
   profilePhotoUrl?: string;
   displayName: string;
-  isAnonymous: boolean;
+  isAnonymous?: boolean; // Optional - Google API doesn't always return this field
 }
 
 interface GoogleReviewReply {

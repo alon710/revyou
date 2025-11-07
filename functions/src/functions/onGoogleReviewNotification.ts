@@ -62,7 +62,7 @@ async function findBusinessByLocationId(locationName: string): Promise<{
           return {
             userId: userDoc.id,
             accountId: accountDoc.id,
-            business: businessDoc.data() as Business,
+            business: { id: businessDoc.id, ...businessDoc.data() } as Business,
           };
         }
       }
@@ -200,7 +200,7 @@ export const onGoogleReviewNotification = onMessagePublished(
           parseGoogleTimestamp(googleReview.updateTime)
         ),
         receivedAt: admin.firestore.Timestamp.now(),
-        isAnonymous: googleReview.reviewer.isAnonymous,
+        isAnonymous: googleReview.reviewer.isAnonymous ?? false,
         replyStatus: "pending",
         postedReply: null,
         postedAt: null,
