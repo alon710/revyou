@@ -1,11 +1,8 @@
 "use client";
 
 import { use, useEffect, useState, useCallback } from "react";
-import { collection, query, orderBy, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
 import { useAuth } from "@/contexts/AuthContext";
-import { getBusinessById } from "@/lib/firebase/business";
-import type { Business, Review } from "../../../../../../types/database";
+import type { Business, Review } from "@/lib/types";
 import { ReviewCard } from "@/components/dashboard/reviews/ReviewCard";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -32,43 +29,32 @@ export default function BusinessReviewsPage({
   const fetchData = useCallback(async () => {
     if (!user || !businessId) return;
 
-    if (!db) {
-      setError("שגיאה באתחול המערכת");
-      setLoading(false);
-      return;
-    }
-
     try {
       setLoading(true);
       setError(null);
 
-      const biz = await getBusinessById(user.uid, businessId);
-      if (!biz) {
-        setError("לא נמצא עסק");
-        return;
-      }
-      setBusiness(biz);
-
-      const q = query(
-        collection(
-          db,
-          "users",
-          user.uid,
-          "accounts",
-          biz.accountId,
-          "businesses",
-          businessId,
-          "reviews"
-        ),
-        orderBy("receivedAt", "desc")
+      // Fetch business using new API
+      const businessResponse = await fetch(
+        `/api/users/${user.uid}/accounts/${user.selectedAccountId}/businesses/${businessId}`
       );
 
-      const snapshot = await getDocs(q);
-      const fetchedReviews = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Review[];
+      if (!businessResponse.ok) {
+        throw new Error("לא נמצא עסק");
+      }
 
+      const { business: biz } = await businessResponse.json();
+      setBusiness(biz);
+
+      // Fetch reviews using new API with filters
+      const reviewsResponse = await fetch(
+        `/api/users/${user.uid}/accounts/${biz.accountId}/businesses/${businessId}/reviews?orderBy=receivedAt&orderDirection=desc`
+      );
+
+      if (!reviewsResponse.ok) {
+        throw new Error("שגיאה בטעינת ביקורות");
+      }
+
+      const { reviews: fetchedReviews } = await reviewsResponse.json();
       setReviews(fetchedReviews);
     } catch (err) {
       const errorMessage =

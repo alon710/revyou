@@ -4,7 +4,7 @@
   "description": "Firebase Cloud Functions for automated AI review workflow",
   "main": "lib/index.js",
   "scripts": {
-    "prebuild": "rm -rf src/shared && mkdir -p src/shared && cp -r ../lib/ai ../lib/google ../types src/shared/ && ([ -f src/shared/ai/prompts/builder.ts ] && sed -i.bak 's|\\.\\./\\.\\./\\.\\./types/database|../../types/database|g' src/shared/ai/prompts/builder.ts && rm -f src/shared/ai/prompts/builder.ts.bak || true) && ([ -f src/shared/types/database.ts ] && sed -i.bak -e 's|@/lib/ai/prompts/template|../ai/prompts/template|g' -e 's|firebase/firestore|firebase-admin/firestore|g' src/shared/types/database.ts && rm -f src/shared/types/database.ts.bak || true) && (find src/shared/google -name '*.ts' -exec sed -i.bak 's|../../types/database|../types/database|g' {} \\; && find src/shared/google -name '*.bak' -delete || true)",
+    "prebuild": "rm -rf src/shared && mkdir -p src/shared && cp -r ../lib/ai ../lib/google ../lib/types src/shared/ && ([ -f src/shared/ai/prompts/builder.ts ] && sed -i.bak 's|\\.\\./\\.\\./\\.\\./types/database|../../types/database|g' src/shared/ai/prompts/builder.ts && rm -f src/shared/ai/prompts/builder.ts.bak || true) && (find src/shared/types -name '*.ts' -exec sed -i.bak -e 's|@/lib/ai/prompts/template|../ai/prompts/template|g' -e 's|firebase/firestore|firebase-admin/firestore|g' {} \\; && find src/shared/types -name '*.bak' -delete || true) && (find src/shared/google -name '*.ts' -exec sed -i.bak 's|../../types/database|../types/database|g' {} \\; && find src/shared/google -name '*.bak' -delete || true)",
     "build": "tsc",
     "postbuild": "rm -rf src/shared",
     "build:watch": "tsc --watch",
