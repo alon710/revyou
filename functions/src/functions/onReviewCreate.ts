@@ -14,7 +14,7 @@ import type {
   User,
   StarConfig,
   ReplyStatus,
-} from "../shared/types/database";
+} from "../shared/types";
 
 const db = admin.firestore();
 

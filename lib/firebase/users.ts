@@ -1,6 +1,6 @@
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
-import { User } from "../../types/database";
+import { User } from "@/lib/types";
 
 export async function getUser(uid: string): Promise<User | null> {
   if (!db) {

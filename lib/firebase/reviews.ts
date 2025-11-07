@@ -1,6 +1,6 @@
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
-import { Review } from "../../types/database";
+import { Review } from "@/lib/types";
 import { reviewSchema } from "@/lib/validation/database";
 
 export async function getReview(

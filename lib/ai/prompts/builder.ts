@@ -1,5 +1,5 @@
 import { DEFAULT_BUSINESS_PROMPT_TEMPLATE } from "./template";
-import type { BusinessConfig, Review } from "../../../types/database";
+import type { BusinessConfig, Review } from "@/lib/types";
 import Mustache from "mustache";
 
 export function buildReplyPrompt(

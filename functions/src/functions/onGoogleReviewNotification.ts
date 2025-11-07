@@ -7,7 +7,7 @@ import {
   parseGoogleTimestamp,
 } from "../shared/google/reviews";
 import { decryptToken } from "../shared/google/business-profile";
-import type { Review, Business } from "../shared/types/database";
+import type { Review, Business } from "../shared/types";
 
 const db = admin.firestore();
 const tokenEncryptionSecret = defineSecret("TOKEN_ENCRYPTION_SECRET");
@@ -161,6 +161,9 @@ export const onGoogleReviewNotification = onMessagePublished(
       console.log("Fetched Google review:", googleReview);
 
       const reviewData: Omit<Review, "id"> = {
+        userId,
+        accountId,
+        businessId: business.id,
         googleReviewId: googleReview.reviewId,
         googleReviewName: googleReview.name,
         name: googleReview.reviewer.displayName,

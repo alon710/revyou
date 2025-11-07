@@ -1,6 +1,6 @@
 import { OAuth2Client } from "google-auth-library";
 import * as Iron from "@hapi/iron";
-import { GoogleBusinessProfileBusiness } from "../../types/database";
+import { GoogleBusinessProfileBusiness } from "@/lib/types";
 
 const GOOGLE_MY_BUSINESS_API_BASE =
   "https://mybusinessbusinessinformation.googleapis.com/v1";

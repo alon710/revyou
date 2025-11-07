@@ -1,5 +1,5 @@
 import { adminDb } from "@/lib/firebase/admin";
-import { Business } from "../../types/database";
+import { Business } from "@/lib/types";
 import { businessSchemaAdmin } from "@/lib/validation/database.admin";
 import { Timestamp as ClientTimestamp } from "firebase/firestore";
 

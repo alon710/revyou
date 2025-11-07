@@ -1,5 +1,5 @@
 import { adminDb } from "@/lib/firebase/admin";
-import { Review } from "../../types/database";
+import { Review } from "@/lib/types";
 import { reviewSchemaAdmin } from "@/lib/validation/database.admin";
 
 export async function getReviewAdmin(
