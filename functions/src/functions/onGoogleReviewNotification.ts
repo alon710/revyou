@@ -20,48 +20,40 @@ interface PubSubNotificationData {
   location: string;
 }
 
-function extractLocationId(locationName: string): string {
-  const parts = locationName.split("/");
-  const locationIndex = parts.indexOf("locations");
-  if (locationIndex === -1 || locationIndex + 1 >= parts.length) {
-    throw new Error(`Invalid location name format: ${locationName}`);
-  }
-  return parts[locationIndex + 1];
-}
-
 async function findBusinessByLocationId(locationName: string): Promise<{
   userId: string;
   accountId: string;
   business: Business;
 } | null> {
   try {
-    const locationId = extractLocationId(locationName);
-    console.log("Searching for business with locationId:", locationId);
+    console.log("Searching for business with location:", locationName);
 
-    const usersSnapshot = await db.collection("users").get();
+    const businessesSnapshot = await db
+      .collectionGroup("businesses")
+      .where("googleBusinessId", "==", locationName)
+      .limit(1)
+      .get();
 
-    for (const userDoc of usersSnapshot.docs) {
-      const accountsSnapshot = await userDoc.ref.collection("accounts").get();
-
-      for (const accountDoc of accountsSnapshot.docs) {
-        const businessesSnapshot = await accountDoc.ref
-          .collection("businesses")
-          .where("googleBusinessId", "==", locationName)
-          .get();
-
-        if (!businessesSnapshot.empty) {
-          const businessDoc = businessesSnapshot.docs[0];
-          return {
-            userId: userDoc.id,
-            accountId: accountDoc.id,
-            business: { id: businessDoc.id, ...businessDoc.data() } as Business,
-          };
-        }
-      }
+    if (businessesSnapshot.empty) {
+      console.error("No business found for location:", locationName);
+      return null;
     }
 
-    console.error("No business found for location:", locationName);
-    return null;
+    const businessDoc = businessesSnapshot.docs[0];
+
+    const accountId = businessDoc.ref.parent.parent?.id;
+    const userId = businessDoc.ref.parent.parent?.parent?.parent?.id;
+
+    if (!userId || !accountId) {
+      console.error("Failed to extract userId or accountId from document path");
+      return null;
+    }
+
+    return {
+      userId,
+      accountId,
+      business: { id: businessDoc.id, ...businessDoc.data() } as Business,
+    };
   } catch (error) {
     console.error("Error finding business:", error);
     return null;
