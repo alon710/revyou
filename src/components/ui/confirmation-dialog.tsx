@@ -139,9 +139,7 @@ export function ConfirmationDialog({
             {inputValue && !isConfirmValid && (
               <p className="text-sm text-destructive text-right">
                 הטקסט אינו תואם:{" "}
-                <span className="italic font-semibold">
-                  "{confirmationText}"
-                </span>
+                <span className="italic font-semibold">{confirmationText}</span>
               </p>
             )}
           </div>
