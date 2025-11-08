@@ -19,7 +19,6 @@ import {
   BusinessCreateInput,
   BusinessUpdateInput,
 } from "@/lib/validation/database";
-import { checkBusinessLimit } from "@/lib/firebase/business-limits";
 import { getDefaultBusinessConfig } from "@/lib/firebase/business-config";
 
 export async function getAccountBusinesses(
@@ -182,11 +181,6 @@ export async function createBusiness(
   }
 
   try {
-    const canCreate = await checkBusinessLimit(data.userId);
-    if (!canCreate) {
-      throw new Error("הגעת למגבלת העסקים עבור חבילת המינוי שלך");
-    }
-
     const defaultConfig = getDefaultBusinessConfig();
     const BusinessConfig = {
       ...defaultConfig,
