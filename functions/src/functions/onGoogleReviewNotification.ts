@@ -8,6 +8,8 @@ import {
 } from "../shared/google/reviews";
 import { decryptToken } from "../shared/google/business-profile";
 import type { Review, Business } from "../shared/types";
+import { AccountsRepositoryAdmin } from "../shared/repositories/accounts.repository.admin";
+import { ReviewsRepositoryAdmin } from "../shared/repositories/reviews.repository.admin";
 
 const db = admin.firestore();
 const tokenEncryptionSecret = defineSecret("TOKEN_ENCRYPTION_SECRET");
@@ -65,20 +67,15 @@ async function getAccountRefreshToken(
   accountId: string
 ): Promise<string | null> {
   try {
-    const accountDoc = await db
-      .collection("users")
-      .doc(userId)
-      .collection("accounts")
-      .doc(accountId)
-      .get();
+    const accountsRepo = new AccountsRepositoryAdmin(userId);
+    const account = await accountsRepo.get(accountId);
 
-    if (!accountDoc.exists) {
+    if (!account) {
       console.error("Account not found", { userId, accountId });
       return null;
     }
 
-    const accountData = accountDoc.data();
-    return accountData?.googleRefreshToken || null;
+    return account.googleRefreshToken || null;
   } catch (error) {
     console.error("Error fetching account refresh token:", error);
     return null;
@@ -184,29 +181,24 @@ export const onGoogleReviewNotification = onMessagePublished(
         postedBy: null,
       };
 
-      const reviewsRef = db
-        .collection("users")
-        .doc(userId)
-        .collection("accounts")
-        .doc(accountId)
-        .collection("businesses")
-        .doc(business.id)
-        .collection("reviews");
+      const reviewsRepo = new ReviewsRepositoryAdmin(
+        userId,
+        accountId,
+        business.id
+      );
 
-      const existingReviewSnapshot = await reviewsRef
-        .where("googleReviewId", "==", googleReview.reviewId)
-        .limit(1)
-        .get();
+      const existingReview = await reviewsRepo.findByGoogleReviewId(
+        googleReview.reviewId
+      );
 
-      if (!existingReviewSnapshot.empty) {
-        const existingReviewDoc = existingReviewSnapshot.docs[0];
-        console.log("Review already exists, skipping:", existingReviewDoc.id);
+      if (existingReview) {
+        console.log("Review already exists, skipping:", existingReview.id);
         return;
       }
 
       console.log("Creating new review");
-      const newReviewRef = await reviewsRef.add(reviewData);
-      console.log("Review created successfully:", newReviewRef.id);
+      const newReview = await reviewsRepo.create(reviewData);
+      console.log("Review created successfully:", newReview.id);
     } catch (error) {
       console.error("Error processing Google review notification:", error);
       throw error;

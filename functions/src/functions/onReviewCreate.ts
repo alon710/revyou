@@ -15,6 +15,10 @@ import type {
   StarConfig,
   ReplyStatus,
 } from "../shared/types";
+import { BusinessesRepositoryAdmin } from "../shared/repositories/businesses.repository.admin";
+import { UsersRepositoryAdmin } from "../shared/repositories/users.repository.admin";
+import { AccountsRepositoryAdmin } from "../shared/repositories/accounts.repository.admin";
+import { ReviewsRepositoryAdmin } from "../shared/repositories/reviews.repository.admin";
 
 const db = admin.firestore();
 
@@ -30,32 +34,25 @@ async function getBusiness(
   accountId: string,
   businessId: string
 ): Promise<Business | null> {
-  const businessDoc = await db
-    .collection("users")
-    .doc(userId)
-    .collection("accounts")
-    .doc(accountId)
-    .collection("businesses")
-    .doc(businessId)
-    .get();
+  const businessesRepo = new BusinessesRepositoryAdmin(userId, accountId);
+  const business = await businessesRepo.get(businessId);
 
-  if (!businessDoc.exists) {
+  if (!business) {
     console.error("Business not found", { accountId, businessId });
-    return null;
   }
 
-  return { id: businessDoc.id, ...businessDoc.data() } as Business;
+  return business;
 }
 
 async function getUser(userId: string): Promise<User | null> {
-  const userDoc = await db.collection("users").doc(userId).get();
+  const usersRepo = new UsersRepositoryAdmin();
+  const user = await usersRepo.get(userId);
 
-  if (!userDoc.exists) {
+  if (!user) {
     console.error("User not found", { userId });
-    return null;
   }
 
-  return userDoc.data() as User;
+  return user;
 }
 
 async function getAccountRefreshToken(
@@ -63,20 +60,15 @@ async function getAccountRefreshToken(
   accountId: string
 ): Promise<string | null> {
   try {
-    const accountDoc = await db
-      .collection("users")
-      .doc(userId)
-      .collection("accounts")
-      .doc(accountId)
-      .get();
+    const accountsRepo = new AccountsRepositoryAdmin(userId);
+    const account = await accountsRepo.get(accountId);
 
-    if (!accountDoc.exists) {
+    if (!account) {
       console.error("Account not found", { userId, accountId });
       return null;
     }
 
-    const accountData = accountDoc.data();
-    return accountData?.googleRefreshToken || null;
+    return account.googleRefreshToken || null;
   } catch (error) {
     console.error("Error fetching account refresh token:", error);
     return null;
@@ -84,7 +76,10 @@ async function getAccountRefreshToken(
 }
 
 async function handleAIReply(
-  eventData: FirebaseFirestore.DocumentSnapshot,
+  userId: string,
+  accountId: string,
+  businessId: string,
+  reviewId: string,
   review: Review,
   config: BusinessConfig,
   apiKey: string,
@@ -92,43 +87,49 @@ async function handleAIReply(
   phoneNumber?: string
 ): Promise<string | null> {
   try {
-    console.log("Generating AI reply", { reviewId: eventData.id });
+    console.log("Generating AI reply", { reviewId });
 
     const prompt = buildReplyPrompt(config, review, businessName, phoneNumber);
 
     const aiReply = await generateWithGemini(apiKey, prompt);
 
-    await eventData.ref.update({
+    const reviewsRepo = new ReviewsRepositoryAdmin(userId, accountId, businessId);
+    await reviewsRepo.update(reviewId, {
       aiReply,
-      aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
+      aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp() as any,
     });
 
     return aiReply;
   } catch (error) {
     console.error("Failed to generate AI reply", { error });
-    await eventData.ref.update({
+    const reviewsRepo = new ReviewsRepositoryAdmin(userId, accountId, businessId);
+    await reviewsRepo.update(reviewId, {
       replyStatus: "failed" as ReplyStatus,
-      aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
+      aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp() as any,
     });
     return null;
   }
 }
 
 async function updateReplyStatus(
-  eventData: FirebaseFirestore.DocumentSnapshot,
+  userId: string,
+  accountId: string,
+  businessId: string,
+  reviewId: string,
   review: Review,
   aiReply: string,
   shouldAutoPost: boolean,
   refreshToken: string | null
 ): Promise<ReplyStatus> {
+  const reviewsRepo = new ReviewsRepositoryAdmin(userId, accountId, businessId);
   const timestamp = admin.firestore.FieldValue.serverTimestamp();
 
   if (shouldAutoPost) {
     if (!refreshToken) {
       console.error("Cannot auto-post: no refresh token available");
-      await eventData.ref.update({
+      await reviewsRepo.update(reviewId, {
         aiReply,
-        aiReplyGeneratedAt: timestamp,
+        aiReplyGeneratedAt: timestamp as any,
         replyStatus: "failed" as ReplyStatus,
       });
       return "failed";
@@ -155,26 +156,26 @@ async function updateReplyStatus(
         googleClientSecret.value()
       );
 
-      await eventData.ref.update({
+      await reviewsRepo.update(reviewId, {
         aiReply,
-        aiReplyGeneratedAt: timestamp,
+        aiReplyGeneratedAt: timestamp as any,
         replyStatus: "posted" as ReplyStatus,
         postedReply: aiReply,
-        postedAt: timestamp,
+        postedAt: timestamp as any,
         postedBy: "system",
       });
 
-      console.log("AI reply auto-posted to Google", { reviewId: eventData.id });
+      console.log("AI reply auto-posted to Google", { reviewId });
       return "posted";
     } catch (error) {
       console.error("Failed to post reply to Google:", {
-        reviewId: eventData.id,
+        reviewId,
         error,
       });
 
-      await eventData.ref.update({
+      await reviewsRepo.update(reviewId, {
         aiReply,
-        aiReplyGeneratedAt: timestamp,
+        aiReplyGeneratedAt: timestamp as any,
         replyStatus: "failed" as ReplyStatus,
       });
 
@@ -182,13 +183,13 @@ async function updateReplyStatus(
     }
   }
 
-  await eventData.ref.update({
+  await reviewsRepo.update(reviewId, {
     aiReply,
-    aiReplyGeneratedAt: timestamp,
+    aiReplyGeneratedAt: timestamp as any,
     replyStatus: "pending" as ReplyStatus,
   });
 
-  console.log("AI reply awaiting approval", { reviewId: eventData.id });
+  console.log("AI reply awaiting approval", { reviewId });
   return "pending";
 }
 
@@ -290,7 +291,10 @@ export const onReviewCreate = onDocumentCreated(
         business.config.starConfigs[review.rating as 1 | 2 | 3 | 4 | 5];
 
       const aiReply = await handleAIReply(
-        eventData,
+        userId,
+        accountId,
+        businessId,
+        reviewId,
         review,
         business.config,
         geminiApiKey.value(),
@@ -307,7 +311,10 @@ export const onReviewCreate = onDocumentCreated(
       }
 
       const replyStatus = await updateReplyStatus(
-        eventData,
+        userId,
+        accountId,
+        businessId,
+        reviewId,
         review,
         aiReply,
         starConfig.autoReply,
