@@ -3,6 +3,7 @@ import type {
   ReviewCreate,
   Review,
   ReviewUpdate,
+  ReviewUpdateInput,
   ReviewFilters,
 } from "@/lib/types";
 import { firestorePaths } from "@/lib/utils/firestore-paths";
@@ -72,9 +73,9 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
     return created;
   }
 
-  async update(reviewId: string, data: ReviewUpdate): Promise<Review> {
+  async update(reviewId: string, data: ReviewUpdateInput): Promise<Review> {
     const reviewRef = adminDb.doc(`${this.basePath}/${reviewId}`);
-    await reviewRef.update(data as { [key: string]: any });
+    await reviewRef.update(data);
 
     const updated = await this.get(reviewId);
     if (!updated) throw new Error("Review not found after update");
@@ -90,7 +91,7 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
   async updateAiReply(reviewId: string, aiReply: string): Promise<Review> {
     return this.update(reviewId, {
       aiReply,
-      aiReplyGeneratedAt: new Date() as any,
+      aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
   }
 
@@ -102,7 +103,7 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
     return this.update(reviewId, {
       replyStatus: "posted",
       postedReply,
-      postedAt: new Date() as any,
+      postedAt: admin.firestore.FieldValue.serverTimestamp(),
       postedBy,
     });
   }

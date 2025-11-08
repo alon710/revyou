@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+import { Timestamp, WithFieldValue, PartialWithFieldValue } from "firebase/firestore";
 
 export type ReplyStatus = "pending" | "rejected" | "posted" | "failed";
 
@@ -38,3 +38,7 @@ export interface ReviewUpdate {
   postedBy?: string | null;
   updateTime?: Timestamp;
 }
+
+// Write-time types that accept FieldValue sentinels for timestamp fields
+export type ReviewCreateInput = WithFieldValue<ReviewCreate>;
+export type ReviewUpdateInput = PartialWithFieldValue<ReviewUpdate>;

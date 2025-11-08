@@ -3,6 +3,7 @@ import type {
   AccountCreate,
   Account,
   AccountUpdate,
+  AccountUpdateInput,
   AccountFilters,
 } from "@/lib/types";
 import { firestorePaths } from "@/lib/utils/firestore-paths";
@@ -56,7 +57,7 @@ export class AccountsRepositoryAdmin extends BaseRepository<
 
     const accountData = {
       ...data,
-      connectedAt: new Date(),
+      connectedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
     const docRef = await collectionRef.add(accountData);
@@ -67,9 +68,9 @@ export class AccountsRepositoryAdmin extends BaseRepository<
     return created;
   }
 
-  async update(accountId: string, data: AccountUpdate): Promise<Account> {
+  async update(accountId: string, data: AccountUpdateInput): Promise<Account> {
     const accountRef = adminDb.doc(`${this.basePath}/${accountId}`);
-    await accountRef.update(data as { [key: string]: any });
+    await accountRef.update(data);
 
     const updated = await this.get(accountId);
     if (!updated) throw new Error("Account not found after update");
@@ -89,7 +90,7 @@ export class AccountsRepositoryAdmin extends BaseRepository<
 
   async updateLastSynced(accountId: string): Promise<Account> {
     return this.update(accountId, {
-      lastSynced: new Date() as any,
+      lastSynced: admin.firestore.FieldValue.serverTimestamp(),
     });
   }
 }

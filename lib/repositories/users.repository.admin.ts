@@ -1,5 +1,5 @@
 import { adminDb } from "@/lib/firebase/admin";
-import type { UserCreate, User, UserUpdate } from "@/lib/types";
+import type { UserCreate, User, UserUpdate, UserUpdateInput } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 
 export class UsersRepositoryAdmin extends BaseRepository<
@@ -36,12 +36,12 @@ export class UsersRepositoryAdmin extends BaseRepository<
   async update(userId: string, data: UserUpdate): Promise<User> {
     const userRef = adminDb.doc(`${this.basePath}/${userId}`);
 
-    const updateData = {
+    const updateData: UserUpdateInput = {
       ...data,
-      updatedAt: new Date(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
-    await userRef.update(updateData as { [key: string]: any });
+    await userRef.update(updateData);
 
     const updated = await this.get(userId);
     if (!updated) throw new Error("User not found after update");

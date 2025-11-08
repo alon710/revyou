@@ -3,6 +3,7 @@ import type {
   BusinessCreate,
   Business,
   BusinessUpdate,
+  BusinessUpdateInput,
   BusinessFilters,
 } from "@/lib/types";
 import { firestorePaths } from "@/lib/utils/firestore-paths";
@@ -59,7 +60,7 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
     const businessData = {
       ...data,
       connected: true,
-      connectedAt: new Date(),
+      connectedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
     const docRef = await collectionRef.add(businessData);
@@ -70,9 +71,9 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
     return created;
   }
 
-  async update(businessId: string, data: BusinessUpdate): Promise<Business> {
+  async update(businessId: string, data: BusinessUpdateInput): Promise<Business> {
     const businessRef = adminDb.doc(`${this.basePath}/${businessId}`);
-    await businessRef.update(data as { [key: string]: any });
+    await businessRef.update(data);
 
     const updated = await this.get(businessId);
     if (!updated) throw new Error("Business not found after update");

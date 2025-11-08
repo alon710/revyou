@@ -100,7 +100,7 @@ async function handleAIReply(
     );
     await reviewsRepo.update(reviewId, {
       aiReply,
-      aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp() as any,
+      aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     return aiReply;
@@ -113,7 +113,7 @@ async function handleAIReply(
     );
     await reviewsRepo.update(reviewId, {
       replyStatus: "failed" as ReplyStatus,
-      aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp() as any,
+      aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
     return null;
   }
@@ -137,7 +137,7 @@ async function updateReplyStatus(
       console.error("Cannot auto-post: no refresh token available");
       await reviewsRepo.update(reviewId, {
         aiReply,
-        aiReplyGeneratedAt: timestamp as any,
+        aiReplyGeneratedAt: timestamp,
         replyStatus: "failed" as ReplyStatus,
       });
       return "failed";
@@ -166,10 +166,10 @@ async function updateReplyStatus(
 
       await reviewsRepo.update(reviewId, {
         aiReply,
-        aiReplyGeneratedAt: timestamp as any,
+        aiReplyGeneratedAt: timestamp,
         replyStatus: "posted" as ReplyStatus,
         postedReply: aiReply,
-        postedAt: timestamp as any,
+        postedAt: timestamp,
         postedBy: "system",
       });
 
@@ -183,7 +183,7 @@ async function updateReplyStatus(
 
       await reviewsRepo.update(reviewId, {
         aiReply,
-        aiReplyGeneratedAt: timestamp as any,
+        aiReplyGeneratedAt: timestamp,
         replyStatus: "failed" as ReplyStatus,
       });
 
@@ -193,7 +193,7 @@ async function updateReplyStatus(
 
   await reviewsRepo.update(reviewId, {
     aiReply,
-    aiReplyGeneratedAt: timestamp as any,
+    aiReplyGeneratedAt: timestamp,
     replyStatus: "pending" as ReplyStatus,
   });
 

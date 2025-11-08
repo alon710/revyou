@@ -3,14 +3,10 @@ import type { BusinessConfig, Review } from "@/lib/types";
 import Mustache from "mustache";
 
 function getStarCustomInstructions(
-  star: number,
+  star: 1 | 2 | 3 | 4 | 5,
   businessConfig: BusinessConfig
 ): string {
-  return (
-    businessConfig.starConfigs?.[
-      star as keyof typeof businessConfig.starConfigs
-    ]?.customInstructions || ""
-  );
+  return businessConfig.starConfigs?.[star]?.customInstructions || "";
 }
 
 export function buildReplyPrompt(

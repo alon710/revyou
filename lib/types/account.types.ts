@@ -1,4 +1,8 @@
-import { Timestamp } from "firebase/firestore";
+import {
+  Timestamp,
+  WithFieldValue,
+  PartialWithFieldValue,
+} from "firebase/firestore";
 import { Business } from "./business.types";
 
 export interface AccountCreate {
@@ -20,6 +24,9 @@ export interface AccountUpdate {
   lastSynced?: Timestamp;
   googleAccountName?: string;
 }
+
+export type AccountCreateInput = WithFieldValue<AccountCreate>;
+export type AccountUpdateInput = PartialWithFieldValue<AccountUpdate>;
 
 export interface AccountWithBusinesses extends Account {
   businesses: Business[];
