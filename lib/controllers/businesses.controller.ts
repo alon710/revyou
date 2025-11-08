@@ -49,6 +49,35 @@ export class BusinessesController extends BaseController<
     }, "Failed to create business");
   }
 
+  async upsertBusiness(data: BusinessCreate): Promise<Business> {
+    return this.handleError(async () => {
+      const repo = this.repository as BusinessesRepositoryAdmin;
+
+      const existingBusiness = await repo.findByGoogleBusinessId(
+        data.googleBusinessId
+      );
+
+      if (existingBusiness) {
+        return this.repository.update(existingBusiness.id, {
+          name: data.name,
+          phoneNumber: data.phoneNumber,
+          websiteUrl: data.websiteUrl,
+          description: data.description,
+          photoUrl: data.photoUrl,
+          connected: true,
+          config: data.config,
+          ...({
+            address: data.address,
+            mapsUrl: data.mapsUrl,
+            connectedAt: new Date(),
+          } as any),
+        });
+      }
+
+      return this.repository.create(data);
+    }, "Failed to upsert business");
+  }
+
   async updateBusiness(
     businessId: string,
     data: BusinessUpdate

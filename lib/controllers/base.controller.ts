@@ -14,7 +14,7 @@ export abstract class BaseController<TCreate, TEntity, TUpdate> {
       return await operation();
     } catch (error) {
       console.error(`${errorMessage}:`, error);
-      throw new Error(errorMessage);
+      throw error;
     }
   }
 

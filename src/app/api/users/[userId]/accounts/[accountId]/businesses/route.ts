@@ -105,7 +105,7 @@ export async function POST(
     };
 
     const controller = new BusinessesController(userId, accountId);
-    const business = await controller.createBusiness(businessData);
+    const business = await controller.upsertBusiness(businessData);
 
     return NextResponse.json({ business }, { status: 201 });
   } catch (error) {

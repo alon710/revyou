@@ -98,14 +98,31 @@ export default function OnboardingStep3() {
       const data = await response.json();
 
       if (!response.ok) {
-        if (response.status === 409) {
-          toast.error(`העסק "${business.name}" כבר מחובר לחשבון שלך`);
-          return;
-        }
         throw new Error(data.error || "Failed to create business");
       }
 
       toast.success("העסק התחבר בהצלחה");
+
+      try {
+        const subscribeResponse = await fetch(
+          "/api/google/notifications/subscribe",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ accountId }),
+          }
+        );
+
+        if (!subscribeResponse.ok) {
+          console.error(
+            "Failed to subscribe to notifications:",
+            await subscribeResponse.text()
+          );
+        }
+      } catch (err) {
+        console.error("Error subscribing to notifications:", err);
+      }
+
       router.push("/dashboard");
     } catch (err) {
       console.error("Error connecting business:", err);
