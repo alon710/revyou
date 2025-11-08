@@ -86,7 +86,8 @@ function CheckoutForm() {
     return (
       <Loading
         fullScreen
-        text="מכין את התשלום... מעביר אותך לעמוד התשלום המאובטח"
+        text="מכין את התשלום... "
+        description="מעביר אותך לעמוד התשלום המאובטח"
         size="lg"
       />
     );
