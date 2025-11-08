@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithGoogle } from "@/lib/firebase/auth";
+import { isValidRedirectPath } from "@/lib/utils";
 import {
   DashboardCard,
   DashboardCardContent,
@@ -40,7 +41,10 @@ function LoginForm() {
       setError(error);
       setIsLoading(false);
     } else if (user) {
-      const redirect = searchParams.get("redirect") || "/dashboard";
+      const redirectParam = searchParams.get("redirect") || "/dashboard";
+      const redirect = isValidRedirectPath(redirectParam)
+        ? redirectParam
+        : "/dashboard";
       router.push(redirect);
     }
   };
