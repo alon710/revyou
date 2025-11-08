@@ -29,14 +29,16 @@ export async function regenerateReply(
   reviewId: string,
   token: string
 ): Promise<string> {
-  const response = await fetch(`/api/reviews/${reviewId}/generate`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId, accountId, businessId }),
-  });
+  const response = await fetch(
+    `/api/users/${userId}/accounts/${accountId}/businesses/${businessId}/reviews/${reviewId}/generate`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
     const error = await response.json();
@@ -54,14 +56,16 @@ export async function postReplyToGoogle(
   reviewId: string,
   token: string
 ): Promise<void> {
-  const response = await fetch(`/api/reviews/${reviewId}/post`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId, accountId, businessId }),
-  });
+  const response = await fetch(
+    `/api/users/${userId}/accounts/${accountId}/businesses/${businessId}/reviews/${reviewId}/post`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
     const error = await response.json();

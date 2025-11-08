@@ -83,21 +83,23 @@ export default function OnboardingStep3() {
         return;
       }
 
-      const response = await fetch("/api/businesses/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          accountId,
-          googleBusinessId: business.id,
-          name: business.name,
-          address: business.address,
-          phoneNumber: business.phoneNumber,
-          websiteUrl: business.websiteUrl,
-          mapsUrl: business.mapsUrl,
-          description: business.description,
-          photoUrl: business.photoUrl,
-        }),
-      });
+      const response = await fetch(
+        `/api/users/${user.uid}/accounts/${accountId}/businesses`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            googleBusinessId: business.id,
+            name: business.name,
+            address: business.address,
+            phoneNumber: business.phoneNumber,
+            websiteUrl: business.websiteUrl,
+            mapsUrl: business.mapsUrl,
+            description: business.description,
+            photoUrl: business.photoUrl,
+          }),
+        }
+      );
 
       const data = await response.json();
 
