@@ -52,10 +52,6 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
       reviews = reviews.filter((r) => idSet.has(r.id));
     }
 
-    if (filters.offset) {
-      reviews = reviews.slice(filters.offset);
-    }
-
     return reviews;
   }
 

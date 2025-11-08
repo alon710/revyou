@@ -50,10 +50,6 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
       businesses = businesses.filter((b) => idSet.has(b.id));
     }
 
-    if (filters.offset) {
-      businesses = businesses.slice(filters.offset);
-    }
-
     return businesses;
   }
 

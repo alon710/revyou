@@ -48,10 +48,6 @@ export class AccountsRepositoryAdmin extends BaseRepository<
       accounts = accounts.filter((a) => idSet.has(a.id));
     }
 
-    if (filters.offset) {
-      accounts = accounts.slice(filters.offset);
-    }
-
     return accounts;
   }
 
