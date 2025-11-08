@@ -22,6 +22,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { User } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ReviewCardProps {
   review: Review;
@@ -29,6 +30,7 @@ interface ReviewCardProps {
   userId: string;
   businessId: string;
   onUpdate?: () => void;
+  onClick?: () => void;
 }
 
 export function ReviewCard({
@@ -37,6 +39,7 @@ export function ReviewCard({
   userId,
   businessId,
   onUpdate,
+  onClick,
 }: ReviewCardProps) {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -111,7 +114,10 @@ export function ReviewCard({
 
   return (
     <>
-      <DashboardCard className="w-full">
+      <DashboardCard
+        className={cn("w-full", onClick && "cursor-pointer")}
+        onClick={onClick}
+      >
         <DashboardCardHeader className="pb-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0 flex-1">
