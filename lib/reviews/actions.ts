@@ -73,7 +73,8 @@ export async function postReplyToGoogle(
   accountId: string,
   businessId: string,
   reviewId: string,
-  token: string
+  token: string,
+  reply?: string
 ): Promise<void> {
   const response = await fetch(
     `/api/users/${userId}/accounts/${accountId}/businesses/${businessId}/reviews/${reviewId}/post`,
@@ -83,6 +84,7 @@ export async function postReplyToGoogle(
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ reply }),
     }
   );
 
