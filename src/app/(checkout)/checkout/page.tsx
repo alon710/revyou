@@ -43,8 +43,6 @@ function CheckoutForm() {
 
     if (priceId && !error) {
       async function initiateCheckout() {
-        if (!priceId) return;
-
         try {
           let options = undefined;
 
@@ -61,7 +59,7 @@ function CheckoutForm() {
             };
           }
 
-          const session = await createSubscriptionCheckout(priceId, options);
+          const session = await createSubscriptionCheckout(priceId!, options);
           window.location.assign(session.url);
         } catch (err) {
           console.error("Error creating checkout session:", err);
