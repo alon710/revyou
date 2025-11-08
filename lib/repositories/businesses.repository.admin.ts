@@ -107,4 +107,14 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
       connected: false,
     });
   }
+
+  async updateConfig(businessId: string, config: any): Promise<Business> {
+    const business = await this.get(businessId);
+    if (!business) {
+      throw new Error("Business not found");
+    }
+
+    const updatedConfig = { ...business.config, ...config };
+    return this.update(businessId, { config: updatedConfig });
+  }
 }

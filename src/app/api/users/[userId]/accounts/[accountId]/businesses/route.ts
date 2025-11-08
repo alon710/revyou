@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
-import { BusinessesController } from "@/lib/controllers";
+import {
+  BusinessesController,
+  SubscriptionsController,
+} from "@/lib/controllers";
 import {
   parseSearchParams,
   businessFiltersSchema,
 } from "@/lib/utils/query-parser";
 import type { BusinessCreate } from "@/lib/types";
-import { checkBusinessLimit } from "@/lib/firebase/business-limits";
-import { getDefaultBusinessConfig } from "@/lib/firebase/business-config";
+import { getDefaultBusinessConfig } from "@/lib/utils/business-config";
+import { getErrorStatusCode } from "@/lib/api/errors";
 
 export async function GET(
   req: NextRequest,
@@ -65,7 +68,8 @@ export async function POST(
 
     const body = await req.json();
 
-    const canCreate = await checkBusinessLimit(userId);
+    const subscriptionsController = new SubscriptionsController();
+    const canCreate = await subscriptionsController.checkBusinessLimit(userId);
     if (!canCreate) {
       return NextResponse.json(
         {
@@ -106,12 +110,13 @@ export async function POST(
     return NextResponse.json({ business }, { status: 201 });
   } catch (error) {
     console.error("Error creating business:", error);
+    const statusCode = getErrorStatusCode(error);
     return NextResponse.json(
       {
         error:
           error instanceof Error ? error.message : "Failed to create business",
       },
-      { status: 500 }
+      { status: statusCode }
     );
   }
 }

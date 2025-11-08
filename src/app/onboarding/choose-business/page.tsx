@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { isBusinessAlreadyConnected } from "@/lib/firebase/business";
 import { GoogleBusinessProfileBusiness } from "../../../../types/database";
 import { StepIndicator } from "@/components/onboarding/StepIndicator";
 import { BusinessSelector } from "@/components/dashboard/businesses/BusinessSelector";
@@ -29,11 +28,15 @@ export default function OnboardingStep3() {
   }, [accountId, router]);
 
   const loadAvailableBusinesses = useCallback(async () => {
+    if (!accountId) return;
+
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("/api/google/businesses");
+      const response = await fetch(
+        `/api/google/businesses?accountId=${accountId}`
+      );
       const data = await response.json();
 
       if (!response.ok) {
@@ -59,7 +62,7 @@ export default function OnboardingStep3() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [accountId]);
 
   useEffect(() => {
     if (accountId) {
@@ -73,15 +76,6 @@ export default function OnboardingStep3() {
     try {
       setConnecting(true);
       setError(null);
-
-      const isDuplicate = await isBusinessAlreadyConnected(
-        user.uid,
-        business.id
-      );
-      if (isDuplicate) {
-        toast.error(`העסק "${business.name}" כבר מחובר לחשבון שלך`);
-        return;
-      }
 
       const response = await fetch(
         `/api/users/${user.uid}/accounts/${accountId}/businesses`,
@@ -104,6 +98,10 @@ export default function OnboardingStep3() {
       const data = await response.json();
 
       if (!response.ok) {
+        if (response.status === 409) {
+          toast.error(`העסק "${business.name}" כבר מחובר לחשבון שלך`);
+          return;
+        }
         throw new Error(data.error || "Failed to create business");
       }
 

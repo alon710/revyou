@@ -12,13 +12,9 @@ export interface UserCreate {
 export interface User extends UserCreate {
   createdAt: Timestamp;
   updatedAt?: Timestamp;
-  selectedAccountId?: string;
-  selectedBusinessId?: string;
 }
 
 export interface UserUpdate {
   displayName?: string;
   photoURL?: string;
-  selectedAccountId?: string;
-  selectedBusinessId?: string;
 }

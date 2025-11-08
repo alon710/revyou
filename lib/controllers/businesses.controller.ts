@@ -6,7 +6,7 @@ import type {
 } from "@/lib/types";
 import { BusinessesRepositoryAdmin } from "@/lib/repositories/businesses.repository.admin";
 import { BaseController } from "./base.controller";
-import { BadRequestError } from "@/lib/api/errors";
+import { ConflictError } from "@/lib/api/errors";
 
 export class BusinessesController extends BaseController<
   BusinessCreate,
@@ -42,7 +42,7 @@ export class BusinessesController extends BaseController<
         data.googleBusinessId
       );
       if (existingBusiness) {
-        throw new BadRequestError("Business already connected to this account");
+        throw new ConflictError("העסק כבר מחובר לחשבון זה");
       }
 
       return this.repository.create(data);
@@ -85,5 +85,13 @@ export class BusinessesController extends BaseController<
   ): Promise<Business | null> {
     const repo = this.repository as BusinessesRepositoryAdmin;
     return repo.findByGoogleBusinessId(googleBusinessId);
+  }
+
+  async updateConfig(businessId: string, config: any): Promise<Business> {
+    const repo = this.repository as BusinessesRepositoryAdmin;
+    return this.handleError(
+      () => repo.updateConfig(businessId, config),
+      "Failed to update business config"
+    );
   }
 }

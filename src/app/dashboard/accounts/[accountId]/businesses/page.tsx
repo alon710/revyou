@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { getAllUserBusinesses } from "@/lib/firebase/business";
-import type { Business } from "../../../../types/database";
+import type { Business } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { IconButton } from "@/components/ui/icon-button";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -19,20 +18,36 @@ import {
 } from "@/components/ui/dashboard-card";
 import Image from "next/image";
 
-export default function BusinessesPage() {
+export default function BusinessesPage({
+  params,
+}: {
+  params: Promise<{ accountId: string }>;
+}) {
   const { user } = useAuth();
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
+  const [accountId, setAccountId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
+    params.then((p) => setAccountId(p.accountId));
+  }, [params]);
+
+  useEffect(() => {
     async function fetchBusinesses() {
-      if (!user) return;
+      if (!user || !accountId) return;
 
       try {
         setLoading(true);
-        const bizList = await getAllUserBusinesses(user.uid);
-        setBusinesses(bizList);
+
+        const businessesResponse = await fetch(
+          `/api/users/${user.uid}/accounts/${accountId}/businesses`
+        );
+        if (!businessesResponse.ok) {
+          throw new Error("Failed to fetch businesses");
+        }
+        const businessesData = await businessesResponse.json();
+        setBusinesses(businessesData.businesses || []);
       } catch (error) {
         console.error("Error fetching businesses:", error);
       } finally {
@@ -41,7 +56,7 @@ export default function BusinessesPage() {
     }
 
     fetchBusinesses();
-  }, [user]);
+  }, [user, accountId]);
 
   if (loading) {
     return (
@@ -53,14 +68,14 @@ export default function BusinessesPage() {
 
   const handleBusinessClick = (business: Business) => {
     router.push(
-      `/dashboard/account/${business.accountId}/business/${business.id}/reviews`
+      `/dashboard/account/${accountId}/business/${business.id}/reviews`
     );
   };
 
   const handleSettingsClick = (e: React.MouseEvent, business: Business) => {
     e.stopPropagation();
     router.push(
-      `/dashboard/account/${business.accountId}/business/${business.id}/settings`
+      `/dashboard/account/${accountId}/business/${business.id}/settings`
     );
   };
 
@@ -94,6 +109,8 @@ export default function BusinessesPage() {
                   src={business.photoUrl}
                   alt={business.name}
                   className="w-full h-32 object-cover rounded-t-lg -mt-6 -mx-6 mb-4"
+                  width={400}
+                  height={128}
                 />
               )}
               <DashboardCardTitle>
@@ -123,7 +140,9 @@ export default function BusinessesPage() {
         ))}
         <DashboardCard
           className="cursor-pointer border-dashed border-2 hover:border-primary/50 hover:bg-accent/50 transition-all flex flex-col items-center justify-center min-h-[320px]"
-          onClick={() => router.push("/onboarding/connect-account")}
+          onClick={() =>
+            router.push(`/onboarding/choose-business?accountId=${accountId}`)
+          }
         >
           <div className="flex flex-col items-center justify-center text-center p-6">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">

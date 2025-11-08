@@ -54,22 +54,4 @@ export class UsersRepositoryAdmin extends BaseRepository<
       "User deletion should be handled by Firebase Auth, not directly"
     );
   }
-
-  async updateSelectedAccount(
-    userId: string,
-    accountId: string
-  ): Promise<User> {
-    return this.update(userId, {
-      selectedAccountId: accountId,
-    });
-  }
-
-  async updateSelectedBusiness(
-    userId: string,
-    businessId: string
-  ): Promise<User> {
-    return this.update(userId, {
-      selectedBusinessId: businessId,
-    });
-  }
 }

@@ -1,5 +1,5 @@
 import { DEFAULT_BUSINESS_PROMPT_TEMPLATE } from "./template";
-import type { BusinessConfig, Review, StarConfig } from "@/lib/types";
+import type { BusinessConfig, Review } from "@/lib/types";
 import Mustache from "mustache";
 
 function getStarCustomInstructions(

@@ -19,9 +19,17 @@ export class BadRequestError extends Error {
   }
 }
 
+export class ConflictError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ConflictError";
+  }
+}
+
 export function getErrorStatusCode(error: unknown): number {
   if (error instanceof NotFoundError) return 404;
   if (error instanceof ForbiddenError) return 403;
   if (error instanceof BadRequestError) return 400;
+  if (error instanceof ConflictError) return 409;
   return 500;
 }

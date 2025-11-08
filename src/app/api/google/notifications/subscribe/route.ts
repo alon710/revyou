@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
-import { getAccount } from "@/lib/firebase/admin-accounts";
-import { getAccountBusinessesAdmin } from "@/lib/firebase/businesses.admin";
-import { getFirestore } from "firebase-admin/firestore";
+import { AccountsController, BusinessesController } from "@/lib/controllers";
 import {
   subscribeToNotifications,
   decryptToken,
@@ -21,7 +19,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const account = await getAccount(userId, accountId);
+    const accountsController = new AccountsController(userId);
+    const businessesController = new BusinessesController(userId, accountId);
+
+    const account = await accountsController.getAccount(accountId);
 
     if (!account) {
       return NextResponse.json({ error: "Account not found" }, { status: 404 });
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const businesses = await getAccountBusinessesAdmin(userId, accountId);
+    const businesses = await businessesController.getBusinesses();
     if (businesses.length === 0) {
       return NextResponse.json(
         { error: "No businesses found" },
@@ -64,13 +65,7 @@ export async function POST(request: NextRequest) {
       refreshToken
     );
 
-    const db = getFirestore();
-    await db
-      .collection("users")
-      .doc(userId)
-      .collection("accounts")
-      .doc(accountId)
-      .update({ googleAccountName });
+    await accountsController.updateAccount(accountId, { googleAccountName });
 
     return NextResponse.json({ success: true });
   } catch (error) {

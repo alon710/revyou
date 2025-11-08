@@ -22,26 +22,4 @@ export class UsersController extends BaseController<
       return this.repository.update(userId, data);
     }, "Failed to update user");
   }
-
-  async updateSelectedAccount(
-    userId: string,
-    accountId: string
-  ): Promise<User> {
-    const repo = this.repository as UsersRepositoryAdmin;
-    return this.handleError(
-      () => repo.updateSelectedAccount(userId, accountId),
-      "Failed to update selected account"
-    );
-  }
-
-  async updateSelectedBusiness(
-    userId: string,
-    businessId: string
-  ): Promise<User> {
-    const repo = this.repository as UsersRepositoryAdmin;
-    return this.handleError(
-      () => repo.updateSelectedBusiness(userId, businessId),
-      "Failed to update selected business"
-    );
-  }
 }

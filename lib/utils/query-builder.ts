@@ -47,9 +47,11 @@ export class QueryBuilder {
       q = query(q, where("receivedAt", "<=", timestamp));
     }
 
-    const sortField = filters.sort?.orderBy || "receivedAt";
-    const sortDirection = filters.sort?.orderDirection || "desc";
-    q = query(q, orderBy(sortField, sortDirection));
+    if (filters.sort) {
+      const sortField = filters.sort.orderBy;
+      const sortDirection = filters.sort.orderDirection || "desc";
+      q = query(q, orderBy(sortField, sortDirection));
+    }
 
     if (filters.limit) {
       q = query(q, limit(filters.limit));
@@ -68,9 +70,11 @@ export class QueryBuilder {
       q = query(q, where("connected", "==", filters.connected));
     }
 
-    const sortField = filters.sort?.orderBy || "connectedAt";
-    const sortDirection = filters.sort?.orderDirection || "desc";
-    q = query(q, orderBy(sortField, sortDirection));
+    if (filters.sort) {
+      const sortField = filters.sort.orderBy;
+      const sortDirection = filters.sort.orderDirection || "desc";
+      q = query(q, orderBy(sortField, sortDirection));
+    }
 
     if (filters.limit) {
       q = query(q, limit(filters.limit));
@@ -89,9 +93,11 @@ export class QueryBuilder {
       q = query(q, where("email", "==", filters.email));
     }
 
-    const sortField = filters.sort?.orderBy || "connectedAt";
-    const sortDirection = filters.sort?.orderDirection || "desc";
-    q = query(q, orderBy(sortField, sortDirection));
+    if (filters.sort) {
+      const sortField = filters.sort.orderBy;
+      const sortDirection = filters.sort.orderDirection || "desc";
+      q = query(q, orderBy(sortField, sortDirection));
+    }
 
     if (filters.limit) {
       q = query(q, limit(filters.limit));
@@ -146,9 +152,11 @@ export class AdminQueryBuilder {
       q = q.where("receivedAt", "<=", filters.dateTo);
     }
 
-    const sortField = filters.sort?.orderBy || "receivedAt";
-    const sortDirection = filters.sort?.orderDirection || "desc";
-    q = q.orderBy(sortField, sortDirection);
+    if (filters.sort) {
+      const sortField = filters.sort.orderBy;
+      const sortDirection = filters.sort.orderDirection || "desc";
+      q = q.orderBy(sortField, sortDirection);
+    }
 
     if (filters.limit) {
       q = q.limit(filters.limit);
@@ -167,9 +175,11 @@ export class AdminQueryBuilder {
       q = q.where("connected", "==", filters.connected);
     }
 
-    const sortField = filters.sort?.orderBy || "connectedAt";
-    const sortDirection = filters.sort?.orderDirection || "desc";
-    q = q.orderBy(sortField, sortDirection);
+    if (filters.sort) {
+      const sortField = filters.sort.orderBy;
+      const sortDirection = filters.sort.orderDirection || "desc";
+      q = q.orderBy(sortField, sortDirection);
+    }
 
     if (filters.limit) {
       q = q.limit(filters.limit);
@@ -188,9 +198,11 @@ export class AdminQueryBuilder {
       q = q.where("email", "==", filters.email);
     }
 
-    const sortField = filters.sort?.orderBy || "connectedAt";
-    const sortDirection = filters.sort?.orderDirection || "desc";
-    q = q.orderBy(sortField, sortDirection);
+    if (filters.sort) {
+      const sortField = filters.sort.orderBy;
+      const sortDirection = filters.sort.orderDirection || "desc";
+      q = q.orderBy(sortField, sortDirection);
+    }
 
     if (filters.limit) {
       q = q.limit(filters.limit);

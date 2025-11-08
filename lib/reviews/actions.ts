@@ -1,15 +1,22 @@
-import {
-  rejectReply as rejectReplyFb,
-  updateReviewReply,
-} from "@/lib/firebase/review-replies";
-
 export async function rejectReply(
   userId: string,
   accountId: string,
   businessId: string,
   reviewId: string
 ): Promise<void> {
-  await rejectReplyFb(userId, accountId, businessId, reviewId);
+  const response = await fetch(
+    `/api/users/${userId}/accounts/${accountId}/businesses/${businessId}/reviews/${reviewId}`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ replyStatus: "rejected" }),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to reject reply");
+  }
 }
 
 export async function editReply(
@@ -19,7 +26,19 @@ export async function editReply(
   reviewId: string,
   newReply: string
 ): Promise<void> {
-  await updateReviewReply(userId, accountId, businessId, reviewId, newReply);
+  const response = await fetch(
+    `/api/users/${userId}/accounts/${accountId}/businesses/${businessId}/reviews/${reviewId}`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ aiReply: newReply }),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to edit reply");
+  }
 }
 
 export async function regenerateReply(

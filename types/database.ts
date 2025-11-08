@@ -27,8 +27,6 @@ export interface User {
   createdAt: Timestamp;
   stripeId?: string;
   stripeLink?: string;
-  selectedAccountId?: string;
-  selectedBusinessId?: string;
 }
 
 export interface StarConfig {

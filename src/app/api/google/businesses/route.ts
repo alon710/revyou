@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server";
-import {
-  getAccountGoogleRefreshToken,
-  getUserSelectedAccountId,
-} from "@/lib/firebase/admin-accounts";
+import { AccountsController } from "@/lib/controllers";
 import { listAllBusinesses, decryptToken } from "@/lib/google/business-profile";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 
@@ -18,32 +15,30 @@ export async function GET(request: Request) {
     const { userId: authenticatedUserId } = authResult;
 
     const { searchParams } = new URL(request.url);
-    let accountId = searchParams.get("accountId");
-
-    if (!accountId) {
-      accountId = await getUserSelectedAccountId(authenticatedUserId);
-    }
+    const accountId = searchParams.get("accountId");
 
     if (!accountId) {
       return NextResponse.json(
-        { error: "לא נמצא חשבון פעיל. אנא התחבר מחדש." },
-        { status: 404 }
+        { error: "accountId is required" },
+        { status: 400 }
       );
     }
 
-    const encryptedRefreshToken = await getAccountGoogleRefreshToken(
-      authenticatedUserId,
-      accountId
-    );
+    const accountsController = new AccountsController(authenticatedUserId);
+    const account = await accountsController.getAccount(accountId);
 
-    if (!encryptedRefreshToken) {
+    if (!account) {
+      return NextResponse.json({ error: "Account not found" }, { status: 404 });
+    }
+
+    if (!account.googleRefreshToken) {
       return NextResponse.json(
         { error: "לא נמצא חיבור ל-Google Business Profile" },
         { status: 404 }
       );
     }
 
-    const refreshToken = await decryptToken(encryptedRefreshToken);
+    const refreshToken = await decryptToken(account.googleRefreshToken);
     const businesses = await listAllBusinesses(refreshToken);
 
     return NextResponse.json({ businesses });
