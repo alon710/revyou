@@ -44,6 +44,7 @@ export async function getBusinessAdmin(
 
       const business: Business = {
         ...validated,
+        userId: userId,
         accountId: accountId,
         connectedAt: ClientTimestamp.fromDate(connectedAtDate),
       };
@@ -107,6 +108,7 @@ export async function getAccountBusinessesAdmin(
 
       const business: Business = {
         ...validated,
+        userId: userId,
         accountId: accountId,
         connectedAt: ClientTimestamp.fromDate(connectedAtDate),
       };
