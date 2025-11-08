@@ -1,6 +1,6 @@
 "use client";
 
-import { Business, BusinessConfig } from "../../../../types/database";
+import { Business, BusinessConfig } from "@/lib/types";
 import BusinessIdentitySection from "@/components/dashboard/businesses/BusinessIdentitySection";
 import AIResponseSettingsSection from "@/components/dashboard/businesses/AIResponseSettingsSection";
 import StarRatingConfigSection from "@/components/dashboard/businesses/StarRatingConfigSection";

@@ -1,6 +1,6 @@
 "use client";
 
-import { Business } from "../../../../types/database";
+import { Business } from "@/lib/types";
 import { DashboardCardField } from "@/components/ui/dashboard-card";
 import { Badge } from "@/components/ui/badge";
 import { Bell } from "lucide-react";

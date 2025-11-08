@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  BusinessConfig,
-  ToneOfVoice,
-  LanguageMode,
-} from "../../../../types/database";
+import { BusinessConfig, ToneOfVoice, LanguageMode } from "@/lib/types";
 import { DashboardCardField } from "@/components/ui/dashboard-card";
 import { Sparkles } from "lucide-react";
 import EditableSection from "@/components/dashboard/shared/EditableSection";

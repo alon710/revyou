@@ -1,6 +1,6 @@
 "use client";
 
-import { BusinessConfig } from "../../../../types/database";
+import { BusinessConfig } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
 import { StarRating } from "@/components/ui/StarRating";

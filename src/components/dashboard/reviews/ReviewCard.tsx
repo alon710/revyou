@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Review, ReplyStatus } from "../../../../types/database";
+import { Review, ReplyStatus } from "@/lib/types";
 import { StarRating } from "@/components/ui/StarRating";
 import {
   DashboardCard,
