@@ -89,14 +89,16 @@ export default function BusinessReviewsPage({
     return (
       <PageContainer>
         <div className="mb-6">
-          <BackButton href="/dashboard/businesses" />
+          <BackButton
+            href={`/dashboard/accounts/${accountId}/businesses/${businessId}`}
+          />
         </div>
         <PageHeader title="ביקורות" description="כל הביקורות לעסק" />
         <EmptyState
           title="שגיאה בטעינת הביקורות"
           description={error || "לא נמצא עסק"}
           buttonText="חזרה לעסקים"
-          buttonLink="/dashboard/businesses"
+          buttonLink={`/dashboard/accounts/${accountId}/businesses/${businessId}`}
         />
       </PageContainer>
     );
@@ -105,7 +107,9 @@ export default function BusinessReviewsPage({
   return (
     <PageContainer>
       <div className="mb-6">
-        <BackButton href="/dashboard/businesses" />
+        <BackButton
+          href={`/dashboard/accounts/${accountId}/businesses/${businessId}`}
+        />
       </div>
 
       <PageHeader
@@ -119,7 +123,7 @@ export default function BusinessReviewsPage({
             title="אין עדיין ביקורות"
             description="כשיגיעו ביקורות חדשות, הן יופיעו כאן"
             buttonText="חזרה לעסקים"
-            buttonLink="/dashboard/businesses"
+            buttonLink={`/dashboard/accounts/${accountId}/businesses/${businessId}`}
           />
         ) : (
           reviews.map((review) => (
