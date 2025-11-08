@@ -93,7 +93,11 @@ async function handleAIReply(
 
     const aiReply = await generateWithGemini(apiKey, prompt);
 
-    const reviewsRepo = new ReviewsRepositoryAdmin(userId, accountId, businessId);
+    const reviewsRepo = new ReviewsRepositoryAdmin(
+      userId,
+      accountId,
+      businessId
+    );
     await reviewsRepo.update(reviewId, {
       aiReply,
       aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp() as any,
@@ -102,7 +106,11 @@ async function handleAIReply(
     return aiReply;
   } catch (error) {
     console.error("Failed to generate AI reply", { error });
-    const reviewsRepo = new ReviewsRepositoryAdmin(userId, accountId, businessId);
+    const reviewsRepo = new ReviewsRepositoryAdmin(
+      userId,
+      accountId,
+      businessId
+    );
     await reviewsRepo.update(reviewId, {
       replyStatus: "failed" as ReplyStatus,
       aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp() as any,
@@ -203,6 +211,7 @@ function shouldSendEmail(business: Business): boolean {
 }
 
 async function sendEmailNotification(
+  accountId: string,
   business: Business,
   review: Review,
   user: User,
@@ -223,6 +232,7 @@ async function sendEmailNotification(
       ReviewNotificationEmail({
         recipientName,
         businessName: business.name,
+        accountId,
         businessId: business.id,
         reviewerName: review.name,
         rating: review.rating,
@@ -327,6 +337,7 @@ export const onReviewCreate = onDocumentCreated(
 
       if (shouldSendEmail(business)) {
         await sendEmailNotification(
+          accountId,
           business,
           review,
           user,

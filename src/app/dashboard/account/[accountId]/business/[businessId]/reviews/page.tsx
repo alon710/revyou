@@ -130,6 +130,11 @@ export default function BusinessReviewsPage({
                 businessId={businessId}
                 userId={user.uid}
                 onUpdate={fetchData}
+                onClick={() =>
+                  router.push(
+                    `/dashboard/account/${accountId}/business/${businessId}/reviews/${review.id}`
+                  )
+                }
               />
             </div>
           ))
