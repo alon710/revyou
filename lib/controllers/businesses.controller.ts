@@ -6,6 +6,7 @@ import type {
 } from "@/lib/types";
 import { BusinessesRepositoryAdmin } from "@/lib/repositories/businesses.repository.admin";
 import { BaseController } from "./base.controller";
+import { BadRequestError } from "@/lib/api/errors";
 
 export class BusinessesController extends BaseController<
   BusinessCreate,
@@ -41,7 +42,7 @@ export class BusinessesController extends BaseController<
         data.googleBusinessId
       );
       if (existingBusiness) {
-        throw new Error("Business already connected to this account");
+        throw new BadRequestError("Business already connected to this account");
       }
 
       return this.repository.create(data);

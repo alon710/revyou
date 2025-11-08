@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { BusinessesController } from "@/lib/controllers";
 import type { BusinessUpdate } from "@/lib/types";
+import { getErrorStatusCode } from "@/lib/api/errors";
 
 export async function GET(
   req: NextRequest,
@@ -33,12 +34,7 @@ export async function GET(
         error:
           error instanceof Error ? error.message : "Failed to fetch business",
       },
-      {
-        status:
-          error instanceof Error && error.message.includes("not found")
-            ? 404
-            : 500,
-      }
+      { status: getErrorStatusCode(error) }
     );
   }
 }
@@ -75,7 +71,7 @@ export async function PUT(
         error:
           error instanceof Error ? error.message : "Failed to update business",
       },
-      { status: 500 }
+      { status: getErrorStatusCode(error) }
     );
   }
 }
@@ -110,7 +106,7 @@ export async function DELETE(
         error:
           error instanceof Error ? error.message : "Failed to delete business",
       },
-      { status: 500 }
+      { status: getErrorStatusCode(error) }
     );
   }
 }

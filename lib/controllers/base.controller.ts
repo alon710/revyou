@@ -1,4 +1,5 @@
 import { BaseRepository } from "@/lib/repositories/base.repository";
+import { NotFoundError } from "@/lib/api/errors";
 
 export abstract class BaseController<TCreate, TEntity, TUpdate> {
   constructor(
@@ -23,7 +24,7 @@ export abstract class BaseController<TCreate, TEntity, TUpdate> {
   ): Promise<TEntity> {
     const entity = await this.repository.get(id);
     if (!entity) {
-      throw new Error(`${entityName} not found: ${id}`);
+      throw new NotFoundError(`${entityName} not found: ${id}`);
     }
     return entity;
   }
