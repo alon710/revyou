@@ -1,5 +1,12 @@
 import { adminDb } from "@/lib/firebase/admin";
-import type { BusinessCreate, Business, BusinessUpdate, BusinessUpdateInput, BusinessFilters, BusinessConfig } from "@/lib/types";
+import type {
+  BusinessCreate,
+  Business,
+  BusinessUpdate,
+  BusinessUpdateInput,
+  BusinessFilters,
+  BusinessConfig,
+} from "@/lib/types";
 import { firestorePaths } from "@/lib/utils/firestore-paths";
 import { AdminQueryBuilder } from "@/lib/utils/query-builder";
 import { BaseRepository } from "./base.repository";

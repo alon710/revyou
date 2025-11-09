@@ -83,12 +83,7 @@ export async function GET(request: NextRequest) {
     } else {
       const userInfo = await getUserInfo(tokens.access_token);
 
-      const userData = await usersController.getUser(authenticatedUserId);
-
-      if (!userData) {
-        console.error("OAuth callback - User not found in database:", authenticatedUserId);
-        return redirectToBusinesses(false);
-      }
+      await usersController.getUser(authenticatedUserId);
 
       const existingAccount = await accountsController.findByEmail(userInfo.email);
 

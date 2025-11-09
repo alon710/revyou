@@ -24,10 +24,6 @@ export async function GET(request: Request) {
     const accountsController = new AccountsController(authenticatedUserId);
     const account = await accountsController.getAccount(accountId);
 
-    if (!account) {
-      return NextResponse.json({ error: "Account not found" }, { status: 404 });
-    }
-
     if (!account.googleRefreshToken) {
       return NextResponse.json({ error: "לא נמצא חיבור ל-Google Business Profile" }, { status: 404 });
     }

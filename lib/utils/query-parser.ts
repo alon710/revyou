@@ -1,8 +1,11 @@
 import { z } from "zod";
 import { ReviewFilters, BusinessFilters, AccountFilters } from "@/lib/types";
 
-export function parseSearchParams<T>(params: URLSearchParams, schema: z.ZodType<T, any, any>): T {
-  const obj: Record<string, any> = {};
+export function parseSearchParams<T>(params: URLSearchParams, schema: z.ZodType<T>): T {
+  const obj: Record<
+    string,
+    string | string[] | undefined | number | number[] | boolean | boolean[] | Date | Date[] | null | null[]
+  > = {};
 
   for (const key of Array.from(new Set(params.keys()))) {
     const values = params.getAll(key);

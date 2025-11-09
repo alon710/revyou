@@ -1,29 +1,23 @@
 import { ReplyStatus } from "./review.types";
-import { ReviewSortOptions, BusinessSortOptions, AccountSortOptions } from "./sort.types";
+import { SortOptions } from "./sort.types";
 
-export interface ReviewFilters {
+export interface TFilters {
   ids?: string[];
+  limit?: number;
+  offset?: number;
+  sort?: SortOptions<string>;
+}
+export interface ReviewFilters extends TFilters {
   replyStatus?: ReplyStatus[];
   rating?: number[];
   dateFrom?: Date;
   dateTo?: Date;
-  limit?: number;
-  offset?: number;
-  sort?: ReviewSortOptions;
 }
 
-export interface BusinessFilters {
-  ids?: string[];
+export interface BusinessFilters extends TFilters {
   connected?: boolean;
-  limit?: number;
-  offset?: number;
-  sort?: BusinessSortOptions;
 }
 
-export interface AccountFilters {
-  ids?: string[];
+export interface AccountFilters extends TFilters {
   email?: string;
-  limit?: number;
-  offset?: number;
-  sort?: AccountSortOptions;
 }

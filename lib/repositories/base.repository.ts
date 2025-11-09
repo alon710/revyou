@@ -1,9 +1,11 @@
+import { type TFilters } from "@/lib/types";
+
 export abstract class BaseRepository<TCreate, TEntity, TUpdate> {
   constructor(protected basePath: string) {}
 
   abstract get(id: string): Promise<TEntity | null>;
 
-  abstract list(filters?: any): Promise<TEntity[]>;
+  abstract list(filters?: TFilters): Promise<TEntity[]>;
 
   abstract create(data: TCreate): Promise<TEntity>;
 
