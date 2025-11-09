@@ -5,11 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loading } from "@/components/ui/loading";
 
-export default function OnboardingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -33,13 +29,8 @@ export default function OnboardingLayout({
 
   return (
     <>
-      <div
-        className="min-h-screen flex items-center justify-center bg-linear-to-b from-background to-muted"
-        dir="rtl"
-      >
-        <div className="container max-w-3xl mx-auto py-12 px-4 w-full">
-          {children}
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-background to-muted" dir="rtl">
+        <div className="container max-w-3xl mx-auto py-12 px-4 w-full">{children}</div>
       </div>
     </>
   );

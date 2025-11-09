@@ -10,10 +10,7 @@ export async function POST(request: NextRequest) {
     const { idToken } = await request.json();
 
     if (!idToken) {
-      return NextResponse.json(
-        { error: "ID token is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "ID token is required" }, { status: 400 });
     }
 
     const decodedToken = await adminAuth.verifyIdToken(idToken);
@@ -36,12 +33,8 @@ export async function POST(request: NextRequest) {
       userId: decodedToken.uid,
     });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json(
-      { error: `Failed to create session: ${errorMessage}` },
-      { status: 401 }
-    );
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: `Failed to create session: ${errorMessage}` }, { status: 401 });
   }
 }
 
@@ -53,9 +46,6 @@ export async function DELETE() {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Failed to delete session:", error);
-    return NextResponse.json(
-      { error: "Failed to delete session" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to delete session" }, { status: 500 });
   }
 }

@@ -1,8 +1,6 @@
 "use client";
 
-import { Business, BusinessConfig } from "../../../../types/database";
-import { updateBusinessConfig } from "@/lib/firebase/business-config";
-import { updateBusiness } from "@/lib/firebase/business";
+import { Business, BusinessConfig } from "@/lib/types";
 import BusinessIdentitySection from "@/components/dashboard/businesses/BusinessIdentitySection";
 import AIResponseSettingsSection from "@/components/dashboard/businesses/AIResponseSettingsSection";
 import StarRatingConfigSection from "@/components/dashboard/businesses/StarRatingConfigSection";
@@ -25,7 +23,17 @@ export default function BusinessDetailsCard({
 }: BusinessDetailsCardProps) {
   const handleSaveSection = async (partialConfig: Partial<BusinessConfig>) => {
     try {
-      await updateBusinessConfig(userId, accountId, business.id, partialConfig);
+      const response = await fetch(`/api/users/${userId}/accounts/${accountId}/businesses/${business.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ config: partialConfig }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to update config");
+      }
+
       await onUpdate();
     } catch (error) {
       console.error("Error saving config:", error);
@@ -33,17 +41,23 @@ export default function BusinessDetailsCard({
     }
   };
 
-  const handleSaveStarConfigs = async (
-    starConfigs: BusinessConfig["starConfigs"]
-  ) => {
+  const handleSaveStarConfigs = async (starConfigs: BusinessConfig["starConfigs"]) => {
     await handleSaveSection({ starConfigs });
   };
 
-  const handleSaveNotificationPreferences = async (data: {
-    emailOnNewReview: boolean;
-  }) => {
+  const handleSaveNotificationPreferences = async (data: { emailOnNewReview: boolean }) => {
     try {
-      await updateBusiness(userId, accountId, business.id, data);
+      const response = await fetch(`/api/users/${userId}/accounts/${accountId}/businesses/${business.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to update preferences");
+      }
+
       await onUpdate();
     } catch (error) {
       console.error("Error saving notification preferences:", error);
@@ -60,11 +74,7 @@ export default function BusinessDetailsCard({
         onSave={handleSaveSection}
       />
 
-      <AIResponseSettingsSection
-        config={business.config}
-        loading={loading}
-        onSave={handleSaveSection}
-      />
+      <AIResponseSettingsSection config={business.config} loading={loading} onSave={handleSaveSection} />
 
       <StarRatingConfigSection
         starConfigs={business.config.starConfigs}

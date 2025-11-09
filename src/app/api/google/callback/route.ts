@@ -1,44 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  exchangeCodeForTokens,
-  encryptToken,
-  getUserInfo,
-} from "@/lib/google/oauth";
-import { updateUserSelectedAccount } from "@/lib/firebase/admin-users";
+import { exchangeCodeForTokens, encryptToken, getUserInfo } from "@/lib/google/oauth";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
-import {
-  createAccount,
-  updateAccount,
-  findAccountByEmail,
-} from "@/lib/firebase/admin-accounts";
-import { adminDb } from "@/lib/firebase/admin";
+import { AccountsController, UsersController } from "@/lib/controllers";
 
 export const runtime = "nodejs";
 
-const redirectToBusinesses = (
-  success?: boolean,
-  errorMessage?: string,
-  accountId?: string,
-  onboarding?: boolean
-) => {
-  if (onboarding && success && accountId) {
-    const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/choose-business?accountId=${accountId}`;
-    return NextResponse.redirect(url);
-  }
-
+const redirectToBusinesses = (success?: boolean, accountId?: string) => {
   if (success && accountId) {
     const url = `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/choose-business?accountId=${accountId}`;
     return NextResponse.redirect(url);
   }
 
-  const baseUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`;
-  if (errorMessage) {
-    return NextResponse.redirect(
-      `${baseUrl}?error=${encodeURIComponent(errorMessage)}`
-    );
-  }
-
-  return NextResponse.redirect(baseUrl);
+  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/onboarding/connect-account`);
 };
 
 export async function GET(request: NextRequest) {
@@ -49,115 +22,95 @@ export async function GET(request: NextRequest) {
     const error = searchParams.get("error");
 
     if (error || !code || !state) {
-      return redirectToBusinesses(
-        false,
-        "אירעה שגיאה באימות Google. אנא נסה שוב."
-      );
+      console.error("OAuth callback - Missing parameters or error from Google:", {
+        error,
+        hasCode: !!code,
+        hasState: !!state,
+      });
+      return redirectToBusinesses(false);
     }
 
     const stateData = JSON.parse(Buffer.from(state, "base64").toString());
     const stateUserId = stateData?.userId;
     const reconnect = stateData?.reconnect || false;
     const existingAccountId = stateData?.accountId;
-    const onboarding = stateData?.onboarding || false;
 
     if (!stateUserId) {
-      return redirectToBusinesses(false, "מזהה משתמש לא תקין. אנא נסה שוב.");
+      console.error("OAuth callback - Invalid state: missing userId");
+      return redirectToBusinesses(false);
     }
 
     const authResult = await getAuthenticatedUserId();
     if (authResult instanceof NextResponse) {
-      return redirectToBusinesses(
-        false,
-        "לא מחובר למערכת. אנא התחבר ונסה שוב."
-      );
+      console.error("OAuth callback - User not authenticated");
+      return redirectToBusinesses(false);
     }
 
     const { userId: authenticatedUserId } = authResult;
 
     if (stateUserId !== authenticatedUserId) {
-      console.error("State userId mismatch with authenticated user");
-      return redirectToBusinesses(
-        false,
-        "חוסר התאמה במזהה משתמש. אנא נסה שוב."
-      );
+      console.error("OAuth callback - State userId mismatch:", {
+        stateUserId,
+        authenticatedUserId,
+      });
+      return redirectToBusinesses(false);
     }
 
     const tokens = await exchangeCodeForTokens(code);
 
     if (!tokens.refresh_token) {
-      return redirectToBusinesses(
-        false,
-        "לא התקבל אסימון רענון מ-Google. אנא נסה שוב."
-      );
+      console.error("OAuth callback - No refresh token received from Google");
+      return redirectToBusinesses(false);
     }
 
     if (!tokens.access_token) {
-      return redirectToBusinesses(
-        false,
-        "לא התקבל אסימון גישה מ-Google. אנא נסה שוב."
-      );
+      console.error("OAuth callback - No access token received from Google");
+      return redirectToBusinesses(false);
     }
 
     const encryptedToken = await encryptToken(tokens.refresh_token);
 
+    const usersController = new UsersController();
+    const accountsController = new AccountsController(authenticatedUserId);
+
     let accountId: string;
 
     if (reconnect && existingAccountId) {
-      await updateAccount(authenticatedUserId, existingAccountId, {
+      await accountsController.updateAccount(existingAccountId, {
         googleRefreshToken: encryptedToken,
       });
       accountId = existingAccountId;
     } else {
       const userInfo = await getUserInfo(tokens.access_token);
 
-      const userDoc = await adminDb
-        .collection("users")
-        .doc(authenticatedUserId)
-        .get();
-      const userData = userDoc.data();
+      await usersController.getUser(authenticatedUserId);
 
-      if (!userData?.email) {
-        return redirectToBusinesses(
-          false,
-          "לא נמצא מייל משתמש. אנא התחבר מחדש."
-        );
-      }
+      const existingAccount = await accountsController.findByEmail(userInfo.email);
 
-      if (userInfo.email.toLowerCase() !== userData.email.toLowerCase()) {
-        return redirectToBusinesses(
-          false,
-          `חשבון Google לא תואם. יש להתחבר עם כתובת המייל שלך: ${userData.email}`
-        );
-      }
-
-      const existingAccountIdByEmail = await findAccountByEmail(
-        authenticatedUserId,
-        userInfo.email
-      );
-
-      if (existingAccountIdByEmail) {
-        await updateAccount(authenticatedUserId, existingAccountIdByEmail, {
+      if (existingAccount) {
+        await accountsController.updateAccount(existingAccount.id, {
           googleRefreshToken: encryptedToken,
         });
-        accountId = existingAccountIdByEmail;
+        accountId = existingAccount.id;
       } else {
-        accountId = await createAccount(authenticatedUserId, {
+        const newAccount = await accountsController.createAccount({
+          userId: authenticatedUserId,
           email: userInfo.email,
           accountName: userInfo.name,
           googleRefreshToken: encryptedToken,
         });
+        accountId = newAccount.id;
       }
-
-      await updateUserSelectedAccount(authenticatedUserId, accountId);
     }
 
-    return redirectToBusinesses(true, undefined, accountId, onboarding);
+    return redirectToBusinesses(true, accountId);
   } catch (error) {
-    console.error("Error in OAuth callback", error);
-    return redirectToBusinesses(
-      false,
-      "אירעה שגיאה בחיבור ל-Google. אנא נסה שוב."
-    );
+    console.error("=== OAuth Callback Error ===");
+    console.error("Error message:", error instanceof Error ? error.message : error);
+    console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
+    console.error("Error details:", JSON.stringify(error, null, 2));
+    console.error("===========================");
+
+    return redirectToBusinesses(false);
   }
 }

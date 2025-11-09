@@ -9,11 +9,7 @@ interface BackButtonProps {
   className?: string;
 }
 
-export function BackButton({
-  href,
-  label = "חזור",
-  className,
-}: BackButtonProps) {
+export function BackButton({ href, label = "חזור", className }: BackButtonProps) {
   return (
     <Button variant="ghost" size="sm" asChild className={cn(className)}>
       <Link href={href}>

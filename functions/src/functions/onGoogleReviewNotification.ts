@@ -1,13 +1,11 @@
 import * as admin from "firebase-admin";
 import { onMessagePublished } from "firebase-functions/v2/pubsub";
 import { defineSecret } from "firebase-functions/params";
-import {
-  getReview,
-  starRatingToNumber,
-  parseGoogleTimestamp,
-} from "../shared/google/reviews";
+import { getReview, starRatingToNumber, parseGoogleTimestamp } from "../shared/google/reviews";
 import { decryptToken } from "../shared/google/business-profile";
-import type { Review, Business } from "../shared/types/database";
+import type { Review, Business } from "../shared/types";
+import { AccountsRepositoryAdmin } from "../shared/repositories/accounts.repository.admin";
+import { ReviewsRepositoryAdmin } from "../shared/repositories/reviews.repository.admin";
 
 const db = admin.firestore();
 const tokenEncryptionSecret = defineSecret("TOKEN_ENCRYPTION_SECRET");
@@ -60,25 +58,17 @@ async function findBusinessByLocationId(locationName: string): Promise<{
   }
 }
 
-async function getAccountRefreshToken(
-  userId: string,
-  accountId: string
-): Promise<string | null> {
+async function getAccountRefreshToken(userId: string, accountId: string): Promise<string | null> {
   try {
-    const accountDoc = await db
-      .collection("users")
-      .doc(userId)
-      .collection("accounts")
-      .doc(accountId)
-      .get();
+    const accountsRepo = new AccountsRepositoryAdmin(userId);
+    const account = await accountsRepo.get(accountId);
 
-    if (!accountDoc.exists) {
+    if (!account) {
       console.error("Account not found", { userId, accountId });
       return null;
     }
 
-    const accountData = accountDoc.data();
-    return accountData?.googleRefreshToken || null;
+    return account.googleRefreshToken || null;
   } catch (error) {
     console.error("Error fetching account refresh token:", error);
     return null;
@@ -98,23 +88,14 @@ export const onGoogleReviewNotification = onMessagePublished(
       console.log("Received Pub/Sub notification:", event.data);
 
       const messageData = event.data.message.data;
-      const notificationJson = Buffer.from(messageData, "base64").toString(
-        "utf-8"
-      );
+      const notificationJson = Buffer.from(messageData, "base64").toString("utf-8");
       const notification: PubSubNotificationData = JSON.parse(notificationJson);
 
       console.log("Parsed notification:", notification);
 
-      const {
-        type: notificationType,
-        review: reviewName,
-        location: locationName,
-      } = notification;
+      const { type: notificationType, review: reviewName, location: locationName } = notification;
 
-      if (
-        notificationType !== "NEW_REVIEW" &&
-        notificationType !== "UPDATED_REVIEW"
-      ) {
+      if (notificationType !== "NEW_REVIEW" && notificationType !== "UPDATED_REVIEW") {
         console.log("Ignoring non-review notification:", notificationType);
         return;
       }
@@ -133,10 +114,7 @@ export const onGoogleReviewNotification = onMessagePublished(
       });
 
       if (!business.connected) {
-        console.log(
-          "Business not connected, skipping notification:",
-          business.id
-        );
+        console.log("Business not connected, skipping notification:", business.id);
         return;
       }
 
@@ -146,10 +124,7 @@ export const onGoogleReviewNotification = onMessagePublished(
         return;
       }
 
-      const refreshToken = await decryptToken(
-        encryptedToken,
-        tokenEncryptionSecret.value()
-      );
+      const refreshToken = await decryptToken(encryptedToken, tokenEncryptionSecret.value());
 
       console.log("Fetching review from GMB API:", reviewName);
       const googleReview = await getReview(
@@ -161,18 +136,17 @@ export const onGoogleReviewNotification = onMessagePublished(
       console.log("Fetched Google review:", googleReview);
 
       const reviewData: Omit<Review, "id"> = {
+        userId,
+        accountId,
+        businessId: business.id,
         googleReviewId: googleReview.reviewId,
         googleReviewName: googleReview.name,
         name: googleReview.reviewer.displayName,
         photoUrl: googleReview.reviewer.profilePhotoUrl,
         rating: starRatingToNumber(googleReview.starRating),
         text: googleReview.comment,
-        date: admin.firestore.Timestamp.fromDate(
-          parseGoogleTimestamp(googleReview.createTime)
-        ),
-        updateTime: admin.firestore.Timestamp.fromDate(
-          parseGoogleTimestamp(googleReview.updateTime)
-        ),
+        date: admin.firestore.Timestamp.fromDate(parseGoogleTimestamp(googleReview.createTime)),
+        updateTime: admin.firestore.Timestamp.fromDate(parseGoogleTimestamp(googleReview.updateTime)),
         receivedAt: admin.firestore.Timestamp.now(),
         isAnonymous: googleReview.reviewer.isAnonymous ?? false,
         replyStatus: "pending",
@@ -181,29 +155,18 @@ export const onGoogleReviewNotification = onMessagePublished(
         postedBy: null,
       };
 
-      const reviewsRef = db
-        .collection("users")
-        .doc(userId)
-        .collection("accounts")
-        .doc(accountId)
-        .collection("businesses")
-        .doc(business.id)
-        .collection("reviews");
+      const reviewsRepo = new ReviewsRepositoryAdmin(userId, accountId, business.id);
 
-      const existingReviewSnapshot = await reviewsRef
-        .where("googleReviewId", "==", googleReview.reviewId)
-        .limit(1)
-        .get();
+      const existingReview = await reviewsRepo.findByGoogleReviewId(googleReview.reviewId);
 
-      if (!existingReviewSnapshot.empty) {
-        const existingReviewDoc = existingReviewSnapshot.docs[0];
-        console.log("Review already exists, skipping:", existingReviewDoc.id);
+      if (existingReview) {
+        console.log("Review already exists, skipping:", existingReview.id);
         return;
       }
 
       console.log("Creating new review");
-      const newReviewRef = await reviewsRef.add(reviewData);
-      console.log("Review created successfully:", newReviewRef.id);
+      const newReview = await reviewsRepo.create(reviewData);
+      console.log("Review created successfully:", newReview.id);
     } catch (error) {
       console.error("Error processing Google review notification:", error);
       throw error;

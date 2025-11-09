@@ -1,10 +1,9 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { User } from "firebase/auth";
 import { signInWithGoogle } from "@/lib/firebase/auth";
-import { useAuth } from "@/contexts/AuthContext";
+import { isValidRedirectPath } from "@/lib/utils";
 import {
   DashboardCard,
   DashboardCardContent,
@@ -13,8 +12,8 @@ import {
   DashboardCardTitle,
 } from "@/components/ui/dashboard-card";
 import { Logo } from "@/components/ui/Logo";
-import { Loading } from "@/components/ui/loading";
 import { GoogleSsoButton } from "@/components/ui/google-sso-button";
+import { Loading } from "@/components/ui/loading";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -23,25 +22,8 @@ export const dynamic = "force-dynamic";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, loading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const redirectAfterLogin = useCallback(
-    async (user?: User) => {
-      if (!user) return;
-
-      const redirect = searchParams.get("redirect") || "/dashboard";
-      router.push(redirect);
-    },
-    [router, searchParams]
-  );
-
-  useEffect(() => {
-    if (!authLoading && user) {
-      redirectAfterLogin(user);
-    }
-  }, [user, authLoading, redirectAfterLogin]);
 
   useEffect(() => {
     if (error) {
@@ -59,58 +41,37 @@ function LoginForm() {
       setError(error);
       setIsLoading(false);
     } else if (user) {
-      await redirectAfterLogin(user);
+      const redirectParam = searchParams.get("redirect") || "/dashboard";
+      const redirect = isValidRedirectPath(redirectParam) ? redirectParam : "/dashboard";
+      router.push(redirect);
     }
   };
-
-  if (authLoading) {
-    return <Loading fullScreen />;
-  }
-
-  if (user) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-b from-background to-muted p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Logo className="justify-center mb-4" href={"/"} size="xl" />
-          <p className="text-muted-foreground">
-            היכנס כדי להתחיל לנהל את הביקורות שלך
-          </p>
+          <p className="text-muted-foreground">היכנס כדי להתחיל לנהל את הביקורות שלך</p>
         </div>
 
         <DashboardCard>
           <DashboardCardHeader className="text-center">
-            <DashboardCardTitle className="justify-center">
-              התחברות
-            </DashboardCardTitle>
-            <DashboardCardDescription>
-              התחבר עם חשבון Google שלך להמשך
-            </DashboardCardDescription>
+            <DashboardCardTitle className="justify-center">התחברות</DashboardCardTitle>
+            <DashboardCardDescription>התחבר עם חשבון Google שלך להמשך</DashboardCardDescription>
           </DashboardCardHeader>
           <DashboardCardContent className="space-y-4">
-            <GoogleSsoButton
-              onClick={handleGoogleSignIn}
-              isLoading={isLoading}
-            />
+            <GoogleSsoButton onClick={handleGoogleSignIn} isLoading={isLoading} />
           </DashboardCardContent>
         </DashboardCard>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
           בהתחברות, אתה מסכים ל
-          <Link
-            href="/terms"
-            className="text-primary hover:underline transition-all"
-          >
+          <Link href="/terms" className="text-primary hover:underline transition-all">
             תנאי השימוש
           </Link>{" "}
           ול
-          <Link
-            href="/privacy"
-            className="text-primary hover:underline transition-all"
-          >
+          <Link href="/privacy" className="text-primary hover:underline transition-all">
             מדיניות הפרטיות
           </Link>
         </p>

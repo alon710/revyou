@@ -15,12 +15,7 @@ interface EmptyStateProps {
   buttonLink: string;
 }
 
-export function EmptyState({
-  title,
-  description,
-  buttonText,
-  buttonLink,
-}: EmptyStateProps) {
+export function EmptyState({ title, description, buttonText, buttonLink }: EmptyStateProps) {
   return (
     <DashboardCard>
       <DashboardCardHeader>

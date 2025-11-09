@@ -13,8 +13,7 @@ const iconButtonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         destructive: "text-destructive hover:bg-destructive/10",
       },
       size: {
@@ -45,33 +44,13 @@ export interface IconButtonProps
 }
 
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
-  (
-    {
-      className,
-      variant,
-      size,
-      hoverEffect,
-      icon: Icon,
-      asChild = false,
-      iconClassName,
-      children,
-      ...props
-    },
-    ref
-  ) => {
+  ({ className, variant, size, hoverEffect, icon: Icon, asChild = false, iconClassName, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
 
-    const iconSize =
-      size === "sm" ? "h-4 w-4" : size === "lg" ? "h-5 w-5" : "h-4 w-4";
+    const iconSize = size === "sm" ? "h-4 w-4" : size === "lg" ? "h-5 w-5" : "h-4 w-4";
 
     return (
-      <Comp
-        className={cn(
-          iconButtonVariants({ variant, size, hoverEffect, className })
-        )}
-        ref={ref}
-        {...props}
-      >
+      <Comp className={cn(iconButtonVariants({ variant, size, hoverEffect, className }))} ref={ref} {...props}>
         {asChild ? children : <Icon className={cn(iconSize, iconClassName)} />}
       </Comp>
     );

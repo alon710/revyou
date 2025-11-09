@@ -54,20 +54,13 @@ export default function EditableSection<T>({
               <DashboardCardTitle icon={icon}>{title}</DashboardCardTitle>
               <DashboardCardDescription>{description}</DashboardCardDescription>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowEditModal(true)}
-              disabled={loading}
-            >
+            <Button variant="outline" size="sm" onClick={() => setShowEditModal(true)} disabled={loading}>
               <Settings className="ml-2 h-4 w-4" />
               עריכה
             </Button>
           </div>
         </DashboardCardHeader>
-        <DashboardCardContent className="space-y-6">
-          {renderDisplay()}
-        </DashboardCardContent>
+        <DashboardCardContent className="space-y-6">{renderDisplay()}</DashboardCardContent>
       </DashboardCard>
 
       <EditableFormModal

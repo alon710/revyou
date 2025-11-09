@@ -42,9 +42,7 @@ export const FEATURE_CONFIGS: FeatureConfig[] = [
   },
 ];
 
-export function extractFeatures(
-  product: Product
-): Record<string, string | number | boolean> {
+export function extractFeatures(product: Product): Record<string, string | number | boolean> {
   const features: Record<string, string | number | boolean> = {};
 
   if (!product.metadata) {
@@ -60,10 +58,7 @@ export function extractFeatures(
           features[config.key] = parseInt(value as string, 10) || 0;
           break;
         case "boolean":
-          features[config.key] =
-            value === "true" ||
-            (typeof value === "boolean" && value === true) ||
-            value === "1";
+          features[config.key] = value === "true" || (typeof value === "boolean" && value === true) || value === "1";
           break;
         case "text":
         default:
@@ -94,9 +89,7 @@ export function formatFeatureValue(
 
   switch (type) {
     case "number":
-      return typeof value === "number"
-        ? value.toLocaleString("he-IL")
-        : value.toString();
+      return typeof value === "number" ? value.toLocaleString("he-IL") : value.toString();
     case "boolean":
       return Boolean(value);
     case "text":

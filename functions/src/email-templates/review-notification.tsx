@@ -1,19 +1,10 @@
 import * as React from "react";
-import {
-  Html,
-  Head,
-  Body,
-  Container,
-  Section,
-  Text,
-  Heading,
-  Hr,
-  Button,
-} from "@react-email/components";
+import { Html, Head, Body, Container, Section, Text, Heading, Hr, Button } from "@react-email/components";
 
 interface ReviewNotificationEmailProps {
   recipientName: string;
   businessName: string;
+  accountId: string;
   businessId: string;
   reviewerName: string;
   rating: number;
@@ -27,6 +18,7 @@ interface ReviewNotificationEmailProps {
 export const ReviewNotificationEmail = ({
   recipientName = "בעל העסק",
   businessName = "העסק שלך",
+  accountId = "",
   businessId = "",
   reviewerName = "לקוח",
   rating = 5,
@@ -38,7 +30,7 @@ export const ReviewNotificationEmail = ({
 }: ReviewNotificationEmailProps) => {
   const statusText = status === "pending" ? "ממתינה לאישור" : "פורסמה";
   const statusColor = status === "pending" ? "#f59e0b" : "#10b981";
-  const reviewPageUrl = `${appBaseUrl}/dashboard/businesses/${businessId}/reviews/${reviewId}`;
+  const reviewPageUrl = `${appBaseUrl}/dashboard/account/${accountId}/business/${businessId}/reviews/${reviewId}`;
 
   return (
     <Html lang="he" dir="rtl">
@@ -87,9 +79,7 @@ export const ReviewNotificationEmail = ({
               {reviewText ? (
                 <Text style={reviewContent}>{reviewText}</Text>
               ) : (
-                <Text style={emptyReviewPlaceholder}>
-                  הלקוח לא השאיר טקסט בביקורת
-                </Text>
+                <Text style={emptyReviewPlaceholder}>הלקוח לא השאיר טקסט בביקורת</Text>
               )}
             </Section>
 
@@ -123,9 +113,7 @@ export const ReviewNotificationEmail = ({
 
           <Section style={footer}>
             <Hr style={divider} />
-            <Text style={footerText}>
-              קיבלת הודעת דוא״ל זו כי הפעלת התראות עבור ביקורות חדשות
-            </Text>
+            <Text style={footerText}>קיבלת הודעת דוא״ל זו כי הפעלת התראות עבור ביקורות חדשות</Text>
           </Section>
         </Container>
       </Body>
@@ -135,8 +123,7 @@ export const ReviewNotificationEmail = ({
 
 const main = {
   backgroundColor: "#f6f9fc",
-  fontFamily:
-    'Rubik, "Segoe UI", sans-serif, -apple-system, BlinkMacSystemFont',
+  fontFamily: 'Rubik, "Segoe UI", sans-serif, -apple-system, BlinkMacSystemFont',
 };
 
 const container = {

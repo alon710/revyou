@@ -44,9 +44,7 @@ export async function createSubscriptionCheckout(
   });
 }
 
-export function onSubscriptionChange(
-  callback: (snapshot: SubscriptionSnapshot) => void
-) {
+export function onSubscriptionChange(callback: (snapshot: SubscriptionSnapshot) => void) {
   const payments = getPayments();
 
   return onCurrentUserSubscriptionUpdate(payments, callback);

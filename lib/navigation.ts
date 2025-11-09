@@ -1,10 +1,4 @@
-import {
-  Home,
-  PiggyBank,
-  ShieldQuestionMarkIcon,
-  Rocket,
-  LayoutDashboard,
-} from "lucide-react";
+import { Home, PiggyBank, ShieldQuestionMarkIcon, Rocket, LayoutDashboard } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export interface NavItem {
@@ -15,7 +9,7 @@ export interface NavItem {
 
 export const dashboardNavItems: NavItem[] = [
   { href: "/dashboard", label: "לוח הבקרה", icon: LayoutDashboard },
-  { href: "/dashboard/businesses", label: "עסקים", icon: Home },
+  { href: "/dashboard/accounts", label: "חשבונות", icon: Home },
 ];
 
 export const landingNavItems: NavItem[] = [
@@ -25,9 +19,7 @@ export const landingNavItems: NavItem[] = [
   { href: "/#faq", label: "שאלות", icon: ShieldQuestionMarkIcon },
 ];
 
-export function getNavigationVariant(
-  pathname: string
-): "dashboard" | "landing" {
+export function getNavigationVariant(pathname: string): "dashboard" | "landing" {
   return pathname.startsWith("/dashboard") ? "dashboard" : "landing";
 }
 
@@ -35,11 +27,7 @@ export function isAnchorLink(href: string): boolean {
   return href.startsWith("/#");
 }
 
-export function getIsActive(
-  pathname: string,
-  href: string,
-  hash?: string
-): boolean {
+export function getIsActive(pathname: string, href: string, hash?: string): boolean {
   if (isAnchorLink(href)) {
     const anchorHash = href.substring(1);
     if (anchorHash === "#hero") {

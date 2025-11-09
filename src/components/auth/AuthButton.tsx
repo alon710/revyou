@@ -11,11 +11,7 @@ interface AuthButtonProps {
   variant?: "landing" | "dashboard";
 }
 
-export function AuthButton({
-  size = "sm",
-  className,
-  variant = "dashboard",
-}: AuthButtonProps) {
+export function AuthButton({ size = "sm", className, variant = "dashboard" }: AuthButtonProps) {
   const { user, loading } = useAuth();
 
   if (loading) {

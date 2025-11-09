@@ -19,10 +19,7 @@ function createOAuthClient(): OAuth2Client {
   return new OAuth2Client(clientId, clientSecret, redirectUri);
 }
 
-export function getAuthorizationUrl(
-  state?: string,
-  loginHint?: string
-): string {
+export function getAuthorizationUrl(state?: string, loginHint?: string): string {
   const oauth2Client = createOAuthClient();
 
   const authUrl = oauth2Client.generateAuthUrl({
@@ -68,14 +65,11 @@ export async function getUserInfo(accessToken: string): Promise<{
   name: string;
 }> {
   try {
-    const response = await fetch(
-      "https://www.googleapis.com/oauth2/v2/userinfo",
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    const response = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
     if (!response.ok) {
       throw new Error("Failed to fetch user info from Google");

@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { AlertTriangle, Trash2 } from "lucide-react";
 
@@ -48,14 +42,10 @@ export function DeleteConfirmation({
         <CardHeader>
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            <CardTitle className="text-destructive font-semibold">
-              אזור מסוכן
-            </CardTitle>
+            <CardTitle className="text-destructive font-semibold">אזור מסוכן</CardTitle>
           </div>
           <CardDescription>
-            <span className="text-destructive">
-              פעולות בלתי הפיכות שישפיעו על החשבון שלך
-            </span>
+            <span className="text-destructive">פעולות בלתי הפיכות שישפיעו על החשבון שלך</span>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -71,15 +61,9 @@ export function DeleteConfirmation({
               </ul>
             )}
 
-            <p className="text-sm font-semibold text-destructive mb-4">
-              {warningText}
-            </p>
+            <p className="text-sm font-semibold text-destructive mb-4">{warningText}</p>
 
-            <Button
-              variant="destructive"
-              onClick={() => setShowDialog(true)}
-              className="gap-2"
-            >
+            <Button variant="destructive" onClick={() => setShowDialog(true)} className="gap-2">
               <Trash2 className="h-4 w-4" />
               {deleteButtonText}
             </Button>

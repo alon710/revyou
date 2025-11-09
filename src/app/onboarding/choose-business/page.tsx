@@ -3,9 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { isBusinessAlreadyConnected } from "@/lib/firebase/business";
-import { GoogleBusinessProfileBusiness } from "../../../../types/database";
-import { StepIndicator } from "@/components/onboarding/StepIndicator";
+import { GoogleBusinessProfileBusiness } from "@/lib/types";
 import { BusinessSelector } from "@/components/dashboard/businesses/BusinessSelector";
 import { toast } from "sonner";
 
@@ -13,9 +11,7 @@ export default function OnboardingStep3() {
   const { user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [availableBusinesses, setAvailableBusinesses] = useState<
-    GoogleBusinessProfileBusiness[]
-  >([]);
+  const [availableBusinesses, setAvailableBusinesses] = useState<GoogleBusinessProfileBusiness[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
@@ -29,19 +25,18 @@ export default function OnboardingStep3() {
   }, [accountId, router]);
 
   const loadAvailableBusinesses = useCallback(async () => {
+    if (!accountId) return;
+
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("/api/google/businesses");
+      const response = await fetch(`/api/google/businesses?accountId=${accountId}`);
       const data = await response.json();
 
       if (!response.ok) {
         if (response.status === 429) {
-          throw new Error(
-            data.error ||
-              "Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב."
-          );
+          throw new Error(data.error || "Google מגביל את מספר הבקשות. נא להמתין דקה ולנסות שוב.");
         }
         throw new Error(data.error || "Failed to load businesses");
       }
@@ -53,13 +48,12 @@ export default function OnboardingStep3() {
       }
     } catch (err) {
       console.error("Error loading available businesses:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "לא ניתן לטעון עסקים";
+      const errorMessage = err instanceof Error ? err.message : "לא ניתן לטעון עסקים";
       setError(errorMessage);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [accountId]);
 
   useEffect(() => {
     if (accountId) {
@@ -74,22 +68,10 @@ export default function OnboardingStep3() {
       setConnecting(true);
       setError(null);
 
-      const isDuplicate = await isBusinessAlreadyConnected(
-        user.uid,
-        business.id
-      );
-      if (isDuplicate) {
-        toast.error(`העסק "${business.name}" כבר מחובר לחשבון שלך`);
-        return;
-      }
-
-      // Use atomic API route that creates business AND subscribes to notifications
-      // If subscription fails, business creation will be rolled back
-      const response = await fetch("/api/businesses/create", {
+      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          accountId,
           googleBusinessId: business.id,
           name: business.name,
           address: business.address,
@@ -108,11 +90,25 @@ export default function OnboardingStep3() {
       }
 
       toast.success("העסק התחבר בהצלחה");
+
+      try {
+        const subscribeResponse = await fetch("/api/google/notifications/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ accountId }),
+        });
+
+        if (!subscribeResponse.ok) {
+          console.error("Failed to subscribe to notifications:", await subscribeResponse.text());
+        }
+      } catch (err) {
+        console.error("Error subscribing to notifications:", err);
+      }
+
       router.push("/dashboard");
     } catch (err) {
       console.error("Error connecting business:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "לא ניתן לחבר את העסק";
+      const errorMessage = err instanceof Error ? err.message : "לא ניתן לחבר את העסק";
       toast.error(errorMessage);
     } finally {
       setConnecting(false);
@@ -125,8 +121,6 @@ export default function OnboardingStep3() {
 
   return (
     <div>
-      <StepIndicator currentStep={2} stepName="בחירת עסק" />
-
       <BusinessSelector
         businesses={availableBusinesses}
         loading={loading}

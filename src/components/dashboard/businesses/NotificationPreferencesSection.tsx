@@ -1,6 +1,6 @@
 "use client";
 
-import { Business } from "../../../../types/database";
+import { Business } from "@/lib/types";
 import { DashboardCardField } from "@/components/ui/dashboard-card";
 import { Badge } from "@/components/ui/badge";
 import { Bell } from "lucide-react";
@@ -40,12 +40,8 @@ export default function NotificationPreferencesSection({
       renderDisplay={() => (
         <DashboardCardField label="">
           <div className="flex items-center justify-between w-full">
-            <p className="text-sm text-foreground">
-              קבל התראה באימייל כאשר מתקבלת ביקורת חדשה
-            </p>
-            <Badge
-              variant={business.emailOnNewReview ? "default" : "secondary"}
-            >
+            <p className="text-sm text-foreground">קבל התראה באימייל כאשר מתקבלת ביקורת חדשה</p>
+            <Badge variant={business.emailOnNewReview ? "default" : "secondary"}>
               {business.emailOnNewReview ? "מופעל" : "כבוי"}
             </Badge>
           </div>
@@ -54,15 +50,10 @@ export default function NotificationPreferencesSection({
       renderForm={({ data, isLoading, onChange }) => (
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1 flex-1">
-            <Label
-              htmlFor="emailOnNewReview"
-              className="text-sm font-medium cursor-pointer"
-            >
+            <Label htmlFor="emailOnNewReview" className="text-sm font-medium cursor-pointer">
               ביקורת חדשה
             </Label>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              קבל התראה באימייל כאשר מתקבלת ביקורת חדשה
-            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed">קבל התראה באימייל כאשר מתקבלת ביקורת חדשה</p>
           </div>
           <Switch
             id="emailOnNewReview"

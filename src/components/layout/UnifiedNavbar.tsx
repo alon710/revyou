@@ -6,11 +6,7 @@ import { NavbarContainer } from "./NavbarContainer";
 import { useNavigation } from "@/hooks/useNavigation";
 import { AuthButton } from "@/components/auth/AuthButton";
 
-export function UnifiedNavbar({
-  variant,
-}: {
-  variant: "landing" | "dashboard";
-}) {
+export function UnifiedNavbar({ variant }: { variant: "landing" | "dashboard" }) {
   const { navItems, scrollToSection, isActive } = useNavigation(variant);
 
   return (
@@ -30,9 +26,7 @@ export function UnifiedNavbar({
                 type="button"
                 onClick={() => scrollToSection(item.href)}
                 className={`text-sm font-medium px-4 py-2 rounded-lg ${
-                  isItemActive
-                    ? "text-gray-900 font-semibold"
-                    : "text-gray-600 hover:text-gray-900"
+                  isItemActive ? "text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900"
                 }`}
               >
                 {item.label}
@@ -45,9 +39,7 @@ export function UnifiedNavbar({
               key={item.label}
               href={item.href}
               className={`text-sm font-medium px-4 py-2 rounded-lg ${
-                isItemActive
-                  ? "text-gray-900 font-semibold"
-                  : "text-gray-600 hover:text-gray-900"
+                isItemActive ? "text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
               {item.label}

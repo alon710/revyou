@@ -13,10 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import type { PlanLimits, PlanType } from "@/lib/stripe/entitlements";
 import type { Subscription } from "@/lib/hooks/useSubscription";
 import { getUsagePercentages } from "@/hooks/useUserStats";
-import {
-  formatHebrewDate,
-  getCurrentBillingPeriod,
-} from "@/lib/subscription/billing-period";
+import { formatHebrewDate, getCurrentBillingPeriod } from "@/lib/subscription/billing-period";
 
 interface SubscriptionInfoProps {
   limits: PlanLimits;
@@ -35,17 +32,8 @@ function getPlanBadgeInfo(planType: PlanType) {
   return planMap[planType];
 }
 
-export function SubscriptionInfo({
-  limits,
-  currentBusiness,
-  currentReviews,
-  planType,
-}: SubscriptionInfoProps) {
-  const { businessesPercent, reviewsPercent } = getUsagePercentages(
-    currentBusiness,
-    currentReviews,
-    limits
-  );
+export function SubscriptionInfo({ limits, currentBusiness, currentReviews, planType }: SubscriptionInfoProps) {
+  const { businessesPercent, reviewsPercent } = getUsagePercentages(currentBusiness, currentReviews, limits);
   const { resetDate } = getCurrentBillingPeriod();
   const badgeInfo = getPlanBadgeInfo(planType);
 
@@ -56,9 +44,7 @@ export function SubscriptionInfo({
           <div className="flex items-start justify-between">
             <div>
               <DashboardCardTitle>שימוש ומגבלות</DashboardCardTitle>
-              <DashboardCardDescription>
-                מעקב אחר השימוש שלך בתוכנית הנוכחית
-              </DashboardCardDescription>
+              <DashboardCardDescription>מעקב אחר השימוש שלך בתוכנית הנוכחית</DashboardCardDescription>
             </div>
             <Badge variant={badgeInfo.variant}>{badgeInfo.label}</Badge>
           </div>
@@ -70,9 +56,7 @@ export function SubscriptionInfo({
                 <span className="font-medium">
                   {currentBusiness} מתוך {limits.businesses} עסקים
                 </span>
-                <span className="text-muted-foreground">
-                  {businessesPercent}%
-                </span>
+                <span className="text-muted-foreground">{businessesPercent}%</span>
               </div>
               <Progress value={businessesPercent} />
             </div>
@@ -87,9 +71,7 @@ export function SubscriptionInfo({
                 <span className="text-muted-foreground">{reviewsPercent}%</span>
               </div>
               <Progress value={reviewsPercent} />
-              <p className="text-xs text-muted-foreground">
-                מתאפס ב-{formatHebrewDate(resetDate)}
-              </p>
+              <p className="text-xs text-muted-foreground">מתאפס ב-{formatHebrewDate(resetDate)}</p>
             </div>
           </DashboardCardField>
         </DashboardCardContent>

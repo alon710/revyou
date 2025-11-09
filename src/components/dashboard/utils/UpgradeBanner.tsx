@@ -55,9 +55,7 @@ export function UpgradeBanner() {
           <div className="flex items-center justify-between gap-4 p-4">
             <div className="flex items-center gap-3 flex-1">
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-foreground mb-0.5">
-                  אתה משתמש חינמי
-                </h3>
+                <h3 className="text-sm font-semibold text-foreground mb-0.5">אתה משתמש חינמי</h3>
                 <p className="text-xs text-muted-foreground">
                   שדרג לתוכנית בשביל להוסיף עסקים, ביקורות ותכונות מתקדמות
                 </p>
@@ -65,20 +63,11 @@ export function UpgradeBanner() {
             </div>
 
             <div className="flex items-center gap-2 flex-shrink-0">
-              <Button
-                size="sm"
-                onClick={handleUpgrade}
-                className="hidden sm:flex"
-              >
+              <Button size="sm" onClick={handleUpgrade} className="hidden sm:flex">
                 שדרג עכשיו
               </Button>
 
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={handleDismiss}
-                className="h-8 w-8 p-0"
-              >
+              <Button size="sm" variant="ghost" onClick={handleDismiss} className="h-8 w-8 p-0">
                 <X className="h-4 w-4" />
                 <span className="sr-only">סגור</span>
               </Button>

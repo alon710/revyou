@@ -1,9 +1,8 @@
 import { OAuth2Client } from "google-auth-library";
 import * as Iron from "@hapi/iron";
-import { GoogleBusinessProfileBusiness } from "../../types/database";
+import { GoogleBusinessProfileBusiness } from "@/lib/types";
 
-const GOOGLE_MY_BUSINESS_API_BASE =
-  "https://mybusinessbusinessinformation.googleapis.com/v1";
+const GOOGLE_MY_BUSINESS_API_BASE = "https://mybusinessbusinessinformation.googleapis.com/v1";
 
 interface GoogleAccount {
   name: string;
@@ -43,11 +42,7 @@ interface BusinessesResponse {
   nextPageToken?: string;
 }
 
-function createOAuthClient(
-  accessToken: string,
-  clientId?: string,
-  clientSecret?: string
-): OAuth2Client {
+function createOAuthClient(accessToken: string, clientId?: string, clientSecret?: string): OAuth2Client {
   const oauthClientId = clientId || process.env.GOOGLE_CLIENT_ID;
   const oauthClientSecret = clientSecret || process.env.GOOGLE_CLIENT_SECRET;
 
@@ -61,10 +56,7 @@ function createOAuthClient(
   return oauth2Client;
 }
 
-async function makeAuthorizedRequest<T>(
-  url: string,
-  accessToken: string
-): Promise<T> {
+async function makeAuthorizedRequest<T>(url: string, accessToken: string): Promise<T> {
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -101,10 +93,7 @@ export async function getAccessTokenFromRefreshToken(
 async function listAccounts(accessToken: string): Promise<GoogleAccount[]> {
   try {
     const url = `${GOOGLE_MY_BUSINESS_API_BASE}/accounts`;
-    const data = await makeAuthorizedRequest<AccountsResponse>(
-      url,
-      accessToken
-    );
+    const data = await makeAuthorizedRequest<AccountsResponse>(url, accessToken);
     return data.accounts || [];
   } catch (error) {
     console.error("Error listing accounts:", error);
@@ -112,30 +101,19 @@ async function listAccounts(accessToken: string): Promise<GoogleAccount[]> {
   }
 }
 
-async function listBusinessesForAccount(
-  accountName: string,
-  accessToken: string
-): Promise<GoogleBusinessProfile[]> {
+async function listBusinessesForAccount(accountName: string, accessToken: string): Promise<GoogleBusinessProfile[]> {
   try {
     const allBusinesses: GoogleBusinessProfile[] = [];
     let pageToken: string | undefined = undefined;
 
     do {
-      const url = new URL(
-        `${GOOGLE_MY_BUSINESS_API_BASE}/${accountName}/locations`
-      );
-      url.searchParams.set(
-        "readMask",
-        "name,title,storefrontAddress,phoneNumbers,websiteUri,metadata,profile"
-      );
+      const url = new URL(`${GOOGLE_MY_BUSINESS_API_BASE}/${accountName}/locations`);
+      url.searchParams.set("readMask", "name,title,storefrontAddress,phoneNumbers,websiteUri,metadata,profile");
       if (pageToken) {
         url.searchParams.set("pageToken", pageToken);
       }
 
-      const data = await makeAuthorizedRequest<BusinessesResponse>(
-        url.toString(),
-        accessToken
-      );
+      const data = await makeAuthorizedRequest<BusinessesResponse>(url.toString(), accessToken);
 
       if (data.locations) {
         allBusinesses.push(...data.locations);
@@ -176,9 +154,7 @@ function formatAddress(business: GoogleBusinessProfile): string {
   return parts.join(", ");
 }
 
-export async function listAllBusinesses(
-  refreshToken: string
-): Promise<GoogleBusinessProfileBusiness[]> {
+export async function listAllBusinesses(refreshToken: string): Promise<GoogleBusinessProfileBusiness[]> {
   try {
     const accessToken = await getAccessTokenFromRefreshToken(refreshToken);
     const accounts = await listAccounts(accessToken);
@@ -190,15 +166,10 @@ export async function listAllBusinesses(
     const allBusinesses: GoogleBusinessProfileBusiness[] = [];
 
     for (const account of accounts) {
-      const businesses = await listBusinessesForAccount(
-        account.name,
-        accessToken
-      );
+      const businesses = await listBusinessesForAccount(account.name, accessToken);
 
       for (const business of businesses) {
-        const businessId = business.name.startsWith("accounts/")
-          ? business.name
-          : `${account.name}/${business.name}`;
+        const businessId = business.name.startsWith("accounts/") ? business.name : `${account.name}/${business.name}`;
 
         allBusinesses.push({
           accountId: account.name,
@@ -221,10 +192,7 @@ export async function listAllBusinesses(
   }
 }
 
-export async function decryptToken(
-  encryptedToken: string,
-  secret?: string
-): Promise<string> {
+export async function decryptToken(encryptedToken: string, secret?: string): Promise<string> {
   const encryptionSecret = secret || process.env.TOKEN_ENCRYPTION_SECRET;
 
   if (!encryptionSecret) {
@@ -232,11 +200,7 @@ export async function decryptToken(
   }
 
   try {
-    const unsealed = await Iron.unseal(
-      encryptedToken,
-      encryptionSecret,
-      Iron.defaults
-    );
+    const unsealed = await Iron.unseal(encryptedToken, encryptionSecret, Iron.defaults);
     return unsealed as string;
   } catch (error) {
     console.error("Error decrypting token:", error);
@@ -287,14 +251,8 @@ export async function subscribeToNotifications(
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(
-        "Error subscribing to notifications:",
-        response.status,
-        errorText
-      );
-      throw new Error(
-        `Failed to subscribe to notifications: ${response.status}`
-      );
+      console.error("Error subscribing to notifications:", response.status, errorText);
+      throw new Error(`Failed to subscribe to notifications: ${response.status}`);
     }
 
     console.log("Successfully subscribed to notifications for", accountName);
@@ -304,10 +262,7 @@ export async function subscribeToNotifications(
   }
 }
 
-export async function unsubscribeFromNotifications(
-  accountName: string,
-  refreshToken: string
-): Promise<void> {
+export async function unsubscribeFromNotifications(accountName: string, refreshToken: string): Promise<void> {
   try {
     const accessToken = await getAccessTokenFromRefreshToken(refreshToken);
     const url = `https://mybusinessnotifications.googleapis.com/v1/${accountName}/notificationSetting`;
@@ -322,25 +277,14 @@ export async function unsubscribeFromNotifications(
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(
-        "Error unsubscribing from notifications:",
-        response.status,
-        errorText
-      );
-      throw new Error(
-        `Failed to unsubscribe from notifications: ${response.status}`
-      );
+      console.error("Error unsubscribing from notifications:", response.status, errorText);
+      throw new Error(`Failed to unsubscribe from notifications: ${response.status}`);
     }
 
-    console.log(
-      "Successfully unsubscribed from notifications for",
-      accountName
-    );
+    console.log("Successfully unsubscribed from notifications for", accountName);
   } catch (error) {
     console.error("Error unsubscribing from notifications:", error);
-    throw new Error(
-      "Failed to unsubscribe from Google My Business notifications"
-    );
+    throw new Error("Failed to unsubscribe from Google My Business notifications");
   }
 }
 
@@ -365,14 +309,8 @@ export async function getNotificationSettings(
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(
-        "Error getting notification settings:",
-        response.status,
-        errorText
-      );
-      throw new Error(
-        `Failed to get notification settings: ${response.status}`
-      );
+      console.error("Error getting notification settings:", response.status, errorText);
+      throw new Error(`Failed to get notification settings: ${response.status}`);
     }
 
     return response.json();

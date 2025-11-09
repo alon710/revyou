@@ -2,15 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/firebase/auth";
-import {
-  onSubscriptionChange,
-  getAvailableProducts,
-} from "@/lib/stripe/client";
-import {
-  getPlanLimits,
-  type PlanType,
-  type PlanLimits,
-} from "@/lib/stripe/entitlements";
+import { onSubscriptionChange, getAvailableProducts } from "@/lib/stripe/client";
+import { getPlanLimits, type PlanType, type PlanLimits } from "@/lib/stripe/entitlements";
 import { EnrichedProduct, enrichProduct } from "@/lib/stripe/product-parser";
 
 export interface Subscription {
@@ -80,14 +73,8 @@ export function useSubscription(): UseSubscriptionReturn {
         const products = await getAvailableProducts();
         const enrichedProducts = products.map(enrichProduct);
 
-        const productMap = new Map<
-          string,
-          { planId: PlanType; product: EnrichedProduct }
-        >(
-          enrichedProducts.map((enriched) => [
-            enriched.id,
-            { planId: enriched.planId as PlanType, product: enriched },
-          ])
+        const productMap = new Map<string, { planId: PlanType; product: EnrichedProduct }>(
+          enrichedProducts.map((enriched) => [enriched.id, { planId: enriched.planId as PlanType, product: enriched }])
         );
 
         const freeProduct = enrichedProducts.find((p) => p.planId === "free");
@@ -102,8 +89,7 @@ export function useSubscription(): UseSubscriptionReturn {
 
         unsubscribe = onSubscriptionChange((snapshot) => {
           const activeSubs = snapshot.subscriptions.filter(
-            (sub: { status: string }) =>
-              sub.status === "active" || sub.status === "trialing"
+            (sub: { status: string }) => sub.status === "active" || sub.status === "trialing"
           );
 
           if (activeSubs.length === 0) {
@@ -120,22 +106,16 @@ export function useSubscription(): UseSubscriptionReturn {
             id: sub.id,
             status: sub.status as Subscription["status"],
 
-            current_period_end:
-              new Date(sub.current_period_end).getTime() / 1000,
-            current_period_start:
-              new Date(sub.current_period_start).getTime() / 1000,
+            current_period_end: new Date(sub.current_period_end).getTime() / 1000,
+            current_period_start: new Date(sub.current_period_start).getTime() / 1000,
             cancel_at_period_end: sub.cancel_at_period_end,
             price: {
               id: sub.price,
               product: sub.product,
             },
 
-            trial_end: sub.trial_end
-              ? new Date(sub.trial_end).getTime() / 1000
-              : undefined,
-            trial_start: sub.trial_start
-              ? new Date(sub.trial_start).getTime() / 1000
-              : undefined,
+            trial_end: sub.trial_end ? new Date(sub.trial_end).getTime() / 1000 : undefined,
+            trial_start: sub.trial_start ? new Date(sub.trial_start).getTime() / 1000 : undefined,
           });
 
           const productData = productMap.get(sub.product);
@@ -165,8 +145,7 @@ export function useSubscription(): UseSubscriptionReturn {
     };
   }, [user]);
 
-  const isActive =
-    subscription?.status === "active" || subscription?.status === "trialing";
+  const isActive = subscription?.status === "active" || subscription?.status === "trialing";
   const isTrial = subscription?.status === "trialing";
 
   return {

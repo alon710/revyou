@@ -19,8 +19,7 @@ const nunito = Nunito({
 
 export const metadata: Metadata = {
   title: "תשובות AI לביקורות - Google Review AI Reply",
-  description:
-    "ייצור אוטומטי של תשובות מקצועיות לביקורות לקוחות באמצעות בינה מלאכותית",
+  description: "ייצור אוטומטי של תשובות מקצועיות לביקורות לקוחות באמצעות בינה מלאכותית",
 };
 
 export default function RootLayout({
@@ -30,10 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="he" dir="rtl">
-      <body
-        className={`${rubik.variable} ${nunito.variable} font-rubik antialiased`}
-        suppressHydrationWarning={true}
-      >
+      <body className={`${rubik.variable} ${nunito.variable} font-rubik antialiased`} suppressHydrationWarning={true}>
         <AuthProvider>
           {children}
           <Toaster dir="rtl" richColors />

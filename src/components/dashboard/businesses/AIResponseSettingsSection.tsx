@@ -1,21 +1,11 @@
 "use client";
 
-import {
-  BusinessConfig,
-  ToneOfVoice,
-  LanguageMode,
-} from "../../../../types/database";
+import { BusinessConfig, ToneOfVoice, LanguageMode } from "@/lib/types";
 import { DashboardCardField } from "@/components/ui/dashboard-card";
 import { Sparkles } from "lucide-react";
 import EditableSection from "@/components/dashboard/shared/EditableSection";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
 interface AIResponseSettingsSectionProps {
@@ -32,11 +22,7 @@ interface AIResponseFormData {
   signature: string;
 }
 
-export default function AIResponseSettingsSection({
-  config,
-  loading,
-  onSave,
-}: AIResponseSettingsSectionProps) {
+export default function AIResponseSettingsSection({ config, loading, onSave }: AIResponseSettingsSectionProps) {
   const formData: AIResponseFormData = {
     toneOfVoice: config.toneOfVoice,
     languageMode: config.languageMode || "auto-detect",
@@ -84,22 +70,16 @@ export default function AIResponseSettingsSection({
 
           <DashboardCardField label="אימוג'ים מותרים">
             <p className="text-sm font-medium">
-              {config.allowedEmojis?.length
-                ? config.allowedEmojis.join(" ")
-                : "ללא שימוש באימוג'ים"}
+              {config.allowedEmojis?.length ? config.allowedEmojis.join(" ") : "ללא שימוש באימוג'ים"}
             </p>
           </DashboardCardField>
 
           <DashboardCardField label="מספר משפטים מקסימלי">
-            <p className="text-sm font-medium">
-              {config.maxSentences || 2} משפטים
-            </p>
+            <p className="text-sm font-medium">{config.maxSentences || 2} משפטים</p>
           </DashboardCardField>
 
           <DashboardCardField label="חתימה">
-            <p className="text-sm font-medium">
-              {config.signature || "ללא חתימה"}
-            </p>
+            <p className="text-sm font-medium">{config.signature || "ללא חתימה"}</p>
           </DashboardCardField>
         </>
       )}
@@ -111,9 +91,7 @@ export default function AIResponseSettingsSection({
             </Label>
             <Select
               value={data.toneOfVoice}
-              onValueChange={(value: ToneOfVoice) =>
-                onChange("toneOfVoice", value)
-              }
+              onValueChange={(value: ToneOfVoice) => onChange("toneOfVoice", value)}
               disabled={isLoading}
             >
               <SelectTrigger id="toneOfVoice" dir="rtl">
@@ -134,9 +112,7 @@ export default function AIResponseSettingsSection({
             </Label>
             <Select
               value={data.languageMode}
-              onValueChange={(value: LanguageMode) =>
-                onChange("languageMode", value)
-              }
+              onValueChange={(value: LanguageMode) => onChange("languageMode", value)}
               disabled={isLoading}
             >
               <SelectTrigger id="languageMode" dir="rtl">
@@ -178,9 +154,7 @@ export default function AIResponseSettingsSection({
             </Label>
             <Select
               value={data.maxSentences.toString()}
-              onValueChange={(value) =>
-                onChange("maxSentences", parseInt(value))
-              }
+              onValueChange={(value) => onChange("maxSentences", parseInt(value))}
               disabled={isLoading}
             >
               <SelectTrigger id="maxSentences" dir="rtl">
@@ -206,9 +180,7 @@ export default function AIResponseSettingsSection({
               placeholder="צוות העסק"
               disabled={isLoading}
             />
-            <p className="text-xs text-muted-foreground text-right">
-              החתימה שתופיע בסוף כל תגובה
-            </p>
+            <p className="text-xs text-muted-foreground text-right">החתימה שתופיע בסוף כל תגובה</p>
           </div>
         </>
       )}

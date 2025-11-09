@@ -1,13 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { db } from "@/lib/firebase/config";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  Timestamp,
-} from "firebase/firestore";
+import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
 import { startOfMonth } from "date-fns";
 import type { PlanLimits } from "@/lib/stripe/entitlements";
 
@@ -26,15 +20,9 @@ export function getUsagePercentages(
   businessesPercent: number;
   reviewsPercent: number;
 } {
-  const businessesPercent = Math.min(
-    100,
-    Math.round((currentBusiness / limits.businesses) * 100)
-  );
+  const businessesPercent = Math.min(100, Math.round((currentBusiness / limits.businesses) * 100));
 
-  const reviewsPercent = Math.min(
-    100,
-    Math.round((currentReviews / limits.reviewsPerMonth) * 100)
-  );
+  const reviewsPercent = Math.min(100, Math.round((currentReviews / limits.reviewsPerMonth) * 100));
 
   return {
     businessesPercent,
@@ -84,16 +72,7 @@ export function useUserStats(): UseUserStatsReturn {
 
         for (const businessDoc of businessesSnapshot.docs) {
           const reviewsQuery = query(
-            collection(
-              db,
-              "users",
-              userId,
-              "accounts",
-              accountId,
-              "businesses",
-              businessDoc.id,
-              "reviews"
-            ),
+            collection(db, "users", userId, "accounts", accountId, "businesses", businessDoc.id, "reviews"),
             where("receivedAt", ">=", Timestamp.fromDate(startDate))
           );
           const snapshot = await getDocs(reviewsQuery);
@@ -104,9 +83,7 @@ export function useUserStats(): UseUserStatsReturn {
       setReviewCount(totalReviewCount);
     } catch (err) {
       console.error("Error getting review count:", err);
-      setError(
-        err instanceof Error ? err : new Error("Failed to fetch review count")
-      );
+      setError(err instanceof Error ? err : new Error("Failed to fetch review count"));
       setReviewCount(0);
     } finally {
       setLoading(false);
