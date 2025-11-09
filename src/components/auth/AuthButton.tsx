@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ interface AuthButtonProps {
 
 export function AuthButton({ size = "sm", className, variant = "dashboard" }: AuthButtonProps) {
   const { user, loading } = useAuth();
+  const [isNavigating, setIsNavigating] = useState(false);
 
   if (loading) {
     return null;
@@ -22,9 +24,9 @@ export function AuthButton({ size = "sm", className, variant = "dashboard" }: Au
     return (
       <>
         {variant === "landing" && (
-          <Link href="/dashboard">
-            <Button size={size} className={className}>
-              החשבון שלי
+          <Link href="/dashboard" onClick={() => setIsNavigating(true)}>
+            <Button size={size} className={className} disabled={isNavigating}>
+              {isNavigating ? "מעביר..." : "החשבון שלי"}
             </Button>
           </Link>
         )}
@@ -34,9 +36,9 @@ export function AuthButton({ size = "sm", className, variant = "dashboard" }: Au
   }
 
   return (
-    <Link href="/login">
-      <Button size={size} className={className}>
-        התחברות
+    <Link href="/login" onClick={() => setIsNavigating(true)}>
+      <Button size={size} className={className} disabled={isNavigating}>
+        {isNavigating ? "מתחבר..." : "התחברות"}
       </Button>
     </Link>
   );
