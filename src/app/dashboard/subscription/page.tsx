@@ -48,6 +48,7 @@ export default function SubscriptionPage() {
       setStripeLink(userData.stripeLink || null);
     } catch (error) {
       console.error("Error loading data:", error);
+      toast.error("שגיאה בטעינת נתונים. אנא נסה שוב מאוחר יותר.");
     } finally {
       setLoading(false);
     }
@@ -65,6 +66,16 @@ export default function SubscriptionPage() {
 
   const handleManageSubscription = () => {
     if (stripeLink) {
+      try {
+        const url = new URL(stripeLink);
+        if (!url.hostname.includes("stripe.com")) {
+          toast.error("קישור לא תקין. אנא פנה לתמיכה.");
+          return;
+        }
+      } catch {
+        toast.error("קישור לא תקין. אנא פנה לתמיכה.");
+        return;
+      }
       window.open(stripeLink, "_blank");
     }
   };
