@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Account, Business } from "@/lib/types";
+import type { AccountWithBusinesses } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   DashboardCard,
@@ -15,10 +15,6 @@ import { MapPin } from "lucide-react";
 import Image from "next/image";
 import { EmptyState } from "@/components/ui/empty-state";
 import { AccountAvatarDropdown } from "./AccountAvatarDropdown";
-
-interface AccountWithBusinesses extends Account {
-  businesses: Business[];
-}
 
 interface AccountBusinessesListProps {
   accounts: AccountWithBusinesses[];

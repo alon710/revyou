@@ -2,15 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import type { Account, Business } from "@/lib/types";
+import type { Account, AccountWithBusinesses } from "@/lib/types";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
 import { AccountBusinessesList } from "@/components/dashboard/home/AccountBusinessesList";
-
-interface AccountWithBusinesses extends Account {
-  businesses: Business[];
-}
 
 export default function HomePage() {
   const { user, loading: authLoading } = useAuth();
