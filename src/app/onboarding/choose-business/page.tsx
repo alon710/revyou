@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { GoogleBusinessProfileBusiness } from "@/lib/types";
-import { StepIndicator } from "@/components/onboarding/StepIndicator";
 import { BusinessSelector } from "@/components/dashboard/businesses/BusinessSelector";
 import { toast } from "sonner";
 
@@ -122,8 +121,6 @@ export default function OnboardingStep3() {
 
   return (
     <div>
-      <StepIndicator currentStep={2} stepName="בחירת עסק" />
-
       <BusinessSelector
         businesses={availableBusinesses}
         loading={loading}

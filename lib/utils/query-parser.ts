@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ReviewFilters, BusinessFilters, AccountFilters } from "@/lib/types";
 
-export function parseSearchParams<T>(params: URLSearchParams, schema: z.ZodType<T>): T {
+export function parseSearchParams<T>(params: URLSearchParams, schema: z.ZodType<T, z.ZodTypeDef, unknown>): T {
   const obj: Record<
     string,
     string | string[] | undefined | number | number[] | boolean | boolean[] | Date | Date[] | null | null[]
@@ -15,23 +15,27 @@ export function parseSearchParams<T>(params: URLSearchParams, schema: z.ZodType<
   return schema.parse(obj);
 }
 
-const arrayTransform = <T>(value: string | string[] | undefined, transform?: (v: string) => T): T[] | undefined => {
-  if (!value) return undefined;
+const stringOrArraySchema = z
+  .union([z.string(), z.array(z.string())])
+  .transform((val) => (Array.isArray(val) ? val : val.split(",")));
 
-  const arr = Array.isArray(value) ? value : value.split(",");
-  return transform ? arr.map(transform) : (arr as unknown as T[]);
-};
+const replyStatusArraySchema = z
+  .union([
+    z.enum(["pending", "rejected", "posted", "failed"]),
+    z.array(z.enum(["pending", "rejected", "posted", "failed"])),
+  ])
+  .transform((val) => (Array.isArray(val) ? val : [val]));
+
+const ratingArraySchema = z.union([z.string(), z.array(z.string())]).transform((val) => {
+  const arr = Array.isArray(val) ? val : val.split(",");
+  return arr.map((v) => parseInt(v, 10));
+});
 
 export const reviewFiltersSchema = z
   .object({
-    ids: z.union([z.string(), z.array(z.string())]).optional(),
-    replyStatus: z
-      .union([
-        z.enum(["pending", "rejected", "posted", "failed"]),
-        z.array(z.enum(["pending", "rejected", "posted", "failed"])),
-      ])
-      .optional(),
-    rating: z.union([z.string(), z.array(z.string())]).optional(),
+    ids: stringOrArraySchema.optional(),
+    replyStatus: replyStatusArraySchema.optional(),
+    rating: ratingArraySchema.optional(),
     dateFrom: z.string().optional(),
     dateTo: z.string().optional(),
     limit: z.string().optional(),
@@ -43,15 +47,15 @@ export const reviewFiltersSchema = z
     const filters: ReviewFilters = {};
 
     if (data.ids) {
-      filters.ids = arrayTransform(data.ids);
+      filters.ids = data.ids;
     }
 
     if (data.replyStatus) {
-      filters.replyStatus = arrayTransform(data.replyStatus) as ReviewFilters["replyStatus"];
+      filters.replyStatus = data.replyStatus;
     }
 
     if (data.rating) {
-      filters.rating = arrayTransform(data.rating, (v) => parseInt(v, 10));
+      filters.rating = data.rating;
     }
 
     if (data.dateFrom) {
@@ -80,7 +84,7 @@ export const reviewFiltersSchema = z
 
 export const businessFiltersSchema = z
   .object({
-    ids: z.union([z.string(), z.array(z.string())]).optional(),
+    ids: stringOrArraySchema.optional(),
     connected: z.string().optional(),
     limit: z.string().optional(),
     offset: z.string().optional(),
@@ -91,7 +95,7 @@ export const businessFiltersSchema = z
     const filters: BusinessFilters = {};
 
     if (data.ids) {
-      filters.ids = arrayTransform(data.ids);
+      filters.ids = data.ids;
     }
 
     if (data.connected !== undefined) {
@@ -118,7 +122,7 @@ export const businessFiltersSchema = z
 
 export const accountFiltersSchema = z
   .object({
-    ids: z.union([z.string(), z.array(z.string())]).optional(),
+    ids: stringOrArraySchema.optional(),
     email: z.string().optional(),
     limit: z.string().optional(),
     offset: z.string().optional(),
@@ -129,7 +133,7 @@ export const accountFiltersSchema = z
     const filters: AccountFilters = {};
 
     if (data.ids) {
-      filters.ids = arrayTransform(data.ids);
+      filters.ids = data.ids;
     }
 
     if (data.email) {

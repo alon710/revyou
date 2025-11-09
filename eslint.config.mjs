@@ -1,6 +1,5 @@
 import nextConfig from "eslint-config-next";
 import unusedImportsPlugin from "eslint-plugin-unused-imports";
-import tseslint from "typescript-eslint";
 
 const eslintConfig = [
   {
@@ -14,15 +13,12 @@ const eslintConfig = [
     ],
   },
   ...nextConfig,
-  ...tseslint.configs.recommended,
   {
     plugins: {
       "unused-imports": unusedImportsPlugin,
     },
     rules: {
       "no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/no-explicit-any": "error",
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": [
         "error",
@@ -33,6 +29,13 @@ const eslintConfig = [
           argsIgnorePattern: "^_",
         },
       ],
+    },
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "error",
     },
   },
 ];
