@@ -89,8 +89,6 @@ export default function OnboardingStep3() {
         throw new Error(data.error || "Failed to create business");
       }
 
-      toast.success("העסק התחבר בהצלחה");
-
       try {
         const subscribeResponse = await fetch("/api/google/notifications/subscribe", {
           method: "POST",
@@ -105,7 +103,7 @@ export default function OnboardingStep3() {
         console.error("Error subscribing to notifications:", err);
       }
 
-      router.push("/dashboard/home");
+      router.push(`/onboarding/business-details?accountId=${accountId}&businessId=${data.business.id}`);
     } catch (err) {
       console.error("Error connecting business:", err);
       const errorMessage = err instanceof Error ? err.message : "לא ניתן לחבר את העסק";

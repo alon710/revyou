@@ -5,9 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
 import { StarRating } from "@/components/ui/StarRating";
 import EditableSection from "@/components/dashboard/shared/EditableSection";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { StarRatingConfigForm } from "@/components/dashboard/businesses/forms/StarRatingConfigForm";
 
 interface StarRatingConfigSectionProps {
   starConfigs: BusinessConfig["starConfigs"];
@@ -53,55 +51,7 @@ export default function StarRatingConfigSection({ starConfigs, loading, onSave }
         </>
       )}
       renderForm={({ data, isLoading, onChange }) => (
-        <div className="space-y-6 overflow-y-auto max-h-[50vh]">
-          {([5, 4, 3, 2, 1] as const).map((rating) => {
-            const starConfig = data[rating];
-
-            return (
-              <div key={rating} className="pb-6 last:pb-0 border-b last:border-b-0 border-border/40">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <Label htmlFor={`auto-reply-${rating}`} className="text-sm font-medium cursor-pointer">
-                      תגובה אוטומטית
-                    </Label>
-                    <Switch
-                      id={`auto-reply-${rating}`}
-                      checked={starConfig.autoReply}
-                      onCheckedChange={(checked) =>
-                        onChange(rating, {
-                          ...starConfig,
-                          autoReply: checked,
-                        })
-                      }
-                      disabled={isLoading}
-                    />
-                  </div>
-                  <StarRating rating={rating} size={18} />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor={`instructions-${rating}`} className="text-right block">
-                    הנחיות מותאמות אישית
-                  </Label>
-                  <Textarea
-                    id={`instructions-${rating}`}
-                    value={starConfig.customInstructions}
-                    onChange={(e) =>
-                      onChange(rating, {
-                        ...starConfig,
-                        customInstructions: e.target.value,
-                      })
-                    }
-                    placeholder="הוסף הנחיות ספציפיות לדירוג זה..."
-                    rows={3}
-                    disabled={isLoading}
-                    className="text-sm resize-none"
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <StarRatingConfigForm values={data} onChange={onChange} disabled={isLoading} />
       )}
     />
   );
