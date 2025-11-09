@@ -34,6 +34,7 @@ export default function HomePage() {
         const accountsWithBusinessesPromises = accounts.map(async (account) => {
           const businessesResponse = await fetch(`/api/users/${user.uid}/accounts/${account.id}/businesses`);
           if (!businessesResponse.ok) {
+            console.error(`Failed to fetch businesses for account ${account.id}:`, businessesResponse.statusText);
             return { ...account, businesses: [] };
           }
           const businessesData = await businessesResponse.json();
