@@ -1,3 +1,5 @@
+const LAST_UPDATED_DATE = new Date("2025-11-09").toLocaleDateString("he-IL");
+
 export default function PrivacyPage() {
   return (
     <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -116,7 +118,7 @@ export default function PrivacyPage() {
           </section>
 
           <div className="mt-12 pt-8 border-t border-border">
-            <p className="text-sm text-muted-foreground">עדכון אחרון: {new Date().toLocaleDateString("he-IL")}</p>
+            <p className="text-sm text-muted-foreground">עדכון אחרון: {LAST_UPDATED_DATE}</p>
           </div>
         </div>
       </div>

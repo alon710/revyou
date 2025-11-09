@@ -61,7 +61,7 @@ export default function BusinessSettingsPage({
         throw new Error("Failed to delete business");
       }
 
-      router.push(`/dashboard/accounts/${accountId}/businesses/${businessId}`);
+      router.push(`/dashboard/accounts/${accountId}/businesses`);
     } catch (error) {
       console.error("Error deleting business:", error);
     }
@@ -81,7 +81,7 @@ export default function BusinessSettingsPage({
         <PageHeader title="עסק לא נמצא" />
         <div className="text-center py-12">
           <p className="text-muted-foreground">העסק המבוקש לא נמצא.</p>
-          <BackButton href={`/dashboard/accounts/${accountId}/businesses/${businessId}`} />
+          <BackButton href={`/dashboard/accounts/${accountId}/businesses`} />
         </div>
       </PageContainer>
     );
@@ -90,7 +90,7 @@ export default function BusinessSettingsPage({
   return (
     <PageContainer>
       <div className="mb-4">
-        <BackButton href={`/dashboard/accounts/${accountId}/businesses/${businessId}`} />
+        <BackButton href={`/dashboard/accounts/${accountId}/businesses`} />
       </div>
 
       <PageHeader

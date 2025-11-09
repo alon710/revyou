@@ -75,7 +75,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
     return (
       <PageContainer>
         <div className="mb-6">
-          <BackButton href={`/dashboard/account/${accountId}/business/${businessId}/reviews`} />
+          <BackButton href={`/dashboard/accounts/${accountId}/businesses/${businessId}/reviews`} />
         </div>
         <PageHeader title="ביקורת" description="פרטי ביקורת" />
         <div className="text-center text-muted-foreground py-12">{error || "הביקורת לא נמצאה"}</div>
@@ -86,7 +86,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
   return (
     <PageContainer>
       <div className="mb-6">
-        <BackButton href={`/dashboard/account/${accountId}/business/${businessId}/reviews`} />
+        <BackButton href={`/dashboard/accounts/${accountId}/businesses/${businessId}/reviews`} />
       </div>
       <PageHeader title={`ביקורת מאת ${review.name}`} description={business.name} />
 

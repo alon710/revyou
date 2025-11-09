@@ -84,14 +84,14 @@ export default function BusinessReviewsPage({ params }: BusinessReviewsPageProps
     return (
       <PageContainer>
         <div className="mb-6">
-          <BackButton href={`/dashboard/accounts/${accountId}/businesses/${businessId}`} />
+          <BackButton href={`/dashboard/accounts/${accountId}/businesses`} />
         </div>
         <PageHeader title="ביקורות" description="כל הביקורות לעסק" />
         <EmptyState
           title="שגיאה בטעינת הביקורות"
           description={error || "לא נמצא עסק"}
           buttonText="חזרה לעסקים"
-          buttonLink={`/dashboard/accounts/${accountId}/businesses/${businessId}`}
+          buttonLink={`/dashboard/accounts/${accountId}/businesses`}
         />
       </PageContainer>
     );
@@ -100,7 +100,7 @@ export default function BusinessReviewsPage({ params }: BusinessReviewsPageProps
   return (
     <PageContainer>
       <div className="mb-6">
-        <BackButton href={`/dashboard/accounts/${accountId}/businesses/${businessId}`} />
+        <BackButton href={`/dashboard/accounts/${accountId}/businesses`} />
       </div>
 
       <PageHeader title={`ביקורות ${business.name}`} description={`כל הביקורות לעסק שלך`} />
@@ -111,7 +111,7 @@ export default function BusinessReviewsPage({ params }: BusinessReviewsPageProps
             title="אין עדיין ביקורות"
             description="כשיגיעו ביקורות חדשות, הן יופיעו כאן"
             buttonText="חזרה לעסקים"
-            buttonLink={`/dashboard/accounts/${accountId}/businesses/${businessId}`}
+            buttonLink={`/dashboard/accounts/${accountId}/businesses`}
           />
         ) : (
           reviews.map((review) => (
@@ -123,7 +123,7 @@ export default function BusinessReviewsPage({ params }: BusinessReviewsPageProps
                 userId={user.uid}
                 onUpdate={fetchData}
                 onClick={() =>
-                  router.push(`/dashboard/account/${accountId}/business/${businessId}/reviews/${review.id}`)
+                  router.push(`/dashboard/accounts/${accountId}/businesses/${businessId}/reviews/${review.id}`)
                 }
               />
             </div>

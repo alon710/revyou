@@ -61,12 +61,12 @@ export default function BusinessesPage({ params }: { params: Promise<{ accountId
   }
 
   const handleBusinessClick = (business: Business) => {
-    router.push(`/dashboard/account/${accountId}/business/${business.id}/reviews`);
+    router.push(`/dashboard/accounts/${accountId}/businesses/${business.id}/reviews`);
   };
 
   const handleSettingsClick = (e: React.MouseEvent, business: Business) => {
     e.stopPropagation();
-    router.push(`/dashboard/account/${accountId}/business/${business.id}/settings`);
+    router.push(`/dashboard/accounts/${accountId}/businesses/${business.id}/settings`);
   };
 
   return (

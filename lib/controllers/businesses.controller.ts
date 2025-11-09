@@ -1,4 +1,4 @@
-import type { BusinessCreate, Business, BusinessUpdate, BusinessFilters } from "@/lib/types";
+import type { BusinessCreate, Business, BusinessUpdate, BusinessFilters, BusinessConfig } from "@/lib/types";
 import { BusinessesRepositoryAdmin } from "@/lib/repositories/businesses.repository.admin";
 import { BaseController } from "./base.controller";
 import { ConflictError } from "@/lib/api/errors";
@@ -91,7 +91,7 @@ export class BusinessesController extends BaseController<BusinessCreate, Busines
     return repo.findByGoogleBusinessId(googleBusinessId);
   }
 
-  async updateConfig(businessId: string, config: any): Promise<Business> {
+  async updateConfig(businessId: string, config: Partial<BusinessConfig>): Promise<Business> {
     const repo = this.repository as BusinessesRepositoryAdmin;
     return this.handleError(() => repo.updateConfig(businessId, config), "Failed to update business config");
   }
