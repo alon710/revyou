@@ -3,6 +3,7 @@ import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { ReviewsController } from "@/lib/controllers";
 import { AccountsController } from "@/lib/controllers";
 import { postReplyToGoogle } from "@/lib/google/reviews";
+import { decryptToken } from "@/lib/google/business-profile";
 
 export async function POST(
   req: NextRequest,
@@ -44,7 +45,8 @@ export async function POST(
     const accountController = new AccountsController(userId);
     const account = await accountController.getAccount(accountId);
 
-    await postReplyToGoogle(review.googleReviewName || review.googleReviewId, replyToPost, account.googleRefreshToken);
+    const refreshToken = await decryptToken(account.googleRefreshToken);
+    await postReplyToGoogle(review.googleReviewName || review.googleReviewId, replyToPost, refreshToken);
 
     const updatedReview = await reviewController.markAsPosted(reviewId, replyToPost, userId);
 

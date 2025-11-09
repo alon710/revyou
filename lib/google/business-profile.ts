@@ -45,12 +45,13 @@ interface BusinessesResponse {
 function createOAuthClient(accessToken: string, clientId?: string, clientSecret?: string): OAuth2Client {
   const oauthClientId = clientId || process.env.GOOGLE_CLIENT_ID;
   const oauthClientSecret = clientSecret || process.env.GOOGLE_CLIENT_SECRET;
+  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/google/callback`;
 
   if (!oauthClientId || !oauthClientSecret) {
     throw new Error("Google OAuth credentials not configured");
   }
 
-  const oauth2Client = new OAuth2Client(oauthClientId, oauthClientSecret);
+  const oauth2Client = new OAuth2Client(oauthClientId, oauthClientSecret, redirectUri);
   oauth2Client.setCredentials({ access_token: accessToken });
 
   return oauth2Client;
@@ -81,13 +82,18 @@ export async function getAccessTokenFromRefreshToken(
   const oauth2Client = createOAuthClient("", clientId, clientSecret);
   oauth2Client.setCredentials({ refresh_token: refreshToken });
 
-  const { credentials } = await oauth2Client.refreshAccessToken();
+  try {
+    const { credentials } = await oauth2Client.refreshAccessToken();
 
-  if (!credentials.access_token) {
-    throw new Error("Failed to refresh access token");
+    if (!credentials.access_token) {
+      throw new Error("Failed to refresh access token");
+    }
+
+    return credentials.access_token;
+  } catch (error) {
+    console.error("Error refreshing access token:", error);
+    throw error;
   }
-
-  return credentials.access_token;
 }
 
 async function listAccounts(accessToken: string): Promise<GoogleAccount[]> {
