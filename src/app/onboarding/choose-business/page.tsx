@@ -105,7 +105,7 @@ export default function OnboardingStep3() {
         console.error("Error subscribing to notifications:", err);
       }
 
-      router.push("/dashboard");
+      router.push("/dashboard/home");
     } catch (err) {
       console.error("Error connecting business:", err);
       const errorMessage = err instanceof Error ? err.message : "לא ניתן לחבר את העסק";

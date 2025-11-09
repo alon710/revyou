@@ -1,4 +1,4 @@
-import { Home, PiggyBank, ShieldQuestionMarkIcon, Rocket, LayoutDashboard } from "lucide-react";
+import { Home, PiggyBank, ShieldQuestionMarkIcon, Rocket, CreditCard, BarChart3 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export interface NavItem {
@@ -8,8 +8,9 @@ export interface NavItem {
 }
 
 export const dashboardNavItems: NavItem[] = [
-  { href: "/dashboard", label: "לוח הבקרה", icon: LayoutDashboard },
-  { href: "/dashboard/accounts", label: "חשבונות", icon: Home },
+  { href: "/dashboard/home", label: "בית", icon: Home },
+  { href: "/dashboard/subscription", label: "תוכנית", icon: CreditCard },
+  { href: "/dashboard/insights", label: "תובנות", icon: BarChart3 },
 ];
 
 export const landingNavItems: NavItem[] = [

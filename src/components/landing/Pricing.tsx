@@ -53,9 +53,9 @@ export function Pricing() {
 
       if (isFree) {
         if (!user) {
-          router.push(`/login?redirect=${encodeURIComponent("/dashboard")}`);
+          router.push(`/login?redirect=${encodeURIComponent("/dashboard/home")}`);
         } else {
-          router.push("/dashboard");
+          router.push("/dashboard/home");
         }
         return;
       }
