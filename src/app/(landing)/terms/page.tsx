@@ -2,7 +2,7 @@ const LAST_UPDATED_DATE = new Date("2025-11-09").toLocaleDateString("he-IL");
 
 export default function TermsPage() {
   return (
-    <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main className="grow container mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-foreground mb-8">תנאי שימוש</h1>
 
