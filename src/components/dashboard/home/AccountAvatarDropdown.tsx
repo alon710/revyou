@@ -11,16 +11,21 @@ export function AccountAvatarDropdown({ account }: AccountAvatarDropdownProps) {
   const getInitials = () => {
     if (account.accountName) {
       return account.accountName
+        .trim()
         .split(" ")
-        .map((n) => n[0])
+        .filter((segment) => segment.length > 0)
+        .map((segment) => segment[0])
         .join("")
         .toUpperCase()
         .slice(0, 2);
     }
     if (account.email) {
-      return account.email[0].toUpperCase();
+      const trimmedEmail = account.email.trim();
+      if (trimmedEmail.length > 0) {
+        return trimmedEmail[0].toUpperCase();
+      }
     }
-    return "A";
+    return "AB";
   };
 
   return (
