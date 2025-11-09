@@ -1,5 +1,31 @@
 import { Timestamp, WithFieldValue, PartialWithFieldValue } from "firebase/firestore";
-import { BusinessConfig } from "./business-config.types";
+
+export interface StarConfig {
+  customInstructions: string;
+  autoReply: boolean;
+}
+
+export interface BusinessConfig {
+  name: string;
+  description?: string;
+  phoneNumber?: string;
+
+  toneOfVoice: ToneOfVoice;
+  useEmojis: boolean;
+  languageMode: LanguageMode;
+  languageInstructions?: string;
+  maxSentences?: number;
+  allowedEmojis?: string[];
+  signature?: string;
+
+  starConfigs: {
+    1: StarConfig;
+    2: StarConfig;
+    3: StarConfig;
+    4: StarConfig;
+    5: StarConfig;
+  };
+}
 
 export interface BusinessCreate {
   userId: string;
@@ -33,9 +59,10 @@ export interface BusinessUpdate {
   connected?: boolean;
 }
 
-// Write-time types that accept FieldValue sentinels for timestamp fields
 export type BusinessCreateInput = WithFieldValue<BusinessCreate>;
 export type BusinessUpdateInput = PartialWithFieldValue<BusinessUpdate>;
+export type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";
+export type LanguageMode = "hebrew" | "english" | "auto-detect";
 
 export interface GoogleBusinessProfileBusiness {
   accountId: string;

@@ -42,19 +42,18 @@ export class BusinessesController extends BaseController<BusinessCreate, Busines
       const existingBusiness = await repo.findByGoogleBusinessId(data.googleBusinessId);
 
       if (existingBusiness) {
-        return this.repository.update(existingBusiness.id, {
+        await this.repository.update(existingBusiness.id, {
           name: data.name,
           phoneNumber: data.phoneNumber,
           websiteUrl: data.websiteUrl,
           description: data.description,
           photoUrl: data.photoUrl,
-          connected: true,
           config: data.config,
-          ...({
-            address: data.address,
-            mapsUrl: data.mapsUrl,
-            connectedAt: new Date(),
-          } as any),
+        });
+
+        return repo.reconnect(existingBusiness.id, {
+          address: data.address,
+          mapsUrl: data.mapsUrl,
         });
       }
 

@@ -95,6 +95,27 @@ export class BusinessesRepositoryAdmin extends BaseRepository<BusinessCreate, Bu
     });
   }
 
+  async reconnect(
+    businessId: string,
+    data: {
+      address: string;
+      mapsUrl: string | null;
+    }
+  ): Promise<Business> {
+    const businessRef = adminDb.doc(`${this.basePath}/${businessId}`);
+    await businessRef.update({
+      address: data.address,
+      mapsUrl: data.mapsUrl,
+      connected: true,
+      connectedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    const updated = await this.get(businessId);
+    if (!updated) throw new Error("Business not found after reconnect");
+
+    return updated;
+  }
+
   async updateConfig(businessId: string, config: any): Promise<Business> {
     const business = await this.get(businessId);
     if (!business) {

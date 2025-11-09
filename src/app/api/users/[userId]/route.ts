@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
+import { getErrorStatusCode } from "@/lib/api/errors";
 import { UsersController } from "@/lib/controllers";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
@@ -14,18 +15,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ user
     const controller = new UsersController();
     const user = await controller.getUser(userId);
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
     return NextResponse.json({ user });
   } catch (error) {
     console.error("Error fetching user:", error);
+    const statusCode = getErrorStatusCode(error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Failed to fetch user",
       },
-      { status: 500 }
+      { status: statusCode }
     );
   }
 }
