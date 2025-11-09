@@ -75,35 +75,21 @@ export function ConfirmationDialog({
     onOpenChange(false);
   };
 
-  const isConfirmValid =
-    !requiresTextConfirmation || inputValue === confirmationText;
+  const isConfirmValid = !requiresTextConfirmation || inputValue === confirmationText;
   const showLoading = loading || isLoading;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent dir="rtl">
         <DialogHeader>
-          <DialogTitle
-            className={`flex items-center gap-2 ${
-              variant === "destructive" ? "text-destructive" : ""
-            }`}
-          >
-            {icon ||
-              (variant === "destructive" && (
-                <AlertTriangle className="h-5 w-5" />
-              ))}
+          <DialogTitle className={`flex items-center gap-2 ${variant === "destructive" ? "text-destructive" : ""}`}>
+            {icon || (variant === "destructive" && <AlertTriangle className="h-5 w-5" />)}
             {title}
           </DialogTitle>
           <DialogDescription asChild className="space-y-2 text-right">
             <div>
               {typeof description === "string" ? (
-                <p
-                  className={
-                    variant === "destructive" ? "text-destructive" : ""
-                  }
-                >
-                  {description}
-                </p>
+                <p className={variant === "destructive" ? "text-destructive" : ""}>{description}</p>
               ) : (
                 description
               )}
@@ -115,10 +101,7 @@ export function ConfirmationDialog({
           <div className="space-y-4 py-4">
             <div>
               {confirmationLabel && (
-                <Label
-                  htmlFor="confirm-input"
-                  className={cn("text-sm text-primary font-medium text-right")}
-                >
+                <Label htmlFor="confirm-input" className={cn("text-sm text-primary font-medium text-right")}>
                   {confirmationLabel}
                 </Label>
               )}
@@ -128,9 +111,7 @@ export function ConfirmationDialog({
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder={
-                  confirmationText ? confirmationText : confirmationPlaceholder
-                }
+                placeholder={confirmationText ? confirmationText : confirmationPlaceholder}
                 className="mt-2 text-right"
                 disabled={showLoading}
               />
@@ -138,27 +119,17 @@ export function ConfirmationDialog({
 
             {inputValue && !isConfirmValid && (
               <p className="text-sm text-destructive text-right">
-                הטקסט אינו תואם:{" "}
-                <span className="italic font-semibold">{confirmationText}</span>
+                הטקסט אינו תואם: <span className="italic font-semibold">{confirmationText}</span>
               </p>
             )}
           </div>
         )}
 
         <DialogFooter className="flex justify-between gap-2">
-          <Button
-            variant="outline"
-            onClick={handleCancel}
-            disabled={showLoading}
-          >
+          <Button variant="outline" onClick={handleCancel} disabled={showLoading}>
             {cancelText}
           </Button>
-          <Button
-            variant={variant}
-            onClick={handleConfirm}
-            disabled={!isConfirmValid || showLoading}
-            className="gap-2"
-          >
+          <Button variant={variant} onClick={handleConfirm} disabled={!isConfirmValid || showLoading} className="gap-2">
             {showLoading ? <>{loadingText}</> : confirmText}
           </Button>
         </DialogFooter>

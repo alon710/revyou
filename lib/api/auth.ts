@@ -12,10 +12,7 @@ export async function getAuthenticatedUserId(): Promise<{ userId: string }> {
       throw new Error("Session cookie not found");
     }
 
-    const decodedClaims = await adminAuth.verifySessionCookie(
-      sessionCookie.value,
-      true
-    );
+    const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie.value, true);
 
     return { userId: decodedClaims.uid };
   } catch (error) {

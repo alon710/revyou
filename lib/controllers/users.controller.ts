@@ -2,11 +2,7 @@ import type { UserCreate, User, UserUpdate } from "@/lib/types";
 import { UsersRepositoryAdmin } from "@/lib/repositories/users.repository.admin";
 import { BaseController } from "./base.controller";
 
-export class UsersController extends BaseController<
-  UserCreate,
-  User,
-  UserUpdate
-> {
+export class UsersController extends BaseController<UserCreate, User, UserUpdate> {
   constructor() {
     const repository = new UsersRepositoryAdmin();
     super(repository);

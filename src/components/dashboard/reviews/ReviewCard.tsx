@@ -13,11 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  rejectReply,
-  postReplyToGoogle,
-  regenerateReply,
-} from "@/lib/reviews/actions";
+import { rejectReply, postReplyToGoogle, regenerateReply } from "@/lib/reviews/actions";
 import { useAuth } from "@/contexts/AuthContext";
 import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
@@ -33,14 +29,7 @@ interface ReviewCardProps {
   onClick?: () => void;
 }
 
-export function ReviewCard({
-  review,
-  accountId,
-  userId,
-  businessId,
-  onUpdate,
-  onClick,
-}: ReviewCardProps) {
+export function ReviewCard({ review, accountId, userId, businessId, onUpdate, onClick }: ReviewCardProps) {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
@@ -114,25 +103,17 @@ export function ReviewCard({
 
   return (
     <>
-      <DashboardCard
-        className={cn("w-full", onClick && "cursor-pointer")}
-        onClick={onClick}
-      >
+      <DashboardCard className={cn("w-full", onClick && "cursor-pointer")} onClick={onClick}>
         <DashboardCardHeader className="pb-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <Avatar className="h-10 w-10 shrink-0">
-                <AvatarImage
-                  src={review.photoUrl || undefined}
-                  alt={`${review.name} profile`}
-                />
+                <AvatarImage src={review.photoUrl || undefined} alt={`${review.name} profile`} />
                 <AvatarFallback className="bg-muted">
                   {review.photoUrl ? (
                     <User className="h-5 w-5 text-muted-foreground" />
                   ) : (
-                    <span className="text-sm font-medium text-muted-foreground">
-                      {getInitials(review.name)}
-                    </span>
+                    <span className="text-sm font-medium text-muted-foreground">{getInitials(review.name)}</span>
                   )}
                 </AvatarFallback>
               </Avatar>
@@ -147,9 +128,7 @@ export function ReviewCard({
           {review.text && (
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  ביקורת
-                </span>
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">ביקורת</span>
               </div>
               <div className="rounded-md bg-muted/50 p-3">
                 <p className="text-sm leading-relaxed">{review.text}</p>
@@ -171,25 +150,12 @@ export function ReviewCard({
           )}
         </DashboardCardContent>
 
-        {(review.replyStatus === "pending" ||
-          review.replyStatus === "failed") && (
+        {(review.replyStatus === "pending" || review.replyStatus === "failed") && (
           <DashboardCardFooter>
-            <Button
-              type="button"
-              onClick={handleReject}
-              disabled={isLoading}
-              variant="outline"
-              size="sm"
-            >
+            <Button type="button" onClick={handleReject} disabled={isLoading} variant="outline" size="sm">
               דחה
             </Button>
-            <Button
-              type="button"
-              onClick={handleRegenerate}
-              disabled={isLoading}
-              size="sm"
-              variant="outline"
-            >
+            <Button type="button" onClick={handleRegenerate} disabled={isLoading} size="sm" variant="outline">
               צור מחדש
             </Button>
             <Button
@@ -250,9 +216,7 @@ export function ReviewCard({
                 <StarRating rating={review.rating} size={14} />
               </div>
               <div className="text-sm">
-                {review.text && (
-                  <p className="mt-1 text-muted-foreground">{review.text}</p>
-                )}
+                {review.text && <p className="mt-1 text-muted-foreground">{review.text}</p>}
               </div>
             </div>
             <div className="rounded-md border border-accent bg-accent/10 p-3">

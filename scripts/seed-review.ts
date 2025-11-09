@@ -53,25 +53,19 @@ const REVIEWER_PHOTO_URL = process.env.SEED_REVIEW_PHOTO_URL;
 
 if (!USER_ID) {
   console.error("⚠️  Missing SEED_REVIEW_USER_ID in .env.local");
-  console.error(
-    "   Please set SEED_REVIEW_USER_ID to a valid Firebase Auth user ID"
-  );
+  console.error("   Please set SEED_REVIEW_USER_ID to a valid Firebase Auth user ID");
   process.exit(1);
 }
 
 if (!ACCOUNT_ID) {
   console.error("⚠️  Missing SEED_REVIEW_ACCOUNT_ID in .env.local");
-  console.error(
-    "   Please set SEED_REVIEW_ACCOUNT_ID (e.g., account_test_001)"
-  );
+  console.error("   Please set SEED_REVIEW_ACCOUNT_ID (e.g., account_test_001)");
   process.exit(1);
 }
 
 if (!BUSINESS_ID) {
   console.error("⚠️  Missing SEED_REVIEW_BUSINESS_ID in .env.local");
-  console.error(
-    "   Please set SEED_REVIEW_BUSINESS_ID (e.g., business_test_001)"
-  );
+  console.error("   Please set SEED_REVIEW_BUSINESS_ID (e.g., business_test_001)");
   process.exit(1);
 }
 
@@ -111,20 +105,12 @@ async function seedReview() {
 
   try {
     console.log(`🔍 Verifying account ${ACCOUNT_ID}...`);
-    const accountRef = db
-      .collection("users")
-      .doc(USER_ID)
-      .collection("accounts")
-      .doc(ACCOUNT_ID);
+    const accountRef = db.collection("users").doc(USER_ID).collection("accounts").doc(ACCOUNT_ID);
 
     const accountDoc = await accountRef.get();
     if (!accountDoc.exists) {
-      console.error(
-        `⚠️  Account ${ACCOUNT_ID} does not exist for user ${USER_ID}`
-      );
-      console.error(
-        "   Please ensure the account exists or run seed-database.ts first"
-      );
+      console.error(`⚠️  Account ${ACCOUNT_ID} does not exist for user ${USER_ID}`);
+      console.error("   Please ensure the account exists or run seed-database.ts first");
       process.exit(1);
     }
 
@@ -142,12 +128,8 @@ async function seedReview() {
 
     const businessDoc = await businessRef.get();
     if (!businessDoc.exists) {
-      console.error(
-        `⚠️  Business ${BUSINESS_ID} does not exist in account ${ACCOUNT_ID}`
-      );
-      console.error(
-        "   Please ensure the business exists or run seed-database.ts first"
-      );
+      console.error(`⚠️  Business ${BUSINESS_ID} does not exist in account ${ACCOUNT_ID}`);
+      console.error("   Please ensure the business exists or run seed-database.ts first");
       process.exit(1);
     }
 
@@ -200,22 +182,14 @@ async function seedReview() {
     const starConfig = starConfigs?.[ratingNumber];
 
     if (starConfig?.autoReply) {
-      console.log(
-        `\n🤖 Auto-reply is ENABLED for ${ratingNumber}-star reviews`
-      );
-      console.log(
-        "   When Cloud Functions are deployed, this review will automatically:"
-      );
+      console.log(`\n🤖 Auto-reply is ENABLED for ${ratingNumber}-star reviews`);
+      console.log("   When Cloud Functions are deployed, this review will automatically:");
       console.log("   1. Generate an AI reply using Gemini");
       console.log("   2. Post the reply automatically");
       console.log("   3. Send an email notification (if enabled)");
     } else {
-      console.log(
-        `\n📝 Auto-reply is DISABLED for ${ratingNumber}-star reviews`
-      );
-      console.log(
-        "   When Cloud Functions are deployed, this review will automatically:"
-      );
+      console.log(`\n📝 Auto-reply is DISABLED for ${ratingNumber}-star reviews`);
+      console.log("   When Cloud Functions are deployed, this review will automatically:");
       console.log("   1. Generate an AI reply using Gemini");
       console.log("   2. Wait for manual approval before posting");
       console.log("   3. Send an email notification (if enabled)");

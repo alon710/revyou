@@ -10,29 +10,25 @@ const steps = [
     number: 1,
     icon: Link2,
     title: "חיבור חשבון Google Business",
-    description:
-      "התחברו בקליק אחד לחשבון Google Business Profile שלכם ובחרו את העסק להפעלה",
+    description: "התחברו בקליק אחד לחשבון Google Business Profile שלכם ובחרו את העסק להפעלה",
   },
   {
     number: 2,
     icon: Settings,
     title: "הגדרת העדפות",
-    description:
-      "התאימו את טון הדיבור, סגנון התשובות והוראות מיוחדות לכל דירוג כוכבים",
+    description: "התאימו את טון הדיבור, סגנון התשובות והוראות מיוחדות לכל דירוג כוכבים",
   },
   {
     number: 3,
     icon: MessageSquare,
     title: "קבלת תשובות אוטומטיות",
-    description:
-      "המערכת מזהה ביקורות חדשות ויוצרת תשובות מותאמות אישית באופן אוטומטי",
+    description: "המערכת מזהה ביקורות חדשות ויוצרת תשובות מותאמות אישית באופן אוטומטי",
   },
   {
     number: 4,
     icon: CheckCircle,
     title: "אישור ופרסום",
-    description:
-      "בדקו ואשרו את התשובות לפני פרסום, או הפעילו מצב פרסום אוטומטי מלא",
+    description: "בדקו ואשרו את התשובות לפני פרסום, או הפעילו מצב פרסום אוטומטי מלא",
   },
 ];
 
@@ -41,9 +37,7 @@ export function HowItWorks() {
     <div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-            איך זה עובד?
-          </h2>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">איך זה עובד?</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             ארבעה צעדים פשוטים להפעלת המערכת ותשובות אוטומטיות לביקורות
           </p>
@@ -149,9 +143,7 @@ export function HowItWorks() {
         </div>
 
         <div className="text-center mt-12">
-          <p className="text-lg text-muted-foreground mb-6">
-            מוכנים להתחיל? זה לוקח פחות מ-5 דקות
-          </p>
+          <p className="text-lg text-muted-foreground mb-6">מוכנים להתחיל? זה לוקח פחות מ-5 דקות</p>
           <Link href="/login">
             <Button className="text-lg px-8">התחל עכשיו בחינם</Button>
           </Link>

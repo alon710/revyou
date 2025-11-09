@@ -24,11 +24,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
           >
-            <LottiePlayer
-              animationData={lottieJson}
-              ariaLabel="Hero animation"
-              className="max-w-full"
-            />
+            <LottiePlayer animationData={lottieJson} ariaLabel="Hero animation" className="max-w-full" />
           </motion.div>
           <motion.div
             className="w-full md:w-1/2 text-center md:text-right order-1"
@@ -74,8 +70,8 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              חסכו זמן יקר והגיבו לכל ביקורת בצורה אישית ומקצועית עם הכוח של
-              בינה מלאכותית. שמרו על קול המותג שלכם ושפרו את המוניטין העסקי.
+              חסכו זמן יקר והגיבו לכל ביקורת בצורה אישית ומקצועית עם הכוח של בינה מלאכותית. שמרו על קול המותג שלכם ושפרו
+              את המוניטין העסקי.
             </motion.p>
 
             <motion.div
@@ -85,10 +81,7 @@ export function Hero() {
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               <Link href="/">
-                <motion.div
-                  whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                >
+                <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.98 }}>
                   <Button className="relative text-lg px-8 py-6 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 shadow-[0_8px_24px_rgba(99,102,241,0.4)] hover:shadow-[0_12px_32px_rgba(99,102,241,0.5)] transition-all duration-300 group overflow-hidden">
                     <span className="relative z-10">חודש ניסיון חינם</span>
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

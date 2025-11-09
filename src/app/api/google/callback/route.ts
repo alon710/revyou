@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  exchangeCodeForTokens,
-  encryptToken,
-  getUserInfo,
-} from "@/lib/google/oauth";
+import { exchangeCodeForTokens, encryptToken, getUserInfo } from "@/lib/google/oauth";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { AccountsController, UsersController } from "@/lib/controllers";
 
@@ -15,9 +11,7 @@ const redirectToBusinesses = (success?: boolean, accountId?: string) => {
     return NextResponse.redirect(url);
   }
 
-  return NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/connect-account`
-  );
+  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/onboarding/connect-account`);
 };
 
 export async function GET(request: NextRequest) {
@@ -28,14 +22,11 @@ export async function GET(request: NextRequest) {
     const error = searchParams.get("error");
 
     if (error || !code || !state) {
-      console.error(
-        "OAuth callback - Missing parameters or error from Google:",
-        {
-          error,
-          hasCode: !!code,
-          hasState: !!state,
-        }
-      );
+      console.error("OAuth callback - Missing parameters or error from Google:", {
+        error,
+        hasCode: !!code,
+        hasState: !!state,
+      });
       return redirectToBusinesses(false);
     }
 
@@ -95,16 +86,11 @@ export async function GET(request: NextRequest) {
       const userData = await usersController.getUser(authenticatedUserId);
 
       if (!userData) {
-        console.error(
-          "OAuth callback - User not found in database:",
-          authenticatedUserId
-        );
+        console.error("OAuth callback - User not found in database:", authenticatedUserId);
         return redirectToBusinesses(false);
       }
 
-      const existingAccount = await accountsController.findByEmail(
-        userInfo.email
-      );
+      const existingAccount = await accountsController.findByEmail(userInfo.email);
 
       if (existingAccount) {
         await accountsController.updateAccount(existingAccount.id, {
@@ -125,14 +111,8 @@ export async function GET(request: NextRequest) {
     return redirectToBusinesses(true, accountId);
   } catch (error) {
     console.error("=== OAuth Callback Error ===");
-    console.error(
-      "Error message:",
-      error instanceof Error ? error.message : error
-    );
-    console.error(
-      "Error stack:",
-      error instanceof Error ? error.stack : "No stack trace"
-    );
+    console.error("Error message:", error instanceof Error ? error.message : error);
+    console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
     console.error("Error details:", JSON.stringify(error, null, 2));
     console.error("===========================");
 

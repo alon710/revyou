@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { ReviewsController } from "@/lib/controllers";
-import {
-  parseSearchParams,
-  reviewFiltersSchema,
-} from "@/lib/utils/query-parser";
+import { parseSearchParams, reviewFiltersSchema } from "@/lib/utils/query-parser";
 
 export async function GET(
   req: NextRequest,
@@ -19,16 +16,10 @@ export async function GET(
     const { userId, accountId, businessId } = await params;
 
     if (authenticatedUserId !== userId) {
-      return NextResponse.json(
-        { error: "Forbidden: Cannot access another user's data" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Forbidden: Cannot access another user's data" }, { status: 403 });
     }
 
-    const filters = parseSearchParams(
-      req.nextUrl.searchParams,
-      reviewFiltersSchema
-    );
+    const filters = parseSearchParams(req.nextUrl.searchParams, reviewFiltersSchema);
 
     const controller = new ReviewsController(userId, accountId, businessId);
     const reviews = await controller.getReviews(filters);
@@ -41,8 +32,7 @@ export async function GET(
     console.error("Error fetching reviews:", error);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to fetch reviews",
+        error: error instanceof Error ? error.message : "Failed to fetch reviews",
       },
       { status: 500 }
     );

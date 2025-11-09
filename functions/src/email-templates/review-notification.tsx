@@ -1,15 +1,5 @@
 import * as React from "react";
-import {
-  Html,
-  Head,
-  Body,
-  Container,
-  Section,
-  Text,
-  Heading,
-  Hr,
-  Button,
-} from "@react-email/components";
+import { Html, Head, Body, Container, Section, Text, Heading, Hr, Button } from "@react-email/components";
 
 interface ReviewNotificationEmailProps {
   recipientName: string;
@@ -89,9 +79,7 @@ export const ReviewNotificationEmail = ({
               {reviewText ? (
                 <Text style={reviewContent}>{reviewText}</Text>
               ) : (
-                <Text style={emptyReviewPlaceholder}>
-                  הלקוח לא השאיר טקסט בביקורת
-                </Text>
+                <Text style={emptyReviewPlaceholder}>הלקוח לא השאיר טקסט בביקורת</Text>
               )}
             </Section>
 
@@ -125,9 +113,7 @@ export const ReviewNotificationEmail = ({
 
           <Section style={footer}>
             <Hr style={divider} />
-            <Text style={footerText}>
-              קיבלת הודעת דוא״ל זו כי הפעלת התראות עבור ביקורות חדשות
-            </Text>
+            <Text style={footerText}>קיבלת הודעת דוא״ל זו כי הפעלת התראות עבור ביקורות חדשות</Text>
           </Section>
         </Container>
       </Body>
@@ -137,8 +123,7 @@ export const ReviewNotificationEmail = ({
 
 const main = {
   backgroundColor: "#f6f9fc",
-  fontFamily:
-    'Rubik, "Segoe UI", sans-serif, -apple-system, BlinkMacSystemFont',
+  fontFamily: 'Rubik, "Segoe UI", sans-serif, -apple-system, BlinkMacSystemFont',
 };
 
 const container = {

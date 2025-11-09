@@ -1,10 +1,7 @@
 import { z } from "zod";
 import { ReviewFilters, BusinessFilters, AccountFilters } from "@/lib/types";
 
-export function parseSearchParams<T>(
-  params: URLSearchParams,
-  schema: z.ZodType<T, any, any>
-): T {
+export function parseSearchParams<T>(params: URLSearchParams, schema: z.ZodType<T, any, any>): T {
   const obj: Record<string, any> = {};
 
   for (const key of Array.from(new Set(params.keys()))) {
@@ -15,10 +12,7 @@ export function parseSearchParams<T>(
   return schema.parse(obj);
 }
 
-const arrayTransform = <T>(
-  value: string | string[] | undefined,
-  transform?: (v: string) => T
-): T[] | undefined => {
+const arrayTransform = <T>(value: string | string[] | undefined, transform?: (v: string) => T): T[] | undefined => {
   if (!value) return undefined;
 
   const arr = Array.isArray(value) ? value : value.split(",");
@@ -50,9 +44,7 @@ export const reviewFiltersSchema = z
     }
 
     if (data.replyStatus) {
-      filters.replyStatus = arrayTransform(
-        data.replyStatus
-      ) as ReviewFilters["replyStatus"];
+      filters.replyStatus = arrayTransform(data.replyStatus) as ReviewFilters["replyStatus"];
     }
 
     if (data.rating) {

@@ -29,9 +29,6 @@ export async function GET(request: Request) {
     return NextResponse.redirect(authUrl);
   } catch (error) {
     console.error("Error initiating OAuth flow:", error);
-    return NextResponse.json(
-      { error: "לא ניתן להתחיל את תהליך ההזדהות" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "לא ניתן להתחיל את תהליך ההזדהות" }, { status: 500 });
   }
 }

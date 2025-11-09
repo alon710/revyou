@@ -21,12 +21,7 @@ interface BusinessIdentityFormData {
   phoneNumber: string;
 }
 
-export default function BusinessIdentitySection({
-  config,
-  business,
-  loading,
-  onSave,
-}: BusinessIdentitySectionProps) {
+export default function BusinessIdentitySection({ config, business, loading, onSave }: BusinessIdentitySectionProps) {
   const formData: BusinessIdentityFormData = {
     name: config.name || "",
     description: config.description || "",
@@ -46,9 +41,7 @@ export default function BusinessIdentitySection({
       renderDisplay={() => (
         <>
           <DashboardCardField label="שם העסק">
-            <p className="text-sm font-medium">
-              {config.name || business.name}
-            </p>
+            <p className="text-sm font-medium">{config.name || business.name}</p>
           </DashboardCardField>
 
           <DashboardCardField label="תיאור העסק">
@@ -58,9 +51,7 @@ export default function BusinessIdentitySection({
           </DashboardCardField>
 
           <DashboardCardField label="טלפון ליצירת קשר (לביקורות שליליות)">
-            <p className="text-sm font-medium">
-              {config.phoneNumber || "אין טלפון"}
-            </p>
+            <p className="text-sm font-medium">{config.phoneNumber || "אין טלפון"}</p>
           </DashboardCardField>
         </>
       )}
@@ -96,9 +87,7 @@ export default function BusinessIdentitySection({
               disabled={isLoading}
               className="resize-none"
             />
-            <p className="text-xs text-muted-foreground text-right">
-              תיאור זה יעזור ל-AI ליצור תשובות מותאמות יותר
-            </p>
+            <p className="text-xs text-muted-foreground text-right">תיאור זה יעזור ל-AI ליצור תשובות מותאמות יותר</p>
           </div>
 
           <div className="space-y-2">
@@ -113,9 +102,7 @@ export default function BusinessIdentitySection({
               placeholder="039025977"
               disabled={isLoading}
             />
-            <p className="text-xs text-muted-foreground text-right">
-              מספר טלפון שיופיע בתגובות שליליות (1-2 כוכבים)
-            </p>
+            <p className="text-xs text-muted-foreground text-right">מספר טלפון שיופיע בתגובות שליליות (1-2 כוכבים)</p>
           </div>
         </>
       )}

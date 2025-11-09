@@ -1,20 +1,11 @@
-import type {
-  Subscription,
-  SubscriptionCreate,
-  SubscriptionUpdate,
-  Business,
-} from "@/lib/types";
+import type { Subscription, SubscriptionCreate, SubscriptionUpdate, Business } from "@/lib/types";
 import { SubscriptionsRepositoryAdmin } from "@/lib/repositories/subscriptions.repository.admin";
 import { AccountsRepositoryAdmin } from "@/lib/repositories/accounts.repository.admin";
 import { BusinessesRepositoryAdmin } from "@/lib/repositories/businesses.repository.admin";
 import { BaseController } from "./base.controller";
 import type { PlanLimits } from "@/lib/stripe/entitlements";
 
-export class SubscriptionsController extends BaseController<
-  SubscriptionCreate,
-  Subscription,
-  SubscriptionUpdate
-> {
+export class SubscriptionsController extends BaseController<SubscriptionCreate, Subscription, SubscriptionUpdate> {
   constructor() {
     const repository = new SubscriptionsRepositoryAdmin();
     super(repository);

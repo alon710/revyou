@@ -48,10 +48,7 @@ Created shared utilities to eliminate code duplication:
 - ✅ `lib/utils/query-parser.ts` - **Zod-based query param parser** (one-liner!)
 
   ```typescript
-  const filters = parseSearchParams(
-    req.nextUrl.searchParams,
-    reviewFiltersSchema
-  );
+  const filters = parseSearchParams(req.nextUrl.searchParams, reviewFiltersSchema);
   ```
 
 - ✅ `lib/utils/query-builder.ts` - **Dynamic Firestore query builder**
@@ -219,16 +216,7 @@ GET /api/users/{userId}/accounts/{accountId}/businesses/{businessId}/reviews?rep
 
 ```typescript
 const q = query(
-  collection(
-    db,
-    "users",
-    user.uid,
-    "accounts",
-    accountId,
-    "businesses",
-    businessId,
-    "reviews"
-  ),
+  collection(db, "users", user.uid, "accounts", accountId, "businesses", businessId, "reviews"),
   orderBy("receivedAt", "desc")
 );
 const snapshot = await getDocs(q);
@@ -248,10 +236,7 @@ const { reviews } = await response.json();
 
 ```typescript
 export async function GET(req: NextRequest, { params }) {
-  const filters = parseSearchParams(
-    req.nextUrl.searchParams,
-    reviewFiltersSchema
-  );
+  const filters = parseSearchParams(req.nextUrl.searchParams, reviewFiltersSchema);
   const controller = new ReviewsController(userId, accountId, businessId);
   const reviews = await controller.getReviews(filters);
   return NextResponse.json({ reviews });

@@ -1,8 +1,4 @@
-import {
-  Timestamp,
-  WithFieldValue,
-  PartialWithFieldValue,
-} from "firebase/firestore";
+import { Timestamp, WithFieldValue, PartialWithFieldValue } from "firebase/firestore";
 
 export type ReplyStatus = "pending" | "rejected" | "posted" | "failed";
 

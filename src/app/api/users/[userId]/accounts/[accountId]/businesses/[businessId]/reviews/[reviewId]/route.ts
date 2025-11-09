@@ -21,10 +21,7 @@ export async function GET(
     const { userId, accountId, businessId, reviewId } = await params;
 
     if (authenticatedUserId !== userId) {
-      return NextResponse.json(
-        { error: "Forbidden: Cannot access another user's data" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Forbidden: Cannot access another user's data" }, { status: 403 });
     }
 
     const controller = new ReviewsController(userId, accountId, businessId);
@@ -35,8 +32,7 @@ export async function GET(
     console.error("Error fetching review:", error);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to fetch review",
+        error: error instanceof Error ? error.message : "Failed to fetch review",
       },
       { status: getErrorStatusCode(error) }
     );
@@ -61,10 +57,7 @@ export async function PATCH(
     const { userId, accountId, businessId, reviewId } = await params;
 
     if (authenticatedUserId !== userId) {
-      return NextResponse.json(
-        { error: "Forbidden: Cannot access another user's data" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Forbidden: Cannot access another user's data" }, { status: 403 });
     }
 
     const body = await req.json();
@@ -84,8 +77,7 @@ export async function PATCH(
     console.error("Error updating review:", error);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to update review",
+        error: error instanceof Error ? error.message : "Failed to update review",
       },
       { status: getErrorStatusCode(error) }
     );

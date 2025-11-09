@@ -1,9 +1,5 @@
 import { ReplyStatus } from "./review.types";
-import {
-  ReviewSortOptions,
-  BusinessSortOptions,
-  AccountSortOptions,
-} from "./sort.types";
+import { ReviewSortOptions, BusinessSortOptions, AccountSortOptions } from "./sort.types";
 
 export interface ReviewFilters {
   ids?: string[];

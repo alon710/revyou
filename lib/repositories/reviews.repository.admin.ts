@@ -1,20 +1,10 @@
 import { adminDb } from "@/lib/firebase/admin";
-import type {
-  ReviewCreate,
-  Review,
-  ReviewUpdate,
-  ReviewUpdateInput,
-  ReviewFilters,
-} from "@/lib/types";
+import type { ReviewCreate, Review, ReviewUpdate, ReviewUpdateInput, ReviewFilters } from "@/lib/types";
 import { firestorePaths } from "@/lib/utils/firestore-paths";
 import { AdminQueryBuilder } from "@/lib/utils/query-builder";
 import { BaseRepository } from "./base.repository";
 
-export class ReviewsRepositoryAdmin extends BaseRepository<
-  ReviewCreate,
-  Review,
-  ReviewUpdate
-> {
+export class ReviewsRepositoryAdmin extends BaseRepository<ReviewCreate, Review, ReviewUpdate> {
   private userId: string;
   private accountId: string;
   private businessId: string;
@@ -95,11 +85,7 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
     });
   }
 
-  async markAsPosted(
-    reviewId: string,
-    postedReply: string,
-    postedBy: string
-  ): Promise<Review> {
+  async markAsPosted(reviewId: string, postedReply: string, postedBy: string): Promise<Review> {
     return this.update(reviewId, {
       replyStatus: "posted",
       postedReply,
@@ -116,10 +102,7 @@ export class ReviewsRepositoryAdmin extends BaseRepository<
 
   async findByGoogleReviewId(googleReviewId: string): Promise<Review | null> {
     const collectionRef = adminDb.collection(this.basePath);
-    const snapshot = await collectionRef
-      .where("googleReviewId", "==", googleReviewId)
-      .limit(1)
-      .get();
+    const snapshot = await collectionRef.where("googleReviewId", "==", googleReviewId).limit(1).get();
 
     if (snapshot.empty) return null;
 

@@ -16,10 +16,7 @@ export async function GET(
     const { userId, accountId, businessId } = await params;
 
     if (authenticatedUserId !== userId) {
-      return NextResponse.json(
-        { error: "Forbidden: Cannot access another user's data" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Forbidden: Cannot access another user's data" }, { status: 403 });
     }
 
     const controller = new BusinessesController(userId, accountId);
@@ -30,8 +27,7 @@ export async function GET(
     console.error("Error fetching business:", error);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to fetch business",
+        error: error instanceof Error ? error.message : "Failed to fetch business",
       },
       { status: getErrorStatusCode(error) }
     );
@@ -51,10 +47,7 @@ export async function PATCH(
     const { userId, accountId, businessId } = await params;
 
     if (authenticatedUserId !== userId) {
-      return NextResponse.json(
-        { error: "Forbidden: Cannot access another user's data" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Forbidden: Cannot access another user's data" }, { status: 403 });
     }
 
     const body = await req.json();
@@ -71,8 +64,7 @@ export async function PATCH(
     console.error("Error updating business:", error);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to update business",
+        error: error instanceof Error ? error.message : "Failed to update business",
       },
       { status: getErrorStatusCode(error) }
     );
@@ -92,10 +84,7 @@ export async function DELETE(
     const { userId, accountId, businessId } = await params;
 
     if (authenticatedUserId !== userId) {
-      return NextResponse.json(
-        { error: "Forbidden: Cannot access another user's data" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Forbidden: Cannot access another user's data" }, { status: 403 });
     }
 
     const controller = new BusinessesController(userId, accountId);
@@ -106,8 +95,7 @@ export async function DELETE(
     console.error("Error deleting business:", error);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to delete business",
+        error: error instanceof Error ? error.message : "Failed to delete business",
       },
       { status: getErrorStatusCode(error) }
     );

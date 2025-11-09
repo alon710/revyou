@@ -2,19 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { UsersController } from "@/lib/controllers";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
-) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
   try {
     const { userId: authenticatedUserId } = await getAuthenticatedUserId();
     const { userId } = await params;
 
     if (authenticatedUserId !== userId) {
-      return NextResponse.json(
-        { error: "Forbidden: Cannot access another user's data" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Forbidden: Cannot access another user's data" }, { status: 403 });
     }
 
     const controller = new UsersController();

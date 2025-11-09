@@ -59,10 +59,7 @@ export default function AccountsPage() {
 
   return (
     <PageContainer>
-      <PageHeader
-        title="החשבונות שלי"
-        description="בחר חשבון Google כדי לנהל את העסקים שלו"
-      />
+      <PageHeader title="החשבונות שלי" description="בחר חשבון Google כדי לנהל את העסקים שלו" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {accounts.map((account) => (
@@ -80,9 +77,7 @@ export default function AccountsPage() {
               </DashboardCardTitle>
             </DashboardCardHeader>
             <DashboardCardContent>
-              <div className="text-sm text-muted-foreground truncate">
-                {account.email}
-              </div>
+              <div className="text-sm text-muted-foreground truncate">{account.email}</div>
             </DashboardCardContent>
           </DashboardCard>
         ))}
@@ -95,9 +90,7 @@ export default function AccountsPage() {
               <Plus className="h-8 w-8 text-primary" />
             </div>
             <h3 className="text-lg font-semibold">חבר חשבון</h3>
-            <p className="text-sm text-muted-foreground mt-2">
-              חבר חשבון Google נוסף
-            </p>
+            <p className="text-sm text-muted-foreground mt-2">חבר חשבון Google נוסף</p>
           </div>
         </DashboardCard>
       </div>

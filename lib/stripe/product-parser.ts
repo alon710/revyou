@@ -30,10 +30,7 @@ function getPlanId(product: Product): string {
 
 function isRecommended(product: Product): boolean {
   const recommended = product.metadata?.recommended;
-  return (
-    recommended === "true" ||
-    (typeof recommended === "boolean" && recommended === true)
-  );
+  return recommended === "true" || (typeof recommended === "boolean" && recommended === true);
 }
 
 export function enrichProduct(product: Product): EnrichedProduct {
@@ -45,9 +42,7 @@ export function enrichProduct(product: Product): EnrichedProduct {
   };
 }
 
-export function sortProductsByPlan(
-  products: EnrichedProduct[]
-): EnrichedProduct[] {
+export function sortProductsByPlan(products: EnrichedProduct[]): EnrichedProduct[] {
   const planOrder: Record<string, number> = {
     free: 0,
     basic: 1,

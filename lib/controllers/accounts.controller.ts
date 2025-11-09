@@ -1,17 +1,8 @@
-import type {
-  AccountCreate,
-  Account,
-  AccountUpdate,
-  AccountFilters,
-} from "@/lib/types";
+import type { AccountCreate, Account, AccountUpdate, AccountFilters } from "@/lib/types";
 import { AccountsRepositoryAdmin } from "@/lib/repositories/accounts.repository.admin";
 import { BaseController } from "./base.controller";
 
-export class AccountsController extends BaseController<
-  AccountCreate,
-  Account,
-  AccountUpdate
-> {
+export class AccountsController extends BaseController<AccountCreate, Account, AccountUpdate> {
   private userId: string;
 
   constructor(userId: string) {
@@ -21,10 +12,7 @@ export class AccountsController extends BaseController<
   }
 
   async getAccounts(filters: AccountFilters = {}): Promise<Account[]> {
-    return this.handleError(
-      () => this.repository.list(filters),
-      "Failed to fetch accounts"
-    );
+    return this.handleError(() => this.repository.list(filters), "Failed to fetch accounts");
   }
 
   async getAccount(accountId: string): Promise<Account> {
@@ -47,10 +35,7 @@ export class AccountsController extends BaseController<
     }, "Failed to create account");
   }
 
-  async updateAccount(
-    accountId: string,
-    data: AccountUpdate
-  ): Promise<Account> {
+  async updateAccount(accountId: string, data: AccountUpdate): Promise<Account> {
     return this.handleError(async () => {
       await this.ensureExists(accountId, "Account");
       return this.repository.update(accountId, data);
@@ -71,16 +56,10 @@ export class AccountsController extends BaseController<
 
   async updateLastSynced(accountId: string): Promise<Account> {
     const repo = this.repository as AccountsRepositoryAdmin;
-    return this.handleError(
-      () => repo.updateLastSynced(accountId),
-      "Failed to update last synced"
-    );
+    return this.handleError(() => repo.updateLastSynced(accountId), "Failed to update last synced");
   }
 
-  async updateRefreshToken(
-    accountId: string,
-    refreshToken: string
-  ): Promise<Account> {
+  async updateRefreshToken(accountId: string, refreshToken: string): Promise<Account> {
     return this.updateAccount(accountId, {
       googleRefreshToken: refreshToken,
     });

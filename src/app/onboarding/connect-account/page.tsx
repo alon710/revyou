@@ -28,8 +28,7 @@ export default function OnboardingStep2() {
         <DashboardCardHeader>
           <DashboardCardTitle>התחבר לחשבון Google שלך</DashboardCardTitle>
           <DashboardCardDescription>
-            התחל בחיבור חשבון Google Business Profile כדי לנהל תשובות לביקורות
-            באמצעות AI
+            התחל בחיבור חשבון Google Business Profile כדי לנהל תשובות לביקורות באמצעות AI
           </DashboardCardDescription>
         </DashboardCardHeader>
         <DashboardCardContent className="space-y-4">
@@ -51,11 +50,7 @@ export default function OnboardingStep2() {
             </ul>
           </div>
 
-          <Button
-            onClick={handleConnect}
-            disabled={connecting}
-            className="w-full"
-          >
+          <Button onClick={handleConnect} disabled={connecting} className="w-full">
             {connecting ? "מתחבר..." : "התחבר עם Google"}
           </Button>
         </DashboardCardContent>

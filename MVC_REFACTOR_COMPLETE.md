@@ -133,16 +133,7 @@ src/app/api/                    # ⭐ RESTful routes
 
 ```typescript
 const q = query(
-  collection(
-    db,
-    "users",
-    user.uid,
-    "accounts",
-    accountId,
-    "businesses",
-    businessId,
-    "reviews"
-  ),
+  collection(db, "users", user.uid, "accounts", accountId, "businesses", businessId, "reviews"),
   orderBy("receivedAt", "desc")
 );
 const snapshot = await getDocs(q);
@@ -167,10 +158,7 @@ export async function GET(req: NextRequest, { params }) {
   const { userId, accountId, businessId } = await params;
 
   // 🎯 ONE-LINER - handles parsing, validation, coercion, defaults!
-  const filters = parseSearchParams(
-    req.nextUrl.searchParams,
-    reviewFiltersSchema
-  );
+  const filters = parseSearchParams(req.nextUrl.searchParams, reviewFiltersSchema);
 
   const controller = new ReviewsController(userId, accountId, businessId);
   const reviews = await controller.getReviews(filters);

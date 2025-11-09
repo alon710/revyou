@@ -22,28 +22,20 @@ export async function POST(
     const { userId, accountId, businessId, reviewId } = await params;
 
     if (authenticatedUserId !== userId) {
-      return NextResponse.json(
-        { error: "Forbidden: Cannot access another user's data" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Forbidden: Cannot access another user's data" }, { status: 403 });
     }
 
     const body = await req.json();
     const customReply = body.reply;
 
-    const reviewController = new ReviewsController(
-      userId,
-      accountId,
-      businessId
-    );
+    const reviewController = new ReviewsController(userId, accountId, businessId);
     const review = await reviewController.getReview(reviewId);
 
     const replyToPost = customReply || review.aiReply;
     if (!replyToPost) {
       return NextResponse.json(
         {
-          error:
-            "No reply to post. Generate AI reply first or provide custom reply.",
+          error: "No reply to post. Generate AI reply first or provide custom reply.",
         },
         { status: 400 }
       );
@@ -52,17 +44,9 @@ export async function POST(
     const accountController = new AccountsController(userId);
     const account = await accountController.getAccount(accountId);
 
-    await postReplyToGoogle(
-      review.googleReviewName || review.googleReviewId,
-      replyToPost,
-      account.googleRefreshToken
-    );
+    await postReplyToGoogle(review.googleReviewName || review.googleReviewId, replyToPost, account.googleRefreshToken);
 
-    const updatedReview = await reviewController.markAsPosted(
-      reviewId,
-      replyToPost,
-      userId
-    );
+    const updatedReview = await reviewController.markAsPosted(reviewId, replyToPost, userId);
 
     return NextResponse.json({
       success: true,
@@ -73,11 +57,7 @@ export async function POST(
 
     try {
       const { userId, accountId, businessId, reviewId } = await params;
-      const reviewController = new ReviewsController(
-        userId,
-        accountId,
-        businessId
-      );
+      const reviewController = new ReviewsController(userId, accountId, businessId);
       await reviewController.updateReview(reviewId, { replyStatus: "failed" });
     } catch (updateError) {
       console.error("Failed to mark review as failed:", updateError);

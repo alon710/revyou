@@ -69,25 +69,17 @@ export function ReplyEditor({
             <Edit className="h-5 w-5" />
             עריכת תגובה
           </DialogTitle>
-          <DialogDescription className="text-right">
-            ערוך את התגובה האוטומטית לפני פרסום לגוגל
-          </DialogDescription>
+          <DialogDescription className="text-right">ערוך את התגובה האוטומטית לפני פרסום לגוגל</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="rounded-md bg-muted p-3">
-            <p className="text-sm font-medium mb-1 text-right">
-              הביקורת המקורית:
-            </p>
-            <p className="text-sm text-muted-foreground text-right">
-              {review.text || "(אין טקסט)"}
-            </p>
+            <p className="text-sm font-medium mb-1 text-right">הביקורת המקורית:</p>
+            <p className="text-sm text-muted-foreground text-right">{review.text || "(אין טקסט)"}</p>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-right block">
-              התגובה:
-            </label>
+            <label className="text-sm font-medium text-right block">התגובה:</label>
             <Textarea
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
@@ -105,20 +97,10 @@ export function ReplyEditor({
         </div>
 
         <DialogFooter className="flex justify-between gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCancel}
-            disabled={isLoading}
-          >
+          <Button type="button" variant="outline" onClick={handleCancel} disabled={isLoading}>
             ביטול
           </Button>
-          <Button
-            variant={variant}
-            onClick={handleSave}
-            disabled={isLoading || !replyText.trim()}
-            className="gap-2"
-          >
+          <Button variant={variant} onClick={handleSave} disabled={isLoading || !replyText.trim()} className="gap-2">
             {isLoading ? <>{loadingText}</> : "שמור"}
           </Button>
         </DialogFooter>

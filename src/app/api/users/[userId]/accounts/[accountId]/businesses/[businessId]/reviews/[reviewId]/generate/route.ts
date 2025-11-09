@@ -23,34 +23,19 @@ export async function POST(
     const { userId, accountId, businessId, reviewId } = await params;
 
     if (authenticatedUserId !== userId) {
-      return NextResponse.json(
-        { error: "Forbidden: Cannot access another user's data" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Forbidden: Cannot access another user's data" }, { status: 403 });
     }
 
-    const reviewController = new ReviewsController(
-      userId,
-      accountId,
-      businessId
-    );
+    const reviewController = new ReviewsController(userId, accountId, businessId);
     const review = await reviewController.getReview(reviewId);
 
     const businessController = new BusinessesController(userId, accountId);
     const business = await businessController.getBusiness(businessId);
 
-    const prompt = buildReplyPrompt(
-      business.config,
-      review,
-      business.name,
-      business.config.phoneNumber
-    );
+    const prompt = buildReplyPrompt(business.config, review, business.name, business.config.phoneNumber);
     const aiReply = await generateAIReply(prompt);
 
-    const updatedReview = await reviewController.updateAiReply(
-      reviewId,
-      aiReply
-    );
+    const updatedReview = await reviewController.updateAiReply(reviewId, aiReply);
 
     return NextResponse.json({
       review: updatedReview,
@@ -60,10 +45,7 @@ export async function POST(
     console.error("Error generating AI reply:", error);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to generate AI reply",
+        error: error instanceof Error ? error.message : "Failed to generate AI reply",
       },
       { status: 500 }
     );

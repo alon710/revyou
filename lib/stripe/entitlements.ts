@@ -15,16 +15,12 @@ export function getPlanLimits(product: EnrichedProduct): PlanLimits {
   const features = product.features;
 
   const businesses = (features[FEATURE_KEYS.MAX_BUSINESSES] as number) || 1;
-  const reviewsPerMonth =
-    (features[FEATURE_KEYS.MONTHLY_REVIEWS] as number) || 5;
+  const reviewsPerMonth = (features[FEATURE_KEYS.MONTHLY_REVIEWS] as number) || 5;
   const autoPost = (features[FEATURE_KEYS.AUTO_PUBLISH] as boolean) || false;
 
   const manualApproval = features[FEATURE_KEYS.MANUAL_APPROVAL];
   const requireApproval =
-    manualApproval === "חובה" ||
-    manualApproval === "required" ||
-    manualApproval === "true" ||
-    manualApproval === true;
+    manualApproval === "חובה" || manualApproval === "required" || manualApproval === "true" || manualApproval === true;
 
   return {
     businesses,

@@ -15,11 +15,7 @@ interface StarRatingConfigSectionProps {
   onSave: (starConfigs: BusinessConfig["starConfigs"]) => Promise<void>;
 }
 
-export default function StarRatingConfigSection({
-  starConfigs,
-  loading,
-  onSave,
-}: StarRatingConfigSectionProps) {
+export default function StarRatingConfigSection({ starConfigs, loading, onSave }: StarRatingConfigSectionProps) {
   return (
     <EditableSection
       title="הגדרות לפי דירוג כוכבים"
@@ -36,14 +32,9 @@ export default function StarRatingConfigSection({
             const starConfig = starConfigs[rating];
 
             return (
-              <div
-                key={rating}
-                className="pb-6 last:pb-0 border-b last:border-b-0 border-border/40"
-              >
+              <div key={rating} className="pb-6 last:pb-0 border-b last:border-b-0 border-border/40">
                 <div className="flex items-center justify-between mb-3">
-                  <Badge
-                    variant={starConfig.autoReply ? "default" : "secondary"}
-                  >
+                  <Badge variant={starConfig.autoReply ? "default" : "secondary"}>
                     תגובה אוטומטית {starConfig.autoReply ? "פעילה" : "כבויה"}
                   </Badge>
                   <StarRating rating={rating} size={18} />
@@ -51,14 +42,10 @@ export default function StarRatingConfigSection({
 
                 {starConfig.customInstructions ? (
                   <div className="text-sm bg-muted/50 p-3 rounded-md">
-                    <p className="whitespace-pre-wrap leading-relaxed">
-                      {starConfig.customInstructions}
-                    </p>
+                    <p className="whitespace-pre-wrap leading-relaxed">{starConfig.customInstructions}</p>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground italic">
-                    אין הנחיות מיוחדות
-                  </p>
+                  <p className="text-sm text-muted-foreground italic">אין הנחיות מיוחדות</p>
                 )}
               </div>
             );
@@ -71,16 +58,10 @@ export default function StarRatingConfigSection({
             const starConfig = data[rating];
 
             return (
-              <div
-                key={rating}
-                className="pb-6 last:pb-0 border-b last:border-b-0 border-border/40"
-              >
+              <div key={rating} className="pb-6 last:pb-0 border-b last:border-b-0 border-border/40">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <Label
-                      htmlFor={`auto-reply-${rating}`}
-                      className="text-sm font-medium cursor-pointer"
-                    >
+                    <Label htmlFor={`auto-reply-${rating}`} className="text-sm font-medium cursor-pointer">
                       תגובה אוטומטית
                     </Label>
                     <Switch
@@ -99,10 +80,7 @@ export default function StarRatingConfigSection({
                 </div>
 
                 <div className="space-y-2">
-                  <Label
-                    htmlFor={`instructions-${rating}`}
-                    className="text-right block"
-                  >
+                  <Label htmlFor={`instructions-${rating}`} className="text-right block">
                     הנחיות מותאמות אישית
                   </Label>
                   <Textarea

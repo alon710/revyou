@@ -11,12 +11,7 @@ import { Loading } from "@/components/ui/loading";
 
 export default function DashboardPage() {
   const { user: authUser, loading: authLoading } = useAuth();
-  const {
-    subscription,
-    limits,
-    planType,
-    loading: subscriptionLoading,
-  } = useSubscription();
+  const { subscription, limits, planType, loading: subscriptionLoading } = useSubscription();
   const { reviewCount, loading: reviewCountLoading } = useUserStats();
   const [businessesCount, setBusinessesCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -27,9 +22,7 @@ export default function DashboardPage() {
     try {
       setLoading(true);
 
-      const accountsResponse = await fetch(
-        `/api/users/${authUser.uid}/accounts`
-      );
+      const accountsResponse = await fetch(`/api/users/${authUser.uid}/accounts`);
       if (!accountsResponse.ok) {
         throw new Error("Failed to fetch accounts");
       }
@@ -37,9 +30,7 @@ export default function DashboardPage() {
 
       let totalBusinesses = 0;
       for (const account of accountsData.accounts || []) {
-        const businessesResponse = await fetch(
-          `/api/users/${authUser.uid}/accounts/${account.id}/businesses`
-        );
+        const businessesResponse = await fetch(`/api/users/${authUser.uid}/accounts/${account.id}/businesses`);
         if (businessesResponse.ok) {
           const businessesData = await businessesResponse.json();
           totalBusinesses += businessesData.businesses?.length || 0;
@@ -69,10 +60,7 @@ export default function DashboardPage() {
 
   return (
     <PageContainer>
-      <PageHeader
-        title="דף הבית"
-        description="נהל את העסקים שלך והביקורות שלך"
-      />
+      <PageHeader title="דף הבית" description="נהל את העסקים שלך והביקורות שלך" />
 
       <SubscriptionInfo
         limits={limits}

@@ -23,14 +23,11 @@ export default function BusinessDetailsCard({
 }: BusinessDetailsCardProps) {
   const handleSaveSection = async (partialConfig: Partial<BusinessConfig>) => {
     try {
-      const response = await fetch(
-        `/api/users/${userId}/accounts/${accountId}/businesses/${business.id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ config: partialConfig }),
-        }
-      );
+      const response = await fetch(`/api/users/${userId}/accounts/${accountId}/businesses/${business.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ config: partialConfig }),
+      });
 
       if (!response.ok) {
         const error = await response.json();
@@ -44,24 +41,17 @@ export default function BusinessDetailsCard({
     }
   };
 
-  const handleSaveStarConfigs = async (
-    starConfigs: BusinessConfig["starConfigs"]
-  ) => {
+  const handleSaveStarConfigs = async (starConfigs: BusinessConfig["starConfigs"]) => {
     await handleSaveSection({ starConfigs });
   };
 
-  const handleSaveNotificationPreferences = async (data: {
-    emailOnNewReview: boolean;
-  }) => {
+  const handleSaveNotificationPreferences = async (data: { emailOnNewReview: boolean }) => {
     try {
-      const response = await fetch(
-        `/api/users/${userId}/accounts/${accountId}/businesses/${business.id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`/api/users/${userId}/accounts/${accountId}/businesses/${business.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
       if (!response.ok) {
         const error = await response.json();
@@ -84,11 +74,7 @@ export default function BusinessDetailsCard({
         onSave={handleSaveSection}
       />
 
-      <AIResponseSettingsSection
-        config={business.config}
-        loading={loading}
-        onSave={handleSaveSection}
-      />
+      <AIResponseSettingsSection config={business.config} loading={loading} onSave={handleSaveSection} />
 
       <StarRatingConfigSection
         starConfigs={business.config.starConfigs}

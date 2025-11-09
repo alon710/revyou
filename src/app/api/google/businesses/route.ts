@@ -18,10 +18,7 @@ export async function GET(request: Request) {
     const accountId = searchParams.get("accountId");
 
     if (!accountId) {
-      return NextResponse.json(
-        { error: "accountId is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "accountId is required" }, { status: 400 });
     }
 
     const accountsController = new AccountsController(authenticatedUserId);
@@ -32,10 +29,7 @@ export async function GET(request: Request) {
     }
 
     if (!account.googleRefreshToken) {
-      return NextResponse.json(
-        { error: "לא נמצא חיבור ל-Google Business Profile" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "לא נמצא חיבור ל-Google Business Profile" }, { status: 404 });
     }
 
     const refreshToken = await decryptToken(account.googleRefreshToken);
@@ -45,9 +39,6 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Error fetching businesses:", error);
 
-    return NextResponse.json(
-      { error: "לא ניתן לטעון עסקים מ-Google Business Profile" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "לא ניתן לטעון עסקים מ-Google Business Profile" }, { status: 500 });
   }
 }

@@ -59,12 +59,8 @@ export function FAQ() {
     <div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-            שאלות נפוצות
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            מצאו תשובות לשאלות הנפוצות ביותר על המערכת
-          </p>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">שאלות נפוצות</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">מצאו תשובות לשאלות הנפוצות ביותר על המערכת</p>
         </div>
 
         <div className="max-w-3xl mx-auto space-y-4">
@@ -105,9 +101,7 @@ export function FAQ() {
                   onClick={() => toggleFAQ(index)}
                   className="w-full text-right p-6 flex items-center justify-between hover:bg-secondary/50 transition-all duration-300 cursor-pointer"
                 >
-                  <h3 className="text-lg font-semibold text-foreground pe-4">
-                    {faq.question}
-                  </h3>
+                  <h3 className="text-lg font-semibold text-foreground pe-4">{faq.question}</h3>
                   <motion.div
                     animate={{ rotate: openIndex === index ? 180 : 0 }}
                     whileHover={{ scale: 1.2 }}

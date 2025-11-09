@@ -1,36 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
-import {
-  BusinessesController,
-  SubscriptionsController,
-} from "@/lib/controllers";
-import {
-  parseSearchParams,
-  businessFiltersSchema,
-} from "@/lib/utils/query-parser";
+import { BusinessesController, SubscriptionsController } from "@/lib/controllers";
+import { parseSearchParams, businessFiltersSchema } from "@/lib/utils/query-parser";
 import type { BusinessCreate } from "@/lib/types";
 import { getDefaultBusinessConfig } from "@/lib/utils/business-config";
 import { getErrorStatusCode } from "@/lib/api/errors";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ userId: string; accountId: string }> }
-) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ userId: string; accountId: string }> }) {
   try {
     const { userId: authenticatedUserId } = await getAuthenticatedUserId();
     const { userId, accountId } = await params;
 
     if (authenticatedUserId !== userId) {
-      return NextResponse.json(
-        { error: "Forbidden: Cannot access another user's data" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Forbidden: Cannot access another user's data" }, { status: 403 });
     }
 
-    const filters = parseSearchParams(
-      req.nextUrl.searchParams,
-      businessFiltersSchema
-    );
+    const filters = parseSearchParams(req.nextUrl.searchParams, businessFiltersSchema);
 
     const controller = new BusinessesController(userId, accountId);
     const businesses = await controller.getBusinesses(filters);
@@ -43,27 +28,20 @@ export async function GET(
     console.error("Error fetching businesses:", error);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to fetch businesses",
+        error: error instanceof Error ? error.message : "Failed to fetch businesses",
       },
       { status: 500 }
     );
   }
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ userId: string; accountId: string }> }
-) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ userId: string; accountId: string }> }) {
   try {
     const { userId: authenticatedUserId } = await getAuthenticatedUserId();
     const { userId, accountId } = await params;
 
     if (authenticatedUserId !== userId) {
-      return NextResponse.json(
-        { error: "Forbidden: Cannot access another user's data" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Forbidden: Cannot access another user's data" }, { status: 403 });
     }
 
     const body = await req.json();
@@ -73,8 +51,7 @@ export async function POST(
     if (!canCreate) {
       return NextResponse.json(
         {
-          error:
-            "הגעת למגבלת העסקים בתוכנית הנוכחית. שדרג את התוכנית כדי להוסיף עסקים נוספים.",
+          error: "הגעת למגבלת העסקים בתוכנית הנוכחית. שדרג את התוכנית כדי להוסיף עסקים נוספים.",
         },
         { status: 403 }
       );
@@ -113,8 +90,7 @@ export async function POST(
     const statusCode = getErrorStatusCode(error);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to create business",
+        error: error instanceof Error ? error.message : "Failed to create business",
       },
       { status: statusCode }
     );

@@ -48,8 +48,7 @@ function CheckoutForm() {
 
           if (customSuccessUrl || customCancelUrl) {
             options = {
-              success_url:
-                customSuccessUrl || `${window.location.origin}/dashboard`,
+              success_url: customSuccessUrl || `${window.location.origin}/dashboard`,
               cancel_url: customCancelUrl || `${window.location.origin}/`,
             };
           } else if (onboarding) {
@@ -69,26 +68,10 @@ function CheckoutForm() {
 
       initiateCheckout();
     }
-  }, [
-    plan,
-    priceId,
-    router,
-    error,
-    onboarding,
-    customSuccessUrl,
-    customCancelUrl,
-    success,
-  ]);
+  }, [plan, priceId, router, error, onboarding, customSuccessUrl, customCancelUrl, success]);
 
   if (!error && priceId) {
-    return (
-      <Loading
-        fullScreen
-        text="מכין את התשלום... "
-        description="מעביר אותך לעמוד התשלום המאובטח"
-        size="lg"
-      />
-    );
+    return <Loading fullScreen text="מכין את התשלום... " description="מעביר אותך לעמוד התשלום המאובטח" size="lg" />;
   }
 
   return null;

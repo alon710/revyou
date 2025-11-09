@@ -58,8 +58,7 @@ export function EditableFormModal<T>({
       toast.success("השינויים נשמרו בהצלחה");
       onClose();
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "אירעה שגיאה בשמירה";
+      const errorMessage = error instanceof Error ? error.message : "אירעה שגיאה בשמירה";
       console.error("Error saving:", error);
       toast.error("שגיאה: " + errorMessage);
     } finally {
@@ -80,30 +79,16 @@ export function EditableFormModal<T>({
             {icon}
             {title}
           </DialogTitle>
-          <DialogDescription className="text-right">
-            {description}
-          </DialogDescription>
+          <DialogDescription className="text-right">{description}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          {renderForm({ data: formData, isLoading, onChange: handleChange })}
-        </div>
+        <div className="space-y-6 py-4">{renderForm({ data: formData, isLoading, onChange: handleChange })}</div>
 
         <DialogFooter className="flex justify-between gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCancel}
-            disabled={isLoading}
-          >
+          <Button type="button" variant="outline" onClick={handleCancel} disabled={isLoading}>
             ביטול
           </Button>
-          <Button
-            variant="default"
-            onClick={handleSave}
-            disabled={isLoading}
-            className="gap-2"
-          >
+          <Button variant="default" onClick={handleSave} disabled={isLoading} className="gap-2">
             {isLoading ? <>שומר...</> : <>שמירה</>}
           </Button>
         </DialogFooter>

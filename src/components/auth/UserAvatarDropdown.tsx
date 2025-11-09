@@ -54,31 +54,19 @@ export function UserAvatarDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">
         <Avatar className="h-10 w-10 cursor-pointer">
-          <AvatarImage
-            src={user.photoURL || undefined}
-            alt={user.displayName || "User"}
-          />
-          <AvatarFallback className="bg-primary text-primary-foreground">
-            {getInitials()}
-          </AvatarFallback>
+          <AvatarImage src={user.photoURL || undefined} alt={user.displayName || "User"} />
+          <AvatarFallback className="bg-primary text-primary-foreground">{getInitials()}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1 text-right">
-            <p className="text-sm font-medium leading-none">
-              {user.displayName || "משתמש"}
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {user.email}
-            </p>
+            <p className="text-sm font-medium leading-none">{user.displayName || "משתמש"}</p>
+            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={handleSignOut}
-          className="cursor-pointer flex justify-between"
-        >
+        <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer flex justify-between">
           <LogOut className="h-4 w-4" />
           <span>התנתק</span>
         </DropdownMenuItem>

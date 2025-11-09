@@ -7,11 +7,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { UpgradeBanner } from "@/components/dashboard/utils/UpgradeBanner";
 import { Loading } from "@/components/ui/loading";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
 

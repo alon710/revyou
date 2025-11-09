@@ -23,18 +23,15 @@ export function getDefaultBusinessConfig(): BusinessConfig {
         autoReply: false,
       },
       3: {
-        customInstructions:
-          "הבע הערכה על המשוב והראה רצון לשיפור. בקש בקצרה פרטים נוספים.",
+        customInstructions: "הבע הערכה על המשוב והראה רצון לשיפור. בקש בקצרה פרטים נוספים.",
         autoReply: false,
       },
       4: {
-        customInstructions:
-          "הבע תודה חמה וכללית. אסור להתייחס לפרטים ספציפיים מהביקורת.",
+        customInstructions: "הבע תודה חמה וכללית. אסור להתייחס לפרטים ספציפיים מהביקורת.",
         autoReply: false,
       },
       5: {
-        customInstructions:
-          "הבע תודה חמה וכללית. אסור להתייחס לפרטים ספציפיים מהביקורת.",
+        customInstructions: "הבע תודה חמה וכללית. אסור להתייחס לפרטים ספציפיים מהביקורת.",
         autoReply: false,
       },
     },

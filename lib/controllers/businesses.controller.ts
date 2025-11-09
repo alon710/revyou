@@ -1,18 +1,9 @@
-import type {
-  BusinessCreate,
-  Business,
-  BusinessUpdate,
-  BusinessFilters,
-} from "@/lib/types";
+import type { BusinessCreate, Business, BusinessUpdate, BusinessFilters } from "@/lib/types";
 import { BusinessesRepositoryAdmin } from "@/lib/repositories/businesses.repository.admin";
 import { BaseController } from "./base.controller";
 import { ConflictError } from "@/lib/api/errors";
 
-export class BusinessesController extends BaseController<
-  BusinessCreate,
-  Business,
-  BusinessUpdate
-> {
+export class BusinessesController extends BaseController<BusinessCreate, Business, BusinessUpdate> {
   private userId: string;
   private accountId: string;
 
@@ -24,10 +15,7 @@ export class BusinessesController extends BaseController<
   }
 
   async getBusinesses(filters: BusinessFilters = {}): Promise<Business[]> {
-    return this.handleError(
-      () => this.repository.list(filters),
-      "Failed to fetch businesses"
-    );
+    return this.handleError(() => this.repository.list(filters), "Failed to fetch businesses");
   }
 
   async getBusiness(businessId: string): Promise<Business> {
@@ -38,9 +26,7 @@ export class BusinessesController extends BaseController<
     return this.handleError(async () => {
       const repo = this.repository as BusinessesRepositoryAdmin;
 
-      const existingBusiness = await repo.findByGoogleBusinessId(
-        data.googleBusinessId
-      );
+      const existingBusiness = await repo.findByGoogleBusinessId(data.googleBusinessId);
       if (existingBusiness) {
         throw new ConflictError("העסק כבר מחובר לחשבון זה");
       }
@@ -53,9 +39,7 @@ export class BusinessesController extends BaseController<
     return this.handleError(async () => {
       const repo = this.repository as BusinessesRepositoryAdmin;
 
-      const existingBusiness = await repo.findByGoogleBusinessId(
-        data.googleBusinessId
-      );
+      const existingBusiness = await repo.findByGoogleBusinessId(data.googleBusinessId);
 
       if (existingBusiness) {
         return this.repository.update(existingBusiness.id, {
@@ -78,10 +62,7 @@ export class BusinessesController extends BaseController<
     }, "Failed to upsert business");
   }
 
-  async updateBusiness(
-    businessId: string,
-    data: BusinessUpdate
-  ): Promise<Business> {
+  async updateBusiness(businessId: string, data: BusinessUpdate): Promise<Business> {
     return this.handleError(async () => {
       await this.ensureExists(businessId, "Business");
       return this.repository.update(businessId, data);
@@ -97,10 +78,7 @@ export class BusinessesController extends BaseController<
 
   async disconnectBusiness(businessId: string): Promise<Business> {
     const repo = this.repository as BusinessesRepositoryAdmin;
-    return this.handleError(
-      () => repo.disconnect(businessId),
-      "Failed to disconnect business"
-    );
+    return this.handleError(() => repo.disconnect(businessId), "Failed to disconnect business");
   }
 
   async checkExists(googleBusinessId: string): Promise<boolean> {
@@ -109,18 +87,13 @@ export class BusinessesController extends BaseController<
     return business !== null;
   }
 
-  async findByGoogleBusinessId(
-    googleBusinessId: string
-  ): Promise<Business | null> {
+  async findByGoogleBusinessId(googleBusinessId: string): Promise<Business | null> {
     const repo = this.repository as BusinessesRepositoryAdmin;
     return repo.findByGoogleBusinessId(googleBusinessId);
   }
 
   async updateConfig(businessId: string, config: any): Promise<Business> {
     const repo = this.repository as BusinessesRepositoryAdmin;
-    return this.handleError(
-      () => repo.updateConfig(businessId, config),
-      "Failed to update business config"
-    );
+    return this.handleError(() => repo.updateConfig(businessId, config), "Failed to update business config");
   }
 }

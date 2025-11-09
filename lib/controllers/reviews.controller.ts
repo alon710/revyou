@@ -1,27 +1,14 @@
-import type {
-  ReviewCreate,
-  Review,
-  ReviewUpdate,
-  ReviewFilters,
-} from "@/lib/types";
+import type { ReviewCreate, Review, ReviewUpdate, ReviewFilters } from "@/lib/types";
 import { ReviewsRepositoryAdmin } from "@/lib/repositories/reviews.repository.admin";
 import { BaseController } from "./base.controller";
 
-export class ReviewsController extends BaseController<
-  ReviewCreate,
-  Review,
-  ReviewUpdate
-> {
+export class ReviewsController extends BaseController<ReviewCreate, Review, ReviewUpdate> {
   private userId: string;
   private accountId: string;
   private businessId: string;
 
   constructor(userId: string, accountId: string, businessId: string) {
-    const repository = new ReviewsRepositoryAdmin(
-      userId,
-      accountId,
-      businessId
-    );
+    const repository = new ReviewsRepositoryAdmin(userId, accountId, businessId);
     super(repository);
     this.userId = userId;
     this.accountId = accountId;
@@ -29,10 +16,7 @@ export class ReviewsController extends BaseController<
   }
 
   async getReviews(filters: ReviewFilters = {}): Promise<Review[]> {
-    return this.handleError(
-      () => this.repository.list(filters),
-      "Failed to fetch reviews"
-    );
+    return this.handleError(() => this.repository.list(filters), "Failed to fetch reviews");
   }
 
   async getReview(reviewId: string): Promise<Review> {
@@ -48,17 +32,10 @@ export class ReviewsController extends BaseController<
 
   async updateAiReply(reviewId: string, aiReply: string): Promise<Review> {
     const repo = this.repository as ReviewsRepositoryAdmin;
-    return this.handleError(
-      () => repo.updateAiReply(reviewId, aiReply),
-      "Failed to update AI reply"
-    );
+    return this.handleError(() => repo.updateAiReply(reviewId, aiReply), "Failed to update AI reply");
   }
 
-  async markAsPosted(
-    reviewId: string,
-    postedReply: string,
-    postedBy: string
-  ): Promise<Review> {
+  async markAsPosted(reviewId: string, postedReply: string, postedBy: string): Promise<Review> {
     const repo = this.repository as ReviewsRepositoryAdmin;
     return this.handleError(
       () => repo.markAsPosted(reviewId, postedReply, postedBy),
@@ -68,10 +45,7 @@ export class ReviewsController extends BaseController<
 
   async markAsRejected(reviewId: string): Promise<Review> {
     const repo = this.repository as ReviewsRepositoryAdmin;
-    return this.handleError(
-      () => repo.markAsRejected(reviewId),
-      "Failed to mark review as rejected"
-    );
+    return this.handleError(() => repo.markAsRejected(reviewId), "Failed to mark review as rejected");
   }
 
   async findByGoogleReviewId(googleReviewId: string): Promise<Review | null> {
@@ -80,9 +54,6 @@ export class ReviewsController extends BaseController<
   }
 
   async createReview(data: ReviewCreate): Promise<Review> {
-    return this.handleError(
-      () => this.repository.create(data),
-      "Failed to create review"
-    );
+    return this.handleError(() => this.repository.create(data), "Failed to create review");
   }
 }

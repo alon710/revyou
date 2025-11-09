@@ -1,17 +1,8 @@
 import { adminDb } from "@/lib/firebase/admin";
-import type {
-  UserCreate,
-  User,
-  UserUpdate,
-  UserUpdateInput,
-} from "@/lib/types";
+import type { UserCreate, User, UserUpdate, UserUpdateInput } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 
-export class UsersRepositoryAdmin extends BaseRepository<
-  UserCreate,
-  User,
-  UserUpdate
-> {
+export class UsersRepositoryAdmin extends BaseRepository<UserCreate, User, UserUpdate> {
   constructor() {
     super("users");
   }
@@ -33,9 +24,7 @@ export class UsersRepositoryAdmin extends BaseRepository<
   }
 
   async create(_data: UserCreate): Promise<User> {
-    throw new Error(
-      "User creation should be handled by Firebase Auth, not directly"
-    );
+    throw new Error("User creation should be handled by Firebase Auth, not directly");
   }
 
   async update(userId: string, data: UserUpdate): Promise<User> {
@@ -55,8 +44,6 @@ export class UsersRepositoryAdmin extends BaseRepository<
   }
 
   async delete(_userId: string): Promise<void> {
-    throw new Error(
-      "User deletion should be handled by Firebase Auth, not directly"
-    );
+    throw new Error("User deletion should be handled by Firebase Auth, not directly");
   }
 }

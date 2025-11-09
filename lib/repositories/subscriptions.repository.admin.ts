@@ -1,20 +1,11 @@
 import { adminDb } from "@/lib/firebase/admin";
-import type {
-  Subscription,
-  SubscriptionCreate,
-  SubscriptionUpdate,
-  SubscriptionWithProduct,
-} from "@/lib/types";
+import type { Subscription, SubscriptionCreate, SubscriptionUpdate, SubscriptionWithProduct } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 import { type PlanLimits, getPlanLimits } from "@/lib/stripe/entitlements";
 import { enrichProduct } from "@/lib/stripe/product-parser";
 import type { Product } from "@invertase/firestore-stripe-payments";
 
-export class SubscriptionsRepositoryAdmin extends BaseRepository<
-  SubscriptionCreate,
-  Subscription,
-  SubscriptionUpdate
-> {
+export class SubscriptionsRepositoryAdmin extends BaseRepository<SubscriptionCreate, Subscription, SubscriptionUpdate> {
   constructor() {
     super("subscriptions");
   }
@@ -28,34 +19,21 @@ export class SubscriptionsRepositoryAdmin extends BaseRepository<
   }
 
   async create(_data: SubscriptionCreate): Promise<Subscription> {
-    throw new Error(
-      "Subscription creation should be handled by Stripe extension"
-    );
+    throw new Error("Subscription creation should be handled by Stripe extension");
   }
 
   async update(_id: string, _data: SubscriptionUpdate): Promise<Subscription> {
-    throw new Error(
-      "Subscription updates should be handled by Stripe extension"
-    );
+    throw new Error("Subscription updates should be handled by Stripe extension");
   }
 
   async delete(_id: string): Promise<void> {
-    throw new Error(
-      "Subscription deletion should be handled by Stripe extension"
-    );
+    throw new Error("Subscription deletion should be handled by Stripe extension");
   }
 
-  async getActiveSubscription(
-    userId: string
-  ): Promise<SubscriptionWithProduct | null> {
+  async getActiveSubscription(userId: string): Promise<SubscriptionWithProduct | null> {
     try {
-      const subscriptionsRef = adminDb.collection(
-        `users/${userId}/subscriptions`
-      );
-      const activeSubQuery = subscriptionsRef.where("status", "in", [
-        "active",
-        "trialing",
-      ]);
+      const subscriptionsRef = adminDb.collection(`users/${userId}/subscriptions`);
+      const activeSubQuery = subscriptionsRef.where("status", "in", ["active", "trialing"]);
       const snapshot = await activeSubQuery.get();
 
       if (snapshot.empty) {
@@ -64,15 +42,9 @@ export class SubscriptionsRepositoryAdmin extends BaseRepository<
 
       const subDoc = snapshot.docs[0];
       const subData = subDoc.data() as Subscription;
-      const productId =
-        typeof subData.product === "string"
-          ? subData.product
-          : subData.product.id;
+      const productId = typeof subData.product === "string" ? subData.product : subData.product.id;
 
-      const productDoc = await adminDb
-        .collection("products")
-        .doc(productId)
-        .get();
+      const productDoc = await adminDb.collection("products").doc(productId).get();
 
       if (!productDoc.exists) {
         console.error("Product not found:", productId);
@@ -105,9 +77,7 @@ export class SubscriptionsRepositoryAdmin extends BaseRepository<
       }
 
       const productsRef = adminDb.collection("products");
-      const freeProductQuery = productsRef
-        .where("active", "==", true)
-        .where("metadata.plan_id", "==", "free");
+      const freeProductQuery = productsRef.where("active", "==", true).where("metadata.plan_id", "==", "free");
       const freeProductSnapshot = await freeProductQuery.get();
 
       if (!freeProductSnapshot.empty) {

@@ -1,18 +1,5 @@
-import {
-  query,
-  where,
-  orderBy,
-  limit,
-  Query,
-  DocumentData,
-  CollectionReference,
-  Timestamp,
-} from "firebase/firestore";
-import type {
-  ReviewFilters,
-  BusinessFilters,
-  AccountFilters,
-} from "@/lib/types";
+import { query, where, orderBy, limit, Query, DocumentData, CollectionReference, Timestamp } from "firebase/firestore";
+import type { ReviewFilters, BusinessFilters, AccountFilters } from "@/lib/types";
 
 export class QueryBuilder {
   static buildReviewQuery(
@@ -106,10 +93,7 @@ export class QueryBuilder {
     return q;
   }
 
-  static filterByIds<T extends { id: string }>(
-    results: T[],
-    ids?: string[]
-  ): T[] {
+  static filterByIds<T extends { id: string }>(results: T[], ids?: string[]): T[] {
     if (!ids || ids.length === 0) return results;
     const idSet = new Set(ids);
     return results.filter((item) => idSet.has(item.id));

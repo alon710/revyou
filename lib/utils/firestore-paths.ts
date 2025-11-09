@@ -3,11 +3,9 @@ export const firestorePaths = {
 
   accounts: (userId: string) => `${firestorePaths.user(userId)}/accounts`,
 
-  account: (userId: string, accountId: string) =>
-    `${firestorePaths.accounts(userId)}/${accountId}`,
+  account: (userId: string, accountId: string) => `${firestorePaths.accounts(userId)}/${accountId}`,
 
-  businesses: (userId: string, accountId: string) =>
-    `${firestorePaths.account(userId, accountId)}/businesses`,
+  businesses: (userId: string, accountId: string) => `${firestorePaths.account(userId, accountId)}/businesses`,
 
   business: (userId: string, accountId: string, businessId: string) =>
     `${firestorePaths.businesses(userId, accountId)}/${businessId}`,
@@ -15,12 +13,8 @@ export const firestorePaths = {
   reviews: (userId: string, accountId: string, businessId: string) =>
     `${firestorePaths.business(userId, accountId, businessId)}/reviews`,
 
-  review: (
-    userId: string,
-    accountId: string,
-    businessId: string,
-    reviewId: string
-  ) => `${firestorePaths.reviews(userId, accountId, businessId)}/${reviewId}`,
+  review: (userId: string, accountId: string, businessId: string, reviewId: string) =>
+    `${firestorePaths.reviews(userId, accountId, businessId)}/${reviewId}`,
 };
 
 export function parseFirestorePath(path: string): {

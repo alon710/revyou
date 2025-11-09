@@ -23,16 +23,8 @@ interface BusinessSelectorProps {
   connecting?: boolean;
 }
 
-export function BusinessSelector({
-  businesses,
-  loading,
-  error,
-  onSelect,
-  onRetry,
-  connecting,
-}: BusinessSelectorProps) {
-  const [selected, setSelected] =
-    useState<GoogleBusinessProfileBusiness | null>(null);
+export function BusinessSelector({ businesses, loading, error, onSelect, onRetry, connecting }: BusinessSelectorProps) {
+  const [selected, setSelected] = useState<GoogleBusinessProfileBusiness | null>(null);
 
   const handleConnect = () => {
     if (selected) onSelect(selected);
@@ -83,15 +75,8 @@ export function BusinessSelector({
                       : "border-border hover:border-primary/50"
                   }`}
                 >
-                  <RadioGroupItem
-                    value={business.id}
-                    id={business.id}
-                    className="mt-1"
-                  />
-                  <Label
-                    htmlFor={business.id}
-                    className="flex-1 cursor-pointer space-y-1"
-                  >
+                  <RadioGroupItem value={business.id} id={business.id} className="mt-1" />
+                  <Label htmlFor={business.id} className="flex-1 cursor-pointer space-y-1">
                     <div className="flex items-center gap-2">
                       <Building2 className="h-4 w-4 text-muted-foreground" />
                       <span className="font-semibold">{business.name}</span>
@@ -108,11 +93,7 @@ export function BusinessSelector({
             </RadioGroup>
 
             <div className="mt-6 flex gap-3" dir="rtl">
-              <Button
-                onClick={handleConnect}
-                className="flex-1"
-                disabled={connecting || !selected}
-              >
+              <Button onClick={handleConnect} className="flex-1" disabled={connecting || !selected}>
                 {connecting ? "מחבר..." : "חבר עסק זה"}
               </Button>
             </div>

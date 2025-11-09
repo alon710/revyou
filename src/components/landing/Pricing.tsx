@@ -11,20 +11,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { getAvailableProducts } from "@/lib/stripe/client";
 import { type BillingPeriod } from "@/lib/stripe/entitlements";
-import {
-  EnrichedProduct,
-  enrichProduct,
-  sortProductsByPlan,
-} from "@/lib/stripe/product-parser";
-import {
-  FEATURE_CONFIGS,
-  formatFeatureValue,
-} from "@/lib/stripe/feature-config";
-import {
-  getMonthlyPrice,
-  getPriceId,
-  getYearlyPrice,
-} from "@/lib/stripe/pricing";
+import { EnrichedProduct, enrichProduct, sortProductsByPlan } from "@/lib/stripe/product-parser";
+import { FEATURE_CONFIGS, formatFeatureValue } from "@/lib/stripe/feature-config";
+import { getMonthlyPrice, getPriceId, getYearlyPrice } from "@/lib/stripe/pricing";
 
 const YEARLY_DISCOUNT = 0.2;
 
@@ -42,9 +31,7 @@ export function Pricing() {
         setLoading(true);
         const fetchedProducts = await getAvailableProducts();
 
-        const enrichedProducts = fetchedProducts
-          .map(enrichProduct)
-          .filter((p) => p.active);
+        const enrichedProducts = fetchedProducts.map(enrichProduct).filter((p) => p.active);
 
         const sortedProducts = sortProductsByPlan(enrichedProducts);
         setProducts(sortedProducts);
@@ -128,10 +115,7 @@ export function Pricing() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {[1, 2, 3].map((i) => (
-              <Card
-                key={i}
-                className="relative p-8 flex flex-col rounded-lg border border-border/40 shadow-sm"
-              >
+              <Card key={i} className="relative p-8 flex flex-col rounded-lg border border-border/40 shadow-sm">
                 <Skeleton className="h-6 w-16 mb-4" />
 
                 <div className="mb-6">
@@ -167,12 +151,8 @@ export function Pricing() {
     <div>
       <div className="container mx-auto px-6 sm:px-8 lg:px-12">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-            תוכניות מחיר שמתאימות לכם
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-            בחרו את התוכנית המתאימה לעסק שלכם
-          </p>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">תוכניות מחיר שמתאימות לכם</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">בחרו את התוכנית המתאימה לעסק שלכם</p>
 
           <Tabs
             value={billingPeriod}
@@ -200,8 +180,7 @@ export function Pricing() {
           >
             {products.map((product, index) => {
               const monthlyPrice = getOriginalMonthlyPrice(product);
-              const showYearlyDiscount =
-                billingPeriod === "yearly" && monthlyPrice > 0;
+              const showYearlyDiscount = billingPeriod === "yearly" && monthlyPrice > 0;
 
               return (
                 <motion.div
@@ -288,20 +267,14 @@ export function Pricing() {
                       }}
                     >
                       {showYearlyDiscount && (
-                        <span className="text-sm text-muted-foreground line-through mb-1">
-                          ₪{monthlyPrice}
-                        </span>
+                        <span className="text-sm text-muted-foreground line-through mb-1">₪{monthlyPrice}</span>
                       )}
                       <div className="flex items-baseline gap-1">
-                        <span className="text-4xl font-bold text-foreground">
-                          {formatPrice(product)}
-                        </span>
+                        <span className="text-4xl font-bold text-foreground">{formatPrice(product)}</span>
                         <span className="text-muted-foreground">/חודש</span>
                       </div>
                       {showYearlyDiscount && (
-                        <span className="text-xs text-primary mt-1">
-                          חסכון של ₪{getSavingsAmount(product)} לחודש
-                        </span>
+                        <span className="text-xs text-primary mt-1">חסכון של ₪{getSavingsAmount(product)} לחודש</span>
                       )}
                     </motion.div>
                   </div>
@@ -309,10 +282,7 @@ export function Pricing() {
                   <ul className="space-y-3 mb-8 grow">
                     {FEATURE_CONFIGS.map((featureConfig, featureIndex) => {
                       const value = product.features[featureConfig.key];
-                      const formattedValue = formatFeatureValue(
-                        value,
-                        featureConfig.type
-                      );
+                      const formattedValue = formatFeatureValue(value, featureConfig.type);
                       const isBoolean = featureConfig.type === "boolean";
                       const isEnabled =
                         isBoolean && typeof formattedValue === "boolean"
@@ -340,16 +310,8 @@ export function Pricing() {
                           ) : (
                             <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                           )}
-                          <span
-                            className={`text-sm ${
-                              isEnabled
-                                ? "text-foreground"
-                                : "text-muted-foreground"
-                            }`}
-                          >
-                            {isBoolean
-                              ? featureConfig.displayName
-                              : `${featureConfig.displayName}: ${formattedValue}`}
+                          <span className={`text-sm ${isEnabled ? "text-foreground" : "text-muted-foreground"}`}>
+                            {isBoolean ? featureConfig.displayName : `${featureConfig.displayName}: ${formattedValue}`}
                           </span>
                         </motion.li>
                       );
@@ -360,8 +322,7 @@ export function Pricing() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{
-                      delay:
-                        index * 0.05 + 0.25 + FEATURE_CONFIGS.length * 0.03,
+                      delay: index * 0.05 + 0.25 + FEATURE_CONFIGS.length * 0.03,
                       duration: 0.3,
                       ease: "easeOut",
                     }}
@@ -374,10 +335,7 @@ export function Pricing() {
                     >
                       {loadingProductId === product.id
                         ? "טוען..."
-                        : product.metadata?.cta ||
-                          (product.planId === "free"
-                            ? "התחל בחינם"
-                            : "התחל עכשיו")}
+                        : product.metadata?.cta || (product.planId === "free" ? "התחל בחינם" : "התחל עכשיו")}
                     </Button>
                   </motion.div>
                 </motion.div>

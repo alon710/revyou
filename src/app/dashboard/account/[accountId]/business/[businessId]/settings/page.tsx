@@ -30,9 +30,7 @@ export default function BusinessSettingsPage({
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`
-      );
+      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch business");
@@ -55,12 +53,9 @@ export default function BusinessSettingsPage({
     if (!business || !user) return;
 
     try {
-      const response = await fetch(
-        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
+        method: "DELETE",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to delete business");
@@ -86,9 +81,7 @@ export default function BusinessSettingsPage({
         <PageHeader title="עסק לא נמצא" />
         <div className="text-center py-12">
           <p className="text-muted-foreground">העסק המבוקש לא נמצא.</p>
-          <BackButton
-            href={`/dashboard/accounts/${accountId}/businesses/${businessId}`}
-          />
+          <BackButton href={`/dashboard/accounts/${accountId}/businesses/${businessId}`} />
         </div>
       </PageContainer>
     );
@@ -97,9 +90,7 @@ export default function BusinessSettingsPage({
   return (
     <PageContainer>
       <div className="mb-4">
-        <BackButton
-          href={`/dashboard/accounts/${accountId}/businesses/${businessId}`}
-        />
+        <BackButton href={`/dashboard/accounts/${accountId}/businesses/${businessId}`} />
       </div>
 
       <PageHeader

@@ -1,11 +1,7 @@
 import * as admin from "firebase-admin";
 import { onMessagePublished } from "firebase-functions/v2/pubsub";
 import { defineSecret } from "firebase-functions/params";
-import {
-  getReview,
-  starRatingToNumber,
-  parseGoogleTimestamp,
-} from "../shared/google/reviews";
+import { getReview, starRatingToNumber, parseGoogleTimestamp } from "../shared/google/reviews";
 import { decryptToken } from "../shared/google/business-profile";
 import type { Review, Business } from "../shared/types";
 import { AccountsRepositoryAdmin } from "../shared/repositories/accounts.repository.admin";
@@ -62,10 +58,7 @@ async function findBusinessByLocationId(locationName: string): Promise<{
   }
 }
 
-async function getAccountRefreshToken(
-  userId: string,
-  accountId: string
-): Promise<string | null> {
+async function getAccountRefreshToken(userId: string, accountId: string): Promise<string | null> {
   try {
     const accountsRepo = new AccountsRepositoryAdmin(userId);
     const account = await accountsRepo.get(accountId);
@@ -95,23 +88,14 @@ export const onGoogleReviewNotification = onMessagePublished(
       console.log("Received Pub/Sub notification:", event.data);
 
       const messageData = event.data.message.data;
-      const notificationJson = Buffer.from(messageData, "base64").toString(
-        "utf-8"
-      );
+      const notificationJson = Buffer.from(messageData, "base64").toString("utf-8");
       const notification: PubSubNotificationData = JSON.parse(notificationJson);
 
       console.log("Parsed notification:", notification);
 
-      const {
-        type: notificationType,
-        review: reviewName,
-        location: locationName,
-      } = notification;
+      const { type: notificationType, review: reviewName, location: locationName } = notification;
 
-      if (
-        notificationType !== "NEW_REVIEW" &&
-        notificationType !== "UPDATED_REVIEW"
-      ) {
+      if (notificationType !== "NEW_REVIEW" && notificationType !== "UPDATED_REVIEW") {
         console.log("Ignoring non-review notification:", notificationType);
         return;
       }
@@ -130,10 +114,7 @@ export const onGoogleReviewNotification = onMessagePublished(
       });
 
       if (!business.connected) {
-        console.log(
-          "Business not connected, skipping notification:",
-          business.id
-        );
+        console.log("Business not connected, skipping notification:", business.id);
         return;
       }
 
@@ -143,10 +124,7 @@ export const onGoogleReviewNotification = onMessagePublished(
         return;
       }
 
-      const refreshToken = await decryptToken(
-        encryptedToken,
-        tokenEncryptionSecret.value()
-      );
+      const refreshToken = await decryptToken(encryptedToken, tokenEncryptionSecret.value());
 
       console.log("Fetching review from GMB API:", reviewName);
       const googleReview = await getReview(
@@ -167,12 +145,8 @@ export const onGoogleReviewNotification = onMessagePublished(
         photoUrl: googleReview.reviewer.profilePhotoUrl,
         rating: starRatingToNumber(googleReview.starRating),
         text: googleReview.comment,
-        date: admin.firestore.Timestamp.fromDate(
-          parseGoogleTimestamp(googleReview.createTime)
-        ),
-        updateTime: admin.firestore.Timestamp.fromDate(
-          parseGoogleTimestamp(googleReview.updateTime)
-        ),
+        date: admin.firestore.Timestamp.fromDate(parseGoogleTimestamp(googleReview.createTime)),
+        updateTime: admin.firestore.Timestamp.fromDate(parseGoogleTimestamp(googleReview.updateTime)),
         receivedAt: admin.firestore.Timestamp.now(),
         isAnonymous: googleReview.reviewer.isAnonymous ?? false,
         replyStatus: "pending",
@@ -181,15 +155,9 @@ export const onGoogleReviewNotification = onMessagePublished(
         postedBy: null,
       };
 
-      const reviewsRepo = new ReviewsRepositoryAdmin(
-        userId,
-        accountId,
-        business.id
-      );
+      const reviewsRepo = new ReviewsRepositoryAdmin(userId, accountId, business.id);
 
-      const existingReview = await reviewsRepo.findByGoogleReviewId(
-        googleReview.reviewId
-      );
+      const existingReview = await reviewsRepo.findByGoogleReviewId(googleReview.reviewId);
 
       if (existingReview) {
         console.log("Review already exists, skipping:", existingReview.id);

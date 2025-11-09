@@ -62,9 +62,7 @@ async function makeAuthorizedRequest<T>(
       method,
       errorBody: errorText,
     });
-    throw new Error(
-      `Google API request failed: ${response.status} ${response.statusText}`
-    );
+    throw new Error(`Google API request failed: ${response.status} ${response.statusText}`);
   }
 
   return response.json();
@@ -77,11 +75,7 @@ export async function getReview(
   clientSecret?: string
 ): Promise<GoogleReview> {
   try {
-    const accessToken = await getAccessTokenFromRefreshToken(
-      refreshToken,
-      clientId,
-      clientSecret
-    );
+    const accessToken = await getAccessTokenFromRefreshToken(refreshToken, clientId, clientSecret);
     const url = `${GOOGLE_MY_BUSINESS_API_BASE}/${reviewName}`;
 
     const review = await makeAuthorizedRequest<GoogleReview>(url, accessToken);
@@ -103,19 +97,10 @@ export async function postReplyToGoogle(
   clientSecret?: string
 ): Promise<GoogleReviewReply> {
   try {
-    const accessToken = await getAccessTokenFromRefreshToken(
-      refreshToken,
-      clientId,
-      clientSecret
-    );
+    const accessToken = await getAccessTokenFromRefreshToken(refreshToken, clientId, clientSecret);
     const url = `${GOOGLE_MY_BUSINESS_API_BASE}/${reviewName}/reply`;
 
-    const reply = await makeAuthorizedRequest<GoogleReviewReply>(
-      url,
-      accessToken,
-      "PUT",
-      { comment: replyText }
-    );
+    const reply = await makeAuthorizedRequest<GoogleReviewReply>(url, accessToken, "PUT", { comment: replyText });
     return reply;
   } catch (error) {
     console.error("Error posting reply to Google:", {

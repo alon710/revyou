@@ -1,20 +1,11 @@
 import { adminDb } from "@/lib/firebase/admin";
-import type {
-  BusinessCreate,
-  Business,
-  BusinessUpdate,
-  BusinessUpdateInput,
-  BusinessFilters,
-} from "@/lib/types";
+import type { BusinessCreate, Business, BusinessUpdate, BusinessUpdateInput, BusinessFilters } from "@/lib/types";
 import { firestorePaths } from "@/lib/utils/firestore-paths";
 import { AdminQueryBuilder } from "@/lib/utils/query-builder";
 import { BaseRepository } from "./base.repository";
+import * as admin from "firebase-admin";
 
-export class BusinessesRepositoryAdmin extends BaseRepository<
-  BusinessCreate,
-  Business,
-  BusinessUpdate
-> {
+export class BusinessesRepositoryAdmin extends BaseRepository<BusinessCreate, Business, BusinessUpdate> {
   private userId: string;
   private accountId: string;
 
@@ -71,10 +62,7 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
     return created;
   }
 
-  async update(
-    businessId: string,
-    data: BusinessUpdateInput
-  ): Promise<Business> {
+  async update(businessId: string, data: BusinessUpdateInput): Promise<Business> {
     const businessRef = adminDb.doc(`${this.basePath}/${businessId}`);
     await businessRef.update(data);
 
@@ -89,14 +77,9 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
     await businessRef.delete();
   }
 
-  async findByGoogleBusinessId(
-    googleBusinessId: string
-  ): Promise<Business | null> {
+  async findByGoogleBusinessId(googleBusinessId: string): Promise<Business | null> {
     const collectionRef = adminDb.collection(this.basePath);
-    const snapshot = await collectionRef
-      .where("googleBusinessId", "==", googleBusinessId)
-      .limit(1)
-      .get();
+    const snapshot = await collectionRef.where("googleBusinessId", "==", googleBusinessId).limit(1).get();
 
     if (snapshot.empty) return null;
 

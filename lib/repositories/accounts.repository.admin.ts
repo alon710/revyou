@@ -1,20 +1,11 @@
 import { adminDb } from "@/lib/firebase/admin";
-import type {
-  AccountCreate,
-  Account,
-  AccountUpdate,
-  AccountUpdateInput,
-  AccountFilters,
-} from "@/lib/types";
+import type { AccountCreate, Account, AccountUpdate, AccountUpdateInput, AccountFilters } from "@/lib/types";
+import * as admin from "firebase-admin";
 import { firestorePaths } from "@/lib/utils/firestore-paths";
 import { AdminQueryBuilder } from "@/lib/utils/query-builder";
 import { BaseRepository } from "./base.repository";
 
-export class AccountsRepositoryAdmin extends BaseRepository<
-  AccountCreate,
-  Account,
-  AccountUpdate
-> {
+export class AccountsRepositoryAdmin extends BaseRepository<AccountCreate, Account, AccountUpdate> {
   private userId: string;
 
   constructor(userId: string) {

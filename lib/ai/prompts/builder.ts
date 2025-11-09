@@ -2,10 +2,7 @@ import { DEFAULT_BUSINESS_PROMPT_TEMPLATE } from "./template";
 import type { BusinessConfig, Review } from "@/lib/types";
 import Mustache from "mustache";
 
-function getStarCustomInstructions(
-  star: 1 | 2 | 3 | 4 | 5,
-  businessConfig: BusinessConfig
-): string {
+function getStarCustomInstructions(star: 1 | 2 | 3 | 4 | 5, businessConfig: BusinessConfig): string {
   return businessConfig.starConfigs?.[star]?.customInstructions || "";
 }
 

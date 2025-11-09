@@ -16,9 +16,7 @@ interface BusinessReviewsPageProps {
   params: Promise<{ accountId: string; businessId: string }>;
 }
 
-export default function BusinessReviewsPage({
-  params,
-}: BusinessReviewsPageProps) {
+export default function BusinessReviewsPage({ params }: BusinessReviewsPageProps) {
   const { accountId, businessId } = use(params);
   const { user } = useAuth();
   const router = useRouter();
@@ -35,9 +33,7 @@ export default function BusinessReviewsPage({
       setLoading(true);
       setError(null);
 
-      const businessResponse = await fetch(
-        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`
-      );
+      const businessResponse = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`);
 
       if (!businessResponse.ok) {
         throw new Error("לא נמצא עסק");
@@ -57,8 +53,7 @@ export default function BusinessReviewsPage({
       const { reviews: fetchedReviews } = await reviewsResponse.json();
       setReviews(fetchedReviews);
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "שגיאה בטעינת ביקורות";
+      const errorMessage = err instanceof Error ? err.message : "שגיאה בטעינת ביקורות";
       console.error("Error loading data:", err);
       setError(errorMessage);
       toast.error(errorMessage);
@@ -89,9 +84,7 @@ export default function BusinessReviewsPage({
     return (
       <PageContainer>
         <div className="mb-6">
-          <BackButton
-            href={`/dashboard/accounts/${accountId}/businesses/${businessId}`}
-          />
+          <BackButton href={`/dashboard/accounts/${accountId}/businesses/${businessId}`} />
         </div>
         <PageHeader title="ביקורות" description="כל הביקורות לעסק" />
         <EmptyState
@@ -107,15 +100,10 @@ export default function BusinessReviewsPage({
   return (
     <PageContainer>
       <div className="mb-6">
-        <BackButton
-          href={`/dashboard/accounts/${accountId}/businesses/${businessId}`}
-        />
+        <BackButton href={`/dashboard/accounts/${accountId}/businesses/${businessId}`} />
       </div>
 
-      <PageHeader
-        title={`ביקורות ${business.name}`}
-        description={`כל הביקורות לעסק שלך`}
-      />
+      <PageHeader title={`ביקורות ${business.name}`} description={`כל הביקורות לעסק שלך`} />
 
       <div className="space-y-4 mt-6">
         {reviews.length === 0 ? (
@@ -135,9 +123,7 @@ export default function BusinessReviewsPage({
                 userId={user.uid}
                 onUpdate={fetchData}
                 onClick={() =>
-                  router.push(
-                    `/dashboard/account/${accountId}/business/${businessId}/reviews/${review.id}`
-                  )
+                  router.push(`/dashboard/account/${accountId}/business/${businessId}/reviews/${review.id}`)
                 }
               />
             </div>

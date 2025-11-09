@@ -18,11 +18,7 @@ import {
 } from "@/components/ui/dashboard-card";
 import Image from "next/image";
 
-export default function BusinessesPage({
-  params,
-}: {
-  params: Promise<{ accountId: string }>;
-}) {
+export default function BusinessesPage({ params }: { params: Promise<{ accountId: string }> }) {
   const { user } = useAuth();
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,9 +36,7 @@ export default function BusinessesPage({
       try {
         setLoading(true);
 
-        const businessesResponse = await fetch(
-          `/api/users/${user.uid}/accounts/${accountId}/businesses`
-        );
+        const businessesResponse = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses`);
         if (!businessesResponse.ok) {
           throw new Error("Failed to fetch businesses");
         }
@@ -67,24 +61,17 @@ export default function BusinessesPage({
   }
 
   const handleBusinessClick = (business: Business) => {
-    router.push(
-      `/dashboard/account/${accountId}/business/${business.id}/reviews`
-    );
+    router.push(`/dashboard/account/${accountId}/business/${business.id}/reviews`);
   };
 
   const handleSettingsClick = (e: React.MouseEvent, business: Business) => {
     e.stopPropagation();
-    router.push(
-      `/dashboard/account/${accountId}/business/${business.id}/settings`
-    );
+    router.push(`/dashboard/account/${accountId}/business/${business.id}/settings`);
   };
 
   return (
     <PageContainer>
-      <PageHeader
-        title="העסקים שלי"
-        description="נהל את חשבונות Google Business Profile המחוברים שלך"
-      />
+      <PageHeader title="העסקים שלי" description="נהל את חשבונות Google Business Profile המחוברים שלך" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {businesses.map((business) => (
@@ -140,18 +127,14 @@ export default function BusinessesPage({
         ))}
         <DashboardCard
           className="cursor-pointer border-dashed border-2 hover:border-primary/50 hover:bg-accent/50 transition-all flex flex-col items-center justify-center min-h-[320px]"
-          onClick={() =>
-            router.push(`/onboarding/choose-business?accountId=${accountId}`)
-          }
+          onClick={() => router.push(`/onboarding/choose-business?accountId=${accountId}`)}
         >
           <div className="flex flex-col items-center justify-center text-center p-6">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
               <Plus className="h-8 w-8 text-primary" />
             </div>
             <h3 className="text-lg font-semibold">הוסף עסק</h3>
-            <p className="text-sm text-muted-foreground mt-2">
-              חבר עסק נוסף מ-Google Business Profile
-            </p>
+            <p className="text-sm text-muted-foreground mt-2">חבר עסק נוסף מ-Google Business Profile</p>
           </div>
         </DashboardCard>
       </div>
