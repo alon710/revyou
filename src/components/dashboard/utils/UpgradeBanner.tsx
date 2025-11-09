@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { useSubscription } from "@/lib/hooks/useSubscription";
+import { useSubscription } from "@/hooks/useSubscription";
 import { useUIStore } from "@/lib/store/ui-store";
 
 export function UpgradeBanner() {

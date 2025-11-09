@@ -12,6 +12,7 @@ import { BusinessesRepositoryAdmin } from "../shared/repositories/businesses.rep
 import { UsersRepositoryAdmin } from "../shared/repositories/users.repository.admin";
 import { AccountsRepositoryAdmin } from "../shared/repositories/accounts.repository.admin";
 import { ReviewsRepositoryAdmin } from "../shared/repositories/reviews.repository.admin";
+import { SubscriptionsController } from "../shared/controllers/subscriptions.controller";
 
 const db = admin.firestore();
 
@@ -257,6 +258,34 @@ export const onReviewCreate = onDocumentCreated(
       const review = eventData.data() as Review;
       const business = await getBusiness(userId, accountId, businessId);
       if (!business) return;
+
+      const subscriptionsController = new SubscriptionsController();
+      const quotaCheck = await subscriptionsController.checkReviewQuota(userId);
+
+      if (!quotaCheck.allowed) {
+        console.log("User has exceeded review quota", {
+          userId,
+          reviewId,
+          currentCount: quotaCheck.currentCount,
+          limit: quotaCheck.limit,
+        });
+
+        const reviewsRepo = new ReviewsRepositoryAdmin(userId, accountId, businessId);
+        await reviewsRepo.update(reviewId, {
+          replyStatus: "quota_exceeded" as ReplyStatus,
+          aiReplyGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
+        console.log("Review saved without AI reply due to quota limit", { reviewId });
+        return;
+      }
+
+      console.log("Quota check passed", {
+        userId,
+        reviewId,
+        currentCount: quotaCheck.currentCount,
+        limit: quotaCheck.limit,
+      });
 
       const starConfig: StarConfig = business.config.starConfigs[review.rating as 1 | 2 | 3 | 4 | 5];
 

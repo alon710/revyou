@@ -1,6 +1,6 @@
 import { Timestamp, WithFieldValue, PartialWithFieldValue } from "firebase/firestore";
 
-export type ReplyStatus = "pending" | "rejected" | "posted" | "failed";
+export type ReplyStatus = "pending" | "rejected" | "posted" | "failed" | "quota_exceeded";
 
 export interface ReviewCreate {
   userId: string;
