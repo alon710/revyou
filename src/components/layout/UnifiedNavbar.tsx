@@ -12,7 +12,7 @@ export function UnifiedNavbar({ variant }: { variant: "landing" | "dashboard" })
   return (
     <NavbarContainer>
       <div className="shrink-0 pl-2">
-        <Logo href="/dashboard" />
+        <Logo href="/dashboard/home" />
       </div>
 
       <nav className="hidden md:flex items-center flex-1 justify-center h-full gap-1">

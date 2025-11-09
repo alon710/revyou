@@ -24,7 +24,7 @@ export function AuthButton({ size = "sm", className, variant = "dashboard" }: Au
     return (
       <>
         {variant === "landing" && (
-          <Link href="/dashboard" onClick={() => setIsNavigating(true)}>
+          <Link href="/dashboard/home" onClick={() => setIsNavigating(true)}>
             <Button size={size} className={className} disabled={isNavigating}>
               {isNavigating ? "מעביר..." : "החשבון שלי"}
             </Button>

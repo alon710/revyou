@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { LogOut, Plus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/lib/firebase/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,6 +25,10 @@ export function UserAvatarDropdown() {
       console.error("Sign out failed", error);
     }
     router.push("/");
+  };
+
+  const handleAddBusiness = () => {
+    router.push("/onboarding/connect-account");
   };
 
   if (loading) {
@@ -66,6 +70,10 @@ export function UserAvatarDropdown() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleAddBusiness} className="cursor-pointer flex justify-between">
+          <Plus className="h-4 w-4" />
+          <span>הוסף עסק</span>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer flex justify-between">
           <LogOut className="h-4 w-4" />
           <span>התנתק</span>

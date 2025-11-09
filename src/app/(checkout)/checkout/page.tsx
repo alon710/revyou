@@ -26,12 +26,12 @@ function CheckoutForm() {
 
   useEffect(() => {
     if (success) {
-      router.push("/dashboard");
+      router.push("/dashboard/home");
       return;
     }
 
     if (plan === "free") {
-      router.push("/dashboard");
+      router.push("/dashboard/home");
       return;
     }
 

@@ -84,7 +84,7 @@ export default function BusinessReviewsPage({ params }: BusinessReviewsPageProps
     return (
       <PageContainer>
         <div className="mb-6">
-          <BackButton href={`/dashboard/accounts/${accountId}/businesses`} />
+          <BackButton />
         </div>
         <PageHeader title="ביקורות" description="כל הביקורות לעסק" />
         <EmptyState
@@ -100,7 +100,7 @@ export default function BusinessReviewsPage({ params }: BusinessReviewsPageProps
   return (
     <PageContainer>
       <div className="mb-6">
-        <BackButton href={`/dashboard/accounts/${accountId}/businesses`} />
+        <BackButton />
       </div>
 
       <PageHeader title={`ביקורות ${business.name}`} description={`כל הביקורות לעסק שלך`} />

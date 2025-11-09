@@ -81,7 +81,7 @@ export default function BusinessSettingsPage({
         <PageHeader title="עסק לא נמצא" />
         <div className="text-center py-12">
           <p className="text-muted-foreground">העסק המבוקש לא נמצא.</p>
-          <BackButton href={`/dashboard/accounts/${accountId}/businesses`} />
+          <BackButton />
         </div>
       </PageContainer>
     );
@@ -90,7 +90,7 @@ export default function BusinessSettingsPage({
   return (
     <PageContainer>
       <div className="mb-4">
-        <BackButton href={`/dashboard/accounts/${accountId}/businesses`} />
+        <BackButton />
       </div>
 
       <PageHeader
