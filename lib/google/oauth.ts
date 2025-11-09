@@ -71,11 +71,17 @@ export async function exchangeCodeForTokens(code: string) {
     console.error("Error exchanging code for tokens:", error);
 
     if (error && typeof error === "object") {
+      const errorResponse = error as ErrorResponse;
+      const responseData =
+        errorResponse.response && typeof errorResponse.response === "object" && "data" in errorResponse.response
+          ? errorResponse.response.data
+          : errorResponse.response;
+
       console.error("[OAuth Debug] Error details:", {
-        message: (error as ErrorResponse).message,
-        code: (error as ErrorResponse).code,
-        status: (error as ErrorResponse).status,
-        response: (error as ErrorResponse).response?.data || (error as ErrorResponse).response,
+        message: errorResponse.message,
+        code: errorResponse.code,
+        status: errorResponse.status,
+        response: responseData,
       });
     }
 
