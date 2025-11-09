@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Business } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
@@ -22,12 +22,8 @@ export default function BusinessesPage({ params }: { params: Promise<{ accountId
   const { user } = useAuth();
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
-  const [accountId, setAccountId] = useState<string | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    params.then((p) => setAccountId(p.accountId));
-  }, [params]);
+  const { accountId } = use(params);
 
   useEffect(() => {
     async function fetchBusinesses() {
