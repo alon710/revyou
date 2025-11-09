@@ -1,4 +1,8 @@
-import { Timestamp, WithFieldValue, PartialWithFieldValue } from "firebase/firestore";
+import {
+  Timestamp,
+  WithFieldValue,
+  PartialWithFieldValue,
+} from "firebase/firestore";
 import { BusinessConfig } from "./business-config.types";
 
 export interface BusinessCreate {

@@ -71,7 +71,10 @@ export class BusinessesRepositoryAdmin extends BaseRepository<
     return created;
   }
 
-  async update(businessId: string, data: BusinessUpdateInput): Promise<Business> {
+  async update(
+    businessId: string,
+    data: BusinessUpdateInput
+  ): Promise<Business> {
     const businessRef = adminDb.doc(`${this.basePath}/${businessId}`);
     await businessRef.update(data);
 
