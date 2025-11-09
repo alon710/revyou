@@ -3,6 +3,7 @@ import type { ReviewCreate, Review, ReviewUpdate, ReviewUpdateInput, ReviewFilte
 import { firestorePaths } from "@/lib/utils/firestore-paths";
 import { AdminQueryBuilder } from "@/lib/utils/query-builder";
 import { BaseRepository } from "./base.repository";
+import * as admin from "firebase-admin";
 
 export class ReviewsRepositoryAdmin extends BaseRepository<ReviewCreate, Review, ReviewUpdate> {
   private userId: string;

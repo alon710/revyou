@@ -1,6 +1,7 @@
 import { adminDb } from "@/lib/firebase/admin";
 import type { UserCreate, User, UserUpdate, UserUpdateInput } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
+import * as admin from "firebase-admin";
 
 export class UsersRepositoryAdmin extends BaseRepository<UserCreate, User, UserUpdate> {
   constructor() {
