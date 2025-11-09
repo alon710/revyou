@@ -90,7 +90,7 @@ export async function getAccessTokenFromRefreshToken(
     }
 
     return credentials.access_token;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error refreshing access token:", error);
     throw error;
   }
