@@ -11,8 +11,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import type { PlanLimits, PlanType } from "@/lib/stripe/entitlements";
-import type { Subscription } from "@/lib/hooks/useSubscription";
-import { getUsagePercentages } from "@/hooks/useUserStats";
+import type { Subscription } from "@/hooks/useSubscription";
 import { formatHebrewDate, getCurrentBillingPeriod } from "@/lib/subscription/billing-period";
 
 interface SubscriptionInfoProps {
@@ -20,6 +19,8 @@ interface SubscriptionInfoProps {
   subscription: Subscription | null;
   currentBusiness: number;
   currentReviews: number;
+  businessesPercent: number;
+  reviewsPercent: number;
   planType: PlanType;
 }
 
@@ -32,8 +33,14 @@ function getPlanBadgeInfo(planType: PlanType) {
   return planMap[planType];
 }
 
-export function SubscriptionInfo({ limits, currentBusiness, currentReviews, planType }: SubscriptionInfoProps) {
-  const { businessesPercent, reviewsPercent } = getUsagePercentages(currentBusiness, currentReviews, limits);
+export function SubscriptionInfo({
+  limits,
+  currentBusiness,
+  currentReviews,
+  businessesPercent,
+  reviewsPercent,
+  planType,
+}: SubscriptionInfoProps) {
   const { resetDate } = getCurrentBillingPeriod();
   const badgeInfo = getPlanBadgeInfo(planType);
 

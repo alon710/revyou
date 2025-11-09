@@ -4,6 +4,8 @@ import { BaseRepository } from "./base.repository";
 import { type PlanLimits, getPlanLimits } from "@/lib/stripe/entitlements";
 import { enrichProduct } from "@/lib/stripe/product-parser";
 import type { Product } from "@invertase/firestore-stripe-payments";
+import { Timestamp } from "firebase-admin/firestore";
+import { startOfMonth } from "date-fns";
 
 export class SubscriptionsRepositoryAdmin extends BaseRepository<SubscriptionCreate, Subscription, SubscriptionUpdate> {
   constructor() {
@@ -104,6 +106,44 @@ export class SubscriptionsRepositoryAdmin extends BaseRepository<SubscriptionCre
         autoPost: false,
         requireApproval: true,
       };
+    }
+  }
+
+  async countUserReviewsThisMonth(userId: string): Promise<number> {
+    try {
+      const startDate = startOfMonth(new Date());
+      const startTimestamp = Timestamp.fromDate(startDate);
+
+      const accountsRef = adminDb.collection(`users/${userId}/accounts`);
+      const accountsSnapshot = await accountsRef.get();
+
+      if (accountsSnapshot.empty) {
+        return 0;
+      }
+
+      let totalReviewCount = 0;
+
+      for (const accountDoc of accountsSnapshot.docs) {
+        const accountId = accountDoc.id;
+
+        const businessesRef = adminDb.collection(`users/${userId}/accounts/${accountId}/businesses`);
+        const businessesQuery = businessesRef.where("connected", "==", true);
+        const businessesSnapshot = await businessesQuery.get();
+
+        for (const businessDoc of businessesSnapshot.docs) {
+          const reviewsRef = adminDb.collection(
+            `users/${userId}/accounts/${accountId}/businesses/${businessDoc.id}/reviews`
+          );
+          const reviewsQuery = reviewsRef.where("receivedAt", ">=", startTimestamp);
+          const countSnapshot = await reviewsQuery.count().get();
+          totalReviewCount += countSnapshot.data().count;
+        }
+      }
+
+      return totalReviewCount;
+    } catch (error) {
+      console.error("Error counting user reviews this month:", error);
+      return 0;
     }
   }
 }

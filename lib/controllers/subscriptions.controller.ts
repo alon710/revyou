@@ -40,4 +40,18 @@ export class SubscriptionsController extends BaseController<SubscriptionCreate, 
       return allBusinesses.length < limits.businesses;
     }, "Failed to check business limit");
   }
+
+  async checkReviewQuota(userId: string): Promise<{ allowed: boolean; currentCount: number; limit: number }> {
+    return this.handleError(async () => {
+      const repo = this.repository as SubscriptionsRepositoryAdmin;
+      const limits = await repo.getUserPlanLimits(userId);
+      const currentCount = await repo.countUserReviewsThisMonth(userId);
+
+      return {
+        allowed: currentCount < limits.reviewsPerMonth,
+        currentCount,
+        limit: limits.reviewsPerMonth,
+      };
+    }, "Failed to check review quota");
+  }
 }

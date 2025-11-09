@@ -50,6 +50,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
       posted: { label: "פורסם", variant: "default" as const },
       rejected: { label: "נדחה", variant: "secondary" as const },
       failed: { label: "נכשל", variant: "secondary" as const },
+      quota_exceeded: { label: "חריגה ממכסה", variant: "destructive" as const },
     };
 
     const statusInfo = statusMap[status] || statusMap.pending;

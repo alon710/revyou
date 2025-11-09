@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSubscription } from "@/lib/hooks/useSubscription";
-import { useUserStats } from "@/hooks/useUserStats";
+import { useSubscription } from "@/hooks/useSubscription";
 import { SubscriptionInfo } from "@/components/dashboard/dashboard/SubscriptionInfo";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -11,9 +10,12 @@ import { Loading } from "@/components/ui/loading";
 
 export default function DashboardPage() {
   const { user: authUser, loading: authLoading } = useAuth();
-  const { subscription, limits, planType, loading: subscriptionLoading } = useSubscription();
-  const { reviewCount, loading: reviewCountLoading } = useUserStats();
+  const { subscription, planType, loading: subscriptionLoading } = useSubscription();
   const [businessesCount, setBusinessesCount] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
+  const [businessesPercent, setBusinessesPercent] = useState(0);
+  const [reviewsPercent, setReviewsPercent] = useState(0);
+  const [limits, setLimits] = useState({ businesses: 1, reviewsPerMonth: 5, autoPost: false, requireApproval: true });
   const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(async () => {
@@ -22,23 +24,19 @@ export default function DashboardPage() {
     try {
       setLoading(true);
 
-      const accountsResponse = await fetch(`/api/users/${authUser.uid}/accounts`);
-      if (!accountsResponse.ok) {
-        throw new Error("Failed to fetch accounts");
+      const statsResponse = await fetch(`/api/users/${authUser.uid}/stats`);
+      if (!statsResponse.ok) {
+        throw new Error("Failed to fetch stats");
       }
-      const accountsData = await accountsResponse.json();
+      const stats = await statsResponse.json();
 
-      let totalBusinesses = 0;
-      for (const account of accountsData.accounts || []) {
-        const businessesResponse = await fetch(`/api/users/${authUser.uid}/accounts/${account.id}/businesses`);
-        if (businessesResponse.ok) {
-          const businessesData = await businessesResponse.json();
-          totalBusinesses += businessesData.businesses?.length || 0;
-        }
-      }
-      setBusinessesCount(totalBusinesses);
+      setBusinessesCount(stats.businesses);
+      setReviewCount(stats.reviews);
+      setBusinessesPercent(stats.businessesPercent);
+      setReviewsPercent(stats.reviewsPercent);
+      setLimits(stats.limits);
     } catch (error) {
-      console.error("Error loading data:", error);
+      console.error("Error loading stats:", error);
     } finally {
       setLoading(false);
     }
@@ -50,7 +48,7 @@ export default function DashboardPage() {
     }
   }, [authUser, authLoading, loadData]);
 
-  if (authLoading || loading || subscriptionLoading || reviewCountLoading) {
+  if (authLoading || loading || subscriptionLoading) {
     return <Loading size="md" fullScreen />;
   }
 
@@ -67,6 +65,8 @@ export default function DashboardPage() {
         subscription={subscription}
         currentBusiness={businessesCount}
         currentReviews={reviewCount}
+        businessesPercent={businessesPercent}
+        reviewsPercent={reviewsPercent}
         planType={planType}
       />
     </PageContainer>
