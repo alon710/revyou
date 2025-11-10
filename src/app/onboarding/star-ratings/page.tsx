@@ -18,8 +18,7 @@ import {
 import { getDefaultBusinessConfig } from "@/lib/utils/business-config";
 import { toast } from "sonner";
 import type { BusinessConfig } from "@/lib/types";
-import { BusinessDetailsFormData } from "@/components/dashboard/businesses/forms/BusinessDetailsForm";
-import { AIResponseSettingsFormData } from "@/components/dashboard/businesses/forms/AIResponseSettingsForm";
+import { useOnboardingStore } from "@/lib/store/onboarding-store";
 
 export default function OnboardingStarRatings() {
   const { user } = useAuth();
@@ -29,7 +28,12 @@ export default function OnboardingStarRatings() {
   const accountId = searchParams.get("accountId");
   const businessId = searchParams.get("businessId");
 
+  const onboardingStore = useOnboardingStore();
+
   const [formData, setFormData] = useState<StarRatingConfigFormData>(() => {
+    if (onboardingStore.starRatings) {
+      return onboardingStore.starRatings;
+    }
     const defaults = getDefaultBusinessConfig();
     return defaults.starConfigs;
   });
@@ -39,18 +43,23 @@ export default function OnboardingStarRatings() {
   useEffect(() => {
     if (!accountId || !businessId) {
       router.push("/onboarding/choose-business");
+    } else {
+      onboardingStore.setAccountId(accountId);
+      onboardingStore.setBusinessId(businessId);
     }
   }, [accountId, businessId, router]);
 
   const handleFormChange = (rating: 1 | 2 | 3 | 4 | 5, config: { autoReply: boolean; customInstructions: string }) => {
-    setFormData((prev) => ({
-      ...prev,
+    const updatedData = {
+      ...formData,
       [rating]: config,
-    }));
+    };
+    setFormData(updatedData);
+
+    onboardingStore.setStarRatings(updatedData);
   };
 
   const handleBack = () => {
-    sessionStorage.setItem("onboarding-star-ratings", JSON.stringify(formData));
     router.push(`/onboarding/ai-settings?accountId=${accountId}&businessId=${businessId}`);
   };
 
@@ -60,23 +69,7 @@ export default function OnboardingStarRatings() {
     try {
       setSaving(true);
 
-      const businessDetailsRaw = sessionStorage.getItem("onboarding-business-details");
-      const aiSettingsRaw = sessionStorage.getItem("onboarding-ai-settings");
-
-      const businessDetails: BusinessDetailsFormData = businessDetailsRaw ? JSON.parse(businessDetailsRaw) : {};
-      const aiSettings: AIResponseSettingsFormData = aiSettingsRaw ? JSON.parse(aiSettingsRaw) : {};
-
-      const config: Partial<BusinessConfig> = {
-        name: businessDetails.name || "",
-        description: businessDetails.description || "",
-        phoneNumber: businessDetails.phoneNumber || "",
-        toneOfVoice: aiSettings.toneOfVoice,
-        languageMode: aiSettings.languageMode,
-        allowedEmojis: aiSettings.allowedEmojis,
-        maxSentences: aiSettings.maxSentences,
-        signature: aiSettings.signature,
-        starConfigs: formData,
-      };
+      const config = onboardingStore.getCombinedConfig();
 
       const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
         method: "PATCH",
@@ -88,9 +81,7 @@ export default function OnboardingStarRatings() {
         throw new Error("Failed to save configuration");
       }
 
-      sessionStorage.removeItem("onboarding-business-details");
-      sessionStorage.removeItem("onboarding-ai-settings");
-      sessionStorage.removeItem("onboarding-star-ratings");
+      onboardingStore.reset();
 
       toast.success("ההגדרות נשמרו בהצלחה!");
 

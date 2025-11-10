@@ -16,6 +16,7 @@ import {
 } from "@/components/dashboard/businesses/forms/AIResponseSettingsForm";
 import { getDefaultBusinessConfig } from "@/lib/utils/business-config";
 import { ToneOfVoice, LanguageMode } from "@/lib/types";
+import { useOnboardingStore } from "@/lib/store/onboarding-store";
 
 export default function OnboardingAISettings() {
   const router = useRouter();
@@ -24,7 +25,12 @@ export default function OnboardingAISettings() {
   const accountId = searchParams.get("accountId");
   const businessId = searchParams.get("businessId");
 
+  const onboardingStore = useOnboardingStore();
+
   const [formData, setFormData] = useState<AIResponseSettingsFormData>(() => {
+    if (onboardingStore.aiSettings) {
+      return onboardingStore.aiSettings;
+    }
     const defaults = getDefaultBusinessConfig();
     return {
       toneOfVoice: defaults.toneOfVoice,
@@ -38,6 +44,9 @@ export default function OnboardingAISettings() {
   useEffect(() => {
     if (!accountId || !businessId) {
       router.push("/onboarding/choose-business");
+    } else {
+      onboardingStore.setAccountId(accountId);
+      onboardingStore.setBusinessId(businessId);
     }
   }, [accountId, businessId, router]);
 
@@ -45,16 +54,17 @@ export default function OnboardingAISettings() {
     field: keyof AIResponseSettingsFormData,
     value: string | string[] | number | ToneOfVoice | LanguageMode
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    const updatedData = { ...formData, [field]: value };
+    setFormData(updatedData);
+
+    onboardingStore.setAISettings(updatedData);
   };
 
   const handleBack = () => {
-    sessionStorage.setItem("onboarding-ai-settings", JSON.stringify(formData));
     router.push(`/onboarding/business-details?accountId=${accountId}&businessId=${businessId}`);
   };
 
   const handleNext = () => {
-    sessionStorage.setItem("onboarding-ai-settings", JSON.stringify(formData));
     router.push(`/onboarding/star-ratings?accountId=${accountId}&businessId=${businessId}`);
   };
 

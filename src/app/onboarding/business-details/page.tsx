@@ -18,6 +18,7 @@ import {
   BusinessDetailsFormData,
 } from "@/components/dashboard/businesses/forms/BusinessDetailsForm";
 import { toast } from "sonner";
+import { useOnboardingStore } from "@/lib/store/onboarding-store";
 
 export default function OnboardingBusinessDetails() {
   const { user } = useAuth();
@@ -27,17 +28,27 @@ export default function OnboardingBusinessDetails() {
   const accountId = searchParams.get("accountId");
   const businessId = searchParams.get("businessId");
 
+  const onboardingStore = useOnboardingStore();
+
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState<BusinessDetailsFormData>({
-    name: "",
-    description: "",
-    phoneNumber: "",
+  const [formData, setFormData] = useState<BusinessDetailsFormData>(() => {
+    if (onboardingStore.businessDetails) {
+      return onboardingStore.businessDetails;
+    }
+    return {
+      name: "",
+      description: "",
+      phoneNumber: "",
+    };
   });
 
   useEffect(() => {
     if (!accountId || !businessId) {
       router.push("/onboarding/choose-business");
+    } else {
+      onboardingStore.setAccountId(accountId);
+      onboardingStore.setBusinessId(businessId);
     }
   }, [accountId, businessId, router]);
 
@@ -56,11 +67,15 @@ export default function OnboardingBusinessDetails() {
       const { business: biz } = await response.json();
       setBusiness(biz);
 
-      setFormData({
-        name: biz.config?.name || "",
-        description: biz.config?.description || "",
-        phoneNumber: biz.config?.phoneNumber || "",
-      });
+      if (onboardingStore.businessDetails) {
+        setFormData(onboardingStore.businessDetails);
+      } else {
+        setFormData({
+          name: biz.config?.name || "",
+          description: biz.config?.description || "",
+          phoneNumber: biz.config?.phoneNumber || "",
+        });
+      }
     } catch (error) {
       console.error("Error fetching business:", error);
       router.push("/onboarding/choose-business");
@@ -76,11 +91,13 @@ export default function OnboardingBusinessDetails() {
   }, [accountId, businessId, fetchBusiness]);
 
   const handleFormChange = (field: keyof BusinessDetailsFormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    const updatedData = { ...formData, [field]: value };
+    setFormData(updatedData);
+
+    onboardingStore.setBusinessDetails(updatedData);
   };
 
   const handleNext = async () => {
-    sessionStorage.setItem("onboarding-business-details", JSON.stringify(formData));
     router.push(`/onboarding/ai-settings?accountId=${accountId}&businessId=${businessId}`);
   };
 
