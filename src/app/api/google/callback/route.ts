@@ -56,15 +56,7 @@ export async function GET(request: NextRequest) {
       return redirectToBusinesses(false);
     }
 
-    console.error("[Callback Debug] About to exchange code for tokens");
-    console.error(`[Callback Debug] Code received (first 15 chars): ${code.substring(0, 15)}...`);
-    console.error(`[Callback Debug] Code length: ${code.length}`);
-
     const tokens = await exchangeCodeForTokens(code);
-
-    console.error("[Callback Debug] Token exchange completed");
-    console.error(`[Callback Debug] Has refresh token: ${!!tokens.refresh_token}`);
-    console.error(`[Callback Debug] Has access token: ${!!tokens.access_token}`);
 
     if (!tokens.refresh_token) {
       console.error("OAuth callback - No refresh token received from Google");
@@ -117,11 +109,6 @@ export async function GET(request: NextRequest) {
     console.error("Error message:", error instanceof Error ? error.message : error);
     console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
     console.error("Error details:", JSON.stringify(error, null, 2));
-    console.error("[Callback Debug] Environment configuration:");
-    console.error(`[Callback Debug] NEXT_PUBLIC_APP_URL: ${process.env.NEXT_PUBLIC_APP_URL}`);
-    console.error(`[Callback Debug] GOOGLE_CLIENT_ID exists: ${!!process.env.GOOGLE_CLIENT_ID}`);
-    console.error(`[Callback Debug] GOOGLE_CLIENT_SECRET exists: ${!!process.env.GOOGLE_CLIENT_SECRET}`);
-    console.error(`[Callback Debug] Expected redirect URI: ${process.env.NEXT_PUBLIC_APP_URL}/api/google/callback`);
     console.error("===========================");
 
     return redirectToBusinesses(false);
