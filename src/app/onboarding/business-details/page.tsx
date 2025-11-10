@@ -97,6 +97,10 @@ export default function OnboardingBusinessDetails() {
     onboardingStore.setBusinessDetails(updatedData);
   };
 
+  const handleBack = () => {
+    router.push(`/onboarding/choose-business?accountId=${accountId}`);
+  };
+
   const handleNext = async () => {
     router.push(`/onboarding/ai-settings?accountId=${accountId}&businessId=${businessId}`);
   };
@@ -123,9 +127,14 @@ export default function OnboardingBusinessDetails() {
         <DashboardCardContent className="space-y-6">
           <BusinessDetailsForm values={formData} onChange={handleFormChange} businessNamePlaceholder={business.name} />
 
-          <Button onClick={handleNext} className="w-full">
-            הבא
-          </Button>
+          <div className="flex gap-3">
+            <Button onClick={handleBack} variant="outline" className="flex-1">
+              הקודם
+            </Button>
+            <Button onClick={handleNext} className="flex-1">
+              הבא
+            </Button>
+          </div>
         </DashboardCardContent>
       </DashboardCard>
     </div>

@@ -21,9 +21,10 @@ interface BusinessSelectorProps {
   onSelect: (business: GoogleBusinessProfileBusiness) => void;
   onRetry: () => void;
   connecting?: boolean;
+  onBack?: () => void;
 }
 
-export function BusinessSelector({ businesses, loading, error, onSelect, onRetry, connecting }: BusinessSelectorProps) {
+export function BusinessSelector({ businesses, loading, error, onSelect, onRetry, connecting, onBack }: BusinessSelectorProps) {
   const [selected, setSelected] = useState<GoogleBusinessProfileBusiness | null>(null);
 
   const handleConnect = () => {
@@ -93,6 +94,11 @@ export function BusinessSelector({ businesses, loading, error, onSelect, onRetry
             </RadioGroup>
 
             <div className="mt-6 flex gap-3" dir="rtl">
+              {onBack && (
+                <Button onClick={onBack} variant="outline" className="flex-1" disabled={connecting}>
+                  הקודם
+                </Button>
+              )}
               <Button onClick={handleConnect} className="flex-1" disabled={connecting || !selected}>
                 {connecting ? "מחבר..." : "חבר עסק זה"}
               </Button>

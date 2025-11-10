@@ -61,6 +61,10 @@ export default function OnboardingStep3() {
     }
   }, [accountId, loadAvailableBusinesses]);
 
+  const handleBack = () => {
+    router.push("/onboarding/connect-account");
+  };
+
   const handleConnect = async (business: GoogleBusinessProfileBusiness) => {
     if (!user || !accountId) return;
 
@@ -126,6 +130,7 @@ export default function OnboardingStep3() {
         onSelect={handleConnect}
         onRetry={loadAvailableBusinesses}
         connecting={connecting}
+        onBack={handleBack}
       />
     </div>
   );

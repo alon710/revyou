@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DashboardCard,
@@ -12,7 +13,12 @@ import {
 import { Building2 } from "lucide-react";
 
 export default function OnboardingStep2() {
+  const router = useRouter();
   const [connecting, setConnecting] = useState(false);
+
+  const handleBack = () => {
+    router.push("/dashboard/home");
+  };
 
   const handleConnect = () => {
     setConnecting(true);
@@ -47,9 +53,14 @@ export default function OnboardingStep2() {
             </ul>
           </div>
 
-          <Button onClick={handleConnect} disabled={connecting} className="w-full">
-            {connecting ? "מתחבר..." : "התחבר עם Google"}
-          </Button>
+          <div className="flex gap-3">
+            <Button onClick={handleBack} variant="outline" className="flex-1">
+              הקודם
+            </Button>
+            <Button onClick={handleConnect} disabled={connecting} className="flex-1">
+              {connecting ? "מתחבר..." : "התחבר עם Google"}
+            </Button>
+          </div>
         </DashboardCardContent>
       </DashboardCard>
     </div>
