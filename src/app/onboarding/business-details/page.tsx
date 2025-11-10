@@ -4,21 +4,13 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Business } from "@/lib/types";
-import { Button } from "@/components/ui/button";
-import {
-  DashboardCard,
-  DashboardCardContent,
-  DashboardCardDescription,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from "@/components/ui/dashboard-card";
 import { Loading } from "@/components/ui/loading";
 import {
   BusinessDetailsForm,
   BusinessDetailsFormData,
 } from "@/components/dashboard/businesses/forms/BusinessDetailsForm";
-import { toast } from "sonner";
 import { useOnboardingStore } from "@/lib/store/onboarding-store";
+import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 
 export default function OnboardingBusinessDetails() {
   const { user } = useAuth();
@@ -28,13 +20,16 @@ export default function OnboardingBusinessDetails() {
   const accountId = searchParams.get("accountId");
   const businessId = searchParams.get("businessId");
 
-  const onboardingStore = useOnboardingStore();
+  const businessDetails = useOnboardingStore((state) => state.businessDetails);
+  const setAccountId = useOnboardingStore((state) => state.setAccountId);
+  const setBusinessId = useOnboardingStore((state) => state.setBusinessId);
+  const setBusinessDetails = useOnboardingStore((state) => state.setBusinessDetails);
 
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<BusinessDetailsFormData>(() => {
-    if (onboardingStore.businessDetails) {
-      return onboardingStore.businessDetails;
+    if (businessDetails) {
+      return businessDetails;
     }
     return {
       name: "",
@@ -47,10 +42,10 @@ export default function OnboardingBusinessDetails() {
     if (!accountId || !businessId) {
       router.push("/onboarding/choose-business");
     } else {
-      onboardingStore.setAccountId(accountId);
-      onboardingStore.setBusinessId(businessId);
+      setAccountId(accountId);
+      setBusinessId(businessId);
     }
-  }, [accountId, businessId, router]);
+  }, [accountId, businessId, router, setAccountId, setBusinessId]);
 
   const fetchBusiness = useCallback(async () => {
     if (!user || !accountId || !businessId) return;
@@ -67,8 +62,8 @@ export default function OnboardingBusinessDetails() {
       const { business: biz } = await response.json();
       setBusiness(biz);
 
-      if (onboardingStore.businessDetails) {
-        setFormData(onboardingStore.businessDetails);
+      if (businessDetails) {
+        setFormData(businessDetails);
       } else {
         setFormData({
           name: biz.config?.name || "",
@@ -82,7 +77,7 @@ export default function OnboardingBusinessDetails() {
     } finally {
       setLoading(false);
     }
-  }, [user, accountId, businessId, router]);
+  }, [user, accountId, businessId, router, businessDetails]);
 
   useEffect(() => {
     if (accountId && businessId) {
@@ -93,8 +88,7 @@ export default function OnboardingBusinessDetails() {
   const handleFormChange = (field: keyof BusinessDetailsFormData, value: string) => {
     const updatedData = { ...formData, [field]: value };
     setFormData(updatedData);
-
-    onboardingStore.setBusinessDetails(updatedData);
+    setBusinessDetails(updatedData);
   };
 
   const handleBack = () => {
@@ -118,25 +112,13 @@ export default function OnboardingBusinessDetails() {
   }
 
   return (
-    <div>
-      <DashboardCard>
-        <DashboardCardHeader>
-          <DashboardCardTitle>פרטי העסק</DashboardCardTitle>
-          <DashboardCardDescription>הגדר את פרטי העסק הבסיסיים שישמשו ביצירת תגובות AI</DashboardCardDescription>
-        </DashboardCardHeader>
-        <DashboardCardContent className="space-y-6">
-          <BusinessDetailsForm values={formData} onChange={handleFormChange} businessNamePlaceholder={business.name} />
-
-          <div className="flex gap-3">
-            <Button onClick={handleBack} variant="outline" className="flex-1">
-              הקודם
-            </Button>
-            <Button onClick={handleNext} className="flex-1">
-              הבא
-            </Button>
-          </div>
-        </DashboardCardContent>
-      </DashboardCard>
-    </div>
+    <OnboardingCard
+      title="פרטי העסק"
+      description="הגדר את פרטי העסק הבסיסיים שישמשו ביצירת תגובות AI"
+      backButton={{ onClick: handleBack }}
+      nextButton={{ label: "הבא", onClick: handleNext }}
+    >
+      <BusinessDetailsForm values={formData} onChange={handleFormChange} businessNamePlaceholder={business.name} />
+    </OnboardingCard>
   );
 }

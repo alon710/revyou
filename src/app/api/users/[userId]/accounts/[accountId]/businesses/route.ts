@@ -73,9 +73,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ use
       config: businessConfig,
     };
 
-    const business = await controller.upsertBusiness(
-      businessData,
-      () => subscriptionsController.checkBusinessLimit(userId)
+    const business = await controller.upsertBusiness(businessData, () =>
+      subscriptionsController.checkBusinessLimit(userId)
     );
 
     return NextResponse.json({ business }, { status: 201 });

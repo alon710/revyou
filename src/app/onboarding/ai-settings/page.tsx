@@ -2,14 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import {
-  DashboardCard,
-  DashboardCardContent,
-  DashboardCardDescription,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from "@/components/ui/dashboard-card";
 import {
   AIResponseSettingsForm,
   AIResponseSettingsFormData,
@@ -17,6 +9,7 @@ import {
 import { getDefaultBusinessConfig } from "@/lib/utils/business-config";
 import { ToneOfVoice, LanguageMode } from "@/lib/types";
 import { useOnboardingStore } from "@/lib/store/onboarding-store";
+import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 
 export default function OnboardingAISettings() {
   const router = useRouter();
@@ -25,11 +18,14 @@ export default function OnboardingAISettings() {
   const accountId = searchParams.get("accountId");
   const businessId = searchParams.get("businessId");
 
-  const onboardingStore = useOnboardingStore();
+  const aiSettings = useOnboardingStore((state) => state.aiSettings);
+  const setAccountId = useOnboardingStore((state) => state.setAccountId);
+  const setBusinessId = useOnboardingStore((state) => state.setBusinessId);
+  const setAISettings = useOnboardingStore((state) => state.setAISettings);
 
   const [formData, setFormData] = useState<AIResponseSettingsFormData>(() => {
-    if (onboardingStore.aiSettings) {
-      return onboardingStore.aiSettings;
+    if (aiSettings) {
+      return aiSettings;
     }
     const defaults = getDefaultBusinessConfig();
     return {
@@ -45,10 +41,10 @@ export default function OnboardingAISettings() {
     if (!accountId || !businessId) {
       router.push("/onboarding/choose-business");
     } else {
-      onboardingStore.setAccountId(accountId);
-      onboardingStore.setBusinessId(businessId);
+      setAccountId(accountId);
+      setBusinessId(businessId);
     }
-  }, [accountId, businessId, router]);
+  }, [accountId, businessId, router, setAccountId, setBusinessId]);
 
   const handleFormChange = (
     field: keyof AIResponseSettingsFormData,
@@ -56,8 +52,7 @@ export default function OnboardingAISettings() {
   ) => {
     const updatedData = { ...formData, [field]: value };
     setFormData(updatedData);
-
-    onboardingStore.setAISettings(updatedData);
+    setAISettings(updatedData);
   };
 
   const handleBack = () => {
@@ -73,25 +68,13 @@ export default function OnboardingAISettings() {
   }
 
   return (
-    <div>
-      <DashboardCard>
-        <DashboardCardHeader>
-          <DashboardCardTitle>הגדרות תגובה AI</DashboardCardTitle>
-          <DashboardCardDescription>התאם אישית את סגנון ואופן התגובות האוטומטיות</DashboardCardDescription>
-        </DashboardCardHeader>
-        <DashboardCardContent className="space-y-6">
-          <AIResponseSettingsForm values={formData} onChange={handleFormChange} />
-
-          <div className="flex gap-3">
-            <Button onClick={handleBack} variant="outline" className="flex-1">
-              הקודם
-            </Button>
-            <Button onClick={handleNext} className="flex-1">
-              הבא
-            </Button>
-          </div>
-        </DashboardCardContent>
-      </DashboardCard>
-    </div>
+    <OnboardingCard
+      title="הגדרות תגובה AI"
+      description="התאם אישית את סגנון ואופן התגובות האוטומטיות"
+      backButton={{ onClick: handleBack }}
+      nextButton={{ label: "הבא", onClick: handleNext }}
+    >
+      <AIResponseSettingsForm values={formData} onChange={handleFormChange} />
+    </OnboardingCard>
   );
 }

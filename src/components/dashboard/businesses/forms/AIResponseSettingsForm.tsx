@@ -6,7 +6,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TooltipIcon } from "@/components/ui/tooltip";
 import { EmojiPicker } from "@/components/ui/emoji-picker";
 import { ToneOfVoice, LanguageMode } from "@/lib/types";
-import { useIsMobile } from "@/hooks/use-mobile";
 import emojiRegex from "emoji-regex";
 
 export interface AIResponseSettingsFormData {
@@ -39,8 +38,6 @@ export function AIResponseSettingsForm({
   showTooltips = true,
   disabled = false,
 }: AIResponseSettingsFormProps) {
-  const isMobile = useIsMobile();
-
   const handleEmojiChange = (value: string) => {
     const emojis = extractEmojis(value);
     onChange("allowedEmojis", emojis);

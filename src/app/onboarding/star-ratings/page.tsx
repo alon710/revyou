@@ -3,22 +3,14 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import {
-  DashboardCard,
-  DashboardCardContent,
-  DashboardCardDescription,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from "@/components/ui/dashboard-card";
 import {
   StarRatingConfigForm,
   StarRatingConfigFormData,
 } from "@/components/dashboard/businesses/forms/StarRatingConfigForm";
 import { getDefaultBusinessConfig } from "@/lib/utils/business-config";
 import { toast } from "sonner";
-import type { BusinessConfig } from "@/lib/types";
 import { useOnboardingStore } from "@/lib/store/onboarding-store";
+import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 
 export default function OnboardingStarRatings() {
   const { user } = useAuth();
@@ -28,11 +20,16 @@ export default function OnboardingStarRatings() {
   const accountId = searchParams.get("accountId");
   const businessId = searchParams.get("businessId");
 
-  const onboardingStore = useOnboardingStore();
+  const starRatings = useOnboardingStore((state) => state.starRatings);
+  const setAccountId = useOnboardingStore((state) => state.setAccountId);
+  const setBusinessId = useOnboardingStore((state) => state.setBusinessId);
+  const setStarRatings = useOnboardingStore((state) => state.setStarRatings);
+  const getCombinedConfig = useOnboardingStore((state) => state.getCombinedConfig);
+  const reset = useOnboardingStore((state) => state.reset);
 
   const [formData, setFormData] = useState<StarRatingConfigFormData>(() => {
-    if (onboardingStore.starRatings) {
-      return onboardingStore.starRatings;
+    if (starRatings) {
+      return starRatings;
     }
     const defaults = getDefaultBusinessConfig();
     return defaults.starConfigs;
@@ -44,10 +41,10 @@ export default function OnboardingStarRatings() {
     if (!accountId || !businessId) {
       router.push("/onboarding/choose-business");
     } else {
-      onboardingStore.setAccountId(accountId);
-      onboardingStore.setBusinessId(businessId);
+      setAccountId(accountId);
+      setBusinessId(businessId);
     }
-  }, [accountId, businessId, router]);
+  }, [accountId, businessId, router, setAccountId, setBusinessId]);
 
   const handleFormChange = (rating: 1 | 2 | 3 | 4 | 5, config: { autoReply: boolean; customInstructions: string }) => {
     const updatedData = {
@@ -55,8 +52,7 @@ export default function OnboardingStarRatings() {
       [rating]: config,
     };
     setFormData(updatedData);
-
-    onboardingStore.setStarRatings(updatedData);
+    setStarRatings(updatedData);
   };
 
   const handleBack = () => {
@@ -69,7 +65,7 @@ export default function OnboardingStarRatings() {
     try {
       setSaving(true);
 
-      const config = onboardingStore.getCombinedConfig();
+      const config = getCombinedConfig();
 
       const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
         method: "PATCH",
@@ -81,7 +77,7 @@ export default function OnboardingStarRatings() {
         throw new Error("Failed to save configuration");
       }
 
-      onboardingStore.reset();
+      reset();
 
       toast.success("ההגדרות נשמרו בהצלחה!");
 
@@ -99,25 +95,17 @@ export default function OnboardingStarRatings() {
   }
 
   return (
-    <div>
-      <DashboardCard>
-        <DashboardCardHeader>
-          <DashboardCardTitle>הגדרות לפי דירוג כוכבים</DashboardCardTitle>
-          <DashboardCardDescription>התאם אישית את התגובות האוטומטיות לפי רמת הדירוג</DashboardCardDescription>
-        </DashboardCardHeader>
-        <DashboardCardContent className="space-y-6">
-          <StarRatingConfigForm values={formData} onChange={handleFormChange} />
-
-          <div className="flex gap-3">
-            <Button onClick={handleBack} variant="outline" className="flex-1" disabled={saving}>
-              הקודם
-            </Button>
-            <Button onClick={handleFinish} className="flex-1" disabled={saving}>
-              {saving ? "שומר..." : "סיים"}
-            </Button>
-          </div>
-        </DashboardCardContent>
-      </DashboardCard>
-    </div>
+    <OnboardingCard
+      title="הגדרות לפי דירוג כוכבים"
+      description="התאם אישית את התגובות האוטומטיות לפי רמת הדירוג"
+      backButton={{ onClick: handleBack, disabled: saving }}
+      nextButton={{
+        label: saving ? "שומר..." : "סיים",
+        onClick: handleFinish,
+        disabled: saving,
+      }}
+    >
+      <StarRatingConfigForm values={formData} onChange={handleFormChange} />
+    </OnboardingCard>
   );
 }
