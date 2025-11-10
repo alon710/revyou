@@ -119,7 +119,7 @@ export function AIResponseSettingsForm({
             dir="ltr"
             className="flex-1"
           />
-          {!isMobile && <EmojiPicker onEmojiSelect={handleEmojiSelect} disabled={disabled} />}
+          <EmojiPicker onEmojiSelect={handleEmojiSelect} disabled={disabled} />
         </div>
         <p className="text-xs text-muted-foreground text-right">
           רק אימוג&apos;ים תקינים יישמרו. כל תווים אחרים יוסרו אוטומטית

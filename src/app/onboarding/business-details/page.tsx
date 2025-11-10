@@ -63,7 +63,6 @@ export default function OnboardingBusinessDetails() {
       });
     } catch (error) {
       console.error("Error fetching business:", error);
-      toast.error("לא ניתן לטעון את פרטי העסק");
       router.push("/onboarding/choose-business");
     } finally {
       setLoading(false);
