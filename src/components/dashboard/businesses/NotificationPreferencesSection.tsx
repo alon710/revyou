@@ -7,6 +7,7 @@ import { Bell } from "lucide-react";
 import EditableSection from "@/components/dashboard/shared/EditableSection";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { TooltipIcon } from "@/components/ui/tooltip";
 
 interface NotificationPreferencesSectionProps {
   business: Business;
@@ -50,9 +51,12 @@ export default function NotificationPreferencesSection({
       renderForm={({ data, isLoading, onChange }) => (
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1 flex-1">
-            <Label htmlFor="emailOnNewReview" className="text-sm font-medium cursor-pointer">
-              ביקורת חדשה
-            </Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="emailOnNewReview" className="text-sm font-medium cursor-pointer">
+                ביקורת חדשה
+              </Label>
+              <TooltipIcon text="כאשר מופעל, תקבל הודעת אימייל מיידית כל פעם שמתפרסמת ביקורת חדשה על העסק שלך ב-Google. זה מאפשר לך להגיב במהירות ללקוחות" />
+            </div>
             <p className="text-xs text-muted-foreground leading-relaxed">קבל התראה באימייל כאשר מתקבלת ביקורת חדשה</p>
           </div>
           <Switch

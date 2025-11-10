@@ -46,16 +46,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ use
 
     const body = await req.json();
 
+    const controller = new BusinessesController(userId, accountId);
     const subscriptionsController = new SubscriptionsController();
-    const canCreate = await subscriptionsController.checkBusinessLimit(userId);
-    if (!canCreate) {
-      return NextResponse.json(
-        {
-          error: "הגעת למגבלת העסקים בתוכנית הנוכחית. שדרג את התוכנית כדי להוסיף עסקים נוספים.",
-        },
-        { status: 403 }
-      );
-    }
 
     const defaultConfig = getDefaultBusinessConfig();
     const businessConfig = {
@@ -81,8 +73,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ use
       config: businessConfig,
     };
 
-    const controller = new BusinessesController(userId, accountId);
-    const business = await controller.upsertBusiness(businessData);
+    const business = await controller.upsertBusiness(businessData, () =>
+      subscriptionsController.checkBusinessLimit(userId)
+    );
 
     return NextResponse.json({ business }, { status: 201 });
   } catch (error) {

@@ -1,7 +1,9 @@
 import type { BusinessCreate, Business, BusinessUpdate, BusinessFilters, BusinessConfig } from "@/lib/types";
 import { BusinessesRepositoryAdmin } from "@/lib/repositories/businesses.repository.admin";
 import { BaseController } from "./base.controller";
-import { ConflictError } from "@/lib/api/errors";
+import { ConflictError, ForbiddenError } from "@/lib/api/errors";
+import { adminDb } from "@/lib/firebase/admin";
+import * as admin from "firebase-admin";
 
 export class BusinessesController extends BaseController<BusinessCreate, Business, BusinessUpdate> {
   private userId: string;
@@ -35,7 +37,7 @@ export class BusinessesController extends BaseController<BusinessCreate, Busines
     }, "Failed to create business");
   }
 
-  async upsertBusiness(data: BusinessCreate): Promise<Business> {
+  async upsertBusiness(data: BusinessCreate, checkLimit?: () => Promise<boolean>): Promise<Business> {
     return this.handleError(async () => {
       const repo = this.repository as BusinessesRepositoryAdmin;
 
@@ -57,7 +59,53 @@ export class BusinessesController extends BaseController<BusinessCreate, Busines
         });
       }
 
-      return this.repository.create(data);
+      if (checkLimit) {
+        const basePath = `users/${this.userId}/accounts/${this.accountId}/businesses`;
+        const collectionRef = adminDb.collection(basePath);
+
+        const businessId = await adminDb.runTransaction(async (transaction) => {
+          const querySnapshot = await transaction.get(
+            collectionRef.where("googleBusinessId", "==", data.googleBusinessId).limit(1)
+          );
+
+          if (!querySnapshot.empty) {
+            const existingDoc = querySnapshot.docs[0];
+            transaction.update(existingDoc.ref, {
+              name: data.name,
+              phoneNumber: data.phoneNumber,
+              websiteUrl: data.websiteUrl,
+              description: data.description,
+              photoUrl: data.photoUrl,
+              config: data.config,
+              address: data.address,
+              mapsUrl: data.mapsUrl,
+              connected: true,
+              connectedAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+            return existingDoc.id;
+          }
+
+          const canCreate = await checkLimit();
+          if (!canCreate) {
+            throw new ForbiddenError("הגעת למגבלת העסקים בתוכנית הנוכחית. שדרג את התוכנית כדי להוסיף עסקים נוספים.");
+          }
+
+          const newBusinessRef = collectionRef.doc();
+          const businessData = {
+            ...data,
+            connected: true,
+            connectedAt: admin.firestore.FieldValue.serverTimestamp(),
+          };
+          transaction.set(newBusinessRef, businessData);
+          return newBusinessRef.id;
+        });
+
+        const business = await repo.get(businessId);
+        if (!business) throw new Error("Failed to create/update business");
+        return business;
+      } else {
+        return this.repository.create(data);
+      }
     }, "Failed to upsert business");
   }
 
