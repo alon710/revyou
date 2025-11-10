@@ -144,7 +144,7 @@ export const onGoogleReviewNotification = onMessagePublished(
         name: googleReview.reviewer.displayName,
         photoUrl: googleReview.reviewer.profilePhotoUrl,
         rating: starRatingToNumber(googleReview.starRating),
-        text: googleReview.comment,
+        text: googleReview.comment ?? null,
         date: admin.firestore.Timestamp.fromDate(parseGoogleTimestamp(googleReview.createTime)),
         updateTime: admin.firestore.Timestamp.fromDate(parseGoogleTimestamp(googleReview.updateTime)),
         receivedAt: admin.firestore.Timestamp.now(),
