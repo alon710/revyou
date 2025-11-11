@@ -15,7 +15,7 @@ interface OnboardingCardProps {
   description: string;
   children: ReactNode;
   backButton?: {
-    label?: string;
+    label: string;
     onClick: () => void;
     disabled?: boolean;
   };

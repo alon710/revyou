@@ -8,6 +8,7 @@ import { useRouter } from "@/i18n/routing";
 
 export default function OnboardingStep2() {
   const router = useRouter();
+  const tCommon = useTranslations("common");
   const t = useTranslations("onboarding.connectAccount");
   const [connecting, setConnecting] = useState(false);
 
@@ -24,7 +25,7 @@ export default function OnboardingStep2() {
     <OnboardingCard
       title={t("title")}
       description={t("description")}
-      backButton={{ onClick: handleBack }}
+      backButton={{ onClick: handleBack, label: tCommon("back") }}
       nextButton={{
         label: connecting ? t("connectingButton") : t("connectButton"),
         onClick: handleConnect,
