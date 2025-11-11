@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { TooltipIcon } from "@/components/ui/tooltip";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { getLocaleDir, type Locale } from "@/i18n/config";
 
 export interface BusinessDetailsFormData {
   name: string;
@@ -28,9 +29,11 @@ export function BusinessDetailsForm({
   businessNamePlaceholder,
 }: BusinessDetailsFormProps) {
   const t = useTranslations("dashboard.businesses.forms.businessDetails");
+  const locale = useLocale() as Locale;
+  const dir = getLocaleDir(locale);
 
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-6" dir={dir}>
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           {showTooltips && (
@@ -49,7 +52,7 @@ export function BusinessDetailsForm({
           onChange={(e) => onChange("name", e.target.value)}
           placeholder={businessNamePlaceholder || t("name.placeholder")}
           disabled={disabled}
-          dir="rtl"
+          dir={dir}
         />
         {businessNamePlaceholder && <p className="text-xs text-muted-foreground text-end">{t("name.helper")}</p>}
       </div>
@@ -73,7 +76,7 @@ export function BusinessDetailsForm({
           rows={4}
           disabled={disabled}
           className="resize-none"
-          dir="rtl"
+          dir={dir}
         />
         <p className="text-xs text-muted-foreground text-end">{t("description.helper")}</p>
       </div>
