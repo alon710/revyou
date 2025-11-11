@@ -64,7 +64,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-foreground mb-4">{t("sections.contact.title")}</h2>
             <p className="text-muted-foreground leading-relaxed">
-              {t("sections.contact.content", { email: t("sections.contact.email") })}{" "}
+              {t("sections.contact.content")}{" "}
               <a href={`mailto:${t("sections.contact.email")}`} className="text-primary hover:underline">
                 {t("sections.contact.email")}
               </a>

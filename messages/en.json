@@ -499,7 +499,7 @@
       },
       "contact": {
         "title": "9. Contact",
-        "content": "For questions or clarifications regarding the terms of service, please contact: {email}",
+        "content": "For questions or clarifications regarding the terms of service, please contact:",
         "email": "alon710@gmail.com"
       }
     }
