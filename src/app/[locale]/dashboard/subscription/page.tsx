@@ -31,8 +31,8 @@ export default function SubscriptionPage() {
       setLoading(true);
 
       const [statsResponse, userResponse] = await Promise.all([
-        fetch(`/api/users/${authUser.uid}/stats`),
-        fetch(`/api/users/${authUser.uid}`),
+        fetch(`/api/users/${authUser.uid}/stats`, { credentials: "include" }),
+        fetch(`/api/users/${authUser.uid}`, { credentials: "include" }),
       ]);
 
       if (!statsResponse.ok || !userResponse.ok) {

@@ -56,7 +56,13 @@ export function AIResponseSettingsForm({
     <div className="space-y-6" dir="rtl">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          {showTooltips && <TooltipIcon text={t("toneOfVoice.tooltip")} />}
+          {showTooltips && (
+            <TooltipIcon
+              text={t("toneOfVoice.tooltip")}
+              additionalInfoLabel={t("toneOfVoice.label")}
+              closeLabel={t("common.close")}
+            />
+          )}
           <Label htmlFor="toneOfVoice">{t("toneOfVoice.label")}</Label>
         </div>
         <Select
@@ -78,7 +84,13 @@ export function AIResponseSettingsForm({
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          {showTooltips && <TooltipIcon text={t("languageMode.tooltip")} />}
+          {showTooltips && (
+            <TooltipIcon
+              text={t("languageMode.tooltip")}
+              additionalInfoLabel={t("languageMode.label")}
+              closeLabel={t("common.close")}
+            />
+          )}
           <Label htmlFor="languageMode">{t("languageMode.label")}</Label>
         </div>
         <Select
@@ -99,7 +111,13 @@ export function AIResponseSettingsForm({
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          {showTooltips && <TooltipIcon text={t("emojis.tooltip")} />}
+          {showTooltips && (
+            <TooltipIcon
+              text={t("emojis.tooltip")}
+              additionalInfoLabel={t("emojis.label")}
+              closeLabel={t("common.close")}
+            />
+          )}
           <Label htmlFor="allowedEmojis">{t("emojis.label")}</Label>
         </div>
         <div className="flex gap-2">
@@ -120,7 +138,13 @@ export function AIResponseSettingsForm({
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          {showTooltips && <TooltipIcon text={t("maxSentences.tooltip")} />}
+          {showTooltips && (
+            <TooltipIcon
+              text={t("maxSentences.tooltip")}
+              additionalInfoLabel={t("maxSentences.label")}
+              closeLabel={t("common.close")}
+            />
+          )}
           <Label htmlFor="maxSentences">{t("maxSentences.label")}</Label>
         </div>
         <Select
@@ -141,7 +165,13 @@ export function AIResponseSettingsForm({
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          {showTooltips && <TooltipIcon text={t("signature.tooltip")} />}
+          {showTooltips && (
+            <TooltipIcon
+              text={t("signature.tooltip")}
+              additionalInfoLabel={t("signature.label")}
+              closeLabel={t("common.close")}
+            />
+          )}
           <Label htmlFor="signature">{t("signature.label")}</Label>
         </div>
         <Input

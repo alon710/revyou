@@ -33,7 +33,13 @@ export function BusinessDetailsForm({
     <div className="space-y-6" dir="rtl">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          {showTooltips && <TooltipIcon text={t("name.tooltip")} />}
+          {showTooltips && (
+            <TooltipIcon
+              text={t("name.tooltip")}
+              additionalInfoLabel={t("name.label")}
+              closeLabel={t("common.close")}
+            />
+          )}
           <Label htmlFor="businessName">{t("name.label")}</Label>
         </div>
         <Input
@@ -50,7 +56,13 @@ export function BusinessDetailsForm({
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          {showTooltips && <TooltipIcon text={t("description.tooltip")} />}
+          {showTooltips && (
+            <TooltipIcon
+              text={t("description.tooltip")}
+              additionalInfoLabel={t("description.label")}
+              closeLabel={t("common.close")}
+            />
+          )}
           <Label htmlFor="businessDescription">{t("description.label")}</Label>
         </div>
         <Textarea
@@ -68,7 +80,13 @@ export function BusinessDetailsForm({
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          {showTooltips && <TooltipIcon text={t("phone.tooltip")} />}
+          {showTooltips && (
+            <TooltipIcon
+              text={t("phone.tooltip")}
+              additionalInfoLabel={t("phone.label")}
+              closeLabel={t("common.close")}
+            />
+          )}
           <Label htmlFor="businessPhone">{t("phone.label")}</Label>
         </div>
         <Input

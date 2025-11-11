@@ -25,6 +25,7 @@ export default function BusinessDetailsCard({
     try {
       const response = await fetch(`/api/users/${userId}/accounts/${accountId}/businesses/${business.id}`, {
         method: "PATCH",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ config: partialConfig }),
       });
@@ -49,6 +50,7 @@ export default function BusinessDetailsCard({
     try {
       const response = await fetch(`/api/users/${userId}/accounts/${accountId}/businesses/${business.id}`, {
         method: "PATCH",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });

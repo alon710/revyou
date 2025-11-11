@@ -75,7 +75,7 @@ export default function OnboardingAISettings() {
     <OnboardingCard
       title={t("title")}
       description={t("description")}
-      backButton={{ onClick: handleBack }}
+      backButton={{ onClick: handleBack, label: tCommon("back") }}
       nextButton={{ label: tCommon("next"), onClick: handleNext }}
     >
       <AIResponseSettingsForm values={formData} onChange={handleFormChange} />

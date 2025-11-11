@@ -40,7 +40,9 @@ export default function OnboardingStep3() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/google/businesses?accountId=${accountId}`);
+      const response = await fetch(`/api/google/businesses?accountId=${accountId}`, {
+        credentials: "include",
+      });
       const data = await response.json();
 
       if (!response.ok) {
@@ -83,6 +85,7 @@ export default function OnboardingStep3() {
 
       const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           googleBusinessId: selectedBusiness.id,
@@ -135,7 +138,7 @@ export default function OnboardingStep3() {
       <OnboardingCard
         title={t("title")}
         description={t("loadingBusinesses")}
-        backButton={{ onClick: handleBack }}
+        backButton={{ onClick: handleBack, label: tCommon("back") }}
         nextButton={{ label: t("connectButton"), onClick: handleConnect, disabled: true }}
       >
         <div className="flex items-center justify-center py-8">
@@ -150,7 +153,7 @@ export default function OnboardingStep3() {
       <OnboardingCard
         title={t("title")}
         description={t("description")}
-        backButton={{ onClick: handleBack }}
+        backButton={{ onClick: handleBack, label: tCommon("back") }}
         nextButton={{ label: tCommon("tryAgain"), onClick: loadAvailableBusinesses, disabled: loading }}
       >
         <div className="text-center py-8">
@@ -165,7 +168,7 @@ export default function OnboardingStep3() {
     <OnboardingCard
       title={t("title")}
       description={t("descriptionWithCount", { count: availableBusinesses.length })}
-      backButton={{ onClick: handleBack, disabled: connecting }}
+      backButton={{ onClick: handleBack, disabled: connecting, label: tCommon("back") }}
       nextButton={{
         label: connecting ? t("connectingButton") : t("connectButton"),
         onClick: handleConnect,

@@ -73,6 +73,7 @@ export default function OnboardingStarRatings() {
 
       const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
         method: "PATCH",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ config }),
       });
@@ -102,7 +103,7 @@ export default function OnboardingStarRatings() {
     <OnboardingCard
       title={t("title")}
       description={t("description")}
-      backButton={{ onClick: handleBack, disabled: saving }}
+      backButton={{ onClick: handleBack, disabled: saving, label: tCommon("back") }}
       nextButton={{
         label: saving ? tCommon("saving") : tCommon("finish"),
         onClick: handleFinish,

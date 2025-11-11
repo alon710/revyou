@@ -57,7 +57,9 @@ export default function OnboardingBusinessDetails() {
     try {
       setLoading(true);
 
-      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`);
+      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch business");
@@ -119,7 +121,7 @@ export default function OnboardingBusinessDetails() {
     <OnboardingCard
       title={t("title")}
       description={t("description")}
-      backButton={{ onClick: handleBack }}
+      backButton={{ onClick: handleBack, label: tCommon("back") }}
       nextButton={{ label: tCommon("next"), onClick: handleNext }}
     >
       <BusinessDetailsForm values={formData} onChange={handleFormChange} businessNamePlaceholder={business.name} />

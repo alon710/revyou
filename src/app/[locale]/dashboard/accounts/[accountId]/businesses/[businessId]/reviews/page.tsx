@@ -35,7 +35,9 @@ export default function BusinessReviewsPage({ params }: BusinessReviewsPageProps
       setLoading(true);
       setError(null);
 
-      const businessResponse = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`);
+      const businessResponse = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
+        credentials: "include",
+      });
 
       if (!businessResponse.ok) {
         throw new Error(t("businessNotFound"));
@@ -45,7 +47,10 @@ export default function BusinessReviewsPage({ params }: BusinessReviewsPageProps
       setBusiness(biz);
 
       const reviewsResponse = await fetch(
-        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}/reviews?orderBy=receivedAt&orderDirection=desc`
+        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}/reviews?orderBy=receivedAt&orderDirection=desc`,
+        {
+          credentials: "include",
+        }
       );
 
       if (!reviewsResponse.ok) {

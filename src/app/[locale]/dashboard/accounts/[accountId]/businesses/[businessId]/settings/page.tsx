@@ -32,7 +32,9 @@ export default function BusinessSettingsPage({
     try {
       setLoading(true);
 
-      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`);
+      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch business");
@@ -57,6 +59,7 @@ export default function BusinessSettingsPage({
     try {
       const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
         method: "DELETE",
+        credentials: "include",
       });
 
       if (!response.ok) {

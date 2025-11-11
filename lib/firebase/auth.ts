@@ -116,7 +116,20 @@ export function useAuth() {
 
     const unsubscribe = onAuthStateChanged(
       auth,
-      (user) => {
+      async (user) => {
+        if (user) {
+          try {
+            const idToken = await user.getIdToken();
+            await fetch("/api/auth/session", {
+              method: "POST",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ idToken }),
+            });
+          } catch (error) {
+            console.error("Failed to create session:", error);
+          }
+        }
         setUser(user);
         setLoading(false);
         setError(null);

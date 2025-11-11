@@ -35,7 +35,13 @@ export function StarRatingConfigForm({
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
-                  {showTooltips && <TooltipIcon text={t("autoReply.tooltip")} />}
+                  {showTooltips && (
+                    <TooltipIcon
+                      text={t("autoReply.tooltip")}
+                      additionalInfoLabel={t("autoReply.label")}
+                      closeLabel={t("common.close")}
+                    />
+                  )}
                   <Label htmlFor={`auto-reply-${rating}`} className="text-sm font-medium cursor-pointer">
                     {t("autoReply.label")}
                   </Label>
@@ -57,7 +63,13 @@ export function StarRatingConfigForm({
 
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                {showTooltips && <TooltipIcon text={t("customInstructions.tooltip")} />}
+                {showTooltips && (
+                  <TooltipIcon
+                    text={t("customInstructions.tooltip")}
+                    additionalInfoLabel={t("customInstructions.label")}
+                    closeLabel={t("common.close")}
+                  />
+                )}
                 <Label htmlFor={`instructions-${rating}`}>{t("customInstructions.label")}</Label>
               </div>
               <Textarea

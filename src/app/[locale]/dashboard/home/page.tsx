@@ -22,7 +22,9 @@ export default function HomePage() {
       try {
         setLoading(true);
 
-        const response = await fetch(`/api/users/${user.uid}/accounts-with-businesses`);
+        const response = await fetch(`/api/users/${user.uid}/accounts-with-businesses`, {
+          credentials: "include",
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch accounts with businesses");
         }

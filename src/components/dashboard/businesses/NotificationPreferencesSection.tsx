@@ -65,7 +65,11 @@ export default function NotificationPreferencesSection({
               <Label htmlFor="emailOnNewReview" className="text-sm font-medium cursor-pointer">
                 {t("emailOnNewReview.label")}
               </Label>
-              <TooltipIcon text={t("emailOnNewReview.tooltip")} />
+              <TooltipIcon
+                text={t("emailOnNewReview.tooltip")}
+                additionalInfoLabel={t("emailOnNewReview.label")}
+                closeLabel={t("common.close")}
+              />
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">{t("emailOnNewReview.helper")}</p>
           </div>

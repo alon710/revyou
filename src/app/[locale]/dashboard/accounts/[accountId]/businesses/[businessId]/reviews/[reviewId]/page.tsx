@@ -34,7 +34,9 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       setLoading(true);
       setError(null);
 
-      const businessResponse = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`);
+      const businessResponse = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
+        credentials: "include",
+      });
 
       if (!businessResponse.ok) {
         throw new Error(t("businessNotFound"));
@@ -44,7 +46,10 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       setBusiness(biz);
 
       const reviewResponse = await fetch(
-        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}/reviews/${reviewId}`
+        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}/reviews/${reviewId}`,
+        {
+          credentials: "include",
+        }
       );
 
       if (!reviewResponse.ok) {

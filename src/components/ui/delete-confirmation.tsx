@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import { AlertTriangle, Trash2 } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 interface DeleteConfirmationProps {
   title: string;
