@@ -19,7 +19,7 @@ export async function signInWithGoogle() {
   if (!auth || !db) {
     return {
       user: null,
-      error: "Firebase לא מוגדר. אנא בדוק את הגדרות הפרויקט.",
+      error: "auth.errors.firebaseNotConfigured",
     };
   }
 
@@ -65,19 +65,19 @@ export async function signInWithGoogle() {
       await response.json();
     } catch (sessionError) {
       console.error("Session creation error:", sessionError);
-      throw new Error("לא ניתן ליצור הרשאה. אנא נסה להתחבר שוב.");
+      throw new Error("auth.errors.sessionCreationFailed");
     }
 
     return { user, error: null };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "אירעה שגיאה בהתחברות עם גוגל";
+    const errorMessage = error instanceof Error ? error.message : "auth.errors.googleSignInFailed";
     return { user: null, error: errorMessage };
   }
 }
 
 export async function signOut() {
   if (!auth) {
-    return { error: "Firebase לא מוגדר", sessionDeletionFailed: false };
+    return { error: "auth.errors.firebaseNotConfigured", sessionDeletionFailed: false };
   }
 
   let sessionDeletionFailed = false;
@@ -100,14 +100,14 @@ export async function signOut() {
     return { error: null, sessionDeletionFailed };
   } catch (error) {
     console.error("Sign out error:", error);
-    return { error: "אירעה שגיאה בהתנתקות", sessionDeletionFailed };
+    return { error: "auth.errors.signOutFailed", sessionDeletionFailed };
   }
 }
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(() => !!auth);
-  const [error, setError] = useState<string | null>(() => (!auth ? "Firebase לא מוגדר" : null));
+  const [error, setError] = useState<string | null>(() => (!auth ? "auth.errors.firebaseNotConfigured" : null));
 
   useEffect(() => {
     if (!auth) {
@@ -116,14 +116,40 @@ export function useAuth() {
 
     const unsubscribe = onAuthStateChanged(
       auth,
-      (user) => {
-        setUser(user);
-        setLoading(false);
-        setError(null);
+      async (user) => {
+        try {
+          if (user) {
+            const idToken = await user.getIdToken();
+            const response = await fetch("/api/auth/session", {
+              method: "POST",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ idToken }),
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              throw new Error(`Session creation failed: ${errorData.error || response.statusText}`);
+            }
+
+            await response.json();
+            setUser(user);
+            setError(null);
+          } else {
+            setUser(null);
+            setError(null);
+          }
+        } catch (error) {
+          console.error("Failed to create session:", error);
+          setError("auth.errors.sessionCreationFailed");
+          setUser(null);
+        } finally {
+          setLoading(false);
+        }
       },
       (error) => {
         console.error("Auth state change error:", error);
-        setError("אירעה שגיאה בטעינת המשתמש");
+        setError("auth.errors.authStateError");
         setLoading(false);
       }
     );

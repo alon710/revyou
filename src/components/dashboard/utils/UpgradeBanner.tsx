@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useUIStore } from "@/lib/store/ui-store";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/routing";
 
 export function UpgradeBanner() {
+  const t = useTranslations("dashboard.components.upgradeBanner");
   const { planType, loading } = useSubscription();
   const router = useRouter();
   const { dismissUpgradeBanner, shouldShowUpgradeBanner } = useUIStore();
@@ -46,37 +48,35 @@ export function UpgradeBanner() {
 
   return (
     <div
-      className={`fixed bottom-16 md:bottom-0 left-0 right-0 z-50 px-4 pb-4 transition-transform duration-300 ${
+      className={`fixed bottom-16 md:bottom-0 inset-x-0 z-50 px-4 pb-4 transition-transform duration-300 ${
         isAnimating ? "translate-y-0" : "translate-y-full"
       }`}
     >
       <div className="max-w-4xl mx-auto">
-        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 rounded-lg shadow-lg backdrop-blur-sm">
+        <div className="bg-linear-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 rounded-lg shadow-lg backdrop-blur-sm">
           <div className="flex items-center justify-between gap-4 p-4">
             <div className="flex items-center gap-3 flex-1">
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-foreground mb-0.5">אתה משתמש חינמי</h3>
-                <p className="text-xs text-muted-foreground">
-                  שדרג לתוכנית בשביל להוסיף עסקים, ביקורות ותכונות מתקדמות
-                </p>
+                <h3 className="text-sm font-semibold text-foreground mb-0.5">{t("title")}</h3>
+                <p className="text-xs text-muted-foreground">{t("description")}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <Button size="sm" onClick={handleUpgrade} className="hidden sm:flex">
-                שדרג עכשיו
+                {t("upgradeNow")}
               </Button>
 
               <Button size="sm" variant="ghost" onClick={handleDismiss} className="h-8 w-8 p-0">
                 <X className="h-4 w-4" />
-                <span className="sr-only">סגור</span>
+                <span className="sr-only">{t("close")}</span>
               </Button>
             </div>
           </div>
 
           <div className="sm:hidden px-4 pb-4">
             <Button onClick={handleUpgrade} className="w-full" size="sm">
-              שדרג לתוכנית בסיסי
+              {t("upgradeToPlan")}
             </Button>
           </div>
         </div>

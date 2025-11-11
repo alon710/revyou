@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { FormRenderProps } from "./EditableSection";
 import { toast } from "sonner";
+import { useLocale } from "next-intl";
 
 interface EditableFormModalProps<T> {
   icon: ReactNode;
@@ -22,6 +23,11 @@ interface EditableFormModalProps<T> {
   data: T;
   onSave: (data: T) => Promise<void>;
   renderForm: (props: FormRenderProps<T>) => ReactNode;
+  successMessage: string;
+  errorMessage: string;
+  cancelLabel: string;
+  saveLabel: string;
+  savingLabel: string;
 }
 
 export function EditableFormModal<T>({
@@ -33,10 +39,17 @@ export function EditableFormModal<T>({
   data,
   onSave,
   renderForm,
+  successMessage,
+  errorMessage,
+  cancelLabel,
+  saveLabel,
+  savingLabel,
 }: EditableFormModalProps<T>) {
+  const locale = useLocale();
   const [formData, setFormData] = useState<T>(data);
   const [isLoading, setIsLoading] = useState(false);
   const prevOpenRef = useRef(open);
+  const dir = locale === "he" ? "rtl" : "ltr";
 
   useEffect(() => {
     if (open && !prevOpenRef.current) {
@@ -55,12 +68,12 @@ export function EditableFormModal<T>({
     try {
       setIsLoading(true);
       await onSave(formData);
-      toast.success("השינויים נשמרו בהצלחה");
+      toast.success(successMessage);
       onClose();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "אירעה שגיאה בשמירה";
+      const specificErrorMessage = error instanceof Error ? error.message : errorMessage;
       console.error("Error saving:", error);
-      toast.error("שגיאה: " + errorMessage);
+      toast.error(specificErrorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -73,23 +86,23 @@ export function EditableFormModal<T>({
 
   return (
     <Dialog open={open} onOpenChange={(open) => !open && handleCancel()}>
-      <DialogContent className="sm:max-w-[600px]" dir="rtl">
+      <DialogContent className="sm:max-w-[600px]" dir={dir}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {icon}
             {title}
           </DialogTitle>
-          <DialogDescription className="text-right">{description}</DialogDescription>
+          <DialogDescription className={dir === "rtl" ? "text-end" : "text-start"}>{description}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">{renderForm({ data: formData, isLoading, onChange: handleChange })}</div>
 
         <DialogFooter className="flex justify-between gap-2">
           <Button type="button" variant="outline" onClick={handleCancel} disabled={isLoading}>
-            ביטול
+            {cancelLabel}
           </Button>
           <Button variant="default" onClick={handleSave} disabled={isLoading} className="gap-2">
-            {isLoading ? <>שומר...</> : <>שמירה</>}
+            {isLoading ? savingLabel : saveLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

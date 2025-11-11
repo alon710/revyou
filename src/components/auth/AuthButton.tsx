@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { UserAvatarDropdown } from "@/components/auth/UserAvatarDropdown";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 
 interface AuthButtonProps {
   size?: "sm" | "default" | "lg";
@@ -15,6 +16,7 @@ interface AuthButtonProps {
 export function AuthButton({ size = "sm", className, variant = "dashboard" }: AuthButtonProps) {
   const { user, loading } = useAuth();
   const [isNavigating, setIsNavigating] = useState(false);
+  const t = useTranslations("auth");
 
   if (loading) {
     return null;
@@ -26,7 +28,7 @@ export function AuthButton({ size = "sm", className, variant = "dashboard" }: Au
         {variant === "landing" && (
           <Link href="/dashboard/home" onClick={() => setIsNavigating(true)}>
             <Button size={size} className={className} disabled={isNavigating}>
-              {isNavigating ? "מעביר..." : "החשבון שלי"}
+              {isNavigating ? t("navigating") : t("myAccount")}
             </Button>
           </Link>
         )}
@@ -38,7 +40,7 @@ export function AuthButton({ size = "sm", className, variant = "dashboard" }: Au
   return (
     <Link href="/login" onClick={() => setIsNavigating(true)}>
       <Button size={size} className={className} disabled={isNavigating}>
-        {isNavigating ? "מתחבר..." : "התחברות"}
+        {isNavigating ? t("loggingIn") : t("login")}
       </Button>
     </Link>
   );

@@ -8,6 +8,7 @@ import EditableSection from "@/components/dashboard/shared/EditableSection";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { TooltipIcon } from "@/components/ui/tooltip";
+import { useTranslations } from "next-intl";
 
 interface NotificationPreferencesSectionProps {
   business: Business;
@@ -24,26 +25,35 @@ export default function NotificationPreferencesSection({
   loading,
   onSave,
 }: NotificationPreferencesSectionProps) {
+  const t = useTranslations("dashboard.businesses.sections.notifications");
+  const tCommon = useTranslations("common");
+
   const formData: NotificationPreferencesData = {
     emailOnNewReview: business.emailOnNewReview,
   };
 
   return (
     <EditableSection
-      title="התראות אימייל"
-      description="בחר אילו התראות תרצה לקבל באימייל עבור עסק זה"
+      editButtonLabel={tCommon("edit")}
+      title={t("title")}
+      description={t("description")}
       icon={<Bell className="h-5 w-5" />}
-      modalTitle="עריכת התראות אימייל"
-      modalDescription="בחר אילו התראות תרצה לקבל באימייל"
+      modalTitle={t("modalTitle")}
+      modalDescription={t("modalDescription")}
       loading={loading}
       data={formData}
       onSave={onSave}
+      successMessage={tCommon("saveSuccess")}
+      errorMessage={tCommon("saveError")}
+      cancelLabel={tCommon("cancel")}
+      saveLabel={tCommon("save")}
+      savingLabel={tCommon("saving")}
       renderDisplay={() => (
         <DashboardCardField label="">
           <div className="flex items-center justify-between w-full">
-            <p className="text-sm text-foreground">קבל התראה באימייל כאשר מתקבלת ביקורת חדשה</p>
+            <p className="text-sm text-foreground">{t("emailOnNewReview.description")}</p>
             <Badge variant={business.emailOnNewReview ? "default" : "secondary"}>
-              {business.emailOnNewReview ? "מופעל" : "כבוי"}
+              {business.emailOnNewReview ? t("enabled") : t("disabled")}
             </Badge>
           </div>
         </DashboardCardField>
@@ -53,11 +63,15 @@ export default function NotificationPreferencesSection({
           <div className="space-y-1 flex-1">
             <div className="flex items-center gap-2">
               <Label htmlFor="emailOnNewReview" className="text-sm font-medium cursor-pointer">
-                ביקורת חדשה
+                {t("emailOnNewReview.label")}
               </Label>
-              <TooltipIcon text="כאשר מופעל, תקבל הודעת אימייל מיידית כל פעם שמתפרסמת ביקורת חדשה על העסק שלך ב-Google. זה מאפשר לך להגיב במהירות ללקוחות" />
+              <TooltipIcon
+                text={t("emailOnNewReview.tooltip")}
+                additionalInfoLabel={t("emailOnNewReview.label")}
+                closeLabel={tCommon("close")}
+              />
             </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">קבל התראה באימייל כאשר מתקבלת ביקורת חדשה</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">{t("emailOnNewReview.helper")}</p>
           </div>
           <Switch
             id="emailOnNewReview"

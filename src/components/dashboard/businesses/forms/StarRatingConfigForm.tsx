@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { TooltipIcon } from "@/components/ui/tooltip";
 import { BusinessConfig } from "@/lib/types";
+import { useTranslations } from "next-intl";
 
 export type StarRatingConfigFormData = BusinessConfig["starConfigs"];
 
@@ -22,6 +23,8 @@ export function StarRatingConfigForm({
   showTooltips = true,
   disabled = false,
 }: StarRatingConfigFormProps) {
+  const t = useTranslations("dashboard.businesses.forms.starRatings");
+
   return (
     <div className="space-y-6 overflow-y-auto max-h-[60vh]" dir="rtl">
       {([5, 4, 3, 2, 1] as const).map((rating) => {
@@ -33,10 +36,14 @@ export function StarRatingConfigForm({
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
                   {showTooltips && (
-                    <TooltipIcon text="כאשר מופעל, המערכת תיצור ותשלח תשובה אוטומטית לביקורות בדירוג זה. ניתן להשבית עבור דירוגים שאתה מעדיף לטפל בהם ידנית" />
+                    <TooltipIcon
+                      text={t("autoReply.tooltip")}
+                      additionalInfoLabel={t("autoReply.label")}
+                      closeLabel={t("common.close")}
+                    />
                   )}
                   <Label htmlFor={`auto-reply-${rating}`} className="text-sm font-medium cursor-pointer">
-                    תגובה אוטומטית
+                    {t("autoReply.label")}
                   </Label>
                 </div>
                 <Switch
@@ -57,9 +64,13 @@ export function StarRatingConfigForm({
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 {showTooltips && (
-                  <TooltipIcon text="הוסף הנחיות ספציפיות שיכוונו את ה-AI איך לגבש תשובות לביקורות בדירוג זה. לדוגמה, עבור 1-2 כוכבים תוכל לבקש התנצלות והזמנה ליצור קשר" />
+                  <TooltipIcon
+                    text={t("customInstructions.tooltip")}
+                    additionalInfoLabel={t("customInstructions.label")}
+                    closeLabel={t("common.close")}
+                  />
                 )}
-                <Label htmlFor={`instructions-${rating}`}>הנחיות מותאמות אישית</Label>
+                <Label htmlFor={`instructions-${rating}`}>{t("customInstructions.label")}</Label>
               </div>
               <Textarea
                 id={`instructions-${rating}`}
@@ -70,24 +81,20 @@ export function StarRatingConfigForm({
                     customInstructions: e.target.value,
                   })
                 }
-                placeholder="הוסף הנחיות ספציפיות לדירוג זה..."
+                placeholder={t("customInstructions.placeholder")}
                 rows={3}
                 disabled={disabled}
                 className="text-sm resize-none"
                 dir="rtl"
               />
               {rating <= 2 && (
-                <p className="text-xs text-muted-foreground text-right">
-                  מומלץ לכלול התנצלות ומספר טלפון לתיאום שיחה אישית עם הלקוח
-                </p>
+                <p className="text-xs text-muted-foreground text-end">{t("customInstructions.helpers.low")}</p>
               )}
               {rating === 3 && (
-                <p className="text-xs text-muted-foreground text-right">
-                  מומלץ להביע הערכה על המשוב ולהראות רצון לשיפור
-                </p>
+                <p className="text-xs text-muted-foreground text-end">{t("customInstructions.helpers.medium")}</p>
               )}
               {rating >= 4 && (
-                <p className="text-xs text-muted-foreground text-right">מומלץ להביע תודה חמה ולעודד ביקור חוזר</p>
+                <p className="text-xs text-muted-foreground text-end">{t("customInstructions.helpers.high")}</p>
               )}
             </div>
           </div>

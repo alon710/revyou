@@ -1,10 +1,10 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/lib/firebase/auth";
 import { dashboardNavItems, landingNavItems, getNavigationVariant, getIsActive } from "@/lib/navigation";
+import { usePathname, useRouter } from "@/i18n/routing";
 
 export function useNavigation(variant?: "landing" | "dashboard") {
   const { user } = useAuth();
@@ -33,8 +33,10 @@ export function useNavigation(variant?: "landing" | "dashboard") {
 
   const scrollToSection = (href: string) => {
     const anchorHash = href.substring(1);
-    if (pathname !== "/") {
-      router.push(href);
+    const isOnLandingPage = pathname === "/";
+
+    if (!isOnLandingPage) {
+      router.push(`/${href}`);
       return;
     }
     setHash(anchorHash);

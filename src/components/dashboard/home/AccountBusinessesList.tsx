@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import type { AccountWithBusinesses } from "@/lib/types";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import {
   DashboardCard,
@@ -22,6 +23,7 @@ interface AccountBusinessesListProps {
 
 export function AccountBusinessesList({ accounts }: AccountBusinessesListProps) {
   const router = useRouter();
+  const t = useTranslations("dashboard.home.accountBusinessesList");
   const [loadingState, setLoadingState] = useState<{ businessId: string; action: "reviews" | "settings" } | null>(null);
 
   const handleViewReviews = (accountId: string, businessId: string) => {
@@ -37,9 +39,9 @@ export function AccountBusinessesList({ accounts }: AccountBusinessesListProps) 
   if (accounts.length === 0) {
     return (
       <EmptyState
-        title="אין חשבונות מחוברים"
-        description="אין לך חשבונות מחוברים"
-        buttonText="חבר חשבון"
+        title={t("noConnectedAccounts")}
+        description={t("noConnectedAccountsDescription")}
+        buttonText={t("connectAccount")}
         buttonLink="/onboarding/connect-account"
       />
     );
@@ -73,7 +75,7 @@ export function AccountBusinessesList({ accounts }: AccountBusinessesListProps) 
                   <DashboardCardTitle>
                     <div className="flex items-center justify-between w-full gap-2">
                       <span className="truncate">{business.name}</span>
-                      {!business.connected && <Badge variant="secondary">מנותק</Badge>}
+                      {!business.connected && <Badge variant="secondary">{t("disconnected")}</Badge>}
                     </div>
                   </DashboardCardTitle>
                 </DashboardCardHeader>
@@ -98,8 +100,8 @@ export function AccountBusinessesList({ accounts }: AccountBusinessesListProps) 
                       disabled={loadingState?.businessId === business.id && loadingState?.action === "reviews"}
                     >
                       {loadingState?.businessId === business.id && loadingState?.action === "reviews"
-                        ? "מעביר..."
-                        : "צפה בביקורות"}
+                        ? t("navigating")
+                        : t("viewReviews")}
                     </Button>
                     <Button
                       variant="default"
@@ -109,8 +111,8 @@ export function AccountBusinessesList({ accounts }: AccountBusinessesListProps) 
                       disabled={loadingState?.businessId === business.id && loadingState?.action === "settings"}
                     >
                       {loadingState?.businessId === business.id && loadingState?.action === "settings"
-                        ? "מעביר..."
-                        : "ערוך פרטים"}
+                        ? t("navigating")
+                        : t("editDetails")}
                     </Button>
                   </div>
                 </DashboardCardContent>

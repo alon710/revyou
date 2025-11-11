@@ -7,6 +7,7 @@ import { TooltipIcon } from "@/components/ui/tooltip";
 import { EmojiPicker } from "@/components/ui/emoji-picker";
 import { ToneOfVoice, LanguageMode } from "@/lib/types";
 import emojiRegex from "emoji-regex";
+import { useTranslations } from "next-intl";
 
 export interface AIResponseSettingsFormData {
   toneOfVoice: ToneOfVoice;
@@ -38,6 +39,8 @@ export function AIResponseSettingsForm({
   showTooltips = true,
   disabled = false,
 }: AIResponseSettingsFormProps) {
+  const t = useTranslations("dashboard.businesses.forms.aiSettings");
+
   const handleEmojiChange = (value: string) => {
     const emojis = extractEmojis(value);
     onChange("allowedEmojis", emojis);
@@ -54,9 +57,13 @@ export function AIResponseSettingsForm({
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           {showTooltips && (
-            <TooltipIcon text="בחר את סגנון הכתיבה של התשובות האוטומטיות: מקצועי לעסקים רציניים, ידידותי לעסקים מזדמנים, פורמלי למקומות יוקרתיים, או משעשע לעסקים עם אווירה קלילה" />
+            <TooltipIcon
+              text={t("toneOfVoice.tooltip")}
+              additionalInfoLabel={t("toneOfVoice.label")}
+              closeLabel={t("common.close")}
+            />
           )}
-          <Label htmlFor="toneOfVoice">סגנון תשובה</Label>
+          <Label htmlFor="toneOfVoice">{t("toneOfVoice.label")}</Label>
         </div>
         <Select
           value={values.toneOfVoice}
@@ -67,10 +74,10 @@ export function AIResponseSettingsForm({
             <SelectValue />
           </SelectTrigger>
           <SelectContent dir="rtl">
-            <SelectItem value="professional">מקצועי</SelectItem>
-            <SelectItem value="friendly">ידידותי</SelectItem>
-            <SelectItem value="formal">פורמלי</SelectItem>
-            <SelectItem value="humorous">משעשע</SelectItem>
+            <SelectItem value="professional">{t("toneOfVoice.options.professional")}</SelectItem>
+            <SelectItem value="friendly">{t("toneOfVoice.options.friendly")}</SelectItem>
+            <SelectItem value="formal">{t("toneOfVoice.options.formal")}</SelectItem>
+            <SelectItem value="humorous">{t("toneOfVoice.options.humorous")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -78,9 +85,13 @@ export function AIResponseSettingsForm({
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           {showTooltips && (
-            <TooltipIcon text="בחר בזיהוי אוטומטי כדי שהמערכת תזהה את שפת הביקורת ותגיב באותה שפה, או בחר שפה קבועה לכל התגובות" />
+            <TooltipIcon
+              text={t("languageMode.tooltip")}
+              additionalInfoLabel={t("languageMode.label")}
+              closeLabel={t("common.close")}
+            />
           )}
-          <Label htmlFor="languageMode">שפת תגובה</Label>
+          <Label htmlFor="languageMode">{t("languageMode.label")}</Label>
         </div>
         <Select
           value={values.languageMode}
@@ -91,9 +102,9 @@ export function AIResponseSettingsForm({
             <SelectValue />
           </SelectTrigger>
           <SelectContent dir="rtl">
-            <SelectItem value="auto-detect">זיהוי אוטומטי</SelectItem>
-            <SelectItem value="hebrew">עברית</SelectItem>
-            <SelectItem value="english">English</SelectItem>
+            <SelectItem value="auto-detect">{t("languageMode.options.autoDetect")}</SelectItem>
+            <SelectItem value="hebrew">{t("languageMode.options.hebrew")}</SelectItem>
+            <SelectItem value="english">{t("languageMode.options.english")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -101,9 +112,13 @@ export function AIResponseSettingsForm({
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           {showTooltips && (
-            <TooltipIcon text="הגדר אילו אימוג'ים המערכת רשאית להשתמש בהם בתגובות. הפרד באמצעות רווחים. השאר ריק אם אינך רוצה שימוש באימוג'ים כלל" />
+            <TooltipIcon
+              text={t("emojis.tooltip")}
+              additionalInfoLabel={t("emojis.label")}
+              closeLabel={t("common.close")}
+            />
           )}
-          <Label htmlFor="allowedEmojis">אימוג&apos;ים מותרים</Label>
+          <Label htmlFor="allowedEmojis">{t("emojis.label")}</Label>
         </div>
         <div className="flex gap-2">
           <Input
@@ -111,24 +126,26 @@ export function AIResponseSettingsForm({
             type="text"
             value={values.allowedEmojis.join(" ")}
             onChange={(e) => handleEmojiChange(e.target.value)}
-            placeholder="✨ 🙏 ❤️ (או השאר ריק לאי שימוש באימוג'ים)"
+            placeholder={t("emojis.placeholder")}
             disabled={disabled}
             dir="ltr"
             className="flex-1"
           />
           <EmojiPicker onEmojiSelect={handleEmojiSelect} disabled={disabled} />
         </div>
-        <p className="text-xs text-muted-foreground text-right">
-          רק אימוג&apos;ים תקינים יישמרו. כל תווים אחרים יוסרו אוטומטית
-        </p>
+        <p className="text-xs text-muted-foreground text-end">{t("emojis.helper")}</p>
       </div>
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           {showTooltips && (
-            <TooltipIcon text="קבע את אורך התגובות. משפט אחד לתגובות קצרות, שני משפטים (מומלץ) לאיזון בין תמציתיות לתוכן, שלושה משפטים לתגובות מפורטות יותר" />
+            <TooltipIcon
+              text={t("maxSentences.tooltip")}
+              additionalInfoLabel={t("maxSentences.label")}
+              closeLabel={t("common.close")}
+            />
           )}
-          <Label htmlFor="maxSentences">מספר משפטים מקסימלי</Label>
+          <Label htmlFor="maxSentences">{t("maxSentences.label")}</Label>
         </div>
         <Select
           value={values.maxSentences.toString()}
@@ -139,9 +156,9 @@ export function AIResponseSettingsForm({
             <SelectValue />
           </SelectTrigger>
           <SelectContent dir="rtl">
-            <SelectItem value="1">משפט אחד</SelectItem>
-            <SelectItem value="2">שני משפטים (מומלץ)</SelectItem>
-            <SelectItem value="3">שלושה משפטים</SelectItem>
+            <SelectItem value="1">{t("maxSentences.options.one")}</SelectItem>
+            <SelectItem value="2">{t("maxSentences.options.two")}</SelectItem>
+            <SelectItem value="3">{t("maxSentences.options.three")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -149,20 +166,24 @@ export function AIResponseSettingsForm({
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           {showTooltips && (
-            <TooltipIcon text="טקסט שיופיע בסוף כל תגובה אוטומטית, למשל 'צוות מסעדת דוד' או 'בברכה, מוטי'" />
+            <TooltipIcon
+              text={t("signature.tooltip")}
+              additionalInfoLabel={t("signature.label")}
+              closeLabel={t("common.close")}
+            />
           )}
-          <Label htmlFor="signature">חתימה</Label>
+          <Label htmlFor="signature">{t("signature.label")}</Label>
         </div>
         <Input
           id="signature"
           type="text"
           value={values.signature}
           onChange={(e) => onChange("signature", e.target.value)}
-          placeholder="צוות העסק"
+          placeholder={t("signature.placeholder")}
           disabled={disabled}
           dir="rtl"
         />
-        <p className="text-xs text-muted-foreground text-right">החתימה שתופיע בסוף כל תגובה</p>
+        <p className="text-xs text-muted-foreground text-end">{t("signature.helper")}</p>
       </div>
     </div>
   );

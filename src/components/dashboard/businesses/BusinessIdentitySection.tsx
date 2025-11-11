@@ -8,6 +8,7 @@ import {
   BusinessDetailsForm,
   BusinessDetailsFormData,
 } from "@/components/dashboard/businesses/forms/BusinessDetailsForm";
+import { useTranslations } from "next-intl";
 
 interface BusinessIdentitySectionProps {
   config: BusinessConfig;
@@ -17,6 +18,9 @@ interface BusinessIdentitySectionProps {
 }
 
 export default function BusinessIdentitySection({ config, business, loading, onSave }: BusinessIdentitySectionProps) {
+  const t = useTranslations("dashboard.businesses.sections.identity");
+  const tCommon = useTranslations("common");
+
   const formData: BusinessDetailsFormData = {
     name: config.name || "",
     description: config.description || "",
@@ -25,28 +29,34 @@ export default function BusinessIdentitySection({ config, business, loading, onS
 
   return (
     <EditableSection
-      title="פרטי עסק"
-      description="פרטי זהות העסק לשימוש בתגובות AI"
+      editButtonLabel={tCommon("edit")}
+      title={t("title")}
+      description={t("description")}
       icon={<Building2 className="h-5 w-5" />}
-      modalTitle="עריכת פרטי עסק"
-      modalDescription="ערוך את פרטי זהות העסק לשימוש בתגובות AI"
+      modalTitle={t("modalTitle")}
+      modalDescription={t("modalDescription")}
       loading={loading}
       data={formData}
       onSave={onSave}
+      successMessage={tCommon("saveSuccess")}
+      errorMessage={tCommon("saveError")}
+      cancelLabel={tCommon("cancel")}
+      saveLabel={tCommon("save")}
+      savingLabel={tCommon("saving")}
       renderDisplay={() => (
         <>
-          <DashboardCardField label="שם העסק">
+          <DashboardCardField label={t("fields.name")}>
             <p className="text-sm font-medium">{config.name || business.name}</p>
           </DashboardCardField>
 
-          <DashboardCardField label="תיאור העסק">
+          <DashboardCardField label={t("fields.description")}>
             <p className="text-sm bg-muted/50 p-3 rounded-md whitespace-pre-wrap leading-relaxed">
-              {config.description || "אין תיאור"}
+              {config.description || t("noDescription")}
             </p>
           </DashboardCardField>
 
-          <DashboardCardField label="טלפון ליצירת קשר (לביקורות שליליות)">
-            <p className="text-sm font-medium">{config.phoneNumber || "אין טלפון"}</p>
+          <DashboardCardField label={t("fields.phone")}>
+            <p className="text-sm font-medium">{config.phoneNumber || t("noPhone")}</p>
           </DashboardCardField>
         </>
       )}

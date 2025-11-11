@@ -1,5 +1,13 @@
-import type { AccountCreate, Account, AccountUpdate, AccountFilters } from "@/lib/types";
+import type {
+  AccountCreate,
+  Account,
+  AccountUpdate,
+  AccountFilters,
+  AccountWithBusinesses,
+  BusinessFilters,
+} from "@/lib/types";
 import { AccountsRepositoryAdmin } from "@/lib/repositories/accounts.repository.admin";
+import { BusinessesRepositoryAdmin } from "@/lib/repositories/businesses.repository.admin";
 import { BaseController } from "./base.controller";
 
 export class AccountsController extends BaseController<AccountCreate, Account, AccountUpdate> {
@@ -63,5 +71,28 @@ export class AccountsController extends BaseController<AccountCreate, Account, A
     return this.updateAccount(accountId, {
       googleRefreshToken: refreshToken,
     });
+  }
+
+  async getAccountsWithBusinesses(
+    accountFilters: AccountFilters = {},
+    businessFilters: BusinessFilters = {}
+  ): Promise<AccountWithBusinesses[]> {
+    return this.handleError(async () => {
+      const accounts = await this.repository.list(accountFilters);
+
+      const accountsWithBusinesses = await Promise.all(
+        accounts.map(async (account) => {
+          const businessRepo = new BusinessesRepositoryAdmin(this.userId, account.id);
+          const businesses = await businessRepo.list(businessFilters);
+
+          return {
+            ...account,
+            businesses,
+          };
+        })
+      );
+
+      return accountsWithBusinesses;
+    }, "Failed to fetch accounts with businesses");
   }
 }

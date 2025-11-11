@@ -19,6 +19,7 @@ import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface ReviewCardProps {
   review: Review;
@@ -30,6 +31,7 @@ interface ReviewCardProps {
 }
 
 export function ReviewCard({ review, accountId, userId, businessId, onUpdate, onClick }: ReviewCardProps) {
+  const t = useTranslations("dashboard.reviews.card");
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
@@ -46,11 +48,11 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 
   const getStatusBadge = (status: ReplyStatus) => {
     const statusMap = {
-      pending: { label: "ממתין לאישור", variant: "secondary" as const },
-      posted: { label: "פורסם", variant: "default" as const },
-      rejected: { label: "נדחה", variant: "secondary" as const },
-      failed: { label: "נכשל", variant: "secondary" as const },
-      quota_exceeded: { label: "חריגה ממכסה", variant: "destructive" as const },
+      pending: { label: t("status.pending"), variant: "secondary" as const },
+      posted: { label: t("status.posted"), variant: "default" as const },
+      rejected: { label: t("status.rejected"), variant: "secondary" as const },
+      failed: { label: t("status.failed"), variant: "secondary" as const },
+      quota_exceeded: { label: t("status.quotaExceeded"), variant: "destructive" as const },
     };
 
     const statusInfo = statusMap[status] || statusMap.pending;
@@ -129,7 +131,9 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
           {review.text && (
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">ביקורת</span>
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  {t("reviewLabel")}
+                </span>
               </div>
               <div className="rounded-md bg-muted/50 p-3">
                 <p className="text-sm leading-relaxed">{review.text}</p>
@@ -141,7 +145,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
             <DashboardCardSection withBorder={!!review.text}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  תגובת בינה מלאכותית
+                  {t("aiReplyLabel")}
                 </span>
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
@@ -154,10 +158,10 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
         {(review.replyStatus === "pending" || review.replyStatus === "failed") && (
           <DashboardCardFooter>
             <Button type="button" onClick={handleReject} disabled={isLoading} variant="outline" size="sm">
-              דחה
+              {t("actions.reject")}
             </Button>
             <Button type="button" onClick={handleRegenerate} disabled={isLoading} size="sm" variant="outline">
-              צור מחדש
+              {t("actions.regenerate")}
             </Button>
             <Button
               type="button"
@@ -170,7 +174,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
               size="sm"
               variant="outline"
             >
-              ערוך
+              {t("actions.edit")}
             </Button>
             <Button
               type="button"
@@ -183,7 +187,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
               size="sm"
               variant="default"
             >
-              פרסם
+              {t("actions.publish")}
             </Button>
           </DashboardCardFooter>
         )}
@@ -205,13 +209,13 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
       <ConfirmationDialog
         open={showPublishDialog}
         onOpenChange={setShowPublishDialog}
-        title="פרסום תגובה לגוגל"
+        title={t("publishDialog.title")}
         description={
           <div className="space-y-3">
-            <p>האם אתה בטוח שברצונך לפרסם את התגובה הזו לגוגל?</p>
+            <p>{t("publishDialog.description")}</p>
             <div className="rounded-md bg-muted p-3 space-y-2">
               <div className="flex items-center gap-2 text-sm">
-                <span className="font-medium">למבקר:</span>
+                <span className="font-medium">{t("publishDialog.reviewer")}</span>
                 <span>{review.name}</span>
                 <span>•</span>
                 <StarRating rating={review.rating} size={14} />
@@ -221,16 +225,16 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
               </div>
             </div>
             <div className="rounded-md border border-accent bg-accent/10 p-3">
-              <p className="text-sm font-medium mb-1">התגובה שתפורסם:</p>
+              <p className="text-sm font-medium mb-1">{t("publishDialog.replyPreview")}</p>
               <p className="text-sm text-foreground">{review.aiReply}</p>
             </div>
           </div>
         }
-        confirmText="פרסם לגוגל"
-        cancelText="ביטול"
+        confirmText={t("publishDialog.confirm")}
+        cancelText={t("publishDialog.cancel")}
         onConfirm={handlePublishConfirm}
         variant="default"
-        loadingText="מפרסם..."
+        loadingText={t("publishDialog.loading")}
       />
     </>
   );

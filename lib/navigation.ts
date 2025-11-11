@@ -8,16 +8,16 @@ export interface NavItem {
 }
 
 export const dashboardNavItems: NavItem[] = [
-  { href: "/dashboard/home", label: "בית", icon: Home },
-  { href: "/dashboard/subscription", label: "תוכנית", icon: CreditCard },
-  { href: "/dashboard/insights", label: "תובנות", icon: BarChart3 },
+  { href: "/dashboard/home", label: "navigation.dashboard.home", icon: Home },
+  { href: "/dashboard/subscription", label: "navigation.dashboard.subscription", icon: CreditCard },
+  { href: "/dashboard/insights", label: "navigation.dashboard.insights", icon: BarChart3 },
 ];
 
 export const landingNavItems: NavItem[] = [
-  { href: "/#hero", label: "בית", icon: Home },
-  { href: "/#how-it-works", label: "איך זה עובד", icon: Rocket },
-  { href: "/#pricing", label: "מחירון", icon: PiggyBank },
-  { href: "/#faq", label: "שאלות", icon: ShieldQuestionMarkIcon },
+  { href: "/#hero", label: "navigation.landing.home", icon: Home },
+  { href: "/#how-it-works", label: "navigation.landing.howItWorks", icon: Rocket },
+  { href: "/#pricing", label: "navigation.landing.pricing", icon: PiggyBank },
+  { href: "/#faq", label: "navigation.landing.faq", icon: ShieldQuestionMarkIcon },
 ];
 
 export function getNavigationVariant(pathname: string): "dashboard" | "landing" {

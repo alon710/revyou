@@ -3,10 +3,12 @@ import { cn } from "@/lib/utils";
 
 interface GoogleSsoButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
+  label: string;
+  labelLoading: string;
 }
 
 const GoogleSsoButton = React.forwardRef<HTMLButtonElement, GoogleSsoButtonProps>(
-  ({ className, isLoading = false, children, ...props }, ref) => {
+  ({ className, isLoading = false, label, labelLoading, ...props }, ref) => {
     return (
       <button
         ref={ref}
@@ -42,7 +44,7 @@ const GoogleSsoButton = React.forwardRef<HTMLButtonElement, GoogleSsoButtonProps
             />
           </g>
         </svg>
-        <span>{isLoading ? "מתחבר..." : children || "התחבר עם גוגל"}</span>
+        <span>{isLoading ? labelLoading : label}</span>
       </button>
     );
   }

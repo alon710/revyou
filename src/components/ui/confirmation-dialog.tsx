@@ -28,6 +28,7 @@ interface ConfirmationDialogProps {
   confirmationText?: string;
   confirmationLabel?: string;
   confirmationPlaceholder?: string;
+  textMismatchMessage?: string;
   icon?: React.ReactNode;
   isLoading?: boolean;
   loadingText?: string | React.ReactNode;
@@ -38,17 +39,18 @@ export function ConfirmationDialog({
   onOpenChange,
   title,
   description,
-  confirmText = "אישור",
-  cancelText = "ביטול",
+  confirmText,
+  cancelText,
   onConfirm,
   variant = "default",
   requiresTextConfirmation = false,
   confirmationText = "",
   confirmationLabel,
   confirmationPlaceholder,
+  textMismatchMessage,
   icon,
   isLoading = false,
-  loadingText = "מעבד...",
+  loadingText,
 }: ConfirmationDialogProps) {
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -80,13 +82,13 @@ export function ConfirmationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent dir="rtl">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className={`flex items-center gap-2 ${variant === "destructive" ? "text-destructive" : ""}`}>
             {icon || (variant === "destructive" && <AlertTriangle className="h-5 w-5" />)}
             {title}
           </DialogTitle>
-          <DialogDescription asChild className="space-y-2 text-right">
+          <DialogDescription asChild className={cn("space-y-2 text-start")}>
             <div>
               {typeof description === "string" ? (
                 <p className={variant === "destructive" ? "text-destructive" : ""}>{description}</p>
@@ -101,7 +103,7 @@ export function ConfirmationDialog({
           <div className="space-y-4 py-4">
             <div>
               {confirmationLabel && (
-                <Label htmlFor="confirm-input" className={cn("text-sm text-primary font-medium text-right")}>
+                <Label htmlFor="confirm-input" className={cn("text-sm text-primary font-medium")}>
                   {confirmationLabel}
                 </Label>
               )}
@@ -112,14 +114,14 @@ export function ConfirmationDialog({
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder={confirmationText ? confirmationText : confirmationPlaceholder}
-                className="mt-2 text-right"
+                className={cn("mt-2 text-start")}
                 disabled={showLoading}
               />
             </div>
 
-            {inputValue && !isConfirmValid && (
-              <p className="text-sm text-destructive text-right">
-                הטקסט אינו תואם: <span className="italic font-semibold">{confirmationText}</span>
+            {inputValue && !isConfirmValid && textMismatchMessage && (
+              <p className={cn("text-sm text-destructive text-start")}>
+                {textMismatchMessage} <span className="italic font-semibold">{confirmationText}</span>
               </p>
             )}
           </div>

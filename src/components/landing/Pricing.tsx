@@ -5,7 +5,6 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Check, X } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
@@ -14,6 +13,8 @@ import { type BillingPeriod } from "@/lib/stripe/entitlements";
 import { EnrichedProduct, enrichProduct, sortProductsByPlan } from "@/lib/stripe/product-parser";
 import { FEATURE_CONFIGS, formatFeatureValue } from "@/lib/stripe/feature-config";
 import { getMonthlyPrice, getPriceId, getYearlyPrice } from "@/lib/stripe/pricing";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/routing";
 
 const YEARLY_DISCOUNT = 0.2;
 
@@ -24,6 +25,7 @@ export function Pricing() {
   const [loadingProductId, setLoadingProductId] = useState<string | null>(null);
   const router = useRouter();
   const { user } = useAuth();
+  const t = useTranslations("landing.pricing");
 
   useEffect(() => {
     async function fetchProducts() {
@@ -151,8 +153,8 @@ export function Pricing() {
     <div>
       <div className="container mx-auto px-6 sm:px-8 lg:px-12">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">תוכניות מחיר שמתאימות לכם</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">בחרו את התוכנית המתאימה לעסק שלכם</p>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">{t("title")}</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">{t("subtitle")}</p>
 
           <Tabs
             value={billingPeriod}
@@ -161,10 +163,10 @@ export function Pricing() {
           >
             <TabsList>
               <TabsTrigger value="yearly">
-                <span className="ms-1 text-xs text-primary">(חסכו 20%)</span>
-                שנתי
+                <span className="ms-1 text-xs text-primary">{t("yearlyDiscount")}</span>
+                {t("yearly")}
               </TabsTrigger>
-              <TabsTrigger value="monthly">חודשי</TabsTrigger>
+              <TabsTrigger value="monthly">{t("monthly")}</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -271,10 +273,12 @@ export function Pricing() {
                       )}
                       <div className="flex items-baseline gap-1">
                         <span className="text-4xl font-bold text-foreground">{formatPrice(product)}</span>
-                        <span className="text-muted-foreground">/חודש</span>
+                        <span className="text-muted-foreground">{t("perMonth")}</span>
                       </div>
                       {showYearlyDiscount && (
-                        <span className="text-xs text-primary mt-1">חסכון של ₪{getSavingsAmount(product)} לחודש</span>
+                        <span className="text-xs text-primary mt-1">
+                          {t("savings", { amount: getSavingsAmount(product) })}
+                        </span>
                       )}
                     </motion.div>
                   </div>
@@ -288,6 +292,7 @@ export function Pricing() {
                         isBoolean && typeof formattedValue === "boolean"
                           ? formattedValue
                           : value !== undefined && value !== null;
+                      const featureName = t(`features.${featureConfig.key}`);
 
                       return (
                         <motion.li
@@ -311,7 +316,7 @@ export function Pricing() {
                             <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                           )}
                           <span className={`text-sm ${isEnabled ? "text-foreground" : "text-muted-foreground"}`}>
-                            {isBoolean ? featureConfig.displayName : `${featureConfig.displayName}: ${formattedValue}`}
+                            {isBoolean ? featureName : `${featureName}: ${formattedValue}`}
                           </span>
                         </motion.li>
                       );
@@ -334,8 +339,8 @@ export function Pricing() {
                       disabled={loadingProductId === product.id}
                     >
                       {loadingProductId === product.id
-                        ? "טוען..."
-                        : product.metadata?.cta || (product.planId === "free" ? "התחל בחינם" : "התחל עכשיו")}
+                        ? t("loading")
+                        : product.metadata?.cta || (product.planId === "free" ? t("freeCta") : t("paidCta"))}
                     </Button>
                   </motion.div>
                 </motion.div>

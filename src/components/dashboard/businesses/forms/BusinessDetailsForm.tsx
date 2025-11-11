@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { TooltipIcon } from "@/components/ui/tooltip";
+import { useTranslations, useLocale } from "next-intl";
+import { getLocaleDir, type Locale } from "@/i18n/config";
 
 export interface BusinessDetailsFormData {
   name: string;
@@ -26,66 +28,80 @@ export function BusinessDetailsForm({
   disabled = false,
   businessNamePlaceholder,
 }: BusinessDetailsFormProps) {
+  const t = useTranslations("dashboard.businesses.forms.businessDetails");
+  const locale = useLocale() as Locale;
+  const dir = getLocaleDir(locale);
+
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-6" dir={dir}>
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           {showTooltips && (
-            <TooltipIcon text="שם העסק כפי שיופיע בתגובות ללקוחות. השאר ריק כדי להשתמש בשם מ-Google Business Profile" />
+            <TooltipIcon
+              text={t("name.tooltip")}
+              additionalInfoLabel={t("name.label")}
+              closeLabel={t("common.close")}
+            />
           )}
-          <Label htmlFor="businessName">שם העסק</Label>
+          <Label htmlFor="businessName">{t("name.label")}</Label>
         </div>
         <Input
           id="businessName"
           type="text"
           value={values.name}
           onChange={(e) => onChange("name", e.target.value)}
-          placeholder={businessNamePlaceholder || "שם העסק"}
+          placeholder={businessNamePlaceholder || t("name.placeholder")}
           disabled={disabled}
-          dir="rtl"
+          dir={dir}
         />
-        {businessNamePlaceholder && (
-          <p className="text-xs text-muted-foreground text-right">שם העסק כפי שהייתם רוצים שיופיע בתגובות</p>
-        )}
+        {businessNamePlaceholder && <p className="text-xs text-muted-foreground text-end">{t("name.helper")}</p>}
       </div>
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           {showTooltips && (
-            <TooltipIcon text="תיאור מפורט של העסק, השירותים שאתה מספק, ונקודות ייחודיות. מידע זה יעזור ל-AI ליצור תשובות מותאמות ומדויקות יותר" />
+            <TooltipIcon
+              text={t("description.tooltip")}
+              additionalInfoLabel={t("description.label")}
+              closeLabel={t("common.close")}
+            />
           )}
-          <Label htmlFor="businessDescription">תיאור העסק</Label>
+          <Label htmlFor="businessDescription">{t("description.label")}</Label>
         </div>
         <Textarea
           id="businessDescription"
           value={values.description}
           onChange={(e) => onChange("description", e.target.value)}
-          placeholder="תאר את העסק שלך, את השירותים שאתה מספק, מה מייחד אותך מהמתחרים..."
+          placeholder={t("description.placeholder")}
           rows={4}
           disabled={disabled}
           className="resize-none"
-          dir="rtl"
+          dir={dir}
         />
-        <p className="text-xs text-muted-foreground text-right">תיאור זה יעזור ל-AI ליצור תשובות מותאמות יותר</p>
+        <p className="text-xs text-muted-foreground text-end">{t("description.helper")}</p>
       </div>
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           {showTooltips && (
-            <TooltipIcon text="מספר טלפון שיופיע בתגובות לביקורות שליליות (1-2 כוכבים) כדי לאפשר ללקוחות ליצור קשר ישיר ולפתור בעיות" />
+            <TooltipIcon
+              text={t("phone.tooltip")}
+              additionalInfoLabel={t("phone.label")}
+              closeLabel={t("common.close")}
+            />
           )}
-          <Label htmlFor="businessPhone">טלפון ליצירת קשר</Label>
+          <Label htmlFor="businessPhone">{t("phone.label")}</Label>
         </div>
         <Input
           id="businessPhone"
           type="tel"
           value={values.phoneNumber}
           onChange={(e) => onChange("phoneNumber", e.target.value)}
-          placeholder="039025977"
+          placeholder={t("phone.placeholder")}
           disabled={disabled}
           dir="ltr"
         />
-        <p className="text-xs text-muted-foreground text-right">מספר טלפון שיופיע בתגובות שליליות (1-2 כוכבים)</p>
+        <p className="text-xs text-muted-foreground text-end">{t("phone.helper")}</p>
       </div>
     </div>
   );
