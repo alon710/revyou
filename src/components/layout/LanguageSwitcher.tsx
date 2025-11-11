@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetTrigger, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -13,6 +13,7 @@ export function LanguageSwitcher() {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations("common");
 
   const handleLocaleChange = (newLocale: Locale) => {
     if (newLocale === locale) return;
@@ -49,7 +50,7 @@ export function LanguageSwitcher() {
         <Sheet>
           <SheetTrigger asChild>{triggerButton}</SheetTrigger>
           <SheetContent side="bottom">
-            <SheetTitle className="sr-only">Select language</SheetTitle>
+            <SheetTitle className="sr-only">{t("selectLanguage")}</SheetTitle>
             <div className="grid gap-4 p-4">{languageOptions}</div>
           </SheetContent>
         </Sheet>

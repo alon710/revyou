@@ -68,7 +68,7 @@ export function DeleteConfirmation({
       <ConfirmationDialog
         open={showDialog}
         onOpenChange={setShowDialog}
-        title={title.toLowerCase()}
+        title={title}
         description={description}
         confirmText={deleteButtonText}
         cancelText={cancelLabel}
