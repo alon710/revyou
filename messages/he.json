@@ -187,6 +187,13 @@
       "termsLink": "תנאי השימוש",
       "termsMiddle": "ול",
       "privacyLink": "מדיניות הפרטיות"
+    },
+    "errors": {
+      "firebaseNotConfigured": "Firebase לא מוגדר. אנא בדוק את הגדרות הפרויקט.",
+      "sessionCreationFailed": "לא ניתן ליצור הרשאה. אנא נסה להתחבר שוב.",
+      "googleSignInFailed": "אירעה שגיאה בהתחברות עם גוגל",
+      "signOutFailed": "אירעה שגיאה בהתנתקות",
+      "authStateError": "אירעה שגיאה בטעינת המשתמש"
     }
   },
   "dashboard": {

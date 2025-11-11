@@ -31,6 +31,14 @@
     "irreversibleActions": "Irreversible actions that will affect your account",
     "additionalInfo": "Additional Information"
   },
+  "errors": {
+    "general": "Something went wrong",
+    "network": "Network error",
+    "unauthorized": "Unauthorized",
+    "notFound": "Not found",
+    "validation": "Validation error",
+    "tryAgain": "Try again"
+  },
   "navigation": {
     "dashboard": {
       "home": "Home",
@@ -177,6 +185,13 @@
       "termsLink": "Terms of Service",
       "termsMiddle": "and",
       "privacyLink": "Privacy Policy"
+    },
+    "errors": {
+      "firebaseNotConfigured": "Firebase is not configured. Please check project settings.",
+      "sessionCreationFailed": "Unable to create session. Please try logging in again.",
+      "googleSignInFailed": "An error occurred signing in with Google",
+      "signOutFailed": "An error occurred signing out",
+      "authStateError": "An error occurred loading user"
     }
   },
   "dashboard": {

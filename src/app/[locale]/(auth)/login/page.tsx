@@ -25,14 +25,15 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("auth.loginPage");
+  const tAuth = useTranslations();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      toast.error(tAuth(error));
     }
-  }, [error]);
+  }, [error, tAuth]);
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
