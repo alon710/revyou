@@ -1,7 +1,7 @@
 export type Locale = "en" | "he";
 
 export const locales: Locale[] = ["en", "he"] as const;
-export const defaultLocale: Locale = "he";
+export const defaultLocale: Locale = "en";
 
 export const localeConfig = {
   en: {
