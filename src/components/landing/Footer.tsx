@@ -68,17 +68,6 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-4">{t("resources.title")}</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/sitemap" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  {t("resources.sitemap")}
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
             <h4 className="text-sm font-semibold text-foreground mb-4">{t("legal.title")}</h4>
             <ul className="space-y-2">
               <li>
