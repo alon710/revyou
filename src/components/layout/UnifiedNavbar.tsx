@@ -1,17 +1,20 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Logo } from "@/components/ui/Logo";
 import { NavbarContainer } from "./NavbarContainer";
 import { useNavigation } from "@/hooks/useNavigation";
 import { AuthButton } from "@/components/auth/AuthButton";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useTranslations } from "next-intl";
 
 export function UnifiedNavbar({ variant }: { variant: "landing" | "dashboard" }) {
   const { navItems, scrollToSection, isActive } = useNavigation(variant);
+  const t = useTranslations();
 
   return (
     <NavbarContainer>
-      <div className="shrink-0 pl-2">
+      <div className="shrink-0 ps-2">
         <Logo href="/dashboard/home" />
       </div>
 
@@ -25,11 +28,11 @@ export function UnifiedNavbar({ variant }: { variant: "landing" | "dashboard" })
                 key={item.label}
                 type="button"
                 onClick={() => scrollToSection(item.href)}
-                className={`text-sm font-medium px-4 py-2 rounded-lg ${
+                className={`text-sm font-medium px-4 py-2 rounded-lg cursor-pointer ${
                   isItemActive ? "text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900"
                 }`}
               >
-                {item.label}
+                {t(item.label)}
               </button>
             );
           }
@@ -38,17 +41,18 @@ export function UnifiedNavbar({ variant }: { variant: "landing" | "dashboard" })
             <Link
               key={item.label}
               href={item.href}
-              className={`text-sm font-medium px-4 py-2 rounded-lg ${
+              className={`text-sm font-medium px-4 py-2 rounded-lg cursor-pointer ${
                 isItemActive ? "text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              {item.label}
+              {t(item.label)}
             </Link>
           );
         })}
       </nav>
 
-      <div className="flex items-center gap-2 shrink-0 pr-2">
+      <div className="flex items-center gap-2 shrink-0 pe-2">
+        <LanguageSwitcher />
         <AuthButton variant={variant} />
       </div>
     </NavbarContainer>

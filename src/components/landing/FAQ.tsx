@@ -4,52 +4,13 @@ import { Card } from "@/components/ui/card";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 
-const faqs = [
-  {
-    question: "איך המערכת יוצרת תשובות לביקורות?",
-    answer:
-      "המערכת משתמשת בטכנולוגיית Gemini AI של Google ליצירת תשובות מותאמות אישית. היא לוקחת בחשבון את תיאור העסק שלך, את טון הדיבור שבחרת, את דירוג הכוכבים והוראות ספציפיות שהגדרת לכל סוג ביקורת.",
-  },
-  {
-    question: "האם אני יכול לערוך את התשובות לפני הפרסום?",
-    answer:
-      "בהחלט! ניתן להגדיר את המערכת לשלושה מצבים: אישור ידני (תבדקו כל תשובה), פרסום אוטומטי מלא, או מצב היברידי שבו תחליטו לפי דירוג הכוכבים. לדוגמה, ביקורות של 4-5 כוכבים יתפרסמו אוטומטית ואילו ביקורות נמוכות יותר ידרשו אישור ידני.",
-  },
-  {
-    question: "האם המערכת תומכת בעברית?",
-    answer:
-      "כן! המערכת תומכת באופן מלא בעברית ובאנגלית. ניתן להגדיר את שפת התשובות כברירת מחדל, או לבחור במצב 'התאמה אוטומטית' שבו המערכת תזהה את שפת הביקורת ותגיב באותה שפה.",
-  },
-  {
-    question: "כמה זמן לוקח לקבל תשובה אוטומטית?",
-    answer:
-      "המערכת מקבלת התראה בזמן אמת על ביקורות חדשות דרך Google Pub/Sub. בדרך כלל, תשובה נוצרת תוך 1-2 דקות מרגע שהביקורת מתפרסמת. במצב פרסום אוטומטי, התשובה מתפרסמת מיד לאחר מכן.",
-  },
-  {
-    question: "האם אני יכול להגדיר תשובות שונות לדירוגים שונים?",
-    answer:
-      "כן! זו אחת התכונות המרכזיות של המערכת. ניתן להגדיר הוראות ספציפיות לכל דירוג כוכבים (1-5). לדוגמה, לביקורת של כוכב אחד תוכלו להגדיר תשובה אמפתית יותר עם הצעת פתרון, בעוד שלביקורת של 5 כוכבים תשובה מודה יותר.",
-  },
-  {
-    question: "מה קורה אם המערכת יוצרת תשובה לא מתאימה?",
-    answer:
-      "אם הפעלתם מצב אישור ידני, תוכלו לדחות את התשובה או לערוך אותה לפני הפרסום. במקרה של פרסום אוטומטי, תמיד ניתן למחוק את התשובה או לערוך אותה גם אחרי הפרסום. בנוסף, המערכת לומדת מהעריכות שלכם ומשתפרת עם הזמן.",
-  },
-  {
-    question: "האם המערכת בטוחה? מה לגבי פרטיות המידע?",
-    answer:
-      "המערכת משתמשת באינטגרציה רשמית של Google Business Profile API עם OAuth 2.0, כך שאנחנו לא שומרים את סיסמת Google שלך. כל המידע מוצפן ומאוחסן באופן מאובטח ב-Firebase של Google. אנחנו עומדים בסטנדרטים הגבוהים ביותר של אבטחת מידע ופרטיות.",
-  },
-  {
-    question: "האם אני יכול לנסות את המערכת לפני התשלום?",
-    answer:
-      "כן! יש לנו תוכנית חינמית שמאפשרת לכם לנהל עסק אחד ועד 5 ביקורות בחודש ללא צורך בכרטיס אשראי. תוכלו לשדרג לתוכנית בתשלום בכל עת.",
-  },
-];
+const FAQ_ITEM_COUNT = 8;
 
 export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const t = useTranslations("landing.faq");
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -59,12 +20,12 @@ export function FAQ() {
     <div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">שאלות נפוצות</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">מצאו תשובות לשאלות הנפוצות ביותר על המערכת</p>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">{t("title")}</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t("subtitle")}</p>
         </div>
 
         <div className="max-w-3xl mx-auto space-y-4">
-          {faqs.map((faq, index) => (
+          {Array.from({ length: FAQ_ITEM_COUNT }).map((_, index) => (
             <motion.div
               key={index}
               className="group relative"
@@ -87,7 +48,7 @@ export function FAQ() {
               whileTap={{ scale: 0.98 }}
             >
               <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/8 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"
+                className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-primary/8 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"
                 initial={false}
               />
 
@@ -99,15 +60,15 @@ export function FAQ() {
               <Card className="relative overflow-hidden border border-border/40 shadow-sm hover:shadow-md rounded-lg bg-card">
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full text-right p-6 flex items-center justify-between hover:bg-secondary/50 transition-all duration-300 cursor-pointer"
+                  className="w-full text-start p-6 flex items-center justify-between hover:bg-secondary/50 transition-all duration-300 cursor-pointer"
                 >
-                  <h3 className="text-lg font-semibold text-foreground pe-4">{faq.question}</h3>
+                  <h3 className="text-lg font-semibold text-foreground pe-4">{t(`items.${index}.question`)}</h3>
                   <motion.div
                     animate={{ rotate: openIndex === index ? 180 : 0 }}
                     whileHover={{ scale: 1.2 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <ChevronDown className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                    <ChevronDown className="h-5 w-5 text-muted-foreground shrink-0" />
                   </motion.div>
                 </button>
                 <AnimatePresence initial={false}>
@@ -130,7 +91,7 @@ export function FAQ() {
                           }}
                           className="text-muted-foreground leading-relaxed"
                         >
-                          {faq.answer}
+                          {t(`items.${index}.answer`)}
                         </motion.p>
                       </div>
                     </motion.div>

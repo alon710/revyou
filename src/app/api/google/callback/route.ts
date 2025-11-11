@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         hasCode: !!code,
         hasState: !!state,
       });
-      return redirectToBusinesses(false);
+      return redirectToBusinesses(false, undefined);
     }
 
     const stateData = JSON.parse(Buffer.from(state, "base64").toString());
@@ -37,13 +37,13 @@ export async function GET(request: NextRequest) {
 
     if (!stateUserId) {
       console.error("OAuth callback - Invalid state: missing userId");
-      return redirectToBusinesses(false);
+      return redirectToBusinesses(false, undefined);
     }
 
     const authResult = await getAuthenticatedUserId();
     if (authResult instanceof NextResponse) {
       console.error("OAuth callback - User not authenticated");
-      return redirectToBusinesses(false);
+      return redirectToBusinesses(false, undefined);
     }
 
     const { userId: authenticatedUserId } = authResult;
@@ -53,19 +53,19 @@ export async function GET(request: NextRequest) {
         stateUserId,
         authenticatedUserId,
       });
-      return redirectToBusinesses(false);
+      return redirectToBusinesses(false, undefined);
     }
 
     const tokens = await exchangeCodeForTokens(code);
 
     if (!tokens.refresh_token) {
       console.error("OAuth callback - No refresh token received from Google");
-      return redirectToBusinesses(false);
+      return redirectToBusinesses(false, undefined);
     }
 
     if (!tokens.access_token) {
       console.error("OAuth callback - No access token received from Google");
-      return redirectToBusinesses(false);
+      return redirectToBusinesses(false, undefined);
     }
 
     const encryptedToken = await encryptToken(tokens.refresh_token);
@@ -111,6 +111,6 @@ export async function GET(request: NextRequest) {
     console.error("Error details:", JSON.stringify(error, null, 2));
     console.error("===========================");
 
-    return redirectToBusinesses(false);
+    return redirectToBusinesses(false, undefined);
   }
 }

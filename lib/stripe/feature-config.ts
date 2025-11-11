@@ -10,34 +10,28 @@ export const FEATURE_KEYS = {
 
 interface FeatureConfig {
   key: string;
-  displayName: string;
   type: "number" | "text" | "boolean";
 }
 
 export const FEATURE_CONFIGS: FeatureConfig[] = [
   {
     key: FEATURE_KEYS.MAX_BUSINESSES,
-    displayName: "מספר עסקים",
     type: "number",
   },
   {
     key: FEATURE_KEYS.MONTHLY_REVIEWS,
-    displayName: "ביקורות בחודש",
     type: "number",
   },
   {
     key: FEATURE_KEYS.MANUAL_APPROVAL,
-    displayName: "אישור ידני",
     type: "boolean",
   },
   {
     key: FEATURE_KEYS.AUTO_PUBLISH,
-    displayName: "פרסום אוטומטי",
     type: "boolean",
   },
   {
     key: FEATURE_KEYS.WHATSAPP_SUPPORT,
-    displayName: "תמיכה בוואטסאפ",
     type: "boolean",
   },
 ];

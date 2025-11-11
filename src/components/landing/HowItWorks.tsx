@@ -2,51 +2,28 @@
 
 import { Button } from "@/components/ui/button";
 import { Link2, Settings, MessageSquare, CheckCircle } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
-const steps = [
-  {
-    number: 1,
-    icon: Link2,
-    title: "חיבור חשבון Google Business",
-    description: "התחברו בקליק אחד לחשבון Google Business Profile שלכם ובחרו את העסק להפעלה",
-  },
-  {
-    number: 2,
-    icon: Settings,
-    title: "הגדרת העדפות",
-    description: "התאימו את טון הדיבור, סגנון התשובות והוראות מיוחדות לכל דירוג כוכבים",
-  },
-  {
-    number: 3,
-    icon: MessageSquare,
-    title: "קבלת תשובות אוטומטיות",
-    description: "המערכת מזהה ביקורות חדשות ויוצרת תשובות מותאמות אישית באופן אוטומטי",
-  },
-  {
-    number: 4,
-    icon: CheckCircle,
-    title: "אישור ופרסום",
-    description: "בדקו ואשרו את התשובות לפני פרסום, או הפעילו מצב פרסום אוטומטי מלא",
-  },
-];
+const STEPS_COUNT = 4;
+const stepIcons = [Link2, Settings, MessageSquare, CheckCircle];
 
 export function HowItWorks() {
+  const t = useTranslations("landing.howItWorks");
   return (
     <div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">איך זה עובד?</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            ארבעה צעדים פשוטים להפעלת המערכת ותשובות אוטומטיות לביקורות
-          </p>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">{t("title")}</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t("subtitle")}</p>
         </div>
 
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-8">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
+            {Array.from({ length: STEPS_COUNT }).map((_, index) => {
+              const Icon = stepIcons[index];
+              const stepNumber = index + 1;
               return (
                 <motion.div
                   key={index}
@@ -72,7 +49,7 @@ export function HowItWorks() {
                   whileTap={{ scale: 0.98 }}
                 >
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"
+                    className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"
                     initial={false}
                   />
 
@@ -92,7 +69,7 @@ export function HowItWorks() {
                       ease: "backOut",
                     }}
                   >
-                    {step.number}
+                    {stepNumber}
                   </motion.div>
 
                   <div className="relative">
@@ -120,7 +97,7 @@ export function HowItWorks() {
                         ease: "easeOut",
                       }}
                     >
-                      {step.title}
+                      {t(`steps.${index}.title`)}
                     </motion.h3>
                     <motion.p
                       className="text-muted-foreground leading-relaxed"
@@ -133,7 +110,7 @@ export function HowItWorks() {
                         ease: "easeOut",
                       }}
                     >
-                      {step.description}
+                      {t(`steps.${index}.description`)}
                     </motion.p>
                   </div>
                 </motion.div>
@@ -143,9 +120,9 @@ export function HowItWorks() {
         </div>
 
         <div className="text-center mt-12">
-          <p className="text-lg text-muted-foreground mb-6">מוכנים להתחיל? זה לוקח פחות מ-5 דקות</p>
+          <p className="text-lg text-muted-foreground mb-6">{t("ctaText")}</p>
           <Link href="/login">
-            <Button className="text-lg px-8">התחל עכשיו בחינם</Button>
+            <Button className="text-lg px-8">{t("ctaButton")}</Button>
           </Link>
         </div>
       </div>

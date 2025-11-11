@@ -1,15 +1,17 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { isAnchorLink } from "@/lib/navigation";
 import { useNavigation } from "@/hooks/useNavigation";
+import { useTranslations } from "next-intl";
 
 export function BottomNavigation() {
   const { navItems, scrollToSection, isActive: checkIsActive } = useNavigation();
+  const t = useTranslations();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg h-16">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white border-t border-gray-200 shadow-lg h-16">
       <div className="flex items-center justify-around h-full px-2">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -20,7 +22,7 @@ export function BottomNavigation() {
             <>
               <Icon className={cn("transition-all", isActive ? "w-6 h-6" : "w-5 h-5")} />
               <span className={cn("text-xs transition-all", isActive ? "font-semibold" : "font-medium")}>
-                {item.label}
+                {t(item.label)}
               </span>
             </>
           );

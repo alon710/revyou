@@ -16,11 +16,6 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
-const TEXTS = {
-  additionalInfo: "מידע נוסף",
-  close: "סגירה",
-};
-
 const TooltipProvider = TooltipPrimitive.Provider;
 const Tooltip = TooltipPrimitive.Root;
 const TooltipTrigger = TooltipPrimitive.Trigger;
@@ -46,9 +41,11 @@ TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
 interface TooltipIconProps {
   text: string;
+  additionalInfoLabel: string;
+  closeLabel: string;
 }
 
-const TooltipIcon = ({ text }: TooltipIconProps) => {
+const TooltipIcon = ({ text, additionalInfoLabel, closeLabel }: TooltipIconProps) => {
   const isMobile = useIsMobile();
 
   if (isMobile) {
@@ -64,14 +61,14 @@ const TooltipIcon = ({ text }: TooltipIconProps) => {
             <DrawerClose asChild>
               <button
                 type="button"
-                className="absolute left-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                className="absolute start-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
               >
                 <X className="h-4 w-4" />
-                <span className="sr-only">{TEXTS.close}</span>
+                <span className="sr-only">{closeLabel}</span>
               </button>
             </DrawerClose>
-            <DrawerTitle className="text-right pl-12">{TEXTS.additionalInfo}</DrawerTitle>
-            <DrawerDescription className="text-right pl-12">{text}</DrawerDescription>
+            <DrawerTitle className="text-end ps-12">{additionalInfoLabel}</DrawerTitle>
+            <DrawerDescription className="text-end ps-12">{text}</DrawerDescription>
           </DrawerHeader>
         </DrawerContent>
       </Drawer>
@@ -85,7 +82,7 @@ const TooltipIcon = ({ text }: TooltipIconProps) => {
           <button
             type="button"
             className="inline-flex size-5 shrink-0 items-center justify-center rounded-md text-muted-foreground leading-none align-middle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            aria-label={TEXTS.additionalInfo}
+            aria-label={additionalInfoLabel}
           >
             <Info className="h-[14px] w-[14px]" strokeWidth={1.75} />
           </button>

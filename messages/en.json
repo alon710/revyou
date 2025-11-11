@@ -1,0 +1,634 @@
+{
+  "metadata": {
+    "title": "AI Responses for Reviews - Google Review AI Reply",
+    "description": "Automatically generate professional responses to customer reviews using artificial intelligence"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "yes": "Yes",
+    "no": "No",
+    "saveSuccess": "Changes saved successfully",
+    "saveError": "An error occurred while saving",
+    "processing": "Processing...",
+    "deleting": "Deleting...",
+    "textMismatch": "Text does not match:",
+    "dangerZone": "Danger Zone",
+    "irreversibleWarning": "This action is irreversible!",
+    "irreversibleActions": "Irreversible actions that will affect your account",
+    "additionalInfo": "Additional Information"
+  },
+  "navigation": {
+    "dashboard": {
+      "home": "Home",
+      "subscription": "Plan",
+      "insights": "Insights"
+    },
+    "landing": {
+      "home": "Home",
+      "howItWorks": "How It Works",
+      "pricing": "Pricing",
+      "faq": "FAQ"
+    }
+  },
+  "landing": {
+    "hero": {
+      "title": "Professional Responses to Reviews",
+      "subtitle": "Automatically",
+      "description": "Save valuable time and respond to every review in a personal and professional manner with the power of artificial intelligence. Maintain your brand voice and improve business reputation.",
+      "cta": "Free Trial Month",
+      "badge1": "Completely Free",
+      "badge2": "No Commitment"
+    },
+    "pricing": {
+      "title": "Pricing Plans That Fit You",
+      "subtitle": "Choose the plan that suits your business",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "yearlyDiscount": "(Save 20%)",
+      "perMonth": "/month",
+      "savings": "Save ₪{amount} per month",
+      "freeCta": "Start Free",
+      "paidCta": "Start Now",
+      "loading": "Loading...",
+      "features": {
+        "max_businesses": "Number of Businesses",
+        "monthly_reviews": "Reviews per Month",
+        "manual_approval": "Manual Approval",
+        "auto_publish": "Auto Publish",
+        "whatsapp_support": "WhatsApp Support"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Find answers to the most common questions about the system",
+      "items": {
+        "0": {
+          "question": "How does the system create review responses?",
+          "answer": "The system uses Google's Gemini AI technology to create personalized responses. It takes into account your business description, chosen tone of voice, star rating, and specific instructions you've set for each review type."
+        },
+        "1": {
+          "question": "Can I edit responses before publishing?",
+          "answer": "Absolutely! You can configure the system in three modes: manual approval (review every response), full auto-publish, or hybrid mode where you decide based on star rating. For example, 4-5 star reviews auto-publish while lower ratings require manual approval."
+        },
+        "2": {
+          "question": "Does the system support Hebrew?",
+          "answer": "Yes! The system fully supports both Hebrew and English. You can set the default response language, or choose 'auto-match' mode where the system detects the review language and responds in the same language."
+        },
+        "3": {
+          "question": "How long does it take to get an automated response?",
+          "answer": "The system receives real-time notifications for new reviews via Google Pub/Sub. Typically, a response is generated within 1-2 minutes of the review being published. In auto-publish mode, the response is published immediately after."
+        },
+        "4": {
+          "question": "Can I set different responses for different ratings?",
+          "answer": "Yes! This is one of the system's core features. You can set specific instructions for each star rating (1-5). For example, for a 1-star review you can configure a more empathetic response with a solution offer, while a 5-star review gets a more grateful response."
+        },
+        "5": {
+          "question": "What happens if the system creates an inappropriate response?",
+          "answer": "If you've enabled manual approval mode, you can reject or edit the response before publishing. In auto-publish mode, you can always delete or edit the response even after publication. Additionally, the system learns from your edits and improves over time."
+        },
+        "6": {
+          "question": "Is the system secure? What about data privacy?",
+          "answer": "The system uses official Google Business Profile API integration with OAuth 2.0, so we never store your Google password. All information is encrypted and securely stored in Google Firebase. We comply with the highest standards of data security and privacy."
+        },
+        "7": {
+          "question": "Can I try the system before paying?",
+          "answer": "Yes! We have a free plan that allows you to manage one business and up to 5 reviews per month without needing a credit card. You can upgrade to a paid plan anytime."
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works?",
+      "subtitle": "Four simple steps to activate the system and get automated review responses",
+      "steps": {
+        "0": {
+          "title": "Connect Google Business Account",
+          "description": "Connect with one click to your Google Business Profile account and select the business to activate"
+        },
+        "1": {
+          "title": "Configure Preferences",
+          "description": "Customize the tone of voice, response style, and special instructions for each star rating"
+        },
+        "2": {
+          "title": "Receive Automated Responses",
+          "description": "The system detects new reviews and creates personalized responses automatically"
+        },
+        "3": {
+          "title": "Review and Publish",
+          "description": "Review and approve responses before publishing, or enable full automatic publishing mode"
+        }
+      },
+      "ctaText": "Ready to get started? It takes less than 5 minutes",
+      "ctaButton": "Start Now for Free"
+    },
+    "footer": {
+      "company": {
+        "name": "AI Responses",
+        "description": "Advanced AI solution for managing and automating customer review responses. Save time and improve your business reputation.",
+        "location": "Tel Aviv, Israel"
+      },
+      "product": {
+        "title": "Product",
+        "howItWorks": "How It Works",
+        "pricing": "Pricing",
+        "faq": "FAQ"
+      },
+      "resources": {
+        "title": "Resources",
+        "sitemap": "Sitemap"
+      },
+      "legal": {
+        "title": "Legal",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service"
+      },
+      "copyright": "© {year} AI Responses. All rights reserved."
+    }
+  },
+  "auth": {
+    "signOut": "Sign Out",
+    "login": "Login",
+    "loggingIn": "Logging in...",
+    "myAccount": "My Account",
+    "navigating": "Navigating...",
+    "user": "User",
+    "addBusiness": "Add Business",
+    "checkingAuth": "Verifying authentication...",
+    "loginPage": {
+      "tagline": "Sign in to start managing your reviews",
+      "title": "Login",
+      "description": "Sign in with your Google account to continue",
+      "googleButton": "Sign in with Google",
+      "googleButtonLoading": "Signing in...",
+      "termsPrefix": "By signing in, you agree to the",
+      "termsLink": "Terms of Service",
+      "termsMiddle": "and",
+      "privacyLink": "Privacy Policy"
+    }
+  },
+  "dashboard": {
+    "home": {
+      "title": "Home",
+      "description": "Manage your accounts and businesses",
+      "accountBusinessesList": {
+        "noConnectedAccounts": "No connected accounts",
+        "noConnectedAccountsDescription": "You have no connected accounts",
+        "connectAccount": "Connect account",
+        "disconnected": "Disconnected",
+        "navigating": "Navigating...",
+        "viewReviews": "View reviews",
+        "editDetails": "Edit details"
+      }
+    },
+    "businesses": {
+      "forms": {
+        "businessDetails": {
+          "name": {
+            "label": "Business Name",
+            "tooltip": "The business name as it will appear in customer responses. Leave empty to use the name from Google Business Profile",
+            "placeholder": "Business Name",
+            "helper": "The business name as you want it to appear in responses"
+          },
+          "description": {
+            "label": "Business Description",
+            "tooltip": "Detailed description of the business, services you provide, and unique features. This information will help AI create more tailored and accurate responses",
+            "placeholder": "Describe your business, the services you provide, what makes you unique from competitors...",
+            "helper": "This description will help AI create more tailored responses"
+          },
+          "phone": {
+            "label": "Contact Phone",
+            "tooltip": "Phone number to appear in responses to negative reviews (1-2 stars) to allow customers to reach out directly and resolve issues",
+            "placeholder": "039025977",
+            "helper": "Phone number to appear in negative reviews (1-2 stars)"
+          }
+        },
+        "aiSettings": {
+          "toneOfVoice": {
+            "label": "Response Style",
+            "tooltip": "Choose the writing style for automatic responses: professional for serious businesses, friendly for casual businesses, formal for upscale venues, or humorous for businesses with a lighthearted atmosphere",
+            "options": {
+              "professional": "Professional",
+              "friendly": "Friendly",
+              "formal": "Formal",
+              "humorous": "Humorous"
+            }
+          },
+          "languageMode": {
+            "label": "Response Language",
+            "tooltip": "Choose auto-detect to have the system identify the review language and respond in the same language, or select a fixed language for all responses",
+            "options": {
+              "autoDetect": "Auto Detect",
+              "hebrew": "Hebrew",
+              "english": "English"
+            }
+          },
+          "emojis": {
+            "label": "Allowed Emojis",
+            "tooltip": "Define which emojis the system is allowed to use in responses. Separate with spaces. Leave empty if you don't want to use emojis at all",
+            "placeholder": "✨ 🙏 ❤️ (or leave empty to not use emojis)",
+            "helper": "Only valid emojis will be saved. All other characters will be removed automatically"
+          },
+          "maxSentences": {
+            "label": "Maximum Sentences",
+            "tooltip": "Set the response length. One sentence for short responses, two sentences (recommended) for balance between brevity and content, three sentences for more detailed responses",
+            "options": {
+              "one": "One sentence",
+              "two": "Two sentences (recommended)",
+              "three": "Three sentences"
+            }
+          },
+          "signature": {
+            "label": "Signature",
+            "tooltip": "Text that will appear at the end of every automatic response, for example 'David's Restaurant Team' or 'Best regards, Moti'",
+            "placeholder": "Business Team",
+            "helper": "The signature that will appear at the end of every response"
+          }
+        },
+        "starRatings": {
+          "autoReply": {
+            "label": "Auto Reply",
+            "tooltip": "When enabled, the system will create and send an automatic response to reviews with this rating. Can be disabled for ratings you prefer to handle manually"
+          },
+          "customInstructions": {
+            "label": "Custom Instructions",
+            "tooltip": "Add specific instructions to guide the AI on how to formulate responses for reviews with this rating. For example, for 1-2 stars you can request an apology and invitation to get in touch",
+            "placeholder": "Add specific instructions for this rating...",
+            "helpers": {
+              "low": "Recommended to include an apology and phone number to arrange a personal call with the customer",
+              "medium": "Recommended to express appreciation for the feedback and show willingness to improve",
+              "high": "Recommended to express warm gratitude and encourage a return visit"
+            }
+          }
+        }
+      },
+      "sections": {
+        "identity": {
+          "title": "Business Details",
+          "description": "Business identity details for use in AI responses",
+          "modalTitle": "Edit Business Details",
+          "modalDescription": "Edit business identity details for use in AI responses",
+          "fields": {
+            "name": "Business Name",
+            "description": "Business Description",
+            "phone": "Contact Phone (for negative reviews)"
+          },
+          "noDescription": "No description",
+          "noPhone": "No phone"
+        },
+        "aiSettings": {
+          "title": "AI Response Settings",
+          "description": "Configure how automatic responses are generated",
+          "modalTitle": "Edit AI Response Settings",
+          "modalDescription": "Configure how automatic responses are generated",
+          "fields": {
+            "toneOfVoice": "Response Style",
+            "languageMode": "Response Language",
+            "emojis": "Allowed Emojis",
+            "maxSentences": "Maximum Sentences",
+            "signature": "Signature"
+          },
+          "toneOptions": {
+            "professional": "Professional",
+            "friendly": "Friendly",
+            "formal": "Formal",
+            "humorous": "Humorous"
+          },
+          "languageOptions": {
+            "autoDetect": "Auto Detect",
+            "hebrew": "Hebrew",
+            "english": "English"
+          },
+          "noEmojis": "No emojis",
+          "noSignature": "No signature",
+          "sentencesUnit": "sentences"
+        },
+        "starRatings": {
+          "title": "Settings by Star Rating",
+          "description": "Customize AI responses for each rating",
+          "modalTitle": "Edit Settings by Star Rating",
+          "modalDescription": "Customize AI responses for each rating",
+          "autoReply": "Auto Reply",
+          "enabled": "Enabled",
+          "disabled": "Disabled",
+          "noInstructions": "No special instructions"
+        },
+        "notifications": {
+          "title": "Email Notifications",
+          "description": "Choose which notifications you'd like to receive by email for this business",
+          "modalTitle": "Edit Email Notifications",
+          "modalDescription": "Choose which notifications you'd like to receive by email",
+          "emailOnNewReview": {
+            "label": "New Review",
+            "description": "Receive email notification when a new review is received",
+            "tooltip": "When enabled, you'll receive an immediate email notification whenever a new review is published on your business in Google. This allows you to respond quickly to customers",
+            "helper": "Receive email notification when a new review is received"
+          },
+          "enabled": "Enabled",
+          "disabled": "Disabled"
+        }
+      }
+    },
+    "subscription": {
+      "title": "Subscription Plan",
+      "description": "Manage your subscription and usage",
+      "upgradePlan": "Upgrade Plan",
+      "manageSubscription": "Manage Subscription",
+      "errorLoading": "Error loading data. Please try again later.",
+      "upgradeComingSoon": "Subscription upgrade will be available soon",
+      "invalidLink": "Invalid link. Please contact support.",
+      "info": {
+        "title": "Usage and Limits",
+        "description": "Track your usage in the current plan",
+        "businessesLabel": "Connected Businesses",
+        "businessesCount": "{current} out of {max} businesses",
+        "reviewsLabel": "Reviews This Month",
+        "reviewsCount": "{current} out of {max} reviews",
+        "resetsOn": "Resets on {date}",
+        "plans": {
+          "free": "Free",
+          "basic": "Basic",
+          "pro": "Pro"
+        },
+        "features": {
+          "max_businesses": "Number of Businesses",
+          "monthly_reviews": "Reviews per Month",
+          "manual_approval": "Manual Approval",
+          "auto_publish": "Auto Publish",
+          "whatsapp_support": "WhatsApp Support"
+        }
+      }
+    },
+    "insights": {
+      "title": "Insights",
+      "description": "Statistics and insights about your business",
+      "comingSoon": "Coming Soon"
+    },
+    "reviews": {
+      "title": "Reviews",
+      "description": "All reviews for the business",
+      "loadingReviews": "Loading reviews...",
+      "errorLoading": "Error loading reviews",
+      "businessNotFound": "Business not found",
+      "backToBusinesses": "Back to businesses",
+      "reviewsFor": "Reviews for {businessName}",
+      "allReviews": "All reviews for your business",
+      "noReviews": "No reviews yet",
+      "noReviewsDescription": "When new reviews arrive, they will appear here",
+      "card": {
+        "status": {
+          "pending": "Pending Approval",
+          "posted": "Published",
+          "rejected": "Rejected",
+          "failed": "Failed",
+          "quotaExceeded": "Quota Exceeded"
+        },
+        "reviewLabel": "Review",
+        "aiReplyLabel": "AI Response",
+        "actions": {
+          "reject": "Reject",
+          "regenerate": "Regenerate",
+          "edit": "Edit",
+          "publish": "Publish"
+        },
+        "publishDialog": {
+          "title": "Publish Reply to Google",
+          "description": "Are you sure you want to publish this reply to Google?",
+          "reviewer": "To reviewer:",
+          "replyPreview": "Reply to be published:",
+          "confirm": "Publish to Google",
+          "cancel": "Cancel",
+          "loading": "Publishing..."
+        }
+      },
+      "editor": {
+        "title": "Edit Reply",
+        "description": "Edit the automatic reply before publishing to Google",
+        "originalReview": "Original review:",
+        "noText": "(no text)",
+        "replyLabel": "Reply:",
+        "placeholder": "Enter your reply...",
+        "characters": "characters",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving..."
+      }
+    },
+    "reviewDetail": {
+      "loadingReview": "Loading review...",
+      "title": "Review",
+      "description": "Review details",
+      "reviewNotFound": "Review not found",
+      "businessNotFound": "Business not found",
+      "errorLoading": "Error loading review",
+      "reviewFrom": "Review from {reviewerName}"
+    },
+    "settings": {
+      "businessNotFound": "Business not found",
+      "businessNotFoundDescription": "The requested business was not found.",
+      "disconnected": "Disconnected",
+      "deleteBusiness": "Delete Business",
+      "deleteConfirmation": "This action will permanently delete the business \"{businessName}\"!",
+      "deleteConfirmationLabel": "To confirm, enter the business name:",
+      "deleteConfirmationPlaceholder": "Business name",
+      "deleteButton": "Delete Business"
+    },
+    "components": {
+      "upgradeBanner": {
+        "title": "You are a free user",
+        "description": "Upgrade to a plan to add businesses, reviews and advanced features",
+        "upgradeNow": "Upgrade Now",
+        "close": "Close",
+        "upgradeToPlan": "Upgrade to Basic Plan"
+      }
+    }
+  },
+  "checkout": {
+    "missingPriceDetails": "Missing price details. Please select a plan from the pricing page.",
+    "checkoutError": "An error occurred while creating the order. Please try again or contact support.",
+    "preparingPayment": "Preparing payment...",
+    "redirectingToPayment": "Redirecting you to the secure payment page"
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: {date}",
+    "sections": {
+      "general": {
+        "title": "1. General",
+        "content": "The following terms of service govern your use of the AI Responses service. Use of the service constitutes full agreement to these terms. Please read the terms carefully before using the service."
+      },
+      "service": {
+        "title": "2. The Service",
+        "content": "The service provides an AI solution for managing and automatically responding to customer reviews on the Google Business Profile platform. The service includes creating personalized responses, managing businesses, and automatic publishing options."
+      },
+      "permittedUse": {
+        "title": "3. Permitted Use",
+        "content": "You agree to use the service only for legal purposes and in accordance with these terms. You may not use the service in a way that could harm the service or interfere with other users' use."
+      },
+      "userAccount": {
+        "title": "4. User Account",
+        "content": "You are responsible for maintaining the confidentiality of your account details and all activities conducted under your account. You must notify us immediately of any unauthorized use of your account."
+      },
+      "paymentRefunds": {
+        "title": "5. Payment and Refunds",
+        "content": "Payment for the service is made according to the selected plan. Prices are subject to change with prior notice. Refund policy will be detailed separately."
+      },
+      "intellectualProperty": {
+        "title": "6. Intellectual Property",
+        "content": "All intellectual property rights in the service and its content belong to us or our licensors. You may not copy, modify, or distribute the content without express written permission."
+      },
+      "limitationLiability": {
+        "title": "7. Limitation of Liability",
+        "content": "The service is provided \"as is\" without warranty of any kind. We are not liable for any direct or indirect damages arising from the use or inability to use the service."
+      },
+      "changes": {
+        "title": "8. Changes to Terms",
+        "content": "We reserve the right to change these terms of service at any time. Changes will take effect immediately upon posting on the site. Continued use of the service after changes constitutes agreement to the updated terms."
+      },
+      "contact": {
+        "title": "9. Contact",
+        "content": "For questions or clarifications regarding the terms of service, please contact: {email}",
+        "email": "alon710@gmail.com"
+      }
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: {date}",
+    "sections": {
+      "introduction": {
+        "title": "1. Introduction",
+        "content": "This privacy policy explains how we collect, use, and protect your personal information when you use the AI Responses service. We are committed to protecting your privacy and maintaining the security of your information."
+      },
+      "informationCollected": {
+        "title": "2. Information We Collect",
+        "content": "We collect several types of information:",
+        "items": [
+          "Personal information: Name, email address, phone number",
+          "Business information: Business details, Google Business Profile",
+          "Content: Reviews, responses, system settings",
+          "Technical information: IP address, browser type, operating system"
+        ]
+      },
+      "useOfInformation": {
+        "title": "3. Use of Information",
+        "content": "We use the collected information for the following purposes:",
+        "items": [
+          "Providing and operating the service",
+          "Creating automatic responses to reviews",
+          "Improving and developing the service",
+          "Communicating with users",
+          "Security and fraud prevention"
+        ]
+      },
+      "informationSecurity": {
+        "title": "4. Information Security",
+        "content": "We use advanced security measures to protect your information, including data encryption, OAuth 2.0 authentication with Google, and secure storage in Firebase. However, no method of transmission or storage is 100% secure."
+      },
+      "sharingWithThirdParties": {
+        "title": "5. Sharing Information with Third Parties",
+        "content": "We do not share your personal information with third parties, except:",
+        "items": [
+          "Google (for Google Business Profile API)",
+          "Gemini AI (for generating responses)",
+          "Infrastructure service providers (Firebase, Cloud Storage)",
+          "When required by law"
+        ]
+      },
+      "userRights": {
+        "title": "6. User Rights",
+        "content": "You have the following rights regarding your personal information:",
+        "items": [
+          "Access to your personal information",
+          "Correction of inaccurate information",
+          "Deletion of your information",
+          "Restriction of information processing",
+          "Data portability",
+          "Objection to information processing"
+        ]
+      },
+      "cookies": {
+        "title": "7. Cookies",
+        "content": "We use cookies and similar technologies to improve user experience, analyze site traffic, and for security purposes. You can manage cookie preferences through your browser settings."
+      },
+      "dataRetention": {
+        "title": "8. Data Retention",
+        "content": "We retain your personal information as long as your account is active or as needed for service purposes. After account deletion, information will be deleted in accordance with our retention policy and legal requirements."
+      },
+      "policyChanges": {
+        "title": "9. Policy Changes",
+        "content": "We may update our privacy policy from time to time. We will notify you of significant changes through the site or via email. Continued use of the service after changes constitutes agreement to the updated policy."
+      },
+      "contact": {
+        "title": "10. Contact",
+        "content": "For questions or requests regarding the privacy policy or exercising your rights, please contact:",
+        "email": "Email: {email}",
+        "phone": "Phone: {phone}",
+        "emailValue": "alon710@gmail.com",
+        "phoneValue": "+972-50-671-5060"
+      }
+    }
+  },
+  "onboarding": {
+    "common": {
+      "back": "Back",
+      "next": "Next",
+      "finish": "Finish",
+      "connecting": "Connecting...",
+      "saving": "Saving...",
+      "loading": "Loading...",
+      "tryAgain": "Try Again"
+    },
+    "connectAccount": {
+      "title": "Connect to your Google account",
+      "description": "Start by connecting your Google Business Profile account to manage review responses with AI",
+      "connectButton": "Connect with Google",
+      "connectingButton": "Connecting...",
+      "permissionsTitle": "What we will request access to:",
+      "permissions": {
+        "businessList": "List of your businesses in Google Business Profile",
+        "readReviews": "Read customer reviews",
+        "publishReplies": "Publish review responses"
+      }
+    },
+    "chooseBusiness": {
+      "title": "Choose Business",
+      "description": "Select the business you want to connect from your business list",
+      "descriptionWithCount": "Select the business you want to connect (found {count} businesses)",
+      "loadingBusinesses": "Loading businesses...",
+      "connectButton": "Connect this business",
+      "connectingButton": "Connecting...",
+      "errors": {
+        "rateLimitError": "Google is limiting the number of requests. Please wait a minute and try again.",
+        "noBusinessesFound": "No businesses found in your Google Business Profile account",
+        "failedToLoad": "Unable to load businesses",
+        "failedToConnect": "Unable to connect the business"
+      }
+    },
+    "businessDetails": {
+      "title": "Business Details",
+      "description": "Set up the basic business details that will be used to create AI responses"
+    },
+    "aiSettings": {
+      "title": "AI Response Settings",
+      "description": "Customize the style and manner of automatic responses"
+    },
+    "starRatings": {
+      "title": "Settings by Star Rating",
+      "description": "Customize automatic responses according to rating level",
+      "successMessage": "Settings saved successfully!",
+      "errorMessage": "Unable to save settings"
+    }
+  }
+}

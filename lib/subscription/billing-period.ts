@@ -1,5 +1,6 @@
 import { startOfMonth, addMonths, format } from "date-fns";
-import { he } from "date-fns/locale";
+import { he, enUS } from "date-fns/locale";
+import type { Locale } from "@/i18n/config";
 
 export function getCurrentBillingPeriod(): {
   start: Date;
@@ -14,6 +15,16 @@ export function getCurrentBillingPeriod(): {
   return { start, end, resetDate };
 }
 
-export function formatHebrewDate(date: Date): string {
-  return format(date, "d 'ב'MMMM yyyy", { locale: he });
+const dateLocales = {
+  he: he,
+  en: enUS,
+} as const;
+
+const dateFormats = {
+  he: "d 'ב'MMMM yyyy",
+  en: "MMMM d, yyyy",
+} as const;
+
+export function formatDate(date: Date, locale: Locale): string {
+  return format(date, dateFormats[locale], { locale: dateLocales[locale] });
 }

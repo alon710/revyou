@@ -53,7 +53,7 @@ export function EmojiPicker({ onEmojiSelect, disabled = false }: EmojiPickerProp
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute top-full left-0 mt-2 z-50 rounded-lg border bg-popover shadow-md">
+          <div className="absolute top-full start-0 mt-2 z-50 rounded-lg border bg-popover shadow-md">
             <div ref={pickerRef} />
           </div>
         </>

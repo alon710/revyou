@@ -40,7 +40,7 @@ export function OnboardingCard({ title, description, children, backButton, nextB
           <div className="flex gap-3">
             {backButton && (
               <Button onClick={backButton.onClick} variant="outline" className="flex-1" disabled={backButton.disabled}>
-                {backButton.label || "הקודם"}
+                {backButton.label}
               </Button>
             )}
             <Button onClick={nextButton.onClick} className="flex-1" disabled={nextButton.disabled}>

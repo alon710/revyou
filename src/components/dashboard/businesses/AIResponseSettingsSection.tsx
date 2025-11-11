@@ -8,6 +8,7 @@ import {
   AIResponseSettingsForm,
   AIResponseSettingsFormData,
 } from "@/components/dashboard/businesses/forms/AIResponseSettingsForm";
+import { useTranslations } from "next-intl";
 
 interface AIResponseSettingsSectionProps {
   config: BusinessConfig;
@@ -16,6 +17,9 @@ interface AIResponseSettingsSectionProps {
 }
 
 export default function AIResponseSettingsSection({ config, loading, onSave }: AIResponseSettingsSectionProps) {
+  const t = useTranslations("dashboard.businesses.sections.aiSettings");
+  const tCommon = useTranslations("common");
+
   const formData: AIResponseSettingsFormData = {
     toneOfVoice: config.toneOfVoice,
     languageMode: config.languageMode || "auto-detect",
@@ -26,53 +30,61 @@ export default function AIResponseSettingsSection({ config, loading, onSave }: A
 
   return (
     <EditableSection
-      title="הגדרות תגובה AI"
-      description="הגדר את אופן יצירת התגובות האוטומטיות"
+      editButtonLabel={tCommon("edit")}
+      title={t("title")}
+      description={t("description")}
       icon={<Sparkles className="h-5 w-5" />}
-      modalTitle="עריכת הגדרות תגובה AI"
-      modalDescription="הגדר את אופן יצירת התגובות האוטומטיות"
+      modalTitle={t("modalTitle")}
+      modalDescription={t("modalDescription")}
       loading={loading}
       data={formData}
       onSave={onSave}
+      successMessage={tCommon("saveSuccess")}
+      errorMessage={tCommon("saveError")}
+      cancelLabel={tCommon("cancel")}
+      saveLabel={tCommon("save")}
+      savingLabel={tCommon("saving")}
       renderDisplay={() => (
         <>
-          <DashboardCardField label="סגנון תשובה">
+          <DashboardCardField label={t("fields.toneOfVoice")}>
             <p className="text-sm font-medium">
               {
                 {
-                  professional: "מקצועי",
-                  friendly: "ידידותי",
-                  formal: "פורמלי",
-                  humorous: "משעשע",
+                  professional: t("toneOptions.professional"),
+                  friendly: t("toneOptions.friendly"),
+                  formal: t("toneOptions.formal"),
+                  humorous: t("toneOptions.humorous"),
                 }[config.toneOfVoice]
               }
             </p>
           </DashboardCardField>
 
-          <DashboardCardField label="שפת תגובה">
+          <DashboardCardField label={t("fields.languageMode")}>
             <p className="text-sm font-medium">
               {
                 {
-                  "auto-detect": "זיהוי אוטומטי",
-                  hebrew: "עברית",
-                  english: "English",
+                  "auto-detect": t("languageOptions.autoDetect"),
+                  hebrew: t("languageOptions.hebrew"),
+                  english: t("languageOptions.english"),
                 }[config.languageMode]
               }
             </p>
           </DashboardCardField>
 
-          <DashboardCardField label="אימוג'ים מותרים">
+          <DashboardCardField label={t("fields.emojis")}>
             <p className="text-sm font-medium">
-              {config.allowedEmojis?.length ? config.allowedEmojis.join(" ") : "ללא שימוש באימוג'ים"}
+              {config.allowedEmojis?.length ? config.allowedEmojis.join(" ") : t("noEmojis")}
             </p>
           </DashboardCardField>
 
-          <DashboardCardField label="מספר משפטים מקסימלי">
-            <p className="text-sm font-medium">{config.maxSentences || 2} משפטים</p>
+          <DashboardCardField label={t("fields.maxSentences")}>
+            <p className="text-sm font-medium">
+              {config.maxSentences || 2} {t("sentencesUnit")}
+            </p>
           </DashboardCardField>
 
-          <DashboardCardField label="חתימה">
-            <p className="text-sm font-medium">{config.signature || "ללא חתימה"}</p>
+          <DashboardCardField label={t("fields.signature")}>
+            <p className="text-sm font-medium">{config.signature || t("noSignature")}</p>
           </DashboardCardField>
         </>
       )}

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { editReply } from "@/lib/reviews/actions";
 import { Edit } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface ReplyEditorProps {
   review: Review;
@@ -36,10 +37,12 @@ export function ReplyEditor({
   onClose,
   onSave,
   variant = "default",
-  loadingText = "שומר...",
+  loadingText,
 }: ReplyEditorProps) {
+  const t = useTranslations("dashboard.reviews.editor");
   const [replyText, setReplyText] = useState(review.aiReply || "");
   const [isLoading, setIsLoading] = useState(false);
+  const defaultLoadingText = loadingText || t("saving");
 
   const handleSave = async () => {
     try {
@@ -67,30 +70,30 @@ export function ReplyEditor({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Edit className="h-5 w-5" />
-            עריכת תגובה
+            {t("title")}
           </DialogTitle>
-          <DialogDescription className="text-right">ערוך את התגובה האוטומטית לפני פרסום לגוגל</DialogDescription>
+          <DialogDescription className="text-end">{t("description")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="rounded-md bg-muted p-3">
-            <p className="text-sm font-medium mb-1 text-right">הביקורת המקורית:</p>
-            <p className="text-sm text-muted-foreground text-right">{review.text || "(אין טקסט)"}</p>
+            <p className="text-sm font-medium mb-1 text-end">{t("originalReview")}</p>
+            <p className="text-sm text-muted-foreground text-end">{review.text || t("noText")}</p>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-right block">התגובה:</label>
+            <label className="text-sm font-medium text-end block">{t("replyLabel")}</label>
             <Textarea
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
-              placeholder="הזן את התגובה..."
-              className="min-h-[150px] resize-y text-right"
+              placeholder={t("placeholder")}
+              className="min-h-[150px] resize-y text-end"
               maxLength={maxChars}
               disabled={isLoading}
             />
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>
-                {charCount} / {maxChars} תווים
+                {charCount} / {maxChars} {t("characters")}
               </span>
             </div>
           </div>
@@ -98,10 +101,10 @@ export function ReplyEditor({
 
         <DialogFooter className="flex justify-between gap-2">
           <Button type="button" variant="outline" onClick={handleCancel} disabled={isLoading}>
-            ביטול
+            {t("cancel")}
           </Button>
           <Button variant={variant} onClick={handleSave} disabled={isLoading || !replyText.trim()} className="gap-2">
-            {isLoading ? <>{loadingText}</> : "שמור"}
+            {isLoading ? <>{defaultLoadingText}</> : t("save")}
           </Button>
         </DialogFooter>
       </DialogContent>

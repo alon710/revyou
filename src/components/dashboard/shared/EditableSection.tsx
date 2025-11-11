@@ -20,9 +20,15 @@ interface EditableSectionProps<T> {
   modalTitle: string;
   modalDescription: string;
   data: T;
+  editButtonLabel: string;
   onSave: (data: T) => Promise<void>;
   renderDisplay: () => ReactNode;
   renderForm: (props: FormRenderProps<T>) => ReactNode;
+  successMessage: string;
+  errorMessage: string;
+  cancelLabel: string;
+  saveLabel: string;
+  savingLabel: string;
 }
 
 export interface FormRenderProps<T> {
@@ -39,9 +45,15 @@ export default function EditableSection<T>({
   modalTitle,
   modalDescription,
   data,
+  editButtonLabel,
   onSave,
   renderDisplay,
   renderForm,
+  successMessage,
+  errorMessage,
+  cancelLabel,
+  saveLabel,
+  savingLabel,
 }: EditableSectionProps<T>) {
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -55,8 +67,8 @@ export default function EditableSection<T>({
               <DashboardCardDescription>{description}</DashboardCardDescription>
             </div>
             <Button variant="outline" size="sm" onClick={() => setShowEditModal(true)} disabled={loading}>
-              <Settings className="ml-2 h-4 w-4" />
-              עריכה
+              <Settings className="ms-2 h-4 w-4" />
+              {editButtonLabel}
             </Button>
           </div>
         </DashboardCardHeader>
@@ -72,6 +84,11 @@ export default function EditableSection<T>({
         data={data}
         onSave={onSave}
         renderForm={renderForm}
+        successMessage={successMessage}
+        errorMessage={errorMessage}
+        cancelLabel={cancelLabel}
+        saveLabel={saveLabel}
+        savingLabel={savingLabel}
       />
     </>
   );
