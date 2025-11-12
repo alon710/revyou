@@ -3,6 +3,7 @@
 import { Link } from "@/i18n/routing";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 
 export function Footer() {
   const t = useTranslations("landing.footer");
@@ -87,6 +88,7 @@ export function Footer() {
         <div className="border-t border-border py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground">{t("copyright", { year: currentYear })}</p>
+            <LanguageSwitcher />
           </div>
         </div>
       </div>
