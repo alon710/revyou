@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetTrigger, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { Globe, ChevronDown } from "lucide-react";
+import { Globe } from "lucide-react";
 import { locales, localeConfig, type Locale } from "@/i18n/config";
 import React from "react";
 
@@ -21,13 +21,9 @@ export function LanguageSwitcher() {
     router.replace(pathname, { locale: newLocale });
   };
 
-  const currentLanguageLabel = localeConfig[locale].label;
-
   const triggerButton = (
-    <Button variant="outline" className="flex items-center gap-2">
+    <Button variant="ghost" className="flex items-center gap-2">
       <Globe className="h-5 w-5" />
-      <span>{currentLanguageLabel}</span>
-      <ChevronDown className="h-4 w-4" />
     </Button>
   );
 

@@ -5,7 +5,6 @@ import { Logo } from "@/components/ui/Logo";
 import { NavbarContainer } from "./NavbarContainer";
 import { useNavigation } from "@/hooks/useNavigation";
 import { AuthButton } from "@/components/auth/AuthButton";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useTranslations } from "next-intl";
 
 export function UnifiedNavbar({ variant }: { variant: "landing" | "dashboard" }) {
@@ -52,8 +51,7 @@ export function UnifiedNavbar({ variant }: { variant: "landing" | "dashboard" })
       </nav>
 
       <div className="flex items-center gap-2 shrink-0 pe-2">
-        <LanguageSwitcher />
-        <AuthButton variant={variant} />
+        <AuthButton />
       </div>
     </NavbarContainer>
   );
