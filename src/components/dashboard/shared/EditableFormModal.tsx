@@ -92,7 +92,7 @@ export function EditableFormModal<T>({
             {icon}
             {title}
           </DialogTitle>
-          <DialogDescription className={dir === "rtl" ? "text-end" : "text-start"}>{description}</DialogDescription>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">{renderForm({ data: formData, isLoading, onChange: handleChange })}</div>
