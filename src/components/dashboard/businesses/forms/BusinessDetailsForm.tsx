@@ -38,11 +38,7 @@ export function BusinessDetailsForm({
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           {showTooltips && (
-            <TooltipIcon
-              text={t("name.tooltip")}
-              additionalInfoLabel={t("name.label")}
-              closeLabel={tCommon("close")}
-            />
+            <TooltipIcon text={t("name.tooltip")} additionalInfoLabel={t("name.label")} closeLabel={tCommon("close")} />
           )}
           <Label htmlFor="businessName">{t("name.label")}</Label>
         </div>

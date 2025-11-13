@@ -50,7 +50,6 @@ const TooltipIcon = ({ text, additionalInfoLabel, closeLabel }: TooltipIconProps
   const isMobile = useIsMobile();
   const locale = useLocale() as Locale;
   const dir = getLocaleDir(locale);
-  const isRTL = dir === "rtl";
 
   if (isMobile) {
     return (

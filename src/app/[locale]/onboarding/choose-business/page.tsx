@@ -207,7 +207,9 @@ export default function OnboardingStep3() {
                 <span className="font-semibold">{business.name}</span>
               </div>
               {business.address && (
-                <div className={`flex items-start gap-2 text-sm text-muted-foreground ${isRTL ? "flex-row-reverse" : ""}`}>
+                <div
+                  className={`flex items-start gap-2 text-sm text-muted-foreground ${isRTL ? "flex-row-reverse" : ""}`}
+                >
                   <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0" />
                   <span>{business.address}</span>
                 </div>
