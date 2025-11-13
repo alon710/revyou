@@ -7,13 +7,16 @@ import {
   AIResponseSettingsFormData,
 } from "@/components/dashboard/businesses/forms/AIResponseSettingsForm";
 import { useRouter } from "@/i18n/routing";
+import { useAuth } from "@/contexts/AuthContext";
 import { getDefaultBusinessConfig } from "@/lib/utils/business-config";
 import { ToneOfVoice, LanguageMode } from "@/lib/types";
 import { useOnboardingStore } from "@/lib/store/onboarding-store";
 import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 export default function OnboardingAISettings() {
+  const { user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("onboarding.aiSettings");
@@ -27,6 +30,7 @@ export default function OnboardingAISettings() {
   const setBusinessId = useOnboardingStore((state) => state.setBusinessId);
   const setAISettings = useOnboardingStore((state) => state.setAISettings);
 
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<AIResponseSettingsFormData>(() => {
     if (aiSettings) {
       return aiSettings;
@@ -63,8 +67,38 @@ export default function OnboardingAISettings() {
     router.push(`/onboarding/business-details?accountId=${accountId}&businessId=${businessId}`);
   };
 
-  const handleNext = () => {
-    router.push(`/onboarding/star-ratings?accountId=${accountId}&businessId=${businessId}`);
+  const handleNext = async () => {
+    if (!user || !accountId || !businessId) return;
+
+    try {
+      setSaving(true);
+
+      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          config: {
+            toneOfVoice: formData.toneOfVoice,
+            languageMode: formData.languageMode,
+            allowedEmojis: formData.allowedEmojis,
+            maxSentences: formData.maxSentences,
+            signature: formData.signature,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save AI settings");
+      }
+
+      router.push(`/onboarding/star-ratings?accountId=${accountId}&businessId=${businessId}`);
+    } catch (error) {
+      console.error("Error saving AI settings:", error);
+      toast.error(t("errorSaving"));
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (!accountId || !businessId) {
@@ -75,8 +109,8 @@ export default function OnboardingAISettings() {
     <OnboardingCard
       title={t("title")}
       description={t("description")}
-      backButton={{ onClick: handleBack, label: tCommon("back") }}
-      nextButton={{ label: tCommon("next"), onClick: handleNext }}
+      backButton={{ onClick: handleBack, loading: saving, label: tCommon("back") }}
+      nextButton={{ label: tCommon("next"), loadingLabel: tCommon("saving"), onClick: handleNext, loading: saving }}
     >
       <AIResponseSettingsForm values={formData} onChange={handleFormChange} />
     </OnboardingCard>

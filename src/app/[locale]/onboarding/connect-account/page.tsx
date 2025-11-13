@@ -3,11 +3,15 @@
 import { useState } from "react";
 import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 import { Building2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "@/i18n/routing";
+import { getLocaleDir, type Locale } from "@/i18n/config";
 
 export default function OnboardingStep2() {
   const router = useRouter();
+  const locale = useLocale() as Locale;
+  const dir = getLocaleDir(locale);
+  const isRTL = dir === "rtl";
   const tCommon = useTranslations("common");
   const t = useTranslations("onboarding.connectAccount");
   const [connecting, setConnecting] = useState(false);
@@ -27,23 +31,24 @@ export default function OnboardingStep2() {
       description={t("description")}
       backButton={{ onClick: handleBack, label: tCommon("back") }}
       nextButton={{
-        label: connecting ? t("connectingButton") : t("connectButton"),
+        label: t("connectButton"),
+        loadingLabel: t("connectingButton"),
         onClick: handleConnect,
-        disabled: connecting,
+        loading: connecting,
       }}
     >
-      <div className="bg-muted p-4 rounded-lg" dir="rtl">
+      <div className="bg-muted p-4 rounded-lg">
         <h4 className="font-semibold mb-2">{t("permissionsTitle")}</h4>
         <ul className="space-y-2 text-sm text-muted-foreground">
-          <li className="flex items-start gap-2">
+          <li className={`flex items-start gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
             <Building2 className="h-4 w-4 mt-0.5 shrink-0" />
             <span>{t("permissions.businessList")}</span>
           </li>
-          <li className="flex items-start gap-2">
+          <li className={`flex items-start gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
             <Building2 className="h-4 w-4 mt-0.5 shrink-0" />
             <span>{t("permissions.readReviews")}</span>
           </li>
-          <li className="flex items-start gap-2">
+          <li className={`flex items-start gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
             <Building2 className="h-4 w-4 mt-0.5 shrink-0" />
             <span>{t("permissions.publishReplies")}</span>
           </li>

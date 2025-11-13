@@ -29,6 +29,7 @@ export function BusinessDetailsForm({
   businessNamePlaceholder,
 }: BusinessDetailsFormProps) {
   const t = useTranslations("dashboard.businesses.forms.businessDetails");
+  const tCommon = useTranslations("common");
   const locale = useLocale() as Locale;
   const dir = getLocaleDir(locale);
 
@@ -40,7 +41,7 @@ export function BusinessDetailsForm({
             <TooltipIcon
               text={t("name.tooltip")}
               additionalInfoLabel={t("name.label")}
-              closeLabel={t("common.close")}
+              closeLabel={tCommon("close")}
             />
           )}
           <Label htmlFor="businessName">{t("name.label")}</Label>
@@ -63,7 +64,7 @@ export function BusinessDetailsForm({
             <TooltipIcon
               text={t("description.tooltip")}
               additionalInfoLabel={t("description.label")}
-              closeLabel={t("common.close")}
+              closeLabel={tCommon("close")}
             />
           )}
           <Label htmlFor="businessDescription">{t("description.label")}</Label>
@@ -87,7 +88,7 @@ export function BusinessDetailsForm({
             <TooltipIcon
               text={t("phone.tooltip")}
               additionalInfoLabel={t("phone.label")}
-              closeLabel={t("common.close")}
+              closeLabel={tCommon("close")}
             />
           )}
           <Label htmlFor="businessPhone">{t("phone.label")}</Label>

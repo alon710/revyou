@@ -11,12 +11,16 @@ import { Loading } from "@/components/ui/loading";
 import { AlertCircle, Building2, MapPin } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { getLocaleDir, type Locale } from "@/i18n/config";
 
 export default function OnboardingStep3() {
   const { user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const locale = useLocale() as Locale;
+  const dir = getLocaleDir(locale);
+  const isRTL = dir === "rtl";
   const t = useTranslations("onboarding.chooseBusiness");
   const tCommon = useTranslations("onboarding.common");
   const [availableBusinesses, setAvailableBusinesses] = useState<GoogleBusinessProfileBusiness[]>([]);
@@ -168,11 +172,13 @@ export default function OnboardingStep3() {
     <OnboardingCard
       title={t("title")}
       description={t("descriptionWithCount", { count: availableBusinesses.length })}
-      backButton={{ onClick: handleBack, disabled: connecting, label: tCommon("back") }}
+      backButton={{ onClick: handleBack, loading: connecting, label: tCommon("back") }}
       nextButton={{
-        label: connecting ? t("connectingButton") : t("connectButton"),
+        label: t("connectButton"),
+        loadingLabel: t("connectingButton"),
         onClick: handleConnect,
-        disabled: connecting || !selectedBusiness,
+        disabled: !selectedBusiness,
+        loading: connecting,
       }}
     >
       <RadioGroup
@@ -182,12 +188,13 @@ export default function OnboardingStep3() {
           setSelectedBusiness(business || null);
         }}
         className="gap-3"
-        dir="rtl"
       >
         {availableBusinesses.map((business) => (
           <div
             key={business.id}
             className={`relative flex items-start gap-3 rounded-lg border p-4 transition-colors ${
+              isRTL ? "flex-row-reverse" : ""
+            } ${
               selectedBusiness?.id === business.id
                 ? "border-primary bg-primary/5"
                 : "border-border hover:border-primary/50"
@@ -195,12 +202,12 @@ export default function OnboardingStep3() {
           >
             <RadioGroupItem value={business.id} id={business.id} className="mt-1" />
             <Label htmlFor={business.id} className="flex-1 cursor-pointer space-y-1">
-              <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
                 <Building2 className="h-4 w-4 text-muted-foreground" />
                 <span className="font-semibold">{business.name}</span>
               </div>
               {business.address && (
-                <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <div className={`flex items-start gap-2 text-sm text-muted-foreground ${isRTL ? "flex-row-reverse" : ""}`}>
                   <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0" />
                   <span>{business.address}</span>
                 </div>

@@ -13,6 +13,7 @@ import {
 import { useOnboardingStore } from "@/lib/store/onboarding-store";
 import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 export default function OnboardingBusinessDetails() {
   const { user } = useAuth();
@@ -31,6 +32,7 @@ export default function OnboardingBusinessDetails() {
 
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<BusinessDetailsFormData>(() => {
     if (businessDetails) {
       return businessDetails;
@@ -102,7 +104,35 @@ export default function OnboardingBusinessDetails() {
   };
 
   const handleNext = async () => {
-    router.push(`/onboarding/ai-settings?accountId=${accountId}&businessId=${businessId}`);
+    if (!user || !accountId || !businessId) return;
+
+    try {
+      setSaving(true);
+
+      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          config: {
+            name: formData.name,
+            description: formData.description,
+            phoneNumber: formData.phoneNumber,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save business details");
+      }
+
+      router.push(`/onboarding/ai-settings?accountId=${accountId}&businessId=${businessId}`);
+    } catch (error) {
+      console.error("Error saving business details:", error);
+      toast.error(t("errorSaving"));
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {
@@ -121,8 +151,8 @@ export default function OnboardingBusinessDetails() {
     <OnboardingCard
       title={t("title")}
       description={t("description")}
-      backButton={{ onClick: handleBack, label: tCommon("back") }}
-      nextButton={{ label: tCommon("next"), onClick: handleNext }}
+      backButton={{ onClick: handleBack, loading: saving, label: tCommon("back") }}
+      nextButton={{ label: tCommon("next"), loadingLabel: tCommon("saving"), onClick: handleNext, loading: saving }}
     >
       <BusinessDetailsForm values={formData} onChange={handleFormChange} businessNamePlaceholder={business.name} />
     </OnboardingCard>
