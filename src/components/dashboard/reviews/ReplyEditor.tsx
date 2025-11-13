@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { editReply } from "@/lib/reviews/actions";
 import { Edit } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { getLocaleDir, type Locale } from "@/i18n/config";
 
 interface ReplyEditorProps {
   review: Review;
@@ -40,6 +41,8 @@ export function ReplyEditor({
   loadingText,
 }: ReplyEditorProps) {
   const t = useTranslations("dashboard.reviews.editor");
+  const locale = useLocale();
+  const dir = getLocaleDir(locale as Locale);
   const [replyText, setReplyText] = useState(review.aiReply || "");
   const [isLoading, setIsLoading] = useState(false);
   const defaultLoadingText = loadingText || t("saving");
@@ -66,28 +69,28 @@ export function ReplyEditor({
 
   return (
     <Dialog open={open} onOpenChange={(open) => !open && handleCancel()}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px]" dir={dir}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Edit className="h-5 w-5" />
             {t("title")}
           </DialogTitle>
-          <DialogDescription className="text-end">{t("description")}</DialogDescription>
+          <DialogDescription>{t("description")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="rounded-md bg-muted p-3">
-            <p className="text-sm font-medium mb-1 text-end">{t("originalReview")}</p>
-            <p className="text-sm text-muted-foreground text-end">{review.text || t("noText")}</p>
+            <p className="text-sm font-medium mb-1 ">{t("originalReview")}</p>
+            <p className="text-sm text-muted-foreground">{review.text || t("noText")}</p>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-end block">{t("replyLabel")}</label>
+            <label className="text-sm font-medium block">{t("replyLabel")}</label>
             <Textarea
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
               placeholder={t("placeholder")}
-              className="min-h-[150px] resize-y text-end"
+              className="min-h-[150px] resize-y"
               maxLength={maxChars}
               disabled={isLoading}
             />
