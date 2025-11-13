@@ -3,7 +3,6 @@
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { Info, X } from "lucide-react";
 import * as React from "react";
-import { useLocale } from "next-intl";
 
 import {
   Drawer,
@@ -16,7 +15,6 @@ import {
 } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { getLocaleDir, type Locale } from "@/i18n/config";
 
 const TooltipProvider = TooltipPrimitive.Provider;
 const Tooltip = TooltipPrimitive.Root;
@@ -48,7 +46,6 @@ interface TooltipIconProps {
 
 const TooltipIcon = ({ text, additionalInfoLabel, closeLabel }: TooltipIconProps) => {
   const isMobile = useIsMobile();
-  const locale = useLocale() as Locale;
 
   if (isMobile) {
     return (
