@@ -168,11 +168,13 @@ export default function OnboardingStep3() {
     <OnboardingCard
       title={t("title")}
       description={t("descriptionWithCount", { count: availableBusinesses.length })}
-      backButton={{ onClick: handleBack, disabled: connecting, label: tCommon("back") }}
+      backButton={{ onClick: handleBack, loading: connecting, label: tCommon("back") }}
       nextButton={{
-        label: connecting ? t("connectingButton") : t("connectButton"),
+        label: t("connectButton"),
+        loadingLabel: t("connectingButton"),
         onClick: handleConnect,
-        disabled: connecting || !selectedBusiness,
+        disabled: !selectedBusiness,
+        loading: connecting,
       }}
     >
       <RadioGroup
@@ -182,7 +184,6 @@ export default function OnboardingStep3() {
           setSelectedBusiness(business || null);
         }}
         className="gap-3"
-        dir="rtl"
       >
         {availableBusinesses.map((business) => (
           <div

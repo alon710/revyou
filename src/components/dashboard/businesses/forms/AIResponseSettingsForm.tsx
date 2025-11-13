@@ -7,7 +7,8 @@ import { TooltipIcon } from "@/components/ui/tooltip";
 import { EmojiPicker } from "@/components/ui/emoji-picker";
 import { ToneOfVoice, LanguageMode } from "@/lib/types";
 import emojiRegex from "emoji-regex";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { getLocaleDir, type Locale } from "@/i18n/config";
 
 export interface AIResponseSettingsFormData {
   toneOfVoice: ToneOfVoice;
@@ -40,6 +41,9 @@ export function AIResponseSettingsForm({
   disabled = false,
 }: AIResponseSettingsFormProps) {
   const t = useTranslations("dashboard.businesses.forms.aiSettings");
+  const tCommon = useTranslations("common");
+  const locale = useLocale() as Locale;
+  const dir = getLocaleDir(locale);
 
   const handleEmojiChange = (value: string) => {
     const emojis = extractEmojis(value);
@@ -53,14 +57,14 @@ export function AIResponseSettingsForm({
     }
   };
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-6" dir={dir}>
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           {showTooltips && (
             <TooltipIcon
               text={t("toneOfVoice.tooltip")}
               additionalInfoLabel={t("toneOfVoice.label")}
-              closeLabel={t("common.close")}
+              closeLabel={tCommon("close")}
             />
           )}
           <Label htmlFor="toneOfVoice">{t("toneOfVoice.label")}</Label>
@@ -70,10 +74,10 @@ export function AIResponseSettingsForm({
           onValueChange={(value: ToneOfVoice) => onChange("toneOfVoice", value)}
           disabled={disabled}
         >
-          <SelectTrigger id="toneOfVoice" dir="rtl">
+          <SelectTrigger id="toneOfVoice">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent dir="rtl">
+          <SelectContent dir={dir}>
             <SelectItem value="professional">{t("toneOfVoice.options.professional")}</SelectItem>
             <SelectItem value="friendly">{t("toneOfVoice.options.friendly")}</SelectItem>
             <SelectItem value="formal">{t("toneOfVoice.options.formal")}</SelectItem>
@@ -88,7 +92,7 @@ export function AIResponseSettingsForm({
             <TooltipIcon
               text={t("languageMode.tooltip")}
               additionalInfoLabel={t("languageMode.label")}
-              closeLabel={t("common.close")}
+              closeLabel={tCommon("close")}
             />
           )}
           <Label htmlFor="languageMode">{t("languageMode.label")}</Label>
@@ -98,10 +102,10 @@ export function AIResponseSettingsForm({
           onValueChange={(value: LanguageMode) => onChange("languageMode", value)}
           disabled={disabled}
         >
-          <SelectTrigger id="languageMode" dir="rtl">
+          <SelectTrigger id="languageMode">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent dir="rtl">
+          <SelectContent dir={dir}>
             <SelectItem value="auto-detect">{t("languageMode.options.autoDetect")}</SelectItem>
             <SelectItem value="hebrew">{t("languageMode.options.hebrew")}</SelectItem>
             <SelectItem value="english">{t("languageMode.options.english")}</SelectItem>
@@ -115,7 +119,7 @@ export function AIResponseSettingsForm({
             <TooltipIcon
               text={t("emojis.tooltip")}
               additionalInfoLabel={t("emojis.label")}
-              closeLabel={t("common.close")}
+              closeLabel={tCommon("close")}
             />
           )}
           <Label htmlFor="allowedEmojis">{t("emojis.label")}</Label>
@@ -133,7 +137,7 @@ export function AIResponseSettingsForm({
           />
           <EmojiPicker onEmojiSelect={handleEmojiSelect} disabled={disabled} />
         </div>
-        <p className="text-xs text-muted-foreground text-end">{t("emojis.helper")}</p>
+        <p className="text-xs text-muted-foreground">{t("emojis.helper")}</p>
       </div>
 
       <div className="space-y-2">
@@ -142,7 +146,7 @@ export function AIResponseSettingsForm({
             <TooltipIcon
               text={t("maxSentences.tooltip")}
               additionalInfoLabel={t("maxSentences.label")}
-              closeLabel={t("common.close")}
+              closeLabel={tCommon("close")}
             />
           )}
           <Label htmlFor="maxSentences">{t("maxSentences.label")}</Label>
@@ -152,10 +156,10 @@ export function AIResponseSettingsForm({
           onValueChange={(value) => onChange("maxSentences", parseInt(value))}
           disabled={disabled}
         >
-          <SelectTrigger id="maxSentences" dir="rtl">
+          <SelectTrigger id="maxSentences">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent dir="rtl">
+          <SelectContent dir={dir}>
             <SelectItem value="1">{t("maxSentences.options.one")}</SelectItem>
             <SelectItem value="2">{t("maxSentences.options.two")}</SelectItem>
             <SelectItem value="3">{t("maxSentences.options.three")}</SelectItem>
@@ -169,7 +173,7 @@ export function AIResponseSettingsForm({
             <TooltipIcon
               text={t("signature.tooltip")}
               additionalInfoLabel={t("signature.label")}
-              closeLabel={t("common.close")}
+              closeLabel={tCommon("close")}
             />
           )}
           <Label htmlFor="signature">{t("signature.label")}</Label>
@@ -181,9 +185,9 @@ export function AIResponseSettingsForm({
           onChange={(e) => onChange("signature", e.target.value)}
           placeholder={t("signature.placeholder")}
           disabled={disabled}
-          dir="rtl"
+          dir={dir}
         />
-        <p className="text-xs text-muted-foreground text-end">{t("signature.helper")}</p>
+        <p className="text-xs text-muted-foreground">{t("signature.helper")}</p>
       </div>
     </div>
   );

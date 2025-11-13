@@ -681,6 +681,12 @@
     "unauthorized": "אין הרשאה",
     "notFound": "לא נמצא",
     "validation": "שגיאת אימות",
-    "tryAgain": "נסה שנית"
+    "tryAgain": "נסה שנית",
+    "notFoundPage": {
+      "title": "404",
+      "heading": "הדף לא נמצא",
+      "description": "אופס, נראה שהדף שאתה מחפש לא קיים.",
+      "homeButton": "חזור לדף הבית"
+    }
   }
 }

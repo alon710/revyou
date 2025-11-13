@@ -24,9 +24,10 @@ export function StarRatingConfigForm({
   disabled = false,
 }: StarRatingConfigFormProps) {
   const t = useTranslations("dashboard.businesses.forms.starRatings");
+  const tCommon = useTranslations("common");
 
   return (
-    <div className="space-y-6 overflow-y-auto max-h-[60vh]" dir="rtl">
+    <div className="space-y-6 overflow-y-auto max-h-[60vh]">
       {([5, 4, 3, 2, 1] as const).map((rating) => {
         const starConfig = values[rating];
 
@@ -39,7 +40,7 @@ export function StarRatingConfigForm({
                     <TooltipIcon
                       text={t("autoReply.tooltip")}
                       additionalInfoLabel={t("autoReply.label")}
-                      closeLabel={t("common.close")}
+                      closeLabel={tCommon("close")}
                     />
                   )}
                   <Label htmlFor={`auto-reply-${rating}`} className="text-sm font-medium cursor-pointer">
@@ -67,7 +68,7 @@ export function StarRatingConfigForm({
                   <TooltipIcon
                     text={t("customInstructions.tooltip")}
                     additionalInfoLabel={t("customInstructions.label")}
-                    closeLabel={t("common.close")}
+                    closeLabel={tCommon("close")}
                   />
                 )}
                 <Label htmlFor={`instructions-${rating}`}>{t("customInstructions.label")}</Label>
@@ -85,7 +86,6 @@ export function StarRatingConfigForm({
                 rows={3}
                 disabled={disabled}
                 className="text-sm resize-none"
-                dir="rtl"
               />
               {rating <= 2 && (
                 <p className="text-xs text-muted-foreground text-end">{t("customInstructions.helpers.low")}</p>

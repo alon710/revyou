@@ -30,7 +30,6 @@ const TooltipContent = React.forwardRef<
       sideOffset={sideOffset}
       className={cn(
         "z-50 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-tooltip-content-transform-origin]",
-        "dir-rtl",
         className
       )}
       {...props}
@@ -56,7 +55,7 @@ const TooltipIcon = ({ text, additionalInfoLabel, closeLabel }: TooltipIconProps
             <Info className="h-4 w-4 text-muted-foreground" />
           </button>
         </DrawerTrigger>
-        <DrawerContent dir="rtl">
+        <DrawerContent>
           <DrawerHeader className="relative">
             <DrawerClose asChild>
               <button
@@ -67,8 +66,8 @@ const TooltipIcon = ({ text, additionalInfoLabel, closeLabel }: TooltipIconProps
                 <span className="sr-only">{closeLabel}</span>
               </button>
             </DrawerClose>
-            <DrawerTitle className="text-end ps-12">{additionalInfoLabel}</DrawerTitle>
-            <DrawerDescription className="text-end ps-12">{text}</DrawerDescription>
+            <DrawerTitle className="text-start ps-12">{additionalInfoLabel}</DrawerTitle>
+            <DrawerDescription className="text-start ps-12">{text}</DrawerDescription>
           </DrawerHeader>
         </DrawerContent>
       </Drawer>

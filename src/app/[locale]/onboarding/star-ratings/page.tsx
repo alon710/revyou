@@ -103,11 +103,12 @@ export default function OnboardingStarRatings() {
     <OnboardingCard
       title={t("title")}
       description={t("description")}
-      backButton={{ onClick: handleBack, disabled: saving, label: tCommon("back") }}
+      backButton={{ onClick: handleBack, loading: saving, label: tCommon("back") }}
       nextButton={{
-        label: saving ? tCommon("saving") : tCommon("finish"),
+        label: tCommon("finish"),
+        loadingLabel: tCommon("saving"),
         onClick: handleFinish,
-        disabled: saving,
+        loading: saving,
       }}
     >
       <StarRatingConfigForm values={formData} onChange={handleFormChange} />
