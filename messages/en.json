@@ -37,7 +37,13 @@
     "unauthorized": "Unauthorized",
     "notFound": "Not found",
     "validation": "Validation error",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "notFoundPage": {
+      "title": "404",
+      "heading": "Page Not Found",
+      "description": "Oops, it looks like the page you're looking for doesn't exist.",
+      "homeButton": "Go to Homepage"
+    }
   },
   "navigation": {
     "dashboard": {

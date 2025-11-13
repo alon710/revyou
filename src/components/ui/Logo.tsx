@@ -43,7 +43,7 @@ export function Logo({ href, className, size = "lg" }: SiteLogoProps) {
         <div className="absolute inset-0 flex items-center justify-center">
           <span
             className={cn(
-              "font-nunito font-extrabold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent",
+              "font-nunito font-extrabold tracking-tight bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent",
               fontSizeClasses[size]
             )}
           >
