@@ -3,12 +3,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
-import { SubscriptionInfo } from "@/components/dashboard/dashboard/SubscriptionInfo";
+import { SubscriptionManagement } from "@/components/dashboard/subscription/SubscriptionManagement";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
-import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
@@ -62,26 +60,6 @@ export default function SubscriptionPage() {
     }
   }, [authUser, authLoading, loadData]);
 
-  const handleUpgrade = () => {
-    toast.info(t("upgradeComingSoon"));
-  };
-
-  const handleManageSubscription = () => {
-    if (stripeLink) {
-      try {
-        const url = new URL(stripeLink);
-        if (!url.hostname.includes("stripe.com")) {
-          toast.error(t("invalidLink"));
-          return;
-        }
-      } catch {
-        toast.error(t("invalidLink"));
-        return;
-      }
-      window.open(stripeLink, "_blank");
-    }
-  };
-
   if (authLoading || loading || subscriptionLoading) {
     return <Loading size="md" fullScreen />;
   }
@@ -94,32 +72,16 @@ export default function SubscriptionPage() {
     <PageContainer>
       <PageHeader title={t("title")} description={t("description")} />
 
-      <div className="space-y-6">
-        <SubscriptionInfo
-          limits={limits}
-          subscription={subscription}
-          currentBusiness={businessesCount}
-          currentReviews={reviewCount}
-          businessesPercent={businessesPercent}
-          reviewsPercent={reviewsPercent}
-          planType={planType}
-        />
-
-        <div className="flex gap-3 flex-wrap">
-          {planType === "free" && (
-            <Button onClick={handleUpgrade} size="lg">
-              {t("upgradePlan")}
-            </Button>
-          )}
-
-          {stripeLink && planType !== "free" && (
-            <Button onClick={handleManageSubscription} variant="outline" size="lg">
-              <ExternalLink className="w-4 h-4 ms-2" />
-              {t("manageSubscription")}
-            </Button>
-          )}
-        </div>
-      </div>
+      <SubscriptionManagement
+        limits={limits}
+        subscription={subscription}
+        currentBusiness={businessesCount}
+        currentReviews={reviewCount}
+        businessesPercent={businessesPercent}
+        reviewsPercent={reviewsPercent}
+        planType={planType}
+        stripeLink={stripeLink}
+      />
     </PageContainer>
   );
 }
