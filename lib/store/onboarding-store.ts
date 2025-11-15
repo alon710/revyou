@@ -83,7 +83,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       },
     }),
     {
-      name: "revyou-onboarding-store",
+      name: "bottie-onboarding-store",
       storage: createJSONStorage(() => sessionStorage),
     }
   )
