@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useOnboardingStore } from "@/lib/store/onboarding-store";
 import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 import { useTranslations } from "next-intl";
+import { updateBusinessConfig } from "@/lib/actions/businesses.actions";
 
 export default function OnboardingStarRatings() {
   const { user } = useAuth();
@@ -71,16 +72,7 @@ export default function OnboardingStarRatings() {
 
       const config = getCombinedConfig();
 
-      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ config }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to save configuration");
-      }
+      await updateBusinessConfig(user.uid, accountId, businessId, config);
 
       reset();
 

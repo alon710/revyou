@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { getUserStats } from "@/lib/actions/stats.actions";
+import { getUser } from "@/lib/actions/users.actions";
 
 export default function SubscriptionPage() {
   const { user: authUser, loading: authLoading } = useAuth();
@@ -30,17 +32,10 @@ export default function SubscriptionPage() {
     try {
       setLoading(true);
 
-      const [statsResponse, userResponse] = await Promise.all([
-        fetch(`/api/users/${authUser.uid}/stats`, { credentials: "include" }),
-        fetch(`/api/users/${authUser.uid}`, { credentials: "include" }),
+      const [stats, userData] = await Promise.all([
+        getUserStats(authUser.uid),
+        getUser(authUser.uid),
       ]);
-
-      if (!statsResponse.ok || !userResponse.ok) {
-        throw new Error("Failed to fetch data");
-      }
-
-      const stats = await statsResponse.json();
-      const userData = await userResponse.json();
 
       setBusinessesCount(stats.businesses);
       setReviewCount(stats.reviews);

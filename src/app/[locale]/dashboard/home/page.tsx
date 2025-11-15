@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
 import { AccountBusinessesList } from "@/components/dashboard/home/AccountBusinessesList";
 import { useTranslations } from "next-intl";
+import { getAccountsWithBusinesses } from "@/lib/actions/accounts.actions";
 
 export default function HomePage() {
   const { user, loading: authLoading } = useAuth();
@@ -22,14 +23,8 @@ export default function HomePage() {
       try {
         setLoading(true);
 
-        const response = await fetch(`/api/users/${user.uid}/accounts-with-businesses`, {
-          credentials: "include",
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch accounts with businesses");
-        }
-        const data = await response.json();
-        setAccountsWithBusinesses(data.accounts || []);
+        const accounts = await getAccountsWithBusinesses(user.uid);
+        setAccountsWithBusinesses(accounts);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {

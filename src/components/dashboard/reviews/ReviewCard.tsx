@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { rejectReply, postReplyToGoogle, regenerateReply } from "@/lib/reviews/actions";
+import { rejectReview, postReviewReply, generateReviewReply } from "@/lib/actions/reviews.actions";
 import { useAuth } from "@/contexts/AuthContext";
 import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
@@ -65,7 +65,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 
     try {
       setIsLoading(true);
-      await rejectReply(userId, accountId, businessId, review.id);
+      await rejectReview(userId, accountId, businessId, review.id);
       onUpdate?.();
     } catch (error) {
       console.error("Error rejecting reply:", error);
@@ -78,8 +78,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
     if (!user) return;
 
     try {
-      const token = await user.getIdToken();
-      await postReplyToGoogle(userId, accountId, businessId, review.id, token);
+      await postReviewReply(userId, accountId, businessId, review.id);
       onUpdate?.();
     } catch (error) {
       console.error("Error publishing reply:", error);
@@ -94,8 +93,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 
     try {
       setIsLoading(true);
-      const token = await user.getIdToken();
-      await regenerateReply(userId, accountId, businessId, review.id, token);
+      await generateReviewReply(userId, accountId, businessId, review.id);
       onUpdate?.();
     } catch (error) {
       console.error("Error regenerating reply:", error);

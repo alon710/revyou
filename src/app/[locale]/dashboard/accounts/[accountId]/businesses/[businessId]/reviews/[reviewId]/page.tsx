@@ -9,6 +9,8 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { BackButton } from "@/components/ui/back-button";
 import { useTranslations } from "next-intl";
+import { getBusiness } from "@/lib/actions/businesses.actions";
+import { getReview } from "@/lib/actions/reviews.actions";
 
 interface ReviewPageProps {
   params: Promise<{ accountId: string; businessId: string; reviewId: string }>;
@@ -34,29 +36,12 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       setLoading(true);
       setError(null);
 
-      const businessResponse = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
-        credentials: "include",
-      });
+      const [biz, fetchedReview] = await Promise.all([
+        getBusiness(user.uid, accountId, businessId),
+        getReview(user.uid, accountId, businessId, reviewId),
+      ]);
 
-      if (!businessResponse.ok) {
-        throw new Error(t("businessNotFound"));
-      }
-
-      const { business: biz } = await businessResponse.json();
       setBusiness(biz);
-
-      const reviewResponse = await fetch(
-        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}/reviews/${reviewId}`,
-        {
-          credentials: "include",
-        }
-      );
-
-      if (!reviewResponse.ok) {
-        throw new Error(t("reviewNotFound"));
-      }
-
-      const { review: fetchedReview } = await reviewResponse.json();
       setReview(fetchedReview);
     } catch (err) {
       console.error("Error loading data:", err);

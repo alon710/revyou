@@ -5,6 +5,7 @@ import BusinessIdentitySection from "@/components/dashboard/businesses/BusinessI
 import AIResponseSettingsSection from "@/components/dashboard/businesses/AIResponseSettingsSection";
 import StarRatingConfigSection from "@/components/dashboard/businesses/StarRatingConfigSection";
 import NotificationPreferencesSection from "@/components/dashboard/businesses/NotificationPreferencesSection";
+import { updateBusinessConfig, updateBusiness } from "@/lib/actions/businesses.actions";
 
 interface BusinessDetailsCardProps {
   business: Business;
@@ -23,18 +24,7 @@ export default function BusinessDetailsCard({
 }: BusinessDetailsCardProps) {
   const handleSaveSection = async (partialConfig: Partial<BusinessConfig>) => {
     try {
-      const response = await fetch(`/api/users/${userId}/accounts/${accountId}/businesses/${business.id}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ config: partialConfig }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to update config");
-      }
-
+      await updateBusinessConfig(userId, accountId, business.id, partialConfig);
       await onUpdate();
     } catch (error) {
       console.error("Error saving config:", error);
@@ -48,18 +38,7 @@ export default function BusinessDetailsCard({
 
   const handleSaveNotificationPreferences = async (data: { emailOnNewReview: boolean }) => {
     try {
-      const response = await fetch(`/api/users/${userId}/accounts/${accountId}/businesses/${business.id}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to update preferences");
-      }
-
+      await updateBusiness(userId, accountId, business.id, data);
       await onUpdate();
     } catch (error) {
       console.error("Error saving notification preferences:", error);

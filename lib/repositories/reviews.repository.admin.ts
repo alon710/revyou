@@ -4,6 +4,7 @@ import { firestorePaths } from "@/lib/utils/firestore-paths";
 import { AdminQueryBuilder } from "@/lib/utils/query-builder";
 import { BaseRepository } from "./base.repository";
 import * as admin from "firebase-admin";
+import { serializeDocument, serializeDocuments } from "@/lib/utils/firestore-serializer";
 
 export class ReviewsRepositoryAdmin extends BaseRepository<ReviewCreate, Review, ReviewUpdate> {
   private userId: string;
@@ -23,10 +24,12 @@ export class ReviewsRepositoryAdmin extends BaseRepository<ReviewCreate, Review,
 
     if (!snapshot.exists) return null;
 
-    return {
+    const review = {
       id: snapshot.id,
       ...snapshot.data(),
     } as Review;
+
+    return serializeDocument(review);
   }
 
   async list(filters: ReviewFilters = {}): Promise<Review[]> {
@@ -44,7 +47,7 @@ export class ReviewsRepositoryAdmin extends BaseRepository<ReviewCreate, Review,
       reviews = reviews.filter((r) => idSet.has(r.id));
     }
 
-    return reviews;
+    return serializeDocuments(reviews);
   }
 
   async create(data: ReviewCreate): Promise<Review> {
@@ -107,9 +110,11 @@ export class ReviewsRepositoryAdmin extends BaseRepository<ReviewCreate, Review,
 
     if (snapshot.empty) return null;
 
-    return {
+    const review = {
       id: snapshot.docs[0].id,
       ...snapshot.docs[0].data(),
     } as Review;
+
+    return serializeDocument(review);
   }
 }

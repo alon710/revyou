@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { editReply } from "@/lib/reviews/actions";
+import { updateAiReply } from "@/lib/actions/reviews.actions";
 import { Edit } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { getLocaleDir, type Locale } from "@/i18n/config";
@@ -50,7 +50,7 @@ export function ReplyEditor({
   const handleSave = async () => {
     try {
       setIsLoading(true);
-      await editReply(userId, accountId, businessId, review.id, replyText);
+      await updateAiReply(userId, accountId, businessId, review.id, replyText);
       onSave();
     } catch (error) {
       console.error("Error saving reply:", error);
