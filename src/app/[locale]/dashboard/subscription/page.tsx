@@ -32,10 +32,7 @@ export default function SubscriptionPage() {
     try {
       setLoading(true);
 
-      const [stats, userData] = await Promise.all([
-        getUserStats(authUser.uid),
-        getUser(authUser.uid),
-      ]);
+      const [stats, userData] = await Promise.all([getUserStats(authUser.uid), getUser(authUser.uid)]);
 
       setBusinessesCount(stats.businesses);
       setReviewCount(stats.reviews);
