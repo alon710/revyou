@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
+import { getBusiness, deleteBusiness } from "@/lib/actions/businesses.actions";
 
 export default function BusinessSettingsPage({
   params,
@@ -32,15 +33,7 @@ export default function BusinessSettingsPage({
     try {
       setLoading(true);
 
-      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch business");
-      }
-
-      const { business: biz } = await response.json();
+      const biz = await getBusiness(user.uid, accountId, businessId);
       setBusiness(biz);
     } catch (error) {
       console.error("Error fetching business:", error);
@@ -57,15 +50,7 @@ export default function BusinessSettingsPage({
     if (!business || !user) return;
 
     try {
-      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete business");
-      }
-
+      await deleteBusiness(user.uid, accountId, businessId);
       router.push("/dashboard/home");
     } catch (error) {
       console.error("Error deleting business:", error);

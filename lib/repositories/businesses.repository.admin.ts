@@ -11,6 +11,7 @@ import { firestorePaths } from "@/lib/utils/firestore-paths";
 import { AdminQueryBuilder } from "@/lib/utils/query-builder";
 import { BaseRepository } from "./base.repository";
 import * as admin from "firebase-admin";
+import { serializeDocument, serializeDocuments } from "@/lib/utils/firestore-serializer";
 
 export class BusinessesRepositoryAdmin extends BaseRepository<BusinessCreate, Business, BusinessUpdate> {
   private userId: string;
@@ -28,10 +29,12 @@ export class BusinessesRepositoryAdmin extends BaseRepository<BusinessCreate, Bu
 
     if (!snapshot.exists) return null;
 
-    return {
+    const business = {
       id: snapshot.id,
       ...snapshot.data(),
     } as Business;
+
+    return serializeDocument(business);
   }
 
   async list(filters: BusinessFilters = {}): Promise<Business[]> {
@@ -49,7 +52,7 @@ export class BusinessesRepositoryAdmin extends BaseRepository<BusinessCreate, Bu
       businesses = businesses.filter((b) => idSet.has(b.id));
     }
 
-    return businesses;
+    return serializeDocuments(businesses);
   }
 
   async create(data: BusinessCreate): Promise<Business> {
@@ -90,10 +93,12 @@ export class BusinessesRepositoryAdmin extends BaseRepository<BusinessCreate, Bu
 
     if (snapshot.empty) return null;
 
-    return {
+    const business = {
       id: snapshot.docs[0].id,
       ...snapshot.docs[0].data(),
     } as Business;
+
+    return serializeDocument(business);
   }
 
   async disconnect(businessId: string): Promise<Business> {

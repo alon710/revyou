@@ -12,6 +12,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
+import { getBusiness } from "@/lib/actions/businesses.actions";
+import { getReviews } from "@/lib/actions/reviews.actions";
 
 interface BusinessReviewsPageProps {
   params: Promise<{ accountId: string; businessId: string }>;
@@ -35,29 +37,12 @@ export default function BusinessReviewsPage({ params }: BusinessReviewsPageProps
       setLoading(true);
       setError(null);
 
-      const businessResponse = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
-        credentials: "include",
-      });
+      const [biz, fetchedReviews] = await Promise.all([
+        getBusiness(user.uid, accountId, businessId),
+        getReviews(user.uid, accountId, businessId, { sort: { orderBy: "receivedAt", orderDirection: "desc" } }),
+      ]);
 
-      if (!businessResponse.ok) {
-        throw new Error(t("businessNotFound"));
-      }
-
-      const { business: biz } = await businessResponse.json();
       setBusiness(biz);
-
-      const reviewsResponse = await fetch(
-        `/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}/reviews?orderBy=receivedAt&orderDirection=desc`,
-        {
-          credentials: "include",
-        }
-      );
-
-      if (!reviewsResponse.ok) {
-        throw new Error(t("errorLoading"));
-      }
-
-      const { reviews: fetchedReviews } = await reviewsResponse.json();
       setReviews(fetchedReviews);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : t("errorLoading");

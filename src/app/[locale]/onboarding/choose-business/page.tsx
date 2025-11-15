@@ -12,6 +12,8 @@ import { AlertCircle, Building2, MapPin } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useTranslations } from "next-intl";
+import { getGoogleBusinesses, subscribeToGoogleNotifications } from "@/lib/actions/google.actions";
+import { upsertBusiness } from "@/lib/actions/businesses.actions";
 
 export default function OnboardingStep3() {
   const { user } = useAuth();
@@ -34,27 +36,17 @@ export default function OnboardingStep3() {
   }, [accountId, router]);
 
   const loadAvailableBusinesses = useCallback(async () => {
-    if (!accountId) return;
+    if (!accountId || !user) return;
 
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/google/businesses?accountId=${accountId}`, {
-        credentials: "include",
-      });
-      const data = await response.json();
+      const businesses = await getGoogleBusinesses(user.uid, accountId);
 
-      if (!response.ok) {
-        if (response.status === 429) {
-          throw new Error(data.error || t("errors.rateLimitError"));
-        }
-        throw new Error(data.error || t("errors.failedToLoad"));
-      }
+      setAvailableBusinesses(businesses);
 
-      setAvailableBusinesses(data.businesses);
-
-      if (data.businesses.length === 0) {
+      if (businesses.length === 0) {
         setError(t("errors.noBusinessesFound"));
       }
     } catch (err) {
@@ -64,7 +56,7 @@ export default function OnboardingStep3() {
     } finally {
       setLoading(false);
     }
-  }, [accountId, t]);
+  }, [accountId, user, t]);
 
   useEffect(() => {
     if (accountId) {
@@ -83,43 +75,24 @@ export default function OnboardingStep3() {
       setConnecting(true);
       setError(null);
 
-      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          googleBusinessId: selectedBusiness.id,
-          name: selectedBusiness.name,
-          address: selectedBusiness.address,
-          phoneNumber: selectedBusiness.phoneNumber,
-          websiteUrl: selectedBusiness.websiteUrl,
-          mapsUrl: selectedBusiness.mapsUrl,
-          description: selectedBusiness.description,
-          photoUrl: selectedBusiness.photoUrl,
-        }),
+      const business = await upsertBusiness(user.uid, accountId, {
+        googleBusinessId: selectedBusiness.id,
+        name: selectedBusiness.name,
+        address: selectedBusiness.address,
+        phoneNumber: selectedBusiness.phoneNumber,
+        websiteUrl: selectedBusiness.websiteUrl,
+        mapsUrl: selectedBusiness.mapsUrl,
+        description: selectedBusiness.description,
+        photoUrl: selectedBusiness.photoUrl,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to create business");
-      }
-
       try {
-        const subscribeResponse = await fetch("/api/google/notifications/subscribe", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ accountId }),
-        });
-
-        if (!subscribeResponse.ok) {
-          console.error("Failed to subscribe to notifications:", await subscribeResponse.text());
-        }
+        await subscribeToGoogleNotifications(user.uid, accountId);
       } catch (err) {
         console.error("Error subscribing to notifications:", err);
       }
 
-      router.push(`/onboarding/business-details?accountId=${accountId}&businessId=${data.business.id}`);
+      router.push(`/onboarding/business-details?accountId=${accountId}&businessId=${business.id}`);
     } catch (err) {
       console.error("Error connecting business:", err);
       const errorMessage = err instanceof Error ? err.message : t("errors.failedToConnect");

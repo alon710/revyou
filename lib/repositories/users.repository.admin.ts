@@ -2,6 +2,7 @@ import { adminDb } from "@/lib/firebase/admin";
 import type { UserCreate, User, UserUpdate, UserUpdateInput } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 import * as admin from "firebase-admin";
+import { serializeDocument } from "@/lib/utils/firestore-serializer";
 
 export class UsersRepositoryAdmin extends BaseRepository<UserCreate, User, UserUpdate> {
   constructor() {
@@ -14,10 +15,12 @@ export class UsersRepositoryAdmin extends BaseRepository<UserCreate, User, UserU
 
     if (!snapshot.exists) return null;
 
-    return {
+    const user = {
       uid: snapshot.id,
       ...snapshot.data(),
     } as User;
+
+    return serializeDocument(user);
   }
 
   async list(): Promise<User[]> {

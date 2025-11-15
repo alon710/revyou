@@ -14,6 +14,7 @@ import { useOnboardingStore } from "@/lib/store/onboarding-store";
 import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { getBusiness, updateBusinessConfig } from "@/lib/actions/businesses.actions";
 
 export default function OnboardingBusinessDetails() {
   const { user } = useAuth();
@@ -59,15 +60,7 @@ export default function OnboardingBusinessDetails() {
     try {
       setLoading(true);
 
-      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch business");
-      }
-
-      const { business: biz } = await response.json();
+      const biz = await getBusiness(user.uid, accountId, businessId);
       setBusiness(biz);
 
       if (businessDetails) {
@@ -109,22 +102,11 @@ export default function OnboardingBusinessDetails() {
     try {
       setSaving(true);
 
-      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          config: {
-            name: formData.name,
-            description: formData.description,
-            phoneNumber: formData.phoneNumber,
-          },
-        }),
+      await updateBusinessConfig(user.uid, accountId, businessId, {
+        name: formData.name,
+        description: formData.description,
+        phoneNumber: formData.phoneNumber,
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to save business details");
-      }
 
       router.push(`/onboarding/ai-settings?accountId=${accountId}&businessId=${businessId}`);
     } catch (error) {

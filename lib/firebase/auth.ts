@@ -10,6 +10,7 @@ import {
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/config";
 import { useState, useEffect } from "react";
+import { createSession, deleteSession } from "@/lib/actions/auth.actions";
 
 const googleProvider = new GoogleAuthProvider();
 googleProvider.addScope("https://www.googleapis.com/auth/userinfo.email");
@@ -48,21 +49,7 @@ export async function signInWithGoogle() {
 
     try {
       const idToken = await user.getIdToken();
-
-      const response = await fetch("/api/auth/session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ idToken }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(`Session creation failed: ${errorData.error || response.statusText}`);
-      }
-
-      await response.json();
+      await createSession(idToken);
     } catch (sessionError) {
       console.error("Session creation error:", sessionError);
       throw new Error("auth.errors.sessionCreationFailed");
@@ -84,13 +71,7 @@ export async function signOut() {
 
   try {
     try {
-      const response = await fetch("/api/auth/session", {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        sessionDeletionFailed = true;
-      }
+      await deleteSession();
     } catch (sessionError) {
       console.error("Session deletion error:", sessionError);
       sessionDeletionFailed = true;
@@ -120,19 +101,7 @@ export function useAuth() {
         try {
           if (user) {
             const idToken = await user.getIdToken();
-            const response = await fetch("/api/auth/session", {
-              method: "POST",
-              credentials: "include",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ idToken }),
-            });
-
-            if (!response.ok) {
-              const errorData = await response.json().catch(() => ({}));
-              throw new Error(`Session creation failed: ${errorData.error || response.statusText}`);
-            }
-
-            await response.json();
+            await createSession(idToken);
             setUser(user);
             setError(null);
           } else {

@@ -14,6 +14,7 @@ import { useOnboardingStore } from "@/lib/store/onboarding-store";
 import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { updateBusinessConfig } from "@/lib/actions/businesses.actions";
 
 export default function OnboardingAISettings() {
   const { user } = useAuth();
@@ -73,24 +74,13 @@ export default function OnboardingAISettings() {
     try {
       setSaving(true);
 
-      const response = await fetch(`/api/users/${user.uid}/accounts/${accountId}/businesses/${businessId}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          config: {
-            toneOfVoice: formData.toneOfVoice,
-            languageMode: formData.languageMode,
-            allowedEmojis: formData.allowedEmojis,
-            maxSentences: formData.maxSentences,
-            signature: formData.signature,
-          },
-        }),
+      await updateBusinessConfig(user.uid, accountId, businessId, {
+        toneOfVoice: formData.toneOfVoice,
+        languageMode: formData.languageMode,
+        allowedEmojis: formData.allowedEmojis,
+        maxSentences: formData.maxSentences,
+        signature: formData.signature,
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to save AI settings");
-      }
 
       router.push(`/onboarding/star-ratings?accountId=${accountId}&businessId=${businessId}`);
     } catch (error) {
