@@ -6,7 +6,7 @@ function isTimestamp(value: unknown): value is Timestamp {
     typeof value === "object" &&
     "_seconds" in value &&
     "_nanoseconds" in value &&
-    typeof (value as any).toDate === "function"
+    typeof (value as Record<string, unknown>).toDate === "function"
   );
 }
 
@@ -32,7 +32,7 @@ export function serializeDocument<T>(doc: T): T {
   }
 
   if (typeof doc === "object") {
-    const serialized: any = {};
+    const serialized: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(doc)) {
       serialized[key] = serializeDocument(value);
     }
