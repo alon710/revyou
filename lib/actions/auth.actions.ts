@@ -1,6 +1,6 @@
 "use server";
 
-import { adminAuth } from "@/lib/firebase/admin";
+import { getAdminAuth } from "@/lib/firebase/admin";
 import { cookies } from "next/headers";
 
 const SESSION_COOKIE_NAME = "session";
@@ -11,9 +11,8 @@ export async function createSession(idToken: string): Promise<{ success: boolean
     throw new Error("ID token is required");
   }
 
-  const decodedToken = await adminAuth.verifyIdToken(idToken);
-
-  const sessionCookie = await adminAuth.createSessionCookie(idToken, {
+  const decodedToken = await getAdminAuth().verifyIdToken(idToken);
+  const sessionCookie = await getAdminAuth().createSessionCookie(idToken, {
     expiresIn: SESSION_DURATION,
   });
 

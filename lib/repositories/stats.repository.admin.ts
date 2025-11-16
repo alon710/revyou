@@ -1,4 +1,4 @@
-import { adminDb } from "@/lib/firebase/admin";
+import { getAdminDb } from "@/lib/firebase/admin";
 import { BaseRepository } from "./base.repository";
 import { Timestamp } from "firebase-admin/firestore";
 import { startOfMonth } from "date-fns";
@@ -34,7 +34,7 @@ export class StatsRepositoryAdmin extends BaseRepository<StatsCreate, Stats, Sta
 
   async countUserBusinesses(userId: string): Promise<number> {
     try {
-      const accountsRef = adminDb.collection(`users/${userId}/accounts`);
+      const accountsRef = getAdminDb().collection(`users/${userId}/accounts`);
       const accountsSnapshot = await accountsRef.get();
 
       if (accountsSnapshot.empty) {
@@ -45,7 +45,7 @@ export class StatsRepositoryAdmin extends BaseRepository<StatsCreate, Stats, Sta
 
       for (const accountDoc of accountsSnapshot.docs) {
         const accountId = accountDoc.id;
-        const businessesRef = adminDb.collection(`users/${userId}/accounts/${accountId}/businesses`);
+        const businessesRef = getAdminDb().collection(`users/${userId}/accounts/${accountId}/businesses`);
         const businessesQuery = businessesRef.where("connected", "==", true);
         const countSnapshot = await businessesQuery.count().get();
         totalBusinessCount += countSnapshot.data().count;
@@ -63,7 +63,7 @@ export class StatsRepositoryAdmin extends BaseRepository<StatsCreate, Stats, Sta
       const startDate = startOfMonth(new Date());
       const startTimestamp = Timestamp.fromDate(startDate);
 
-      const accountsRef = adminDb.collection(`users/${userId}/accounts`);
+      const accountsRef = getAdminDb().collection(`users/${userId}/accounts`);
       const accountsSnapshot = await accountsRef.get();
 
       if (accountsSnapshot.empty) {
@@ -75,12 +75,12 @@ export class StatsRepositoryAdmin extends BaseRepository<StatsCreate, Stats, Sta
       for (const accountDoc of accountsSnapshot.docs) {
         const accountId = accountDoc.id;
 
-        const businessesRef = adminDb.collection(`users/${userId}/accounts/${accountId}/businesses`);
+        const businessesRef = getAdminDb().collection(`users/${userId}/accounts/${accountId}/businesses`);
         const businessesQuery = businessesRef.where("connected", "==", true);
         const businessesSnapshot = await businessesQuery.get();
 
         for (const businessDoc of businessesSnapshot.docs) {
-          const reviewsRef = adminDb.collection(
+          const reviewsRef = getAdminDb().collection(
             `users/${userId}/accounts/${accountId}/businesses/${businessDoc.id}/reviews`
           );
           const reviewsQuery = reviewsRef.where("receivedAt", ">=", startTimestamp);

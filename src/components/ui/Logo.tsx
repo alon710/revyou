@@ -47,7 +47,7 @@ export function Logo({ href, className, size = "lg" }: SiteLogoProps) {
               fontSizeClasses[size]
             )}
           >
-            RevYou
+            Bottie
           </span>
         </div>
       </div>

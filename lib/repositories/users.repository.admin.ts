@@ -1,4 +1,4 @@
-import { adminDb } from "@/lib/firebase/admin";
+import { getAdminDb } from "@/lib/firebase/admin";
 import type { UserCreate, User, UserUpdate, UserUpdateInput } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 import * as admin from "firebase-admin";
@@ -10,7 +10,7 @@ export class UsersRepositoryAdmin extends BaseRepository<UserCreate, User, UserU
   }
 
   async get(userId: string): Promise<User | null> {
-    const userRef = adminDb.doc(`${this.basePath}/${userId}`);
+    const userRef = getAdminDb().doc(`${this.basePath}/${userId}`);
     const snapshot = await userRef.get();
 
     if (!snapshot.exists) return null;
@@ -32,7 +32,7 @@ export class UsersRepositoryAdmin extends BaseRepository<UserCreate, User, UserU
   }
 
   async update(userId: string, data: UserUpdate): Promise<User> {
-    const userRef = adminDb.doc(`${this.basePath}/${userId}`);
+    const userRef = getAdminDb().doc(`${this.basePath}/${userId}`);
 
     const updateData: UserUpdateInput = {
       ...data,

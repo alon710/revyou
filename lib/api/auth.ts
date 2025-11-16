@@ -1,4 +1,4 @@
-import { adminAuth } from "@/lib/firebase/admin";
+import { getAdminAuth } from "@/lib/firebase/admin";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { defaultLocale, type Locale, isValidLocale } from "@/i18n/config";
@@ -15,7 +15,7 @@ export async function getAuthenticatedUserId(): Promise<{ userId: string }> {
       throw new Error("Session cookie not found");
     }
 
-    const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie.value, true);
+    const decodedClaims = await getAdminAuth().verifySessionCookie(sessionCookie.value, true);
 
     return { userId: decodedClaims.uid };
   } catch (error) {

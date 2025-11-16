@@ -1,4 +1,4 @@
-import { adminDb } from "@/lib/firebase/admin";
+import { getAdminDb } from "@/lib/firebase/admin";
 import type { AccountCreate, Account, AccountUpdate, AccountUpdateInput, AccountFilters } from "@/lib/types";
 import * as admin from "firebase-admin";
 import { firestorePaths } from "@/lib/utils/firestore-paths";
@@ -15,7 +15,7 @@ export class AccountsRepositoryAdmin extends BaseRepository<AccountCreate, Accou
   }
 
   async get(accountId: string): Promise<Account | null> {
-    const accountRef = adminDb.doc(`${this.basePath}/${accountId}`);
+    const accountRef = getAdminDb().doc(`${this.basePath}/${accountId}`);
     const snapshot = await accountRef.get();
 
     if (!snapshot.exists) return null;
@@ -29,7 +29,7 @@ export class AccountsRepositoryAdmin extends BaseRepository<AccountCreate, Accou
   }
 
   async list(filters: AccountFilters = {}): Promise<Account[]> {
-    const collectionRef = adminDb.collection(this.basePath);
+    const collectionRef = getAdminDb().collection(this.basePath);
     const q = AdminQueryBuilder.buildAccountQuery(collectionRef, filters);
     const snapshot = await q.get();
 
@@ -47,7 +47,7 @@ export class AccountsRepositoryAdmin extends BaseRepository<AccountCreate, Accou
   }
 
   async create(data: AccountCreate): Promise<Account> {
-    const collectionRef = adminDb.collection(this.basePath);
+    const collectionRef = getAdminDb().collection(this.basePath);
 
     const accountData = {
       ...data,
@@ -63,7 +63,7 @@ export class AccountsRepositoryAdmin extends BaseRepository<AccountCreate, Accou
   }
 
   async update(accountId: string, data: AccountUpdateInput): Promise<Account> {
-    const accountRef = adminDb.doc(`${this.basePath}/${accountId}`);
+    const accountRef = getAdminDb().doc(`${this.basePath}/${accountId}`);
     await accountRef.update(data);
 
     const updated = await this.get(accountId);
@@ -73,7 +73,7 @@ export class AccountsRepositoryAdmin extends BaseRepository<AccountCreate, Accou
   }
 
   async delete(accountId: string): Promise<void> {
-    const accountRef = adminDb.doc(`${this.basePath}/${accountId}`);
+    const accountRef = getAdminDb().doc(`${this.basePath}/${accountId}`);
     await accountRef.delete();
   }
 

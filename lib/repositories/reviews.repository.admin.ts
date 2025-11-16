@@ -1,4 +1,4 @@
-import { adminDb } from "@/lib/firebase/admin";
+import { getAdminDb } from "@/lib/firebase/admin";
 import type { ReviewCreate, Review, ReviewUpdate, ReviewUpdateInput, ReviewFilters } from "@/lib/types";
 import { firestorePaths } from "@/lib/utils/firestore-paths";
 import { AdminQueryBuilder } from "@/lib/utils/query-builder";
@@ -19,7 +19,7 @@ export class ReviewsRepositoryAdmin extends BaseRepository<ReviewCreate, Review,
   }
 
   async get(reviewId: string): Promise<Review | null> {
-    const reviewRef = adminDb.doc(`${this.basePath}/${reviewId}`);
+    const reviewRef = getAdminDb().doc(`${this.basePath}/${reviewId}`);
     const snapshot = await reviewRef.get();
 
     if (!snapshot.exists) return null;
@@ -33,7 +33,7 @@ export class ReviewsRepositoryAdmin extends BaseRepository<ReviewCreate, Review,
   }
 
   async list(filters: ReviewFilters = {}): Promise<Review[]> {
-    const collectionRef = adminDb.collection(this.basePath);
+    const collectionRef = getAdminDb().collection(this.basePath);
     const q = AdminQueryBuilder.buildReviewQuery(collectionRef, filters);
     const snapshot = await q.get();
 
@@ -51,7 +51,7 @@ export class ReviewsRepositoryAdmin extends BaseRepository<ReviewCreate, Review,
   }
 
   async create(data: ReviewCreate): Promise<Review> {
-    const collectionRef = adminDb.collection(this.basePath);
+    const collectionRef = getAdminDb().collection(this.basePath);
 
     const reviewData = {
       ...data,
@@ -68,7 +68,7 @@ export class ReviewsRepositoryAdmin extends BaseRepository<ReviewCreate, Review,
   }
 
   async update(reviewId: string, data: ReviewUpdateInput): Promise<Review> {
-    const reviewRef = adminDb.doc(`${this.basePath}/${reviewId}`);
+    const reviewRef = getAdminDb().doc(`${this.basePath}/${reviewId}`);
     await reviewRef.update(data);
 
     const updated = await this.get(reviewId);
@@ -78,7 +78,7 @@ export class ReviewsRepositoryAdmin extends BaseRepository<ReviewCreate, Review,
   }
 
   async delete(reviewId: string): Promise<void> {
-    const reviewRef = adminDb.doc(`${this.basePath}/${reviewId}`);
+    const reviewRef = getAdminDb().doc(`${this.basePath}/${reviewId}`);
     await reviewRef.delete();
   }
 
@@ -105,7 +105,7 @@ export class ReviewsRepositoryAdmin extends BaseRepository<ReviewCreate, Review,
   }
 
   async findByGoogleReviewId(googleReviewId: string): Promise<Review | null> {
-    const collectionRef = adminDb.collection(this.basePath);
+    const collectionRef = getAdminDb().collection(this.basePath);
     const snapshot = await collectionRef.where("googleReviewId", "==", googleReviewId).limit(1).get();
 
     if (snapshot.empty) return null;

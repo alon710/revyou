@@ -6,20 +6,17 @@ import { createSubscriptionCheckout } from "@/lib/stripe/client";
 import { useRouter } from "@/i18n/routing";
 import { Loading } from "@/components/ui/loading";
 import { toast } from "sonner";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 function CheckoutForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("checkout");
+  const locale = useLocale();
   const [error, setError] = useState<string | null>(null);
 
   const plan = searchParams.get("plan");
   const priceId = searchParams.get("priceId");
-  const onboarding = searchParams.get("onboarding") === "true";
-  const customSuccessUrl = searchParams.get("success_url");
-  const customCancelUrl = searchParams.get("cancel_url");
-  const success = searchParams.get("success") === "true";
 
   useEffect(() => {
     if (error) {
@@ -28,11 +25,6 @@ function CheckoutForm() {
   }, [error]);
 
   useEffect(() => {
-    if (success) {
-      router.push("/dashboard/home");
-      return;
-    }
-
     if (plan === "free") {
       router.push("/dashboard/home");
       return;
@@ -47,21 +39,10 @@ function CheckoutForm() {
     if (priceId && !error) {
       async function initiateCheckout() {
         try {
-          let options = undefined;
-
-          if (customSuccessUrl || customCancelUrl) {
-            options = {
-              success_url: customSuccessUrl || `${window.location.origin}/dashboard`,
-              cancel_url: customCancelUrl || `${window.location.origin}/`,
-            };
-          } else if (onboarding) {
-            options = {
-              success_url: `${window.location.origin}/checkout?success=true`,
-              cancel_url: `${window.location.origin}/dashboard`,
-            };
-          }
-
-          const session = await createSubscriptionCheckout(priceId!, options);
+          const session = await createSubscriptionCheckout(priceId!, {
+            success_url: `${window.location.origin}/${locale}/dashboard/home`,
+            cancel_url: `${window.location.origin}/`,
+          });
           window.location.assign(session.url);
         } catch (err) {
           console.error("Error creating checkout session:", err);
@@ -71,7 +52,7 @@ function CheckoutForm() {
 
       initiateCheckout();
     }
-  }, [plan, priceId, router, error, onboarding, customSuccessUrl, customCancelUrl, success, t]);
+  }, [plan, priceId, router, error, locale, t]);
 
   if (!error && priceId) {
     return <Loading fullScreen text={t("preparingPayment")} description={t("redirectingToPayment")} size="lg" />;

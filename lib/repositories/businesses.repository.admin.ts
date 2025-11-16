@@ -1,4 +1,4 @@
-import { adminDb } from "@/lib/firebase/admin";
+import { getAdminDb } from "@/lib/firebase/admin";
 import type {
   BusinessCreate,
   Business,
@@ -24,7 +24,7 @@ export class BusinessesRepositoryAdmin extends BaseRepository<BusinessCreate, Bu
   }
 
   async get(businessId: string): Promise<Business | null> {
-    const businessRef = adminDb.doc(`${this.basePath}/${businessId}`);
+    const businessRef = getAdminDb().doc(`${this.basePath}/${businessId}`);
     const snapshot = await businessRef.get();
 
     if (!snapshot.exists) return null;
@@ -38,7 +38,7 @@ export class BusinessesRepositoryAdmin extends BaseRepository<BusinessCreate, Bu
   }
 
   async list(filters: BusinessFilters = {}): Promise<Business[]> {
-    const collectionRef = adminDb.collection(this.basePath);
+    const collectionRef = getAdminDb().collection(this.basePath);
     const q = AdminQueryBuilder.buildBusinessQuery(collectionRef, filters);
     const snapshot = await q.get();
 
@@ -56,7 +56,7 @@ export class BusinessesRepositoryAdmin extends BaseRepository<BusinessCreate, Bu
   }
 
   async create(data: BusinessCreate): Promise<Business> {
-    const collectionRef = adminDb.collection(this.basePath);
+    const collectionRef = getAdminDb().collection(this.basePath);
 
     const businessData = {
       ...data,
@@ -73,7 +73,7 @@ export class BusinessesRepositoryAdmin extends BaseRepository<BusinessCreate, Bu
   }
 
   async update(businessId: string, data: BusinessUpdateInput): Promise<Business> {
-    const businessRef = adminDb.doc(`${this.basePath}/${businessId}`);
+    const businessRef = getAdminDb().doc(`${this.basePath}/${businessId}`);
     await businessRef.update(data);
 
     const updated = await this.get(businessId);
@@ -83,12 +83,12 @@ export class BusinessesRepositoryAdmin extends BaseRepository<BusinessCreate, Bu
   }
 
   async delete(businessId: string): Promise<void> {
-    const businessRef = adminDb.doc(`${this.basePath}/${businessId}`);
+    const businessRef = getAdminDb().doc(`${this.basePath}/${businessId}`);
     await businessRef.delete();
   }
 
   async findByGoogleBusinessId(googleBusinessId: string): Promise<Business | null> {
-    const collectionRef = adminDb.collection(this.basePath);
+    const collectionRef = getAdminDb().collection(this.basePath);
     const snapshot = await collectionRef.where("googleBusinessId", "==", googleBusinessId).limit(1).get();
 
     if (snapshot.empty) return null;
@@ -114,7 +114,7 @@ export class BusinessesRepositoryAdmin extends BaseRepository<BusinessCreate, Bu
       mapsUrl: string | null;
     }
   ): Promise<Business> {
-    const businessRef = adminDb.doc(`${this.basePath}/${businessId}`);
+    const businessRef = getAdminDb().doc(`${this.basePath}/${businessId}`);
     await businessRef.update({
       address: data.address,
       mapsUrl: data.mapsUrl,
