@@ -1,4 +1,4 @@
-import { adminDb } from "@/lib/firebase/admin";
+import { getAdminDb } from "@/lib/firebase/admin";
 import type { Subscription, SubscriptionCreate, SubscriptionUpdate, SubscriptionWithProduct } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 import { type PlanLimits, getPlanLimits } from "@/lib/stripe/entitlements";
@@ -34,7 +34,7 @@ export class SubscriptionsRepositoryAdmin extends BaseRepository<SubscriptionCre
 
   async getActiveSubscription(userId: string): Promise<SubscriptionWithProduct | null> {
     try {
-      const subscriptionsRef = adminDb.collection(`users/${userId}/subscriptions`);
+      const subscriptionsRef = getAdminDb().collection(`users/${userId}/subscriptions`);
       const activeSubQuery = subscriptionsRef.where("status", "in", ["active", "trialing"]);
       const snapshot = await activeSubQuery.get();
 
@@ -46,7 +46,7 @@ export class SubscriptionsRepositoryAdmin extends BaseRepository<SubscriptionCre
       const subData = subDoc.data() as Subscription;
       const productId = typeof subData.product === "string" ? subData.product : subData.product.id;
 
-      const productDoc = await adminDb.collection("products").doc(productId).get();
+      const productDoc = await getAdminDb().collection("products").doc(productId).get();
 
       if (!productDoc.exists) {
         console.error("Product not found:", productId);
@@ -78,7 +78,7 @@ export class SubscriptionsRepositoryAdmin extends BaseRepository<SubscriptionCre
         return getPlanLimits(enriched);
       }
 
-      const productsRef = adminDb.collection("products");
+      const productsRef = getAdminDb().collection("products");
       const freeProductQuery = productsRef.where("active", "==", true).where("metadata.plan_id", "==", "free");
       const freeProductSnapshot = await freeProductQuery.get();
 
@@ -114,7 +114,7 @@ export class SubscriptionsRepositoryAdmin extends BaseRepository<SubscriptionCre
       const startDate = startOfMonth(new Date());
       const startTimestamp = Timestamp.fromDate(startDate);
 
-      const accountsRef = adminDb.collection(`users/${userId}/accounts`);
+      const accountsRef = getAdminDb().collection(`users/${userId}/accounts`);
       const accountsSnapshot = await accountsRef.get();
 
       if (accountsSnapshot.empty) {
@@ -126,12 +126,12 @@ export class SubscriptionsRepositoryAdmin extends BaseRepository<SubscriptionCre
       for (const accountDoc of accountsSnapshot.docs) {
         const accountId = accountDoc.id;
 
-        const businessesRef = adminDb.collection(`users/${userId}/accounts/${accountId}/businesses`);
+        const businessesRef = getAdminDb().collection(`users/${userId}/accounts/${accountId}/businesses`);
         const businessesQuery = businessesRef.where("connected", "==", true);
         const businessesSnapshot = await businessesQuery.get();
 
         for (const businessDoc of businessesSnapshot.docs) {
-          const reviewsRef = adminDb.collection(
+          const reviewsRef = getAdminDb().collection(
             `users/${userId}/accounts/${accountId}/businesses/${businessDoc.id}/reviews`
           );
           const reviewsQuery = reviewsRef.where("receivedAt", ">=", startTimestamp);

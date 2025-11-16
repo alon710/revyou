@@ -2,7 +2,7 @@ import type { BusinessCreate, Business, BusinessUpdate, BusinessFilters, Busines
 import { BusinessesRepositoryAdmin } from "@/lib/repositories/businesses.repository.admin";
 import { BaseController } from "./base.controller";
 import { ConflictError, ForbiddenError } from "@/lib/api/errors";
-import { adminDb } from "@/lib/firebase/admin";
+import { getAdminDb } from "@/lib/firebase/admin";
 import * as admin from "firebase-admin";
 
 export class BusinessesController extends BaseController<BusinessCreate, Business, BusinessUpdate> {
@@ -61,9 +61,9 @@ export class BusinessesController extends BaseController<BusinessCreate, Busines
 
       if (checkLimit) {
         const basePath = `users/${this.userId}/accounts/${this.accountId}/businesses`;
-        const collectionRef = adminDb.collection(basePath);
+        const collectionRef = getAdminDb().collection(basePath);
 
-        const businessId = await adminDb.runTransaction(async (transaction) => {
+        const businessId = await getAdminDb().runTransaction(async (transaction) => {
           const querySnapshot = await transaction.get(
             collectionRef.where("googleBusinessId", "==", data.googleBusinessId).limit(1)
           );
