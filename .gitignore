@@ -53,3 +53,9 @@ firebase-debug.log
 !/lib/**/*.config.js
 /types/**/*.js
 /types/**/*.js.map
+
+# Drizzle ORM generated files
+/drizzle/
+
+# Supabase temporary files
+/supabase/.temp/
