@@ -1,4 +1,6 @@
-import { boolean, pgTable, text, timestamp, uuid, index } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uuid, index, pgPolicy } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { authenticatedRole, authUid } from "./roles";
 import { accounts } from "./accounts.schema";
 
 /**
@@ -29,12 +31,52 @@ export const businesses = pgTable(
     // Timestamps
     connectedAt: timestamp("connected_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (table) => ({
-    accountIdIdx: index("businesses_account_id_idx").on(table.accountId),
-    googleBusinessIdIdx: index("businesses_google_business_id_idx").on(table.googleBusinessId),
-    connectedIdx: index("businesses_connected_idx").on(table.connected),
-    accountConnectedIdx: index("businesses_account_connected_idx").on(table.accountId, table.connected),
-  })
+  (table) => [
+    // Indexes
+    index("businesses_account_id_idx").on(table.accountId),
+    index("businesses_google_business_id_idx").on(table.googleBusinessId),
+    index("businesses_connected_idx").on(table.connected),
+    index("businesses_account_connected_idx").on(table.accountId, table.connected),
+
+    // RLS Policies: Users can access businesses in accounts they have access to
+    pgPolicy("businesses_select_associated", {
+      for: "select",
+      to: authenticatedRole,
+      using: sql`EXISTS (
+        SELECT 1 FROM user_accounts ua
+        WHERE ua.account_id = ${table.accountId}
+        AND ua.user_id = ${authUid()}
+      )`,
+    }),
+    pgPolicy("businesses_insert_associated", {
+      for: "insert",
+      to: authenticatedRole,
+      withCheck: sql`EXISTS (
+        SELECT 1 FROM user_accounts ua
+        WHERE ua.account_id = ${table.accountId}
+        AND ua.user_id = ${authUid()}
+      )`,
+    }),
+    pgPolicy("businesses_update_associated", {
+      for: "update",
+      to: authenticatedRole,
+      using: sql`EXISTS (
+        SELECT 1 FROM user_accounts ua
+        WHERE ua.account_id = ${table.accountId}
+        AND ua.user_id = ${authUid()}
+      )`,
+    }),
+    pgPolicy("businesses_delete_owner", {
+      for: "delete",
+      to: authenticatedRole,
+      using: sql`EXISTS (
+        SELECT 1 FROM user_accounts ua
+        WHERE ua.account_id = ${table.accountId}
+        AND ua.user_id = ${authUid()}
+        AND ua.role = 'owner'
+      )`,
+    }),
+  ]
 );
 
 export type Business = typeof businesses.$inferSelect;

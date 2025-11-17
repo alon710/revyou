@@ -4,29 +4,33 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 Before running the application, you need to configure your environment variables in `.env.local`:
 
-### Required Stripe Configuration
+### Required Configuration
 
-The application uses [Firestore Stripe Payments Extension](https://github.com/invertase/stripe-firebase-extensions/tree/next/firestore-stripe-payments) for subscription management. You need to set up the following Stripe price IDs:
+The application uses Paddle for subscription management and requires several service integrations:
 
-1. **Create Products in Stripe Dashboard**: Create two subscription products (Basic and Professional)
-2. **Create Prices**: For each product, create both monthly and yearly prices
-3. **Update `.env.local`** with your actual price IDs:
+1. **Paddle Configuration** (Billing):
+   - Create subscription plans in Paddle Dashboard
+   - Set up price IDs for Starter and Pro plans (monthly and yearly)
+   - Configure webhook secret for payment events
 
-```bash
-# Replace these placeholder values with your actual Stripe price IDs
-NEXT_PUBLIC_STRIPE_PRICE_BASIC_MONTHLY=price_xxxxxxxxxxxxx
-NEXT_PUBLIC_STRIPE_PRICE_BASIC_YEARLY=price_xxxxxxxxxxxxx
-NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY=price_xxxxxxxxxxxxx
-NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY=price_xxxxxxxxxxxxx
-```
+2. **Google Cloud Services**:
+   - Google OAuth credentials (for Google Business Profile integration)
+   - Google Pub/Sub (for review notifications)
+   - Gemini API key (for AI reply generation)
 
-**Important**: The current `.env.local` has placeholder price IDs that will cause checkout to fail. You must replace them with real price IDs from your Stripe account.
+3. **Supabase** (Authentication & Database):
+   - PostgreSQL database with Drizzle ORM
+   - Authentication with Supabase Auth
 
-### Other Required Environment Variables
+4. **Resend** (Email Service):
+   - API key for sending email notifications
+   - Verified sender domain
 
-- Firebase configuration (already set up)
-- Google OAuth credentials
-- Gemini API key for AI features
+5. **Internal Services**:
+   - Token encryption secret
+   - Internal API secret (for webhook processing)
+
+See [`.env.example`](.env.example) for a complete list of required environment variables.
 
 ## Getting Started
 

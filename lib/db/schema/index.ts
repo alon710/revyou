@@ -1,3 +1,4 @@
+export * from "./roles";
 export * from "./users-configs.schema";
 export * from "./accounts.schema";
 export * from "./user-accounts.schema";

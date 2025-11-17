@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/routing";
 import { Loading } from "@/components/ui/loading";
@@ -17,7 +17,7 @@ function CheckoutForm() {
   const t = useTranslations("checkout");
   const { user } = useAuth();
   const [error, setError] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const hasStartedProcessing = useRef(false);
 
   const plan = searchParams.get("plan") as PlanTier;
   const period = searchParams.get("period") as BillingInterval;
@@ -30,7 +30,7 @@ function CheckoutForm() {
 
   useEffect(() => {
     // Don't process if already processing or if user is not loaded
-    if (isProcessing || !user) return;
+    if (hasStartedProcessing.current || !user) return;
 
     if (plan === "free") {
       router.push("/dashboard/home");
@@ -44,7 +44,8 @@ function CheckoutForm() {
     }
 
     if (plan && period && !error) {
-      setIsProcessing(true);
+      // Mark as started to prevent duplicate processing
+      hasStartedProcessing.current = true;
 
       async function processMockCheckout() {
         try {
@@ -68,7 +69,7 @@ function CheckoutForm() {
 
       processMockCheckout();
     }
-  }, [plan, period, router, error, t, user, isProcessing]);
+  }, [plan, period, router, error, t, user]);
 
   if (!error && plan && period) {
     return <Loading fullScreen text={t("processing")} description={t("almostThere")} size="lg" />;

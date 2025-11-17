@@ -1,4 +1,6 @@
-import { boolean, integer, pgTable, text, timestamp, uuid, index } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, text, timestamp, uuid, index, pgPolicy } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { authenticatedRole, authUid } from "./roles";
 import { businesses } from "./businesses.schema";
 import { accounts } from "./accounts.schema";
 
@@ -45,16 +47,56 @@ export const reviews = pgTable(
     receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
     updateTime: timestamp("update_time", { withTimezone: true }),
   },
-  (table) => ({
-    accountIdIdx: index("reviews_account_id_idx").on(table.accountId),
-    businessIdIdx: index("reviews_business_id_idx").on(table.businessId),
-    googleReviewIdIdx: index("reviews_google_review_id_idx").on(table.googleReviewId),
-    replyStatusIdx: index("reviews_reply_status_idx").on(table.replyStatus),
-    receivedAtIdx: index("reviews_received_at_idx").on(table.receivedAt),
-    accountBusinessIdx: index("reviews_account_business_idx").on(table.accountId, table.businessId),
-    businessStatusIdx: index("reviews_business_status_idx").on(table.businessId, table.replyStatus),
-    receivedStatusIdx: index("reviews_received_status_idx").on(table.receivedAt, table.replyStatus),
-  })
+  (table) => [
+    // Indexes
+    index("reviews_account_id_idx").on(table.accountId),
+    index("reviews_business_id_idx").on(table.businessId),
+    index("reviews_google_review_id_idx").on(table.googleReviewId),
+    index("reviews_reply_status_idx").on(table.replyStatus),
+    index("reviews_received_at_idx").on(table.receivedAt),
+    index("reviews_account_business_idx").on(table.accountId, table.businessId),
+    index("reviews_business_status_idx").on(table.businessId, table.replyStatus),
+    index("reviews_received_status_idx").on(table.receivedAt, table.replyStatus),
+
+    // RLS Policies: Users can access reviews for accounts they have access to
+    pgPolicy("reviews_select_associated", {
+      for: "select",
+      to: authenticatedRole,
+      using: sql`EXISTS (
+        SELECT 1 FROM user_accounts ua
+        WHERE ua.account_id = ${table.accountId}
+        AND ua.user_id = ${authUid()}
+      )`,
+    }),
+    pgPolicy("reviews_insert_associated", {
+      for: "insert",
+      to: authenticatedRole,
+      withCheck: sql`EXISTS (
+        SELECT 1 FROM user_accounts ua
+        WHERE ua.account_id = ${table.accountId}
+        AND ua.user_id = ${authUid()}
+      )`,
+    }),
+    pgPolicy("reviews_update_associated", {
+      for: "update",
+      to: authenticatedRole,
+      using: sql`EXISTS (
+        SELECT 1 FROM user_accounts ua
+        WHERE ua.account_id = ${table.accountId}
+        AND ua.user_id = ${authUid()}
+      )`,
+    }),
+    pgPolicy("reviews_delete_owner", {
+      for: "delete",
+      to: authenticatedRole,
+      using: sql`EXISTS (
+        SELECT 1 FROM user_accounts ua
+        WHERE ua.account_id = ${table.accountId}
+        AND ua.user_id = ${authUid()}
+        AND ua.role = 'owner'
+      )`,
+    }),
+  ]
 );
 
 export type Review = typeof reviews.$inferSelect;

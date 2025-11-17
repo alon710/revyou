@@ -6,14 +6,16 @@
     "dev": "next dev --turbopack",
     "build": "yarn format:check && next build",
     "start": "next start",
-    "lint": "eslint",
     "lint:check": "eslint .",
     "lint:fix": "eslint . --fix",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "seed:review": "tsx scripts/seed-review.ts",
-    "seed:pubsub": "tsx scripts/seed-pubsub-notification.ts",
-    "knip": "knip"
+    "knip": "knip",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:drop": "drizzle-kit drop"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^4.10.0",
@@ -32,6 +34,8 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@react-email/components": "^1.0.1",
+    "@react-email/render": "^2.0.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.81.1",
     "accept-language": "^3.0.20",
@@ -55,7 +59,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "recharts": "2.15.4",
-    "resend": "^6.3.0",
+    "resend": "^6.4.2",
     "server-only": "^0.0.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
@@ -75,7 +79,6 @@
     "eslint": "^9",
     "eslint-config-next": "^16.0.0",
     "eslint-plugin-unused-imports": "^4.3.0",
-    "firebase-tools": "^14.24.1",
     "googleapis": "^165.0.0",
     "knip": "^5.66.3",
     "prettier": "^3.6.2",
@@ -87,7 +90,6 @@
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
   "knip": {
     "ignore": [
-      "functions/**",
       "src/i18n/request.ts"
     ],
     "rules": {

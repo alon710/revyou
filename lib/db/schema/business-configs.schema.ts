@@ -1,4 +1,6 @@
-import { boolean, integer, jsonb, pgTable, text, timestamp, uuid, index } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, pgTable, text, timestamp, uuid, index, pgPolicy } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { authenticatedRole, authUid } from "./roles";
 import { businesses } from "./businesses.schema";
 
 /**
@@ -47,9 +49,52 @@ export const businessConfigs = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }),
   },
-  (table) => ({
-    businessIdIdx: index("business_configs_business_id_idx").on(table.businessId),
-  })
+  (table) => [
+    // Indexes
+    index("business_configs_business_id_idx").on(table.businessId),
+
+    // RLS Policies: Users can access configs for businesses they have access to
+    pgPolicy("business_configs_select_associated", {
+      for: "select",
+      to: authenticatedRole,
+      using: sql`EXISTS (
+        SELECT 1 FROM businesses b
+        JOIN user_accounts ua ON ua.account_id = b.account_id
+        WHERE b.id = ${table.businessId}
+        AND ua.user_id = ${authUid()}
+      )`,
+    }),
+    pgPolicy("business_configs_insert_associated", {
+      for: "insert",
+      to: authenticatedRole,
+      withCheck: sql`EXISTS (
+        SELECT 1 FROM businesses b
+        JOIN user_accounts ua ON ua.account_id = b.account_id
+        WHERE b.id = ${table.businessId}
+        AND ua.user_id = ${authUid()}
+      )`,
+    }),
+    pgPolicy("business_configs_update_associated", {
+      for: "update",
+      to: authenticatedRole,
+      using: sql`EXISTS (
+        SELECT 1 FROM businesses b
+        JOIN user_accounts ua ON ua.account_id = b.account_id
+        WHERE b.id = ${table.businessId}
+        AND ua.user_id = ${authUid()}
+      )`,
+    }),
+    pgPolicy("business_configs_delete_associated", {
+      for: "delete",
+      to: authenticatedRole,
+      using: sql`EXISTS (
+        SELECT 1 FROM businesses b
+        JOIN user_accounts ua ON ua.account_id = b.account_id
+        WHERE b.id = ${table.businessId}
+        AND ua.user_id = ${authUid()}
+      )`,
+    }),
+  ]
 );
 
 export type BusinessConfig = typeof businessConfigs.$inferSelect;
