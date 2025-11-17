@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { Resend } from "resend";
-import { render } from "@react-email/render";
 import { generateWithGemini } from "@/lib/ai/core/gemini-client";
 import { buildReplyPrompt } from "@/lib/ai/prompts/builder";
-import { ReviewNotificationEmail } from "@/lib/email/templates/review-notification";
 import { postReplyToGoogle } from "@/lib/google/reviews";
 import { decryptToken } from "@/lib/google/business-profile";
+import { generateReviewNotificationEmail } from "@/lib/email/review-notification";
 import { ReviewsRepository } from "@/lib/db/repositories/reviews.repository";
 import { BusinessesRepository } from "@/lib/db/repositories/businesses.repository";
 import { AccountsRepository } from "@/lib/db/repositories/accounts.repository";
@@ -226,21 +225,19 @@ export async function POST(request: NextRequest) {
           } else {
             const status = replyStatus === "pending" ? "pending" : "posted";
 
-            const emailHtml = render(
-              ReviewNotificationEmail({
-                recipientName: recipientName || recipientEmail,
-                businessName: business.name,
-                accountId,
-                businessId: business.id,
-                reviewerName: review.name,
-                rating: review.rating,
-                reviewText: review.text || "",
-                aiReply,
-                status,
-                appBaseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-                reviewId,
-              })
-            );
+            const emailHtml = generateReviewNotificationEmail({
+              recipientName: recipientName || recipientEmail,
+              businessName: business.name,
+              accountId,
+              businessId: business.id,
+              reviewerName: review.name,
+              rating: review.rating,
+              reviewText: review.text || "",
+              aiReply,
+              status,
+              appBaseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+              reviewId,
+            });
 
             const subject = `ביקורת חדשה התקבלה: ${review.rating} כוכבים - ${business.name}`;
 

@@ -209,7 +209,6 @@ export async function POST(request: NextRequest) {
 
     // Prepare review data
     const reviewData: ReviewInsert = {
-      userId,
       accountId,
       businessId: business.id,
       googleReviewId: googleReview.reviewId,
