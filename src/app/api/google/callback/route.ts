@@ -83,7 +83,6 @@ export async function GET(request: NextRequest) {
     } else {
       const userInfo = await getUserInfo(tokens.access_token);
 
-      // Ensure user config exists (will create if doesn't exist)
       await usersController.getUserConfig(authenticatedUserId);
 
       const existingAccount = await accountsController.findByEmail(userInfo.email);

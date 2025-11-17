@@ -40,8 +40,6 @@ function LoginForm() {
       setError(error);
       setIsLoading(false);
     }
-    // Note: With Supabase OAuth, the user will be redirected to the callback URL
-    // The redirect to dashboard/specified path will happen in the callback handler
   };
 
   return (

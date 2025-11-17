@@ -35,7 +35,8 @@
     "dashboard": {
       "home": "בית",
       "subscription": "תוכנית",
-      "insights": "תובנות"
+      "insights": "תובנות",
+      "settings": "הגדרות"
     },
     "landing": {
       "home": "בית",
@@ -465,6 +466,27 @@
         }
       }
     },
+    "accountSettings": {
+      "title": "הגדרות",
+      "description": "נהל את העדפות החשבון שלך",
+      "languagePreferences": {
+        "title": "העדפות שפה",
+        "description": "בחר את השפה המועדפת עליך עבור הממשק והאימיילים",
+        "label": "שפה מועדפת",
+        "tooltip": "שפה זו תשמש עבור כל האימיילים שלך וכשפת ברירת המחדל של הממשק"
+      },
+      "emailNotifications": {
+        "title": "התראות דוא״ל",
+        "description": "הגדר אילו התראות דוא״ל ברצונך לקבל",
+        "label": "התראות על ביקורות",
+        "tooltip": "קבל התראות דוא״ל כאשר מתקבלות ביקורות חדשות",
+        "enabled": "מופעל",
+        "disabled": "כבוי"
+      },
+      "saveSuccess": "ההגדרות נשמרו בהצלחה",
+      "saveError": "שגיאה בשמירת ההגדרות. אנא נסה שוב.",
+      "loadError": "שגיאה בטעינת ההגדרות. אנא נסה שוב."
+    },
     "reviewDetail": {
       "loadingReview": "טוען ביקורת...",
       "title": "ביקורת",
@@ -675,6 +697,20 @@
       "description": "התאם אישית את התגובות האוטומטיות לפי רמת הדירוג",
       "successMessage": "ההגדרות נשמרו בהצלחה!",
       "errorMessage": "לא ניתן לשמור את ההגדרות"
+    }
+  },
+  "emails": {
+    "reviewNotification": {
+      "subject": "ביקורת חדשה התקבלה: {rating} כוכבים - {businessName}",
+      "title": "ביקורת חדשה התקבלה!",
+      "greeting": "שלום {name},",
+      "body": "התקבלה ביקורת חדשה עבור <strong>{businessName}</strong>",
+      "noReviewText": "הלקוח לא השאיר טקסט בביקורת",
+      "aiReplyHeader": "תגובת הבינה המלאכותית",
+      "statusPending": "ממתינה לאישור",
+      "statusPosted": "פורסמה",
+      "viewReviewButton": "צפייה בביקורת",
+      "footer": "קיבלת הודעת דוא״ל זו כי הפעלת התראות עבור ביקורות חדשות"
     }
   },
   "errors": {

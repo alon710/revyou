@@ -55,7 +55,6 @@ export function useAuth() {
   useEffect(() => {
     const supabase = createClient();
 
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
         console.error("Failed to get session:", error);
@@ -68,7 +67,6 @@ export function useAuth() {
       setLoading(false);
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {

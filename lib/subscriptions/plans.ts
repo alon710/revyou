@@ -16,8 +16,8 @@ export interface Plan {
   id: PlanTier;
   name: string;
   description: string;
-  monthlyPrice: number; // in dollars
-  yearlyPrice: number; // in dollars
+  monthlyPrice: number;
+  yearlyPrice: number;
   features: string[];
   limits: PlanLimits;
 }
@@ -75,8 +75,8 @@ export const PLANS: Record<PlanTier, Plan> = {
       "Priority support",
     ],
     limits: {
-      businesses: -1, // -1 means unlimited
-      reviewsPerMonth: -1, // -1 means unlimited
+      businesses: -1,
+      reviewsPerMonth: -1,
       autoPost: true,
       requireApproval: false,
     },

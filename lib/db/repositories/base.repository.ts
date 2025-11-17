@@ -1,9 +1,5 @@
 import { type TFilters } from "@/lib/types";
 
-/**
- * Base repository interface for all repositories
- * Defines standard CRUD operations
- */
 export abstract class BaseRepository<TCreate, TEntity, TUpdate> {
   abstract get(id: string): Promise<TEntity | null>;
 

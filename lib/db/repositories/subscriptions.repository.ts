@@ -11,15 +11,7 @@ import {
 import { type PlanLimits, getPlanLimits, type PlanTier } from "@/lib/subscriptions/plans";
 import { startOfMonth } from "date-fns";
 
-/**
- * Subscriptions repository using Drizzle ORM
- * Manages subscription and billing information
- * Note: Subscriptions are linked to users (1:1), not accounts
- */
 export class SubscriptionsRepository {
-  /**
-   * Get active subscription for a user
-   */
   async getActiveSubscriptionForUser(userId: string): Promise<Subscription | null> {
     try {
       const [result] = await db
@@ -35,14 +27,10 @@ export class SubscriptionsRepository {
     }
   }
 
-  /**
-   * Create or update subscription for a user
-   */
   async upsert(userId: string, data: Omit<SubscriptionInsert, "userId">): Promise<Subscription> {
     const existing = await this.getActiveSubscriptionForUser(userId);
 
     if (existing) {
-      // Update existing subscription
       const [updated] = await db
         .update(subscriptions)
         .set({
@@ -59,7 +47,6 @@ export class SubscriptionsRepository {
       if (!updated) throw new Error("Failed to update subscription");
       return updated;
     } else {
-      // Create new subscription
       const [created] = await db
         .insert(subscriptions)
         .values({
@@ -73,9 +60,6 @@ export class SubscriptionsRepository {
     }
   }
 
-  /**
-   * Cancel subscription for a user
-   */
   async cancel(userId: string): Promise<Subscription> {
     const existing = await this.getActiveSubscriptionForUser(userId);
 
@@ -96,9 +80,6 @@ export class SubscriptionsRepository {
     return canceled;
   }
 
-  /**
-   * Get plan limits for a user (based on their best subscription)
-   */
   async getUserPlanLimits(userId: string): Promise<PlanLimits> {
     try {
       const subscription = await this.getActiveSubscriptionForUser(userId);
@@ -107,7 +88,6 @@ export class SubscriptionsRepository {
         return getPlanLimits(subscription.planTier as PlanTier);
       }
 
-      // Default to free plan
       return getPlanLimits("free");
     } catch (error) {
       console.error("Error fetching user plan limits:", error);
@@ -115,9 +95,6 @@ export class SubscriptionsRepository {
     }
   }
 
-  /**
-   * Count user's reviews this month (across all their accounts)
-   */
   async countUserReviewsThisMonth(userId: string): Promise<number> {
     try {
       const startDate = startOfMonth(new Date());

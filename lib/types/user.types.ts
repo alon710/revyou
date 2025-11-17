@@ -4,4 +4,4 @@ export type UserConfig = UsersConfig;
 
 export type UserConfigCreate = Omit<UsersConfigInsert, "id" | "createdAt" | "updatedAt">;
 
-export type UserConfigUpdate = Partial<Pick<UsersConfigInsert, "emailOnNewReview">>;
+export type UserConfigUpdate = Partial<Pick<UsersConfigInsert, "emailOnNewReview" | "locale">>;

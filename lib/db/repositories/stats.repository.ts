@@ -3,14 +3,7 @@ import { db } from "@/lib/db/client";
 import { businesses, reviews, userAccounts } from "@/lib/db/schema";
 import { startOfMonth } from "date-fns";
 
-/**
- * Stats repository using Drizzle ORM
- * Provides statistical queries for user data
- */
 export class StatsRepository {
-  /**
-   * Count total connected businesses for a user (across all their accounts)
-   */
   async countUserBusinesses(userId: string): Promise<number> {
     try {
       const result = await db
@@ -26,9 +19,6 @@ export class StatsRepository {
     }
   }
 
-  /**
-   * Count user's reviews this month (across all their accounts)
-   */
   async countUserReviewsThisMonth(userId: string): Promise<number> {
     try {
       const startDate = startOfMonth(new Date());

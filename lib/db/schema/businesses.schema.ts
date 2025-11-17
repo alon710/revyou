@@ -3,10 +3,6 @@ import { sql } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
 import { accounts } from "./accounts.schema";
 
-/**
- * Businesses table
- * Stores Google Business Profile locations
- */
 export const businesses = pgTable(
   "businesses",
   {
@@ -15,7 +11,6 @@ export const businesses = pgTable(
       .notNull()
       .references(() => accounts.id, { onDelete: "cascade" }),
 
-    // Google Business Profile details
     googleBusinessId: text("google_business_id").notNull().unique(),
     name: text("name").notNull(),
     address: text("address").notNull(),
@@ -25,20 +20,16 @@ export const businesses = pgTable(
     description: text("description"),
     photoUrl: text("photo_url"),
 
-    // Status
     connected: boolean("connected").notNull().default(true),
 
-    // Timestamps
     connectedAt: timestamp("connected_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    // Indexes
     index("businesses_account_id_idx").on(table.accountId),
     index("businesses_google_business_id_idx").on(table.googleBusinessId),
     index("businesses_connected_idx").on(table.connected),
     index("businesses_account_connected_idx").on(table.accountId, table.connected),
 
-    // RLS Policies: Users can access businesses in accounts they have access to
     pgPolicy("businesses_select_associated", {
       for: "select",
       to: authenticatedRole,

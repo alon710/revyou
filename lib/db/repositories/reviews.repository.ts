@@ -4,10 +4,6 @@ import { reviews, userAccounts, type Review, type ReviewInsert } from "@/lib/db/
 import type { ReviewFilters, ReplyStatus } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 
-/**
- * Reviews repository using Drizzle ORM
- * Manages Google Business Profile reviews and AI-generated replies
- */
 export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Partial<Review>> {
   constructor(
     private userId: string,
@@ -17,9 +13,6 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     super();
   }
 
-  /**
-   * Get review by ID (with access check)
-   */
   async get(reviewId: string): Promise<Review | null> {
     const result = await db
       .select({ reviews })
@@ -38,9 +31,6 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     return result.length > 0 ? result[0].reviews : null;
   }
 
-  /**
-   * List all reviews for business
-   */
   async list(filters: ReviewFilters = {}): Promise<Review[]> {
     let query = db
       .select({ reviews })
@@ -57,7 +47,6 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     const results = await query;
     let reviewList = results.map((r) => r.reviews);
 
-    // Apply filters in application code
     if (filters.replyStatus && filters.replyStatus.length > 0) {
       reviewList = reviewList.filter((r) => filters.replyStatus!.includes(r.replyStatus as ReplyStatus));
     }
@@ -74,9 +63,6 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     return reviewList;
   }
 
-  /**
-   * Create new review
-   */
   async create(data: ReviewInsert): Promise<Review> {
     const reviewData: ReviewInsert = {
       ...data,
@@ -90,9 +76,6 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     return created;
   }
 
-  /**
-   * Update review
-   */
   async update(reviewId: string, data: Partial<Review>): Promise<Review> {
     const [updated] = await db
       .update(reviews)
@@ -107,16 +90,10 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     return updated;
   }
 
-  /**
-   * Delete review
-   */
   async delete(reviewId: string): Promise<void> {
     await db.delete(reviews).where(eq(reviews.id, reviewId));
   }
 
-  /**
-   * Update AI-generated reply
-   */
   async updateAiReply(reviewId: string, aiReply: string): Promise<Review> {
     return this.update(reviewId, {
       aiReply,
@@ -124,9 +101,6 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     });
   }
 
-  /**
-   * Mark review as posted with reply
-   */
   async markAsPosted(reviewId: string, postedReply: string, postedBy: string): Promise<Review> {
     return this.update(reviewId, {
       replyStatus: "posted",
@@ -136,18 +110,12 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     });
   }
 
-  /**
-   * Mark review as rejected
-   */
   async markAsRejected(reviewId: string): Promise<Review> {
     return this.update(reviewId, {
       replyStatus: "rejected",
     });
   }
 
-  /**
-   * Find review by Google Review ID
-   */
   async findByGoogleReviewId(googleReviewId: string): Promise<Review | null> {
     const result = await db
       .select()

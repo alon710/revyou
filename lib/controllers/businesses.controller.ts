@@ -56,7 +56,6 @@ export class BusinessesController {
   async updateBusiness(businessId: string, data: BusinessUpdate): Promise<Business> {
     await this.getBusiness(businessId);
 
-    // Handle config updates separately if provided
     if (data.config) {
       await this.repository.updateConfig(businessId, data.config);
       const { config: _config, ...rest } = data;

@@ -5,16 +5,18 @@ import { generateWithGemini } from "@/lib/ai/core/gemini-client";
 import { buildReplyPrompt } from "@/lib/ai/prompts/builder";
 import { postReplyToGoogle } from "@/lib/google/reviews";
 import { decryptToken } from "@/lib/google/business-profile";
-import { generateReviewNotificationEmail } from "@/lib/email/review-notification";
+import { renderReviewNotificationEmail } from "@/lib/email/render";
 import { ReviewsRepository } from "@/lib/db/repositories/reviews.repository";
 import { BusinessesRepository } from "@/lib/db/repositories/businesses.repository";
 import { AccountsRepository } from "@/lib/db/repositories/accounts.repository";
+import { UsersConfigsRepository } from "@/lib/db/repositories/users-configs.repository";
 import { SubscriptionsController } from "@/lib/controllers/subscriptions.controller";
 import type { ReplyStatus, StarConfig } from "@/lib/types";
+import type { Locale } from "@/i18n/config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 60; // Max duration for serverless function
+export const maxDuration = 60;
 
 interface ProcessReviewRequest {
   userId: string;
@@ -23,22 +25,8 @@ interface ProcessReviewRequest {
   reviewId: string;
 }
 
-/**
- * Internal API route for processing reviews
- *
- * This endpoint is called after a review is created in the database.
- * It handles:
- * 1. Quota checking
- * 2. AI reply generation
- * 3. Auto-posting to Google (if enabled)
- * 4. Email notifications (if enabled)
- *
- * This is an internal endpoint and should not be publicly accessible.
- * It requires an INTERNAL_API_SECRET header for authentication.
- */
 export async function POST(request: NextRequest) {
   try {
-    // Verify internal authentication
     const internalSecret = request.headers.get("X-Internal-Secret");
     const expectedSecret = process.env.INTERNAL_API_SECRET || "change-me-in-production";
 
@@ -57,26 +45,22 @@ export async function POST(request: NextRequest) {
       reviewId,
     });
 
-    // Get repositories
     const reviewsRepo = new ReviewsRepository(userId, accountId, businessId);
     const businessesRepo = new BusinessesRepository(userId, accountId);
     const accountsRepo = new AccountsRepository(userId);
 
-    // Get review
     const review = await reviewsRepo.get(reviewId);
     if (!review) {
       console.error("Review not found", { reviewId });
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    // Get business with config
     const business = await businessesRepo.get(businessId);
     if (!business) {
       console.error("Business not found", { businessId });
       return NextResponse.json({ error: "Business not found" }, { status: 404 });
     }
 
-    // Check review quota
     const subscriptionsController = new SubscriptionsController();
     const quotaCheck = await subscriptionsController.checkReviewQuota(userId);
 
@@ -110,10 +94,8 @@ export async function POST(request: NextRequest) {
       limit: quotaCheck.limit,
     });
 
-    // Get star-specific configuration
     const starConfig: StarConfig = business.config.starConfigs[review.rating as 1 | 2 | 3 | 4 | 5];
 
-    // Generate AI reply
     console.log("Generating AI reply", { reviewId });
     let aiReply: string;
     try {
@@ -146,7 +128,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Handle auto-posting if enabled
     let replyStatus: ReplyStatus = "pending";
 
     if (starConfig.autoReply) {
@@ -205,12 +186,10 @@ export async function POST(request: NextRequest) {
       console.log("AI reply awaiting approval", { reviewId });
     }
 
-    // Send email notification if enabled
     if (business.emailOnNewReview) {
       try {
         console.log("Sending email notification", { reviewId, replyStatus });
 
-        // Get user info from Supabase Auth
         const supabase = await createClient();
         const { data: userData } = await supabase.auth.admin.getUserById(userId);
 
@@ -223,25 +202,29 @@ export async function POST(request: NextRequest) {
           if (!recipientEmail) {
             console.error("User email not found", { userId });
           } else {
+            const usersConfigsRepo = new UsersConfigsRepository();
+            const userConfig = await usersConfigsRepo.getOrCreate(userId);
+            const locale = (userConfig.locale || "en") as Locale;
+
             const status = replyStatus === "pending" ? "pending" : "posted";
 
-            const emailHtml = generateReviewNotificationEmail({
-              recipientName: recipientName || recipientEmail,
-              businessName: business.name,
-              accountId,
-              businessId: business.id,
-              reviewerName: review.name,
-              rating: review.rating,
-              reviewText: review.text || "",
-              aiReply,
-              status,
-              appBaseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-              reviewId,
-            });
+            const { subject, html } = await renderReviewNotificationEmail(
+              {
+                recipientName: recipientName || recipientEmail,
+                businessName: business.name,
+                accountId,
+                businessId: business.id,
+                reviewerName: review.name,
+                rating: review.rating,
+                reviewText: review.text || "",
+                aiReply,
+                status,
+                appBaseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+                reviewId,
+              },
+              locale
+            );
 
-            const subject = `ביקורת חדשה התקבלה: ${review.rating} כוכבים - ${business.name}`;
-
-            // Send email using Resend
             const resendApiKey = process.env.RESEND_API_KEY;
             const fromEmail = process.env.RESEND_FROM_EMAIL || "Bottie <noreply@bottie.ai>";
 
@@ -253,16 +236,15 @@ export async function POST(request: NextRequest) {
                 from: fromEmail,
                 to: recipientEmail,
                 subject,
-                html: emailHtml,
+                html,
               });
 
-              console.log("Email sent successfully", { reviewId, replyStatus });
+              console.log("Email sent successfully", { reviewId, replyStatus, locale });
             }
           }
         }
       } catch (error) {
         console.error("Failed to send email notification", { reviewId, error });
-        // Don't fail the request if email sending fails
       }
     }
 

@@ -11,18 +11,11 @@ import {
 import type { BusinessFilters, BusinessConfig as BusinessConfigType } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 
-/**
- * Combined Business with its config
- */
 export type BusinessWithConfig = Business & {
   config: BusinessConfigType;
   emailOnNewReview: boolean;
 };
 
-/**
- * Businesses repository using Drizzle ORM
- * Manages Google Business Profile locations with configurations
- */
 export class BusinessesRepository extends BaseRepository<BusinessInsert, BusinessWithConfig, Partial<Business>> {
   constructor(
     private userId: string,
@@ -31,9 +24,6 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
     super();
   }
 
-  /**
-   * Get business by ID with config (with access check)
-   */
   async get(businessId: string): Promise<BusinessWithConfig | null> {
     const result = await db
       .select()
@@ -77,9 +67,6 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
     } as BusinessWithConfig;
   }
 
-  /**
-   * List all businesses in account with configs
-   */
   async list(filters: BusinessFilters = {}): Promise<BusinessWithConfig[]> {
     const query = db
       .select()
@@ -129,17 +116,12 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
     return businessList;
   }
 
-  /**
-   * Create new business with initial config
-   */
   async create(
     data: BusinessInsert & { config: BusinessConfigType; emailOnNewReview: boolean }
   ): Promise<BusinessWithConfig> {
     return await db.transaction(async (tx) => {
-      // Create business
       const [business] = await tx.insert(businesses).values(data).returning();
 
-      // Create business config
       const configData: BusinessConfigInsert = {
         businessId: business.id,
         name: data.config.name,
@@ -158,7 +140,6 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
 
       await tx.insert(businessConfigs).values(configData);
 
-      // Fetch and return complete business with config
       const created = await this.get(business.id);
       if (!created) throw new Error("Failed to create business");
 
@@ -166,9 +147,6 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
     });
   }
 
-  /**
-   * Update business
-   */
   async update(businessId: string, data: Partial<Business>): Promise<BusinessWithConfig> {
     await db.update(businesses).set(data).where(eq(businesses.id, businessId));
 
@@ -178,16 +156,10 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
     return updated;
   }
 
-  /**
-   * Delete business (cascade will delete config)
-   */
   async delete(businessId: string): Promise<void> {
     await db.delete(businesses).where(eq(businesses.id, businessId));
   }
 
-  /**
-   * Find business by Google Business ID
-   */
   async findByGoogleBusinessId(googleBusinessId: string): Promise<BusinessWithConfig | null> {
     const results = await db
       .select()
@@ -229,16 +201,10 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
     } as BusinessWithConfig;
   }
 
-  /**
-   * Disconnect business
-   */
   async disconnect(businessId: string): Promise<BusinessWithConfig> {
     return this.update(businessId, { connected: false });
   }
 
-  /**
-   * Reconnect business
-   */
   async reconnect(
     businessId: string,
     data: {
@@ -262,9 +228,6 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
     return updated;
   }
 
-  /**
-   * Update business configuration
-   */
   async updateConfig(businessId: string, configUpdate: Partial<BusinessConfigType>): Promise<BusinessWithConfig> {
     const business = await this.get(businessId);
     if (!business) {

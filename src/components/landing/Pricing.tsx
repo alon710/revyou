@@ -52,7 +52,7 @@ export function Pricing() {
 
   const getPlanPrice = (plan: Plan) => {
     if (billingPeriod === "yearly") {
-      return plan.yearlyPrice / 12; // Monthly equivalent
+      return plan.yearlyPrice / 12;
     }
     return plan.monthlyPrice;
   };
@@ -98,7 +98,7 @@ export function Pricing() {
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {plans.map((plan, index) => {
-              const isRecommended = plan.id === "basic"; // Mark Basic as recommended
+              const isRecommended = plan.id === "basic";
               const showYearlyDiscount = billingPeriod === "yearly" && plan.monthlyPrice > 0;
 
               return (

@@ -4,10 +4,6 @@ import { authenticatedRole, authUid } from "./roles";
 import { businesses } from "./businesses.schema";
 import { accounts } from "./accounts.schema";
 
-/**
- * Reviews table
- * Stores Google Business Profile reviews and AI-generated replies
- */
 export const reviews = pgTable(
   "reviews",
   {
@@ -19,36 +15,29 @@ export const reviews = pgTable(
       .notNull()
       .references(() => businesses.id, { onDelete: "cascade" }),
 
-    // Google review details
     googleReviewId: text("google_review_id").notNull().unique(),
     googleReviewName: text("google_review_name"),
 
-    // Reviewer information
     name: text("name").notNull(),
     photoUrl: text("photo_url"),
     isAnonymous: boolean("is_anonymous").notNull().default(false),
 
-    // Review content
     rating: integer("rating").notNull(),
     text: text("text"),
     date: timestamp("date", { withTimezone: true }).notNull(),
 
-    // AI reply
     aiReply: text("ai_reply"),
     aiReplyGeneratedAt: timestamp("ai_reply_generated_at", { withTimezone: true }),
 
-    // Posted reply
-    replyStatus: text("reply_status").notNull().default("pending"), // pending, rejected, posted, failed, quota_exceeded
+    replyStatus: text("reply_status").notNull().default("pending"),
     postedReply: text("posted_reply"),
     postedAt: timestamp("posted_at", { withTimezone: true }),
-    postedBy: uuid("posted_by"), // References auth.users
+    postedBy: uuid("posted_by"),
 
-    // Timestamps
     receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
     updateTime: timestamp("update_time", { withTimezone: true }),
   },
   (table) => [
-    // Indexes
     index("reviews_account_id_idx").on(table.accountId),
     index("reviews_business_id_idx").on(table.businessId),
     index("reviews_google_review_id_idx").on(table.googleReviewId),
@@ -58,7 +47,6 @@ export const reviews = pgTable(
     index("reviews_business_status_idx").on(table.businessId, table.replyStatus),
     index("reviews_received_status_idx").on(table.receivedAt, table.replyStatus),
 
-    // RLS Policies: Users can access reviews for accounts they have access to
     pgPolicy("reviews_select_associated", {
       for: "select",
       to: authenticatedRole,

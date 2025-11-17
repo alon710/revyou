@@ -32,10 +32,6 @@ interface BusinessLookupResult {
   business: BusinessWithConfig;
 }
 
-/**
- * Find business by Google Business ID across all accounts
- * This is the equivalent of Firestore's collectionGroup query
- */
 async function findBusinessByGoogleBusinessId(googleBusinessId: string): Promise<BusinessLookupResult | null> {
   try {
     console.log("Searching for business with googleBusinessId:", googleBusinessId);
@@ -95,9 +91,6 @@ async function findBusinessByGoogleBusinessId(googleBusinessId: string): Promise
   }
 }
 
-/**
- * Get account's encrypted refresh token
- */
 async function getAccountRefreshToken(userId: string, accountId: string): Promise<string | null> {
   try {
     const accountsRepo = new AccountsRepository(userId);
@@ -115,20 +108,6 @@ async function getAccountRefreshToken(userId: string, accountId: string): Promis
   }
 }
 
-/**
- * Google Pub/Sub webhook endpoint for receiving review notifications
- *
- * This endpoint receives notifications from Google My Business when:
- * - A new review is posted
- * - An existing review is updated
- *
- * Flow:
- * 1. Parse the Pub/Sub message
- * 2. Find the business in our database by googleBusinessId
- * 3. Fetch the full review data from Google API
- * 4. Create the review in our database
- * 5. Trigger review processing (which will generate AI reply)
- */
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as PubSubMessage;
@@ -138,7 +117,6 @@ export async function POST(request: NextRequest) {
       publishTime: body.message.publishTime,
     });
 
-    // Decode the base64 message data
     const messageData = body.message.data;
     const notificationJson = Buffer.from(messageData, "base64").toString("utf-8");
     const notification: PubSubNotificationData = JSON.parse(notificationJson);
@@ -147,13 +125,11 @@ export async function POST(request: NextRequest) {
 
     const { type: notificationType, review: reviewName, location: locationName } = notification;
 
-    // Only process new and updated reviews
     if (notificationType !== "NEW_REVIEW" && notificationType !== "UPDATED_REVIEW") {
       console.log("Ignoring non-review notification:", notificationType);
       return NextResponse.json({ message: "Notification type ignored" }, { status: 200 });
     }
 
-    // Find the business in our database
     const businessData = await findBusinessByGoogleBusinessId(locationName);
     if (!businessData) {
       console.error("Business not found for location:", locationName);
@@ -168,23 +144,19 @@ export async function POST(request: NextRequest) {
       businessName: business.name,
     });
 
-    // Check if business is connected
     if (!business.connected) {
       console.log("Business not connected, skipping notification:", business.id);
       return NextResponse.json({ message: "Business not connected" }, { status: 200 });
     }
 
-    // Get the account's refresh token
     const encryptedToken = await getAccountRefreshToken(userId, accountId);
     if (!encryptedToken) {
       console.error("No refresh token found for account:", accountId);
       return NextResponse.json({ error: "No refresh token found" }, { status: 400 });
     }
 
-    // Decrypt the refresh token
     const refreshToken = await decryptToken(encryptedToken);
 
-    // Fetch the full review data from Google
     console.log("Fetching review from Google API:", reviewName);
     const googleReview = await getReview(
       reviewName,
@@ -198,7 +170,6 @@ export async function POST(request: NextRequest) {
       reviewer: googleReview.reviewer.displayName,
     });
 
-    // Check if review already exists
     const reviewsRepo = new ReviewsRepository(userId, accountId, business.id);
     const existingReview = await reviewsRepo.findByGoogleReviewId(googleReview.reviewId);
 
@@ -207,7 +178,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Review already exists" }, { status: 200 });
     }
 
-    // Prepare review data
     const reviewData: ReviewInsert = {
       accountId,
       businessId: business.id,
@@ -229,19 +199,15 @@ export async function POST(request: NextRequest) {
       aiReplyGeneratedAt: null,
     };
 
-    // Create the review in database
     console.log("Creating new review in database");
     const newReview = await reviewsRepo.create(reviewData);
     console.log("Review created successfully:", newReview.id);
 
-    // Trigger review processing asynchronously
-    // We don't await this to keep the webhook response fast
     const processUrl = new URL("/api/internal/process-review", request.url);
     fetch(processUrl.toString(), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // Add internal authentication header for security
         "X-Internal-Secret": process.env.INTERNAL_API_SECRET || "change-me-in-production",
       },
       body: JSON.stringify({

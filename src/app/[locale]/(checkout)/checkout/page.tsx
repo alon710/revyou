@@ -29,7 +29,6 @@ function CheckoutForm() {
   }, [error]);
 
   useEffect(() => {
-    // Don't process if already processing or if user is not loaded
     if (hasStartedProcessing.current || !user) return;
 
     if (plan === "free") {
@@ -44,17 +43,14 @@ function CheckoutForm() {
     }
 
     if (plan && period && !error) {
-      // Mark as started to prevent duplicate processing
       hasStartedProcessing.current = true;
 
       async function processMockCheckout() {
         try {
-          // Mock payment - automatically create subscription
           const result = await createSubscription(plan, period);
 
           if (result.success) {
             toast.success(t("success"));
-            // Small delay to show success message
             setTimeout(() => {
               router.push("/dashboard/home");
             }, 1000);

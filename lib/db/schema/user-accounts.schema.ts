@@ -3,30 +3,22 @@ import { sql } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
 import { accounts } from "./accounts.schema";
 
-/**
- * User-Accounts junction table
- * Enables many-to-many relationship between users and accounts
- * Allows multiple users to share access to accounts and businesses
- */
 export const userAccounts = pgTable(
   "user_accounts",
   {
-    userId: uuid("user_id").notNull(), // References auth.users in Supabase
+    userId: uuid("user_id").notNull(),
     accountId: uuid("account_id")
       .notNull()
       .references(() => accounts.id, { onDelete: "cascade" }),
 
-    // Access metadata
-    role: text("role").notNull().default("owner"), // owner, admin, member, etc.
+    role: text("role").notNull().default("owner"),
     addedAt: timestamp("added_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    // Indexes
     primaryKey({ columns: [table.userId, table.accountId] }),
     index("user_accounts_user_id_idx").on(table.userId),
     index("user_accounts_account_id_idx").on(table.accountId),
 
-    // RLS Policies: Users can view their associations, owners can manage them
     pgPolicy("user_accounts_select_own", {
       for: "select",
       to: authenticatedRole,
