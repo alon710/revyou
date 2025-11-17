@@ -1,6 +1,13 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import { usersConfigs, type UsersConfig, type UsersConfigInsert } from "@/lib/db/schema";
+import {
+  usersConfigs,
+  type UsersConfig,
+  type UsersConfigInsert,
+  type UserConfigKey,
+  type UserConfigMap,
+  type UserConfigValue,
+} from "@/lib/db/schema";
 
 export class UsersConfigsRepository {
   async get(userId: string): Promise<UsersConfig | null> {
@@ -13,7 +20,13 @@ export class UsersConfigsRepository {
     let config = await this.get(userId);
 
     if (!config) {
-      config = await this.create({ userId, emailOnNewReview: "true" });
+      config = await this.create({
+        userId,
+        configs: {
+          EMAIL_ON_NEW_REVIEW: true,
+          LOCALE: "en",
+        },
+      });
     }
 
     return config;
@@ -43,5 +56,33 @@ export class UsersConfigsRepository {
 
   async delete(userId: string): Promise<void> {
     await db.delete(usersConfigs).where(eq(usersConfigs.userId, userId));
+  }
+
+  async getConfig<K extends UserConfigKey>(userId: string, key: K): Promise<UserConfigValue<K> | null> {
+    const config = await this.get(userId);
+    if (!config) return null;
+    return (config.configs[key] as UserConfigValue<K>) ?? null;
+  }
+
+  async setConfig<K extends UserConfigKey>(userId: string, key: K, value: UserConfigValue<K>): Promise<UsersConfig> {
+    const config = await this.getOrCreate(userId);
+
+    const updatedConfigs = {
+      ...config.configs,
+      [key]: value,
+    } as UserConfigMap;
+
+    return this.update(userId, { configs: updatedConfigs });
+  }
+
+  async updateConfigs(userId: string, partialConfigs: Partial<UserConfigMap>): Promise<UsersConfig> {
+    const config = await this.getOrCreate(userId);
+
+    const updatedConfigs = {
+      ...config.configs,
+      ...partialConfigs,
+    } as UserConfigMap;
+
+    return this.update(userId, { configs: updatedConfigs });
   }
 }

@@ -22,8 +22,8 @@ export async function GET() {
     const config = await controller.getUserConfig(user.id);
 
     return NextResponse.json({
-      locale: config.locale,
-      emailOnNewReview: config.emailOnNewReview,
+      locale: config.configs.LOCALE,
+      emailOnNewReview: config.configs.EMAIL_ON_NEW_REVIEW,
     });
   } catch (error) {
     console.error("Error fetching user settings:", error);
@@ -50,22 +50,22 @@ export async function PATCH(request: NextRequest) {
       if (!["en", "he"].includes(body.locale)) {
         return NextResponse.json({ error: "Invalid locale" }, { status: 400 });
       }
-      updates.locale = body.locale;
+      updates.LOCALE = body.locale;
     }
 
     if (body.emailOnNewReview !== undefined) {
-      if (!["true", "false"].includes(body.emailOnNewReview)) {
+      if (typeof body.emailOnNewReview !== "boolean") {
         return NextResponse.json({ error: "Invalid emailOnNewReview value" }, { status: 400 });
       }
-      updates.emailOnNewReview = body.emailOnNewReview;
+      updates.EMAIL_ON_NEW_REVIEW = body.emailOnNewReview;
     }
 
     const controller = new UsersController();
     const updatedConfig = await controller.updateUserConfig(user.id, updates);
 
     return NextResponse.json({
-      locale: updatedConfig.locale,
-      emailOnNewReview: updatedConfig.emailOnNewReview,
+      locale: updatedConfig.configs.LOCALE,
+      emailOnNewReview: updatedConfig.configs.EMAIL_ON_NEW_REVIEW,
     });
   } catch (error) {
     console.error("Error updating user settings:", error);

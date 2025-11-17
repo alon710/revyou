@@ -50,7 +50,6 @@
     "dashboard": {
       "home": "Home",
       "subscription": "Plan",
-      "insights": "Insights",
       "settings": "Settings"
     },
     "landing": {
@@ -418,11 +417,6 @@
       "saveSuccess": "Settings saved successfully",
       "saveError": "Error saving settings. Please try again.",
       "loadError": "Error loading settings. Please try again."
-    },
-    "insights": {
-      "title": "Insights",
-      "description": "Statistics and insights about your business",
-      "comingSoon": "Coming Soon"
     },
     "reviews": {
       "title": "Reviews",

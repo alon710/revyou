@@ -37,8 +37,8 @@ export async function detectLocale(): Promise<Locale> {
     if (user) {
       const repo = new UsersConfigsRepository();
       const config = await repo.get(user.id);
-      if (config && config.locale && isValidLocale(config.locale)) {
-        return config.locale as Locale;
+      if (config && config.configs.LOCALE && isValidLocale(config.configs.LOCALE)) {
+        return config.configs.LOCALE as Locale;
       }
     }
   } catch (error) {

@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { getLocaleDir, type Locale } from "@/i18n/config";
 import { getLocaleFromCookie } from "@/lib/locale-detection";
+import "./globals.css";
 
 export const dynamic = "force-dynamic";
 

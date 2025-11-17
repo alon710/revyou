@@ -36,7 +36,6 @@
     "dashboard": {
       "home": "בית",
       "subscription": "תוכנית",
-      "insights": "תובנות",
       "settings": "הגדרות"
     },
     "landing": {
@@ -421,14 +420,6 @@
         "save": "שמור",
         "saving": "שומר..."
       }
-    },
-    "insights": {
-      "title": "תובנות",
-      "description": "סטטיסטיקות ותובנות על העסק שלך",
-      "overview": "סקירה כללית",
-      "trends": "מגמות",
-      "performance": "ביצועים",
-      "comingSoon": "בקרוב"
     },
     "subscription": {
       "title": "תוכנית המנוי",

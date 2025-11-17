@@ -204,7 +204,7 @@ export async function POST(request: NextRequest) {
           } else {
             const usersConfigsRepo = new UsersConfigsRepository();
             const userConfig = await usersConfigsRepo.getOrCreate(userId);
-            const locale = (userConfig.locale || "en") as Locale;
+            const locale = (userConfig.configs.LOCALE || "en") as Locale;
 
             const status = replyStatus === "pending" ? "pending" : "posted";
 

@@ -1,6 +1,20 @@
-import { pgTable, text, timestamp, uuid, index, pgPolicy } from "drizzle-orm/pg-core";
+import { pgTable, timestamp, uuid, index, pgPolicy, jsonb } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
+
+export const USER_CONFIG_KEYS = {
+  EMAIL_ON_NEW_REVIEW: "EMAIL_ON_NEW_REVIEW",
+  LOCALE: "LOCALE",
+} as const;
+
+export type UserConfigKey = keyof typeof USER_CONFIG_KEYS;
+
+export type UserConfigMap = {
+  EMAIL_ON_NEW_REVIEW: boolean;
+  LOCALE: "en" | "he";
+};
+
+export type UserConfigValue<K extends UserConfigKey> = UserConfigMap[K];
 
 export const usersConfigs = pgTable(
   "users_configs",
@@ -8,9 +22,10 @@ export const usersConfigs = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
     userId: uuid("user_id").notNull().unique(),
 
-    emailOnNewReview: text("email_on_new_review").notNull().default("true"),
-
-    locale: text("locale").notNull().default("en"),
+    configs: jsonb("configs")
+      .$type<UserConfigMap>()
+      .notNull()
+      .default(sql`'{}'::jsonb`),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }),

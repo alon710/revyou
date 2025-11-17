@@ -47,7 +47,7 @@ export default function SettingsPage() {
         const data = await response.json();
         setSettings({
           locale: data.locale,
-          emailOnNewReview: data.emailOnNewReview === "true",
+          emailOnNewReview: data.emailOnNewReview,
         });
       } catch (error) {
         console.error("Error loading settings:", error);
@@ -71,7 +71,7 @@ export default function SettingsPage() {
         },
         body: JSON.stringify({
           locale: data.locale,
-          emailOnNewReview: data.emailOnNewReview.toString(),
+          emailOnNewReview: data.emailOnNewReview,
         }),
       });
 
