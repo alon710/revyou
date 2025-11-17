@@ -77,7 +77,7 @@ const DashboardCardField = React.forwardRef<
 >(({ className, label, value, children, ...props }, ref) => (
   <div ref={ref} className={cn("space-y-2", className)} {...props}>
     <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{label}</label>
-    {value ? <p className="text-sm font-medium leading-relaxed">{value}</p> : children}
+    {value ? <div className="text-sm font-medium leading-relaxed">{value}</div> : children}
   </div>
 ));
 DashboardCardField.displayName = "DashboardCardField";
