@@ -9,30 +9,34 @@ export class AccountsRepository extends BaseRepository<AccountInsert, Account, P
     super();
   }
 
-  async get(accountId: string): Promise<Account | null> {
-    const result = await db
-      .select()
-      .from(accounts)
-      .innerJoin(userAccounts, eq(accounts.id, userAccounts.accountId))
-      .where(and(eq(accounts.id, accountId), eq(userAccounts.userId, this.userId)))
-      .limit(1);
+  private async verifyAccess(accountId: string): Promise<boolean> {
+    const access = await db.query.userAccounts.findFirst({
+      where: and(eq(userAccounts.userId, this.userId), eq(userAccounts.accountId, accountId)),
+    });
+    return !!access;
+  }
 
-    return result.length > 0 ? result[0].accounts : null;
+  async get(accountId: string): Promise<Account | null> {
+    if (!(await this.verifyAccess(accountId))) return null;
+
+    const result = await db.query.accounts.findFirst({
+      where: eq(accounts.id, accountId),
+    });
+
+    return result ?? null;
   }
 
   async list(filters: AccountFilters = {}): Promise<Account[]> {
-    const conditions = [eq(userAccounts.userId, this.userId)];
+    const userAccountsList = await db.query.userAccounts.findMany({
+      where: eq(userAccounts.userId, this.userId),
+      with: { account: true },
+    });
+
+    let accountsList = userAccountsList.map((ua) => ua.account);
+
     if (filters.email) {
-      conditions.push(eq(accounts.email, filters.email));
+      accountsList = accountsList.filter((a) => a.email === filters.email);
     }
-
-    const results = await db
-      .select({ accounts })
-      .from(accounts)
-      .innerJoin(userAccounts, eq(accounts.id, userAccounts.accountId))
-      .where(and(...conditions));
-
-    let accountsList = results.map((r) => r.accounts);
 
     if (filters.ids && filters.ids.length > 0) {
       const idSet = new Set(filters.ids);

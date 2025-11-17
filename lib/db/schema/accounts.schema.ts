@@ -1,6 +1,8 @@
 import { pgTable, text, timestamp, uuid, index, pgPolicy } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
+import { businesses } from "./businesses.schema";
+import { userAccounts } from "./user-accounts.schema";
 
 export const accounts = pgTable(
   "accounts",
@@ -56,6 +58,11 @@ export const accounts = pgTable(
     }),
   ]
 );
+
+export const accountsRelations = relations(accounts, ({ many }) => ({
+  businesses: many(businesses),
+  userAccounts: many(userAccounts),
+}));
 
 export type Account = typeof accounts.$inferSelect;
 export type AccountInsert = typeof accounts.$inferInsert;

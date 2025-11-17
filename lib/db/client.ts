@@ -4,7 +4,7 @@ import postgres from "postgres";
 import * as schema from "./schema";
 
 let client: ReturnType<typeof postgres> | null = null;
-let dbInstance: ReturnType<typeof drizzle> | null = null;
+let dbInstance: ReturnType<typeof drizzle<typeof schema>> | null = null;
 
 function getDb() {
   if (!dbInstance) {
@@ -24,9 +24,9 @@ function getDb() {
   return dbInstance;
 }
 
-export const db = new Proxy({} as ReturnType<typeof drizzle>, {
+export const db = new Proxy({} as ReturnType<typeof drizzle<typeof schema>>, {
   get(target, prop) {
-    return getDb()[prop as keyof ReturnType<typeof drizzle>];
+    return getDb()[prop as keyof ReturnType<typeof drizzle<typeof schema>>];
   },
 });
 

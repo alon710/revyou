@@ -1,7 +1,7 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { reviews, userAccounts, type Review, type ReviewInsert } from "@/lib/db/schema";
-import type { ReviewFilters, ReplyStatus } from "@/lib/types";
+import type { ReviewFilters } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 
 export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Partial<Review>> {
@@ -13,54 +13,47 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     super();
   }
 
-  async get(reviewId: string): Promise<Review | null> {
-    const result = await db
-      .select({ reviews })
-      .from(reviews)
-      .innerJoin(userAccounts, eq(reviews.accountId, userAccounts.accountId))
-      .where(
-        and(
-          eq(reviews.id, reviewId),
-          eq(reviews.accountId, this.accountId),
-          eq(reviews.businessId, this.businessId),
-          eq(userAccounts.userId, this.userId)
-        )
-      )
-      .limit(1);
+  private async verifyAccess(): Promise<boolean> {
+    const access = await db.query.userAccounts.findFirst({
+      where: and(eq(userAccounts.userId, this.userId), eq(userAccounts.accountId, this.accountId)),
+    });
+    return !!access;
+  }
 
-    return result.length > 0 ? result[0].reviews : null;
+  async get(reviewId: string): Promise<Review | null> {
+    if (!(await this.verifyAccess())) return null;
+
+    const result = await db.query.reviews.findFirst({
+      where: and(
+        eq(reviews.id, reviewId),
+        eq(reviews.accountId, this.accountId),
+        eq(reviews.businessId, this.businessId)
+      ),
+    });
+
+    return result ?? null;
   }
 
   async list(filters: ReviewFilters = {}): Promise<Review[]> {
-    let query = db
-      .select({ reviews })
-      .from(reviews)
-      .innerJoin(userAccounts, eq(reviews.accountId, userAccounts.accountId))
-      .where(
-        and(
-          eq(reviews.accountId, this.accountId),
-          eq(reviews.businessId, this.businessId),
-          eq(userAccounts.userId, this.userId)
-        )
-      );
+    if (!(await this.verifyAccess())) return [];
 
-    const results = await query;
-    let reviewList = results.map((r) => r.reviews);
+    const conditions = [eq(reviews.accountId, this.accountId), eq(reviews.businessId, this.businessId)];
 
     if (filters.replyStatus && filters.replyStatus.length > 0) {
-      reviewList = reviewList.filter((r) => filters.replyStatus!.includes(r.replyStatus as ReplyStatus));
+      conditions.push(inArray(reviews.replyStatus, filters.replyStatus));
     }
 
     if (filters.rating && filters.rating.length > 0) {
-      reviewList = reviewList.filter((r) => filters.rating!.includes(r.rating));
+      conditions.push(inArray(reviews.rating, filters.rating));
     }
 
     if (filters.ids && filters.ids.length > 0) {
-      const idSet = new Set(filters.ids);
-      reviewList = reviewList.filter((r) => idSet.has(r.id));
+      conditions.push(inArray(reviews.id, filters.ids));
     }
 
-    return reviewList;
+    return await db.query.reviews.findMany({
+      where: and(...conditions),
+    });
   }
 
   async create(data: ReviewInsert): Promise<Review> {
@@ -117,20 +110,16 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
   }
 
   async findByGoogleReviewId(googleReviewId: string): Promise<Review | null> {
-    const result = await db
-      .select()
-      .from(reviews)
-      .innerJoin(userAccounts, eq(reviews.accountId, userAccounts.accountId))
-      .where(
-        and(
-          eq(reviews.googleReviewId, googleReviewId),
-          eq(reviews.accountId, this.accountId),
-          eq(reviews.businessId, this.businessId),
-          eq(userAccounts.userId, this.userId)
-        )
-      )
-      .limit(1);
+    if (!(await this.verifyAccess())) return null;
 
-    return result.length > 0 ? result[0].reviews : null;
+    const result = await db.query.reviews.findFirst({
+      where: and(
+        eq(reviews.googleReviewId, googleReviewId),
+        eq(reviews.accountId, this.accountId),
+        eq(reviews.businessId, this.businessId)
+      ),
+    });
+
+    return result ?? null;
   }
 }

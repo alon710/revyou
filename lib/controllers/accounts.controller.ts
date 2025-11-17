@@ -1,5 +1,8 @@
 import type { AccountFilters, AccountWithBusinesses, BusinessFilters, Account, AccountCreate } from "@/lib/types";
-import { AccountsRepository, BusinessesRepository } from "@/lib/db/repositories";
+import { AccountsRepository } from "@/lib/db/repositories";
+import { db } from "@/lib/db/client";
+import { accounts, businesses, userAccounts } from "@/lib/db/schema";
+import { eq, and, inArray, type SQL } from "drizzle-orm";
 
 export class AccountsController {
   private repository: AccountsRepository;
@@ -59,20 +62,56 @@ export class AccountsController {
     accountFilters: AccountFilters = {},
     businessFilters: BusinessFilters = {}
   ): Promise<AccountWithBusinesses[]> {
-    const accounts = await this.repository.list(accountFilters);
+    const accountConditions = [eq(userAccounts.userId, this.userId)];
 
-    const accountsWithBusinesses = await Promise.all(
-      accounts.map(async (account) => {
-        const businessRepo = new BusinessesRepository(this.userId, account.id);
-        const businesses = await businessRepo.list(businessFilters);
+    if (accountFilters.ids && accountFilters.ids.length > 0) {
+      accountConditions.push(inArray(accounts.id, accountFilters.ids));
+    }
 
-        return {
-          ...account,
-          businesses,
-        };
-      })
-    );
+    const businessConditions: SQL[] = [];
 
-    return accountsWithBusinesses;
+    if (businessFilters.connected !== undefined) {
+      businessConditions.push(eq(businesses.connected, businessFilters.connected));
+    }
+
+    if (businessFilters.ids && businessFilters.ids.length > 0) {
+      businessConditions.push(inArray(businesses.id, businessFilters.ids));
+    }
+
+    const accountsWithBusinesses = await db.query.userAccounts.findMany({
+      where: and(...accountConditions),
+      with: {
+        account: {
+          with: {
+            businesses: {
+              where: businessConditions.length > 0 ? and(...businessConditions) : undefined,
+              with: { config: true },
+            },
+          },
+        },
+      },
+    });
+
+    return accountsWithBusinesses.map((ua) => ({
+      ...ua.account,
+      businesses: ua.account.businesses.map((b) => ({
+        ...b,
+        config: b.config
+          ? {
+              name: b.config.name,
+              description: b.config.description || undefined,
+              phoneNumber: b.config.phoneNumber || undefined,
+              toneOfVoice: b.config.toneOfVoice as "friendly" | "formal" | "humorous" | "professional",
+              useEmojis: b.config.useEmojis,
+              languageMode: b.config.languageMode as "hebrew" | "english" | "auto-detect",
+              languageInstructions: b.config.languageInstructions || undefined,
+              maxSentences: b.config.maxSentences || undefined,
+              allowedEmojis: b.config.allowedEmojis || undefined,
+              signature: b.config.signature || undefined,
+              starConfigs: b.config.starConfigs,
+            }
+          : undefined,
+      })),
+    })) as AccountWithBusinesses[];
   }
 }

@@ -1,5 +1,5 @@
 import { boolean, integer, jsonb, pgTable, text, timestamp, uuid, index, pgPolicy } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
 import { businesses } from "./businesses.schema";
 
@@ -82,6 +82,13 @@ export const businessConfigs = pgTable(
     }),
   ]
 );
+
+export const businessConfigsRelations = relations(businessConfigs, ({ one }) => ({
+  business: one(businesses, {
+    fields: [businessConfigs.businessId],
+    references: [businesses.id],
+  }),
+}));
 
 export type BusinessConfig = typeof businessConfigs.$inferSelect;
 export type BusinessConfigInsert = typeof businessConfigs.$inferInsert;

@@ -1,4 +1,4 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import {
   businesses,
@@ -7,6 +7,7 @@ import {
   type Business,
   type BusinessInsert,
   type BusinessConfigInsert,
+  type BusinessConfig,
 } from "@/lib/db/schema";
 import type { BusinessFilters, BusinessConfig as BusinessConfigType } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
@@ -14,6 +15,22 @@ import { BaseRepository } from "./base.repository";
 export type BusinessWithConfig = Business & {
   config: BusinessConfigType;
 };
+
+function transformConfig(config: BusinessConfig): BusinessConfigType {
+  return {
+    name: config.name,
+    description: config.description || undefined,
+    phoneNumber: config.phoneNumber || undefined,
+    toneOfVoice: config.toneOfVoice as "friendly" | "formal" | "humorous" | "professional",
+    useEmojis: config.useEmojis,
+    languageMode: config.languageMode as "hebrew" | "english" | "auto-detect",
+    languageInstructions: config.languageInstructions || undefined,
+    maxSentences: config.maxSentences || undefined,
+    allowedEmojis: config.allowedEmojis || undefined,
+    signature: config.signature || undefined,
+    starConfigs: config.starConfigs,
+  };
+}
 
 export class BusinessesRepository extends BaseRepository<BusinessInsert, BusinessWithConfig, Partial<Business>> {
   constructor(
@@ -23,98 +40,65 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
     super();
   }
 
+  private async verifyAccess(): Promise<boolean> {
+    const access = await db.query.userAccounts.findFirst({
+      where: and(eq(userAccounts.userId, this.userId), eq(userAccounts.accountId, this.accountId)),
+    });
+    return !!access;
+  }
+
   async get(businessId: string): Promise<BusinessWithConfig | null> {
-    const result = await db
-      .select()
-      .from(businesses)
-      .innerJoin(userAccounts, eq(businesses.accountId, userAccounts.accountId))
-      .leftJoin(businessConfigs, eq(businesses.id, businessConfigs.businessId))
-      .where(
-        and(
-          eq(businesses.id, businessId),
-          eq(businesses.accountId, this.accountId),
-          eq(userAccounts.userId, this.userId)
-        )
-      )
-      .limit(1);
+    if (!(await this.verifyAccess())) return null;
 
-    if (result.length === 0) return null;
+    const result = await db.query.businesses.findFirst({
+      where: and(eq(businesses.id, businessId), eq(businesses.accountId, this.accountId)),
+      with: { config: true },
+    });
 
-    const business = result[0].businesses;
-    const config = result[0].business_configs;
-
-    if (!config) {
-      throw new Error(`Business ${businessId} has no configuration`);
+    if (!result || !result.config) {
+      if (result) throw new Error(`Business ${businessId} has no configuration`);
+      return null;
     }
 
     return {
-      ...business,
-      config: {
-        name: config.name,
-        description: config.description || undefined,
-        phoneNumber: config.phoneNumber || undefined,
-        toneOfVoice: config.toneOfVoice as "friendly" | "formal" | "humorous" | "professional",
-        useEmojis: config.useEmojis,
-        languageMode: config.languageMode as "hebrew" | "english" | "auto-detect",
-        languageInstructions: config.languageInstructions || undefined,
-        maxSentences: config.maxSentences || undefined,
-        allowedEmojis: config.allowedEmojis || undefined,
-        signature: config.signature || undefined,
-        starConfigs: config.starConfigs,
-      },
-    } as BusinessWithConfig;
+      ...result,
+      config: transformConfig(result.config),
+    };
   }
 
   async list(filters: BusinessFilters = {}): Promise<BusinessWithConfig[]> {
-    const query = db
-      .select()
-      .from(businesses)
-      .innerJoin(userAccounts, eq(businesses.accountId, userAccounts.accountId))
-      .leftJoin(businessConfigs, eq(businesses.id, businessConfigs.businessId))
-      .where(and(eq(businesses.accountId, this.accountId), eq(userAccounts.userId, this.userId)));
+    if (!(await this.verifyAccess())) return [];
 
-    const results = await query;
-
-    let businessList = results.map((r) => {
-      const business = r.businesses;
-      const config = r.business_configs;
-
-      if (!config) {
-        throw new Error(`Business ${business.id} has no configuration`);
-      }
-
-      return {
-        ...business,
-        config: {
-          name: config.name,
-          description: config.description || undefined,
-          phoneNumber: config.phoneNumber || undefined,
-          toneOfVoice: config.toneOfVoice as "friendly" | "formal" | "humorous" | "professional",
-          useEmojis: config.useEmojis,
-          languageMode: config.languageMode as "hebrew" | "english" | "auto-detect",
-          languageInstructions: config.languageInstructions || undefined,
-          maxSentences: config.maxSentences || undefined,
-          allowedEmojis: config.allowedEmojis || undefined,
-          signature: config.signature || undefined,
-          starConfigs: config.starConfigs,
-        },
-        emailOnNewReview: config.emailOnNewReview,
-      } as BusinessWithConfig;
-    });
+    const conditions = [eq(businesses.accountId, this.accountId)];
 
     if (filters.connected !== undefined) {
-      businessList = businessList.filter((b) => b.connected === filters.connected);
+      conditions.push(eq(businesses.connected, filters.connected));
     }
 
     if (filters.ids && filters.ids.length > 0) {
-      const idSet = new Set(filters.ids);
-      businessList = businessList.filter((b) => idSet.has(b.id));
+      conditions.push(inArray(businesses.id, filters.ids));
     }
 
-    return businessList;
+    const results = await db.query.businesses.findMany({
+      where: and(...conditions),
+      with: { config: true },
+    });
+
+    return results.map((result) => {
+      if (!result.config) {
+        throw new Error(`Business ${result.id} has no configuration`);
+      }
+
+      return {
+        ...result,
+        config: transformConfig(result.config),
+      };
+    });
   }
 
   async create(data: BusinessInsert & { config: BusinessConfigType }): Promise<BusinessWithConfig> {
+    if (!(await this.verifyAccess())) throw new Error("Access denied");
+
     return await db.transaction(async (tx) => {
       const [business] = await tx.insert(businesses).values(data).returning();
 
@@ -133,48 +117,12 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
         starConfigs: data.config.starConfigs,
       };
 
-      await tx.insert(businessConfigs).values(configData);
-
-      const result = await tx
-        .select()
-        .from(businesses)
-        .innerJoin(userAccounts, eq(businesses.accountId, userAccounts.accountId))
-        .leftJoin(businessConfigs, eq(businesses.id, businessConfigs.businessId))
-        .where(
-          and(
-            eq(businesses.id, business.id),
-            eq(businesses.accountId, this.accountId),
-            eq(userAccounts.userId, this.userId)
-          )
-        )
-        .limit(1);
-
-      if (result.length === 0) throw new Error("Failed to create business");
-
-      const createdBusiness = result[0].businesses;
-      const config = result[0].business_configs;
-
-      if (!config) {
-        throw new Error(`Business ${business.id} has no configuration`);
-      }
+      const [config] = await tx.insert(businessConfigs).values(configData).returning();
 
       return {
-        ...createdBusiness,
-        config: {
-          name: config.name,
-          description: config.description || undefined,
-          phoneNumber: config.phoneNumber || undefined,
-          toneOfVoice: config.toneOfVoice as "friendly" | "formal" | "humorous" | "professional",
-          useEmojis: config.useEmojis,
-          languageMode: config.languageMode as "hebrew" | "english" | "auto-detect",
-          languageInstructions: config.languageInstructions || undefined,
-          maxSentences: config.maxSentences || undefined,
-          allowedEmojis: config.allowedEmojis || undefined,
-          signature: config.signature || undefined,
-          starConfigs: config.starConfigs,
-        },
-        emailOnNewReview: config.emailOnNewReview,
-      } as BusinessWithConfig;
+        ...business,
+        config: transformConfig(config),
+      };
     });
   }
 
@@ -192,43 +140,19 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
   }
 
   async findByGoogleBusinessId(googleBusinessId: string): Promise<BusinessWithConfig | null> {
-    const results = await db
-      .select()
-      .from(businesses)
-      .innerJoin(userAccounts, eq(businesses.accountId, userAccounts.accountId))
-      .leftJoin(businessConfigs, eq(businesses.id, businessConfigs.businessId))
-      .where(
-        and(
-          eq(businesses.googleBusinessId, googleBusinessId),
-          eq(businesses.accountId, this.accountId),
-          eq(userAccounts.userId, this.userId)
-        )
-      )
-      .limit(1);
+    if (!(await this.verifyAccess())) return null;
 
-    if (results.length === 0) return null;
+    const result = await db.query.businesses.findFirst({
+      where: and(eq(businesses.googleBusinessId, googleBusinessId), eq(businesses.accountId, this.accountId)),
+      with: { config: true },
+    });
 
-    const business = results[0].businesses;
-    const config = results[0].business_configs;
-
-    if (!config) return null;
+    if (!result || !result.config) return null;
 
     return {
-      ...business,
-      config: {
-        name: config.name,
-        description: config.description || undefined,
-        phoneNumber: config.phoneNumber || undefined,
-        toneOfVoice: config.toneOfVoice as "friendly" | "formal" | "humorous" | "professional",
-        useEmojis: config.useEmojis,
-        languageMode: config.languageMode as "hebrew" | "english" | "auto-detect",
-        languageInstructions: config.languageInstructions || undefined,
-        maxSentences: config.maxSentences || undefined,
-        allowedEmojis: config.allowedEmojis || undefined,
-        signature: config.signature || undefined,
-        starConfigs: config.starConfigs,
-      },
-    } as BusinessWithConfig;
+      ...result,
+      config: transformConfig(result.config),
+    };
   }
 
   async disconnect(businessId: string): Promise<BusinessWithConfig> {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import { businesses, accounts, userAccounts, businessConfigs, type ReviewInsert } from "@/lib/db/schema";
+import { businesses, type ReviewInsert } from "@/lib/db/schema";
 import { getReview, starRatingToNumber, parseGoogleTimestamp } from "@/lib/google/reviews";
 import { decryptToken } from "@/lib/google/business-profile";
 import type { BusinessWithConfig } from "@/lib/db/repositories/businesses.repository";
@@ -36,46 +36,49 @@ async function findBusinessByGoogleBusinessId(googleBusinessId: string): Promise
   try {
     console.log("Searching for business with googleBusinessId:", googleBusinessId);
 
-    const result = await db
-      .select({
-        business: businesses,
-        account: accounts,
-        userAccount: userAccounts,
-        config: businessConfigs,
-      })
-      .from(businesses)
-      .innerJoin(accounts, eq(businesses.accountId, accounts.id))
-      .innerJoin(userAccounts, eq(accounts.id, userAccounts.accountId))
-      .leftJoin(businessConfigs, eq(businesses.id, businessConfigs.businessId))
-      .where(eq(businesses.googleBusinessId, googleBusinessId))
-      .limit(1);
+    const business = await db.query.businesses.findFirst({
+      where: eq(businesses.googleBusinessId, googleBusinessId),
+      with: {
+        config: true,
+        account: {
+          with: {
+            userAccounts: true,
+          },
+        },
+      },
+    });
 
-    if (result.length === 0) {
+    if (!business) {
       console.error("No business found for googleBusinessId:", googleBusinessId);
       return null;
     }
 
-    const { business, userAccount, config } = result[0];
-
-    if (!config) {
+    if (!business.config) {
       console.error("Business config not found for business:", business.id);
       return null;
     }
 
+    if (!business.account.userAccounts || business.account.userAccounts.length === 0) {
+      console.error("No user accounts found for business:", business.id);
+      return null;
+    }
+
+    const userAccount = business.account.userAccounts[0];
+
     const businessWithConfig: BusinessWithConfig = {
       ...business,
       config: {
-        name: config.name,
-        description: config.description || undefined,
-        phoneNumber: config.phoneNumber || undefined,
-        toneOfVoice: config.toneOfVoice as "friendly" | "formal" | "humorous" | "professional",
-        useEmojis: config.useEmojis,
-        languageMode: config.languageMode as "hebrew" | "english" | "auto-detect",
-        languageInstructions: config.languageInstructions || undefined,
-        maxSentences: config.maxSentences || undefined,
-        allowedEmojis: config.allowedEmojis || undefined,
-        signature: config.signature || undefined,
-        starConfigs: config.starConfigs,
+        name: business.config.name,
+        description: business.config.description || undefined,
+        phoneNumber: business.config.phoneNumber || undefined,
+        toneOfVoice: business.config.toneOfVoice as "friendly" | "formal" | "humorous" | "professional",
+        useEmojis: business.config.useEmojis,
+        languageMode: business.config.languageMode as "hebrew" | "english" | "auto-detect",
+        languageInstructions: business.config.languageInstructions || undefined,
+        maxSentences: business.config.maxSentences || undefined,
+        allowedEmojis: business.config.allowedEmojis || undefined,
+        signature: business.config.signature || undefined,
+        starConfigs: business.config.starConfigs,
       },
     };
 

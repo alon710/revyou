@@ -1,5 +1,5 @@
 import { boolean, integer, pgTable, text, timestamp, uuid, index, pgPolicy } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
 import { businesses } from "./businesses.schema";
 import { accounts } from "./accounts.schema";
@@ -86,6 +86,17 @@ export const reviews = pgTable(
     }),
   ]
 );
+
+export const reviewsRelations = relations(reviews, ({ one }) => ({
+  business: one(businesses, {
+    fields: [reviews.businessId],
+    references: [businesses.id],
+  }),
+  account: one(accounts, {
+    fields: [reviews.accountId],
+    references: [accounts.id],
+  }),
+}));
 
 export type Review = typeof reviews.$inferSelect;
 export type ReviewInsert = typeof reviews.$inferInsert;
