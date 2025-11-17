@@ -163,7 +163,7 @@ export default function SettingsPage() {
               </div>
 
               {}
-              <div className="space-y-4 pt-4 border-t">
+              <div className="space-y-4">
                 <div>
                   <h4 className="text-sm font-semibold mb-1">{t("emailNotifications.title")}</h4>
                   <p className="text-xs text-muted-foreground">{t("emailNotifications.description")}</p>
