@@ -6,7 +6,6 @@ import {
   userAccounts,
   type Business,
   type BusinessInsert,
-  type BusinessConfig,
   type BusinessConfigInsert,
 } from "@/lib/db/schema";
 import type { BusinessFilters, BusinessConfig as BusinessConfigType } from "@/lib/types";
@@ -40,7 +39,13 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
       .from(businesses)
       .innerJoin(userAccounts, eq(businesses.accountId, userAccounts.accountId))
       .leftJoin(businessConfigs, eq(businesses.id, businessConfigs.businessId))
-      .where(and(eq(businesses.id, businessId), eq(businesses.accountId, this.accountId), eq(userAccounts.userId, this.userId)))
+      .where(
+        and(
+          eq(businesses.id, businessId),
+          eq(businesses.accountId, this.accountId),
+          eq(userAccounts.userId, this.userId)
+        )
+      )
       .limit(1);
 
     if (result.length === 0) return null;
@@ -126,7 +131,9 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
   /**
    * Create new business with initial config
    */
-  async create(data: BusinessInsert & { config: BusinessConfigType; emailOnNewReview: boolean }): Promise<BusinessWithConfig> {
+  async create(
+    data: BusinessInsert & { config: BusinessConfigType; emailOnNewReview: boolean }
+  ): Promise<BusinessWithConfig> {
     return await db.transaction(async (tx) => {
       // Create business
       const [business] = await tx.insert(businesses).values(data).returning();
@@ -186,7 +193,13 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
       .from(businesses)
       .innerJoin(userAccounts, eq(businesses.accountId, userAccounts.accountId))
       .leftJoin(businessConfigs, eq(businesses.id, businessConfigs.businessId))
-      .where(and(eq(businesses.googleBusinessId, googleBusinessId), eq(businesses.accountId, this.accountId), eq(userAccounts.userId, this.userId)))
+      .where(
+        and(
+          eq(businesses.googleBusinessId, googleBusinessId),
+          eq(businesses.accountId, this.accountId),
+          eq(userAccounts.userId, this.userId)
+        )
+      )
       .limit(1);
 
     if (results.length === 0) return null;

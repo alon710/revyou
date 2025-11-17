@@ -30,13 +30,15 @@ export const businessConfigs = pgTable(
     signature: text("signature"),
 
     // Star-specific configurations (JSONB for flexibility)
-    starConfigs: jsonb("star_configs").$type<{
-      1: { customInstructions: string; autoReply: boolean };
-      2: { customInstructions: string; autoReply: boolean };
-      3: { customInstructions: string; autoReply: boolean };
-      4: { customInstructions: string; autoReply: boolean };
-      5: { customInstructions: string; autoReply: boolean };
-    }>().notNull(),
+    starConfigs: jsonb("star_configs")
+      .$type<{
+        1: { customInstructions: string; autoReply: boolean };
+        2: { customInstructions: string; autoReply: boolean };
+        3: { customInstructions: string; autoReply: boolean };
+        4: { customInstructions: string; autoReply: boolean };
+        5: { customInstructions: string; autoReply: boolean };
+      }>()
+      .notNull(),
 
     // Email preferences
     emailOnNewReview: boolean("email_on_new_review").notNull().default(false),

@@ -46,7 +46,13 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
       .select({ reviews })
       .from(reviews)
       .innerJoin(userAccounts, eq(reviews.accountId, userAccounts.accountId))
-      .where(and(eq(reviews.accountId, this.accountId), eq(reviews.businessId, this.businessId), eq(userAccounts.userId, this.userId)));
+      .where(
+        and(
+          eq(reviews.accountId, this.accountId),
+          eq(reviews.businessId, this.businessId),
+          eq(userAccounts.userId, this.userId)
+        )
+      );
 
     const results = await query;
     let reviewList = results.map((r) => r.reviews);
