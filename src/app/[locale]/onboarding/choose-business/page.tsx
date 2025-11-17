@@ -42,7 +42,7 @@ export default function OnboardingStep3() {
       setLoading(true);
       setError(null);
 
-      const businesses = await getGoogleBusinesses(user.uid, accountId);
+      const businesses = await getGoogleBusinesses(user.id, accountId);
 
       setAvailableBusinesses(businesses);
 
@@ -75,7 +75,7 @@ export default function OnboardingStep3() {
       setConnecting(true);
       setError(null);
 
-      const business = await upsertBusiness(user.uid, accountId, {
+      const business = await upsertBusiness(user.id, accountId, {
         googleBusinessId: selectedBusiness.id,
         name: selectedBusiness.name,
         address: selectedBusiness.address,
@@ -87,7 +87,7 @@ export default function OnboardingStep3() {
       });
 
       try {
-        await subscribeToGoogleNotifications(user.uid, accountId);
+        await subscribeToGoogleNotifications(user.id, accountId);
       } catch (err) {
         console.error("Error subscribing to notifications:", err);
       }

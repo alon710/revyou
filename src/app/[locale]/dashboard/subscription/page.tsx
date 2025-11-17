@@ -8,11 +8,9 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Loading } from "@/components/ui/loading";
 import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { getUserStats } from "@/lib/actions/stats.actions";
-import { getUser } from "@/lib/actions/users.actions";
 
 export default function SubscriptionPage() {
   const { user: authUser, loading: authLoading } = useAuth();
@@ -22,8 +20,7 @@ export default function SubscriptionPage() {
   const [reviewCount, setReviewCount] = useState(0);
   const [businessesPercent, setBusinessesPercent] = useState(0);
   const [reviewsPercent, setReviewsPercent] = useState(0);
-  const [limits, setLimits] = useState({ businesses: 1, reviewsPerMonth: 5, autoPost: false, requireApproval: true });
-  const [stripeLink, setStripeLink] = useState<string | null>(null);
+  const [limits, setLimits] = useState({ businesses: 1, reviewsPerMonth: 10, autoPost: false, requireApproval: true });
   const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(async () => {
@@ -32,14 +29,13 @@ export default function SubscriptionPage() {
     try {
       setLoading(true);
 
-      const [stats, userData] = await Promise.all([getUserStats(authUser.uid), getUser(authUser.uid)]);
+      const stats = await getUserStats(authUser.id);
 
       setBusinessesCount(stats.businesses);
       setReviewCount(stats.reviews);
       setBusinessesPercent(stats.businessesPercent);
       setReviewsPercent(stats.reviewsPercent);
       setLimits(stats.limits);
-      setStripeLink(userData.stripeLink || null);
     } catch (error) {
       console.error("Error loading data:", error);
       toast.error(t("errorLoading"));
@@ -55,23 +51,7 @@ export default function SubscriptionPage() {
   }, [authUser, authLoading, loadData]);
 
   const handleUpgrade = () => {
-    toast.info(t("upgradeComingSoon"));
-  };
-
-  const handleManageSubscription = () => {
-    if (stripeLink) {
-      try {
-        const url = new URL(stripeLink);
-        if (!url.hostname.includes("stripe.com")) {
-          toast.error(t("invalidLink"));
-          return;
-        }
-      } catch {
-        toast.error(t("invalidLink"));
-        return;
-      }
-      window.open(stripeLink, "_blank");
-    }
+    window.location.href = "/#pricing";
   };
 
   if (authLoading || loading || subscriptionLoading) {
@@ -104,11 +84,13 @@ export default function SubscriptionPage() {
             </Button>
           )}
 
-          {stripeLink && planType !== "free" && (
-            <Button onClick={handleManageSubscription} variant="outline" size="lg">
-              <ExternalLink className="w-4 h-4 ms-2" />
-              {t("manageSubscription")}
-            </Button>
+          {planType !== "free" && (
+            <div className="text-sm text-muted-foreground">
+              <p>
+                {t("currentPlan")}: {planType.toUpperCase()}
+              </p>
+              <p className="mt-1">{t("contactSupport")}</p>
+            </div>
           )}
         </div>
       </div>

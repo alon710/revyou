@@ -1,8 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, ReactNode } from "react";
-import { User } from "firebase/auth";
-import { useAuth as useFirebaseAuth } from "@/lib/firebase/auth";
+import { User } from "@supabase/supabase-js";
+import { useAuth as useSupabaseAuth } from "@/lib/auth/auth";
 
 interface AuthContextType {
   user: User | null;
@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const auth = useFirebaseAuth();
+  const auth = useSupabaseAuth();
 
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 }

@@ -33,7 +33,7 @@ export default function BusinessSettingsPage({
     try {
       setLoading(true);
 
-      const biz = await getBusiness(user.uid, accountId, businessId);
+      const biz = await getBusiness(user.id, accountId, businessId);
       setBusiness(biz);
     } catch (error) {
       console.error("Error fetching business:", error);
@@ -50,7 +50,7 @@ export default function BusinessSettingsPage({
     if (!business || !user) return;
 
     try {
-      await deleteBusiness(user.uid, accountId, businessId);
+      await deleteBusiness(user.id, accountId, businessId);
       router.push("/dashboard/home");
     } catch (error) {
       console.error("Error deleting business:", error);
@@ -92,7 +92,7 @@ export default function BusinessSettingsPage({
       <BusinessDetailsCard
         business={business}
         accountId={accountId}
-        userId={user!.uid}
+        userId={user!.id}
         loading={loading}
         onUpdate={fetchBusiness}
       />

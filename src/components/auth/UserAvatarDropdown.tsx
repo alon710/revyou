@@ -2,7 +2,7 @@
 
 import { LogOut, Plus, LayoutDashboard, Globe } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { signOut } from "@/lib/firebase/auth";
+import { signOut } from "@/lib/auth/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -58,11 +58,14 @@ export function UserAvatarDropdown() {
     return null;
   }
 
+  const displayName = user.user_metadata?.full_name || user.user_metadata?.name;
+  const photoURL = user.user_metadata?.avatar_url || user.user_metadata?.picture;
+
   const getInitials = () => {
-    if (user.displayName) {
-      return user.displayName
+    if (displayName) {
+      return displayName
         .split(" ")
-        .map((n) => n[0])
+        .map((n: string) => n[0])
         .join("")
         .toUpperCase()
         .slice(0, 2);
@@ -77,14 +80,14 @@ export function UserAvatarDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">
         <Avatar className="h-10 w-10 cursor-pointer">
-          <AvatarImage src={user.photoURL || undefined} alt={user.displayName || "User"} />
+          <AvatarImage src={photoURL || undefined} alt={displayName || "User"} />
           <AvatarFallback className="bg-primary text-primary-foreground">{getInitials()}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1 text-end">
-            <p className="text-sm font-medium leading-none">{user.displayName || t("user")}</p>
+            <p className="text-sm font-medium leading-none">{displayName || t("user")}</p>
             <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>

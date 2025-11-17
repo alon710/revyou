@@ -38,8 +38,8 @@ export default function BusinessReviewsPage({ params }: BusinessReviewsPageProps
       setError(null);
 
       const [biz, fetchedReviews] = await Promise.all([
-        getBusiness(user.uid, accountId, businessId),
-        getReviews(user.uid, accountId, businessId, { sort: { orderBy: "receivedAt", orderDirection: "desc" } }),
+        getBusiness(user.id, accountId, businessId),
+        getReviews(user.id, accountId, businessId, { sort: { orderBy: "receivedAt", orderDirection: "desc" } }),
       ]);
 
       setBusiness(biz);
@@ -112,7 +112,7 @@ export default function BusinessReviewsPage({ params }: BusinessReviewsPageProps
                 review={review}
                 accountId={accountId}
                 businessId={businessId}
-                userId={user.uid}
+                userId={user.id}
                 onUpdate={fetchData}
                 onClick={() =>
                   router.push(`/dashboard/accounts/${accountId}/businesses/${businessId}/reviews/${review.id}`)

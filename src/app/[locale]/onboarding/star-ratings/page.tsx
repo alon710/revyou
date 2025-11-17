@@ -72,7 +72,7 @@ export default function OnboardingStarRatings() {
 
       const config = getCombinedConfig();
 
-      await updateBusinessConfig(user.uid, accountId, businessId, config);
+      await updateBusinessConfig(user.id, accountId, businessId, config);
 
       reset();
 

@@ -1,9 +1,7 @@
 import { getAdminDb } from "@/lib/firebase/admin";
-import type { Subscription, SubscriptionCreate, SubscriptionUpdate, SubscriptionWithProduct } from "@/lib/types";
+import type { Subscription, SubscriptionCreate, SubscriptionUpdate } from "@/lib/types/subscription.types";
 import { BaseRepository } from "./base.repository";
-import { type PlanLimits, getPlanLimits } from "@/lib/stripe/entitlements";
-import { enrichProduct } from "@/lib/stripe/product-parser";
-import type { Product } from "@invertase/firestore-stripe-payments";
+import { type PlanLimits, getPlanLimits, type PlanTier } from "@/lib/subscriptions/plans";
 import { Timestamp } from "firebase-admin/firestore";
 import { startOfMonth } from "date-fns";
 
@@ -21,47 +19,40 @@ export class SubscriptionsRepositoryAdmin extends BaseRepository<SubscriptionCre
   }
 
   async create(_data: SubscriptionCreate): Promise<Subscription> {
-    throw new Error("Subscription creation should be handled by Stripe extension");
+    throw new Error("Use subscription.actions.ts instead");
   }
 
   async update(_id: string, _data: SubscriptionUpdate): Promise<Subscription> {
-    throw new Error("Subscription updates should be handled by Stripe extension");
+    throw new Error("Use subscription.actions.ts instead");
   }
 
   async delete(_id: string): Promise<void> {
-    throw new Error("Subscription deletion should be handled by Stripe extension");
+    throw new Error("Use subscription.actions.ts instead");
   }
 
-  async getActiveSubscription(userId: string): Promise<SubscriptionWithProduct | null> {
+  async getActiveSubscription(userId: string): Promise<Subscription | null> {
     try {
       const subscriptionsRef = getAdminDb().collection(`users/${userId}/subscriptions`);
-      const activeSubQuery = subscriptionsRef.where("status", "in", ["active", "trialing"]);
+      const activeSubQuery = subscriptionsRef.where("status", "==", "active").orderBy("createdAt", "desc").limit(1);
       const snapshot = await activeSubQuery.get();
 
       if (snapshot.empty) {
         return null;
       }
 
-      const subDoc = snapshot.docs[0];
-      const subData = subDoc.data() as Subscription;
-      const productId = typeof subData.product === "string" ? subData.product : subData.product.id;
-
-      const productDoc = await getAdminDb().collection("products").doc(productId).get();
-
-      if (!productDoc.exists) {
-        console.error("Product not found:", productId);
-        return null;
-      }
-
-      const productData = productDoc.data() as Product;
+      const doc = snapshot.docs[0];
+      const data = doc.data();
 
       return {
-        ...subData,
-        id: subDoc.id,
-        productData: {
-          ...productData,
-          id: productDoc.id,
-        },
+        id: doc.id,
+        userId: data.userId,
+        planTier: data.planTier as PlanTier,
+        status: data.status,
+        billingInterval: data.billingInterval,
+        createdAt: data.createdAt.toDate(),
+        currentPeriodStart: data.currentPeriodStart.toDate(),
+        currentPeriodEnd: data.currentPeriodEnd.toDate(),
+        canceledAt: data.canceledAt ? data.canceledAt.toDate() : null,
       };
     } catch (error) {
       console.error("Error fetching active subscription:", error);
@@ -73,39 +64,15 @@ export class SubscriptionsRepositoryAdmin extends BaseRepository<SubscriptionCre
     try {
       const subscription = await this.getActiveSubscription(userId);
 
-      if (subscription?.productData) {
-        const enriched = enrichProduct(subscription.productData);
-        return getPlanLimits(enriched);
+      if (subscription) {
+        return getPlanLimits(subscription.planTier);
       }
 
-      const productsRef = getAdminDb().collection("products");
-      const freeProductQuery = productsRef.where("active", "==", true).where("metadata.plan_id", "==", "free");
-      const freeProductSnapshot = await freeProductQuery.get();
-
-      if (!freeProductSnapshot.empty) {
-        const productDoc = freeProductSnapshot.docs[0];
-        const productData = productDoc.data() as Product;
-        const enriched = enrichProduct({
-          ...productData,
-          id: productDoc.id,
-        });
-        return getPlanLimits(enriched);
-      }
-
-      return {
-        businesses: 1,
-        reviewsPerMonth: 5,
-        autoPost: false,
-        requireApproval: true,
-      };
+      // Default to free plan
+      return getPlanLimits("free");
     } catch (error) {
       console.error("Error fetching user plan limits:", error);
-      return {
-        businesses: 1,
-        reviewsPerMonth: 5,
-        autoPost: false,
-        requireApproval: true,
-      };
+      return getPlanLimits("free");
     }
   }
 

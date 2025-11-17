@@ -2,21 +2,22 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { createSubscriptionCheckout } from "@/lib/stripe/client";
 import { useRouter } from "@/i18n/routing";
 import { Loading } from "@/components/ui/loading";
 import { toast } from "sonner";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
+import { createSubscription } from "@/lib/actions/subscription.actions";
+import type { PlanTier } from "@/lib/subscriptions/plans";
+import type { BillingInterval } from "@/lib/types/subscription.types";
 
 function CheckoutForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("checkout");
-  const locale = useLocale();
   const [error, setError] = useState<string | null>(null);
 
-  const plan = searchParams.get("plan");
-  const priceId = searchParams.get("priceId");
+  const plan = searchParams.get("plan") as PlanTier;
+  const period = searchParams.get("period") as BillingInterval;
 
   useEffect(() => {
     if (error) {
@@ -30,32 +31,39 @@ function CheckoutForm() {
       return;
     }
 
-    if (plan !== "free" && !priceId) {
+    if (!plan || !period) {
       toast.error(t("missingPriceDetails"));
       router.push("/");
       return;
     }
 
-    if (priceId && !error) {
-      async function initiateCheckout() {
+    if (plan && period && !error) {
+      async function processMockCheckout() {
         try {
-          const session = await createSubscriptionCheckout(priceId!, {
-            success_url: `${window.location.origin}/${locale}/dashboard/home`,
-            cancel_url: `${window.location.origin}/`,
-          });
-          window.location.assign(session.url);
+          // Mock payment - automatically create subscription
+          const result = await createSubscription(plan, period);
+
+          if (result.success) {
+            toast.success("Subscription activated successfully!");
+            // Small delay to show success message
+            setTimeout(() => {
+              router.push("/dashboard/home");
+            }, 1000);
+          } else {
+            setError(result.error || "Failed to create subscription");
+          }
         } catch (err) {
-          console.error("Error creating checkout session:", err);
+          console.error("Error creating subscription:", err);
           setError(t("checkoutError"));
         }
       }
 
-      initiateCheckout();
+      processMockCheckout();
     }
-  }, [plan, priceId, router, error, locale, t]);
+  }, [plan, period, router, error, t]);
 
-  if (!error && priceId) {
-    return <Loading fullScreen text={t("preparingPayment")} description={t("redirectingToPayment")} size="lg" />;
+  if (!error && plan && period) {
+    return <Loading fullScreen text="Processing your subscription..." description="Almost there!" size="lg" />;
   }
 
   return null;

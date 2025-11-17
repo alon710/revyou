@@ -60,7 +60,7 @@ export default function OnboardingBusinessDetails() {
     try {
       setLoading(true);
 
-      const biz = await getBusiness(user.uid, accountId, businessId);
+      const biz = await getBusiness(user.id, accountId, businessId);
       setBusiness(biz);
 
       if (businessDetails) {
@@ -102,7 +102,7 @@ export default function OnboardingBusinessDetails() {
     try {
       setSaving(true);
 
-      await updateBusinessConfig(user.uid, accountId, businessId, {
+      await updateBusinessConfig(user.id, accountId, businessId, {
         name: formData.name,
         description: formData.description,
         phoneNumber: formData.phoneNumber,

@@ -5,8 +5,6 @@ export interface UserCreate {
   email: string;
   displayName: string;
   photoURL?: string;
-  stripeId?: string;
-  stripeLink?: string;
 }
 
 export interface User extends UserCreate {

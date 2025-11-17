@@ -23,7 +23,7 @@ export default function HomePage() {
       try {
         setLoading(true);
 
-        const accounts = await getAccountsWithBusinesses(user.uid);
+        const accounts = await getAccountsWithBusinesses(user.id);
         setAccountsWithBusinesses(accounts);
       } catch (error) {
         console.error("Error fetching data:", error);

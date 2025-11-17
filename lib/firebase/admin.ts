@@ -1,59 +1,34 @@
+import * as admin from "firebase-admin";
 import "server-only";
 
-import { initializeApp, getApps, cert, App } from "firebase-admin/app";
-import { getAuth, Auth } from "firebase-admin/auth";
-import { getFirestore, Firestore } from "firebase-admin/firestore";
-
-let app: App | undefined;
-
-function validateEnvVars(): { projectId: string; clientEmail: string; privateKey: string } {
-  const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
-  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
-
-  const missing: string[] = [];
-
-  if (!projectId) missing.push("FIREBASE_ADMIN_PROJECT_ID");
-  if (!clientEmail) missing.push("FIREBASE_ADMIN_CLIENT_EMAIL");
-  if (!privateKey) missing.push("FIREBASE_ADMIN_PRIVATE_KEY");
-
-  if (missing.length > 0) {
-    throw new Error(
-      `Missing required Firebase Admin environment variables: ${missing.join(", ")}. ` +
-        `Please check your .env.local file and ensure all required variables are set.`
-    );
-  }
-
-  return {
-    projectId: projectId as string,
-    clientEmail: clientEmail as string,
-    privateKey: privateKey as string,
-  };
-}
-
-function getAdminApp(): App {
-  if (!getApps().length) {
-    const { projectId, clientEmail, privateKey } = validateEnvVars();
-
-    app = initializeApp({
-      credential: cert({
-        projectId,
-        clientEmail,
-        privateKey: privateKey.replace(/\\n/g, "\n"),
+// Initialize Firebase Admin if not already initialized
+if (!admin.apps.length) {
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, "\n"),
       }),
-      projectId,
     });
-  } else {
-    app = getApps()[0];
+  } catch (error) {
+    console.error("Firebase Admin initialization error:", error);
+    throw new Error("Failed to initialize Firebase Admin SDK");
   }
-
-  return app;
 }
 
-export function getAdminAuth(): Auth {
-  return getAuth(getAdminApp());
+/**
+ * Get the Firestore database instance
+ * @returns Firestore database instance
+ */
+export function getAdminDb() {
+  return admin.firestore();
 }
 
-export function getAdminDb(): Firestore {
-  return getFirestore(getAdminApp());
+/**
+ * Get the Firebase Admin instance
+ * @returns Firebase Admin instance
+ */
+export function getAdminApp() {
+  return admin.app();
 }

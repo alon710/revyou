@@ -74,7 +74,7 @@ export default function OnboardingAISettings() {
     try {
       setSaving(true);
 
-      await updateBusinessConfig(user.uid, accountId, businessId, {
+      await updateBusinessConfig(user.id, accountId, businessId, {
         toneOfVoice: formData.toneOfVoice,
         languageMode: formData.languageMode,
         allowedEmojis: formData.allowedEmojis,

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { signOut } from "@/lib/firebase/auth";
+import { signOut } from "@/lib/auth/auth";
 import { dashboardNavItems, landingNavItems, getNavigationVariant, getIsActive } from "@/lib/navigation";
 import { usePathname, useRouter } from "@/i18n/routing";
 

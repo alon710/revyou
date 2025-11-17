@@ -67,9 +67,7 @@ service cloud.firestore {
       request.resource.data.uid == userId &&
       request.resource.data.email is string &&
       validStringLength(request.resource.data.displayName, 1, 200) &&
-      (!('photoURL' in request.resource.data) || request.resource.data.photoURL is string) &&
-      (!('stripeId' in request.resource.data) || request.resource.data.stripeId is string) &&
-      (!('stripeLink' in request.resource.data) || request.resource.data.stripeLink is string);
+      (!('photoURL' in request.resource.data) || request.resource.data.photoURL is string);
 
       allow update: if isOwner(userId) &&
       // Cannot change uid or createdAt
@@ -77,29 +75,14 @@ service cloud.firestore {
 
       allow delete: if false; // Users should not be deleted via Firestore
 
-      // ====== STRIPE SUBSCRIPTIONS (Firestore Stripe Extension) ======
-      // Subscriptions subcollection managed by Stripe extension
+      // ====== SUBSCRIPTIONS SUBCOLLECTION ======
+      // Subscriptions subcollection for managing user plans
       match /subscriptions/{subscriptionId} {
         // Users can read their own subscriptions
         allow read: if isOwner(userId);
 
-        // Only the Stripe extension and admin can write
-        allow write: if false;
-      }
-
-      // Checkout sessions subcollection managed by Stripe extension
-      match /checkout_sessions/{sessionId} {
-        // Users can read and create their own checkout sessions
-        allow read, write: if isOwner(userId);
-      }
-
-      // Payments subcollection managed by Stripe extension
-      match /payments/{paymentId} {
-        // Users can read their own payments
-        allow read: if isOwner(userId);
-
-        // Only the Stripe extension and admin can write
-        allow write: if false;
+        // Users can create and update their own subscriptions
+        allow write: if isOwner(userId);
       }
 
       // ====== ACCOUNTS SUBCOLLECTION ======
@@ -205,24 +188,6 @@ service cloud.firestore {
             allow delete: if false;
           }
         }
-      }
-    }
-
-    // ====== PRODUCTS COLLECTION (Stripe Extension) ======
-    match /products/{productId} {
-      // Anyone can read products (for pricing page)
-      allow read: if true;
-
-      // Only admin can write (synced from Stripe)
-      allow write: if false;
-
-      // Prices subcollection
-      match /prices/{priceId} {
-        // Anyone can read prices
-        allow read: if true;
-
-        // Only admin can write
-        allow write: if false;
       }
     }
   }

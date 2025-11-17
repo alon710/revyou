@@ -1,10 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { signInWithGoogle } from "@/lib/firebase/auth";
-import { useRouter } from "@/i18n/routing";
-import { isValidRedirectPath } from "@/lib/utils";
+import { signInWithGoogle } from "@/lib/auth/auth";
 import {
   DashboardCard,
   DashboardCardContent,
@@ -22,8 +19,6 @@ import { useTranslations } from "next-intl";
 export const dynamic = "force-dynamic";
 
 function LoginForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const t = useTranslations("auth.loginPage");
   const tAuth = useTranslations();
   const [isLoading, setIsLoading] = useState(false);
@@ -39,16 +34,14 @@ function LoginForm() {
     setIsLoading(true);
     setError(null);
 
-    const { user, error } = await signInWithGoogle();
+    const { error } = await signInWithGoogle();
 
     if (error) {
       setError(error);
       setIsLoading(false);
-    } else if (user) {
-      const redirectParam = searchParams.get("redirect") || "/dashboard";
-      const redirect = isValidRedirectPath(redirectParam) ? redirectParam : "/dashboard";
-      router.push(redirect);
     }
+    // Note: With Supabase OAuth, the user will be redirected to the callback URL
+    // The redirect to dashboard/specified path will happen in the callback handler
   };
 
   return (

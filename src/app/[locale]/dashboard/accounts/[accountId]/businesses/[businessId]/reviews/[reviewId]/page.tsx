@@ -37,8 +37,8 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       setError(null);
 
       const [biz, fetchedReview] = await Promise.all([
-        getBusiness(user.uid, accountId, businessId),
-        getReview(user.uid, accountId, businessId, reviewId),
+        getBusiness(user.id, accountId, businessId),
+        getReview(user.id, accountId, businessId, reviewId),
       ]);
 
       setBusiness(biz);
@@ -87,7 +87,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
           review={review}
           accountId={accountId}
           businessId={businessId}
-          userId={user.uid}
+          userId={user.id}
           onUpdate={loadData}
         />
       </div>

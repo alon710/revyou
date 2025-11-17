@@ -1,6 +1,6 @@
 import { StatsRepositoryAdmin } from "@/lib/repositories/stats.repository.admin";
 import { SubscriptionsRepositoryAdmin } from "@/lib/repositories/subscriptions.repository.admin";
-import type { PlanLimits } from "@/lib/stripe/entitlements";
+import type { PlanLimits } from "@/lib/subscriptions/plans";
 import { BaseController } from "./base.controller";
 
 interface Stats {}
