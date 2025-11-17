@@ -2,7 +2,6 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { getLocaleDir, type Locale } from "@/i18n/config";
 import { detectLocale } from "@/lib/locale-detection";
-import "./globals.css";
 
 export default async function NotFound() {
   const locale = await detectLocale();

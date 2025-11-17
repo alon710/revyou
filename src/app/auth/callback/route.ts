@@ -5,7 +5,7 @@ import { createLocaleAwareRedirect } from "@/lib/api/auth";
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
+  const next = searchParams.get("next") ?? "/dashboard/home";
 
   if (code) {
     const supabase = await createClient();

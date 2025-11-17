@@ -1,7 +1,7 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { reviews, userAccounts, type Review, type ReviewInsert } from "@/lib/db/schema";
-import type { ReviewFilters } from "@/lib/types";
+import type { ReviewFilters, ReplyStatus } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 
 /**
@@ -58,12 +58,12 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     let reviewList = results.map((r) => r.reviews);
 
     // Apply filters in application code
-    if (filters.replyStatus) {
-      reviewList = reviewList.filter((r) => r.replyStatus === filters.replyStatus);
+    if (filters.replyStatus && filters.replyStatus.length > 0) {
+      reviewList = reviewList.filter((r) => filters.replyStatus!.includes(r.replyStatus as ReplyStatus));
     }
 
-    if (filters.rating) {
-      reviewList = reviewList.filter((r) => r.rating === filters.rating);
+    if (filters.rating && filters.rating.length > 0) {
+      reviewList = reviewList.filter((r) => filters.rating!.includes(r.rating));
     }
 
     if (filters.ids && filters.ids.length > 0) {

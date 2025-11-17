@@ -31,25 +31,27 @@ export class AccountsRepository extends BaseRepository<AccountInsert, Account, P
    * List all accounts accessible by the user
    */
   async list(filters: AccountFilters = {}): Promise<Account[]> {
-    let query = db
+    // Build conditions array
+    const conditions = [eq(userAccounts.userId, this.userId)];
+    if (filters.email) {
+      conditions.push(eq(accounts.email, filters.email));
+    }
+
+    const results = await db
       .select({ accounts })
       .from(accounts)
       .innerJoin(userAccounts, eq(accounts.id, userAccounts.accountId))
-      .where(eq(userAccounts.userId, this.userId));
+      .where(and(...conditions));
 
-    if (filters.email) {
-      query = query.where(eq(accounts.email, filters.email));
-    }
+    let accountsList = results.map((r) => r.accounts);
 
+    // Filter by IDs in application code if needed
     if (filters.ids && filters.ids.length > 0) {
-      // Filter by IDs in application code since Drizzle's inArray has issues with combined filters
-      const results = await query;
       const idSet = new Set(filters.ids);
-      return results.filter((r) => idSet.has(r.accounts.id)).map((r) => r.accounts);
+      accountsList = accountsList.filter((a) => idSet.has(a.id));
     }
 
-    const results = await query;
-    return results.map((r) => r.accounts);
+    return accountsList;
   }
 
   /**

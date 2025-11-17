@@ -39,7 +39,7 @@ export class BusinessesController {
       await this.repository.updateConfig(existingBusiness.id, data.config);
       return this.repository.reconnect(existingBusiness.id, {
         address: data.address,
-        mapsUrl: data.mapsUrl,
+        mapsUrl: data.mapsUrl ?? null,
       });
     }
 
@@ -59,7 +59,7 @@ export class BusinessesController {
     // Handle config updates separately if provided
     if (data.config) {
       await this.repository.updateConfig(businessId, data.config);
-      const { config, ...rest } = data;
+      const { config: _config, ...rest } = data;
       if (Object.keys(rest).length > 0) {
         return this.repository.update(businessId, rest);
       }

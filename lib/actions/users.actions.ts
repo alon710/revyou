@@ -2,9 +2,9 @@
 
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { UsersController } from "@/lib/controllers";
-import type { User, UserUpdate } from "@/lib/types";
+import type { UserConfig, UserConfigUpdate } from "@/lib/types";
 
-export async function getUser(userId: string): Promise<User> {
+export async function getUserConfig(userId: string): Promise<UserConfig> {
   const { userId: authenticatedUserId } = await getAuthenticatedUserId();
 
   if (authenticatedUserId !== userId) {
@@ -12,10 +12,10 @@ export async function getUser(userId: string): Promise<User> {
   }
 
   const controller = new UsersController();
-  return controller.getUser(userId);
+  return controller.getUserConfig(userId);
 }
 
-export async function updateUser(userId: string, data: UserUpdate): Promise<User> {
+export async function updateUserConfig(userId: string, data: UserConfigUpdate): Promise<UserConfig> {
   const { userId: authenticatedUserId } = await getAuthenticatedUserId();
 
   if (authenticatedUserId !== userId) {
@@ -23,5 +23,5 @@ export async function updateUser(userId: string, data: UserUpdate): Promise<User
   }
 
   const controller = new UsersController();
-  return controller.updateUser(userId, data);
+  return controller.updateUserConfig(userId, data);
 }

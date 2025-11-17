@@ -121,7 +121,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
               <h3 className="font-semibold truncate">{review.name}</h3>
             </div>
             <StarRating rating={review.rating} size={18} />
-            {getStatusBadge(review.replyStatus)}
+            {getStatusBadge(review.replyStatus as ReplyStatus)}
           </div>
         </DashboardCardHeader>
 

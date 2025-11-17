@@ -16,6 +16,7 @@ import { BaseRepository } from "./base.repository";
  */
 export type BusinessWithConfig = Business & {
   config: BusinessConfigType;
+  emailOnNewReview: boolean;
 };
 
 /**

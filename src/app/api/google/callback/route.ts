@@ -83,7 +83,8 @@ export async function GET(request: NextRequest) {
     } else {
       const userInfo = await getUserInfo(tokens.access_token);
 
-      await usersController.getUser(authenticatedUserId);
+      // Ensure user config exists (will create if doesn't exist)
+      await usersController.getUserConfig(authenticatedUserId);
 
       const existingAccount = await accountsController.findByEmail(userInfo.email);
 
@@ -94,7 +95,6 @@ export async function GET(request: NextRequest) {
         accountId = existingAccount.id;
       } else {
         const newAccount = await accountsController.createAccount({
-          userId: authenticatedUserId,
           email: userInfo.email,
           accountName: userInfo.name,
           googleRefreshToken: encryptedToken,
