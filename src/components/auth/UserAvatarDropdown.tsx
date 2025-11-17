@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Plus, LayoutDashboard, Globe } from "lucide-react";
+import { LogOut, Plus, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/lib/auth/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,21 +11,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/routing";
-import { locales, localeConfig, type Locale } from "@/i18n/config";
 
 export function UserAvatarDropdown() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const locale = useLocale() as Locale;
   const t = useTranslations("auth");
 
   const isDashboardPage = pathname?.startsWith("/dashboard");
@@ -44,10 +38,6 @@ export function UserAvatarDropdown() {
 
   const handleDashboard = () => {
     router.push("/dashboard/home");
-  };
-
-  const handleLanguageChange = (newLocale: Locale) => {
-    router.replace(pathname, { locale: newLocale });
   };
 
   if (loading) {
@@ -102,26 +92,6 @@ export function UserAvatarDropdown() {
           <Plus className="h-4 w-4" />
           <span>{t("addBusiness")}</span>
         </DropdownMenuItem>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="cursor-pointer">
-            <div className="flex items-center justify-between flex-1">
-              <Globe className="h-4 w-4" />
-              <span>{t("language")}</span>
-            </div>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuPortal>
-            <DropdownMenuSubContent>
-              {locales.map((loc) => (
-                <DropdownMenuItem key={loc} onSelect={() => handleLanguageChange(loc)}>
-                  <span className="flex items-center justify-between w-full">
-                    {localeConfig[loc].label}
-                    {locale === loc && <span className="text-xs">✓</span>}
-                  </span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuSubContent>
-          </DropdownMenuPortal>
-        </DropdownMenuSub>
         <DropdownMenuItem onSelect={handleSignOut} className="cursor-pointer flex justify-between">
           <LogOut className="h-4 w-4" />
           <span>{t("signOut")}</span>

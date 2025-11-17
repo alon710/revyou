@@ -7,10 +7,10 @@ import { useRouter } from "@/i18n/routing";
 import { GoogleBusinessProfileBusiness } from "@/lib/types";
 import { toast } from "sonner";
 import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
+import { BusinessRadioItem } from "@/components/onboarding/BusinessRadioItem";
 import { Loading } from "@/components/ui/loading";
-import { AlertCircle, Building2, MapPin } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
+import { AlertCircle } from "lucide-react";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { useTranslations } from "next-intl";
 import { getGoogleBusinesses, subscribeToGoogleNotifications } from "@/lib/actions/google.actions";
 import { upsertBusiness } from "@/lib/actions/businesses.actions";
@@ -159,28 +159,7 @@ export default function OnboardingStep3() {
         className="gap-3"
       >
         {availableBusinesses.map((business) => (
-          <div
-            key={business.id}
-            className={`relative flex items-start gap-3 rounded-lg border p-4 transition-colors ${
-              selectedBusiness?.id === business.id
-                ? "border-primary bg-primary/5"
-                : "border-border hover:border-primary/50"
-            }`}
-          >
-            <RadioGroupItem value={business.id} id={business.id} className="mt-1" />
-            <Label htmlFor={business.id} className="flex-1 cursor-pointer space-y-1">
-              <div className="flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-muted-foreground" />
-                <span className="font-semibold">{business.name}</span>
-              </div>
-              {business.address && (
-                <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                  <span>{business.address}</span>
-                </div>
-              )}
-            </Label>
-          </div>
+          <BusinessRadioItem key={business.id} business={business} selected={selectedBusiness?.id === business.id} />
         ))}
       </RadioGroup>
     </OnboardingCard>

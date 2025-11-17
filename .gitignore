@@ -56,3 +56,6 @@ firebase-debug.log
 
 # Drizzle
 /drizzle
+
+# Supabase
+/supabase/.temp/*

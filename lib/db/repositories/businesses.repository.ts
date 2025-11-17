@@ -140,10 +140,46 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
 
       await tx.insert(businessConfigs).values(configData);
 
-      const created = await this.get(business.id);
-      if (!created) throw new Error("Failed to create business");
+      const result = await tx
+        .select()
+        .from(businesses)
+        .innerJoin(userAccounts, eq(businesses.accountId, userAccounts.accountId))
+        .leftJoin(businessConfigs, eq(businesses.id, businessConfigs.businessId))
+        .where(
+          and(
+            eq(businesses.id, business.id),
+            eq(businesses.accountId, this.accountId),
+            eq(userAccounts.userId, this.userId)
+          )
+        )
+        .limit(1);
 
-      return created;
+      if (result.length === 0) throw new Error("Failed to create business");
+
+      const createdBusiness = result[0].businesses;
+      const config = result[0].business_configs;
+
+      if (!config) {
+        throw new Error(`Business ${business.id} has no configuration`);
+      }
+
+      return {
+        ...createdBusiness,
+        config: {
+          name: config.name,
+          description: config.description || undefined,
+          phoneNumber: config.phoneNumber || undefined,
+          toneOfVoice: config.toneOfVoice as "friendly" | "formal" | "humorous" | "professional",
+          useEmojis: config.useEmojis,
+          languageMode: config.languageMode as "hebrew" | "english" | "auto-detect",
+          languageInstructions: config.languageInstructions || undefined,
+          maxSentences: config.maxSentences || undefined,
+          allowedEmojis: config.allowedEmojis || undefined,
+          signature: config.signature || undefined,
+          starConfigs: config.starConfigs,
+        },
+        emailOnNewReview: config.emailOnNewReview,
+      } as BusinessWithConfig;
     });
   }
 
