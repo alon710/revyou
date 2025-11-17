@@ -14,50 +14,21 @@ import { startOfMonth } from "date-fns";
 /**
  * Subscriptions repository using Drizzle ORM
  * Manages subscription and billing information
- * Note: Subscriptions are now linked to accounts (1:1), not users
+ * Note: Subscriptions are linked to users (1:1), not accounts
  */
 export class SubscriptionsRepository {
   /**
-   * Get active subscription for a specific account
+   * Get active subscription for a user
    */
-  async getActiveSubscriptionForAccount(accountId: string): Promise<Subscription | null> {
+  async getActiveSubscriptionForUser(userId: string): Promise<Subscription | null> {
     try {
       const [result] = await db
         .select()
         .from(subscriptions)
-        .where(and(eq(subscriptions.accountId, accountId), eq(subscriptions.status, "active")))
+        .where(and(eq(subscriptions.userId, userId), eq(subscriptions.status, "active")))
         .limit(1);
 
       return result || null;
-    } catch (error) {
-      console.error("Error fetching active subscription for account:", error);
-      return null;
-    }
-  }
-
-  /**
-   * Get active subscription for a user (checks all accounts user has access to)
-   * Returns the best subscription (highest tier) if user has multiple
-   */
-  async getActiveSubscriptionForUser(userId: string): Promise<Subscription | null> {
-    try {
-      const results = await db
-        .select({ subscription: subscriptions })
-        .from(subscriptions)
-        .innerJoin(userAccounts, eq(subscriptions.accountId, userAccounts.accountId))
-        .where(and(eq(userAccounts.userId, userId), eq(subscriptions.status, "active")));
-
-      if (results.length === 0) {
-        return null;
-      }
-
-      // Return the highest tier subscription
-      const planTierOrder: Record<string, number> = { free: 0, basic: 1, pro: 2 };
-      return results.reduce((best, current) => {
-        const currentTier = planTierOrder[current.subscription.planTier] || 0;
-        const bestTier = planTierOrder[best.planTier] || 0;
-        return currentTier > bestTier ? current.subscription : best;
-      }, results[0].subscription);
     } catch (error) {
       console.error("Error fetching active subscription for user:", error);
       return null;
@@ -65,10 +36,10 @@ export class SubscriptionsRepository {
   }
 
   /**
-   * Create or update subscription for an account
+   * Create or update subscription for a user
    */
-  async upsert(accountId: string, data: Omit<SubscriptionInsert, "accountId">): Promise<Subscription> {
-    const existing = await this.getActiveSubscriptionForAccount(accountId);
+  async upsert(userId: string, data: Omit<SubscriptionInsert, "userId">): Promise<Subscription> {
+    const existing = await this.getActiveSubscriptionForUser(userId);
 
     if (existing) {
       // Update existing subscription
@@ -92,7 +63,7 @@ export class SubscriptionsRepository {
       const [created] = await db
         .insert(subscriptions)
         .values({
-          accountId,
+          userId,
           ...data,
         })
         .returning();
@@ -103,10 +74,10 @@ export class SubscriptionsRepository {
   }
 
   /**
-   * Cancel subscription for an account
+   * Cancel subscription for a user
    */
-  async cancel(accountId: string): Promise<Subscription> {
-    const existing = await this.getActiveSubscriptionForAccount(accountId);
+  async cancel(userId: string): Promise<Subscription> {
+    const existing = await this.getActiveSubscriptionForUser(userId);
 
     if (!existing) {
       throw new Error("No active subscription found");

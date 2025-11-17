@@ -8,4 +8,4 @@ export type Subscription = DrizzleSubscription;
 
 export type SubscriptionCreate = Omit<SubscriptionInsert, "id" | "createdAt">;
 
-export type SubscriptionUpdate = Partial<Omit<SubscriptionInsert, "id" | "accountId" | "createdAt">>;
+export type SubscriptionUpdate = Partial<Omit<SubscriptionInsert, "id" | "userId" | "createdAt">>;

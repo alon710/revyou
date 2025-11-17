@@ -1,24 +1,17 @@
 "use server";
 
 import { getAuthenticatedUserId } from "@/lib/api/auth";
-import { SubscriptionsRepository, AccountsRepository } from "@/lib/db/repositories";
+import { SubscriptionsRepository } from "@/lib/db/repositories";
 import type { BillingInterval } from "@/lib/types/subscription.types";
 import type { PlanTier } from "@/lib/subscriptions/plans";
 import type { Subscription } from "@/lib/db/schema";
 
 export async function createSubscription(
-  accountId: string,
   planTier: PlanTier,
   billingInterval: BillingInterval = "monthly"
 ): Promise<{ success: boolean; subscriptionId?: string; error?: string }> {
   try {
     const { userId } = await getAuthenticatedUserId();
-
-    const accountRepo = new AccountsRepository(userId);
-    const account = await accountRepo.get(accountId);
-    if (!account) {
-      return { success: false, error: "Account not found" };
-    }
 
     const now = new Date();
     const currentPeriodEnd = new Date(now);
@@ -30,7 +23,7 @@ export async function createSubscription(
     }
 
     const repo = new SubscriptionsRepository();
-    const subscription = await repo.upsert(accountId, {
+    const subscription = await repo.upsert(userId, {
       planTier,
       status: "active",
       billingInterval,
@@ -64,21 +57,15 @@ export async function getActiveSubscription(): Promise<Subscription | null> {
   }
 }
 
-export async function cancelSubscription(accountId: string): Promise<{
+export async function cancelSubscription(): Promise<{
   success: boolean;
   error?: string;
 }> {
   try {
     const { userId } = await getAuthenticatedUserId();
 
-    const accountRepo = new AccountsRepository(userId);
-    const account = await accountRepo.get(accountId);
-    if (!account) {
-      return { success: false, error: "Account not found" };
-    }
-
     const repo = new SubscriptionsRepository();
-    await repo.cancel(accountId);
+    await repo.cancel(userId);
 
     return { success: true };
   } catch (error) {

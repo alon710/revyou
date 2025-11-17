@@ -372,6 +372,8 @@
       "errorLoading": "Error loading data. Please try again later.",
       "upgradeComingSoon": "Subscription upgrade will be available soon",
       "invalidLink": "Invalid link. Please contact support.",
+      "currentPlan": "Current Plan",
+      "contactSupport": "To manage or cancel your subscription, please contact support.",
       "info": {
         "title": "Usage and Limits",
         "description": "Track your usage in the current plan",
@@ -480,9 +482,10 @@
   },
   "checkout": {
     "missingPriceDetails": "Missing price details. Please select a plan from the pricing page.",
-    "checkoutError": "An error occurred while creating the order. Please try again or contact support.",
-    "preparingPayment": "Preparing payment...",
-    "redirectingToPayment": "Redirecting you to the secure payment page"
+    "error": "An error occurred while creating your subscription. Please try again or contact support.",
+    "processing": "Processing your subscription...",
+    "almostThere": "Almost there!",
+    "success": "Subscription activated successfully!"
   },
   "terms": {
     "title": "Terms of Service",

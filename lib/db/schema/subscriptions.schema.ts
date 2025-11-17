@@ -1,19 +1,17 @@
 import { pgTable, text, timestamp, uuid, index } from "drizzle-orm/pg-core";
-import { accounts } from "./accounts.schema";
 
 /**
  * Subscriptions table
  * Stores subscription and billing information
- * 1:1 relationship with accounts
+ * 1:1 relationship with users (stored in Supabase Auth)
  */
 export const subscriptions = pgTable(
   "subscriptions",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    accountId: uuid("account_id")
+    userId: uuid("user_id")
       .notNull()
-      .unique()
-      .references(() => accounts.id, { onDelete: "cascade" }),
+      .unique(),
 
     // Plan details
     planTier: text("plan_tier").notNull().default("free"), // free, basic, pro
@@ -29,9 +27,9 @@ export const subscriptions = pgTable(
     canceledAt: timestamp("canceled_at", { withTimezone: true }),
   },
   (table) => ({
-    accountIdIdx: index("subscriptions_account_id_idx").on(table.accountId),
+    userIdIdx: index("subscriptions_user_id_idx").on(table.userId),
     statusIdx: index("subscriptions_status_idx").on(table.status),
-    accountStatusIdx: index("subscriptions_account_status_idx").on(table.accountId, table.status),
+    userStatusIdx: index("subscriptions_user_status_idx").on(table.userId, table.status),
   })
 );
 
