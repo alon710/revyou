@@ -348,20 +348,6 @@
           "enabled": "Enabled",
           "disabled": "Disabled",
           "noInstructions": "No special instructions"
-        },
-        "notifications": {
-          "title": "Email Notifications",
-          "description": "Choose which notifications you'd like to receive by email for this business",
-          "modalTitle": "Edit Email Notifications",
-          "modalDescription": "Choose which notifications you'd like to receive by email",
-          "emailOnNewReview": {
-            "label": "New Review",
-            "description": "Receive email notification when a new review is received",
-            "tooltip": "When enabled, you'll receive an immediate email notification whenever a new review is published on your business in Google. This allows you to respond quickly to customers",
-            "helper": "Receive email notification when a new review is received"
-          },
-          "enabled": "Enabled",
-          "disabled": "Disabled"
         }
       }
     },

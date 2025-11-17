@@ -13,7 +13,6 @@ import { BaseRepository } from "./base.repository";
 
 export type BusinessWithConfig = Business & {
   config: BusinessConfigType;
-  emailOnNewReview: boolean;
 };
 
 export class BusinessesRepository extends BaseRepository<BusinessInsert, BusinessWithConfig, Partial<Business>> {
@@ -63,7 +62,6 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
         signature: config.signature || undefined,
         starConfigs: config.starConfigs,
       },
-      emailOnNewReview: config.emailOnNewReview,
     } as BusinessWithConfig;
   }
 
@@ -117,7 +115,7 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
   }
 
   async create(
-    data: BusinessInsert & { config: BusinessConfigType; emailOnNewReview: boolean }
+    data: BusinessInsert & { config: BusinessConfigType }
   ): Promise<BusinessWithConfig> {
     return await db.transaction(async (tx) => {
       const [business] = await tx.insert(businesses).values(data).returning();
@@ -135,7 +133,6 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
         allowedEmojis: data.config.allowedEmojis,
         signature: data.config.signature,
         starConfigs: data.config.starConfigs,
-        emailOnNewReview: data.emailOnNewReview,
       };
 
       await tx.insert(businessConfigs).values(configData);
@@ -233,7 +230,6 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
         signature: config.signature || undefined,
         starConfigs: config.starConfigs,
       },
-      emailOnNewReview: config.emailOnNewReview,
     } as BusinessWithConfig;
   }
 

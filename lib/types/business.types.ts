@@ -29,19 +29,16 @@ export interface BusinessConfig {
 
 export type Business = DrizzleBusiness & {
   config: BusinessConfig;
-  emailOnNewReview: boolean;
 };
 
 export type BusinessCreate = Omit<BusinessInsert, "id" | "connected" | "connectedAt"> & {
   config: BusinessConfig;
-  emailOnNewReview: boolean;
 };
 
 export type BusinessUpdate = Partial<
   Pick<BusinessInsert, "name" | "phoneNumber" | "websiteUrl" | "description" | "photoUrl" | "connected">
 > & {
   config?: Partial<BusinessConfig>;
-  emailOnNewReview?: boolean;
 };
 
 export type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";

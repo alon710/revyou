@@ -34,8 +34,7 @@ export async function getBusiness(userId: string, accountId: string, businessId:
 export async function upsertBusiness(
   userId: string,
   accountId: string,
-  data: Omit<BusinessCreate, "accountId" | "emailOnNewReview" | "config"> & {
-    emailOnNewReview?: boolean;
+  data: Omit<BusinessCreate, "accountId" | "config"> & {
     config?: Partial<BusinessConfig>;
   }
 ): Promise<Business> {
@@ -67,7 +66,6 @@ export async function upsertBusiness(
     mapsUrl: data.mapsUrl || null,
     description: data.description || null,
     photoUrl: data.photoUrl || null,
-    emailOnNewReview: data.emailOnNewReview ?? true,
     config: businessConfig,
   };
 

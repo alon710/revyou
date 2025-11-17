@@ -186,7 +186,10 @@ export async function POST(request: NextRequest) {
       console.log("AI reply awaiting approval", { reviewId });
     }
 
-    if (business.emailOnNewReview) {
+    const usersConfigsRepo = new UsersConfigsRepository();
+    const userConfig = await usersConfigsRepo.getOrCreate(userId);
+
+    if (userConfig.configs.EMAIL_ON_NEW_REVIEW) {
       try {
         console.log("Sending email notification", { reviewId, replyStatus });
 
@@ -202,8 +205,6 @@ export async function POST(request: NextRequest) {
           if (!recipientEmail) {
             console.error("User email not found", { userId });
           } else {
-            const usersConfigsRepo = new UsersConfigsRepository();
-            const userConfig = await usersConfigsRepo.getOrCreate(userId);
             const locale = (userConfig.configs.LOCALE || "en") as Locale;
 
             const status = replyStatus === "pending" ? "pending" : "posted";

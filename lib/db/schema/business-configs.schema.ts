@@ -34,8 +34,6 @@ export const businessConfigs = pgTable(
       }>()
       .notNull(),
 
-    emailOnNewReview: boolean("email_on_new_review").notNull().default(false),
-
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }),
   },

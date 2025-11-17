@@ -4,8 +4,7 @@ import { Business, BusinessConfig } from "@/lib/types";
 import BusinessIdentitySection from "@/components/dashboard/businesses/BusinessIdentitySection";
 import AIResponseSettingsSection from "@/components/dashboard/businesses/AIResponseSettingsSection";
 import StarRatingConfigSection from "@/components/dashboard/businesses/StarRatingConfigSection";
-import NotificationPreferencesSection from "@/components/dashboard/businesses/NotificationPreferencesSection";
-import { updateBusinessConfig, updateBusiness } from "@/lib/actions/businesses.actions";
+import { updateBusinessConfig } from "@/lib/actions/businesses.actions";
 
 interface BusinessDetailsCardProps {
   business: Business;
@@ -36,16 +35,6 @@ export default function BusinessDetailsCard({
     await handleSaveSection({ starConfigs });
   };
 
-  const handleSaveNotificationPreferences = async (data: { emailOnNewReview: boolean }) => {
-    try {
-      await updateBusiness(userId, accountId, business.id, data);
-      await onUpdate();
-    } catch (error) {
-      console.error("Error saving notification preferences:", error);
-      throw error;
-    }
-  };
-
   return (
     <div className="space-y-6">
       <BusinessIdentitySection
@@ -61,12 +50,6 @@ export default function BusinessDetailsCard({
         starConfigs={business.config.starConfigs}
         loading={loading}
         onSave={handleSaveStarConfigs}
-      />
-
-      <NotificationPreferencesSection
-        business={business}
-        loading={loading}
-        onSave={handleSaveNotificationPreferences}
       />
     </div>
   );

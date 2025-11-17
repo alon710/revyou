@@ -77,7 +77,6 @@ async function findBusinessByGoogleBusinessId(googleBusinessId: string): Promise
         signature: config.signature || undefined,
         starConfigs: config.starConfigs,
       },
-      emailOnNewReview: config.emailOnNewReview,
     };
 
     return {
