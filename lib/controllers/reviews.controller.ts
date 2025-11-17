@@ -1,6 +1,5 @@
-import type { ReviewFilters } from "@/lib/types";
+import type { ReviewFilters, Review, ReviewCreate } from "@/lib/types";
 import { ReviewsRepository } from "@/lib/db/repositories";
-import type { Review, ReviewInsert } from "@/lib/db/schema";
 
 export class ReviewsController {
   private repository: ReviewsRepository;
@@ -40,7 +39,7 @@ export class ReviewsController {
     return this.repository.findByGoogleReviewId(googleReviewId);
   }
 
-  async createReview(data: ReviewInsert): Promise<Review> {
+  async createReview(data: ReviewCreate): Promise<Review> {
     return this.repository.create(data);
   }
 }

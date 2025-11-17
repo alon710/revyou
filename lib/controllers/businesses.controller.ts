@@ -1,6 +1,5 @@
-import type { BusinessFilters } from "@/lib/types";
+import type { BusinessFilters, Business, BusinessCreate, BusinessUpdate } from "@/lib/types";
 import { BusinessesRepository } from "@/lib/db/repositories";
-import type { Business, BusinessInsert } from "@/lib/db/schema";
 import type { BusinessConfig as BusinessConfigType } from "@/lib/types";
 import { ConflictError, ForbiddenError } from "@/lib/api/errors";
 
@@ -25,9 +24,7 @@ export class BusinessesController {
     return business;
   }
 
-  async createBusiness(
-    data: BusinessInsert & { config: BusinessConfigType; emailOnNewReview: boolean }
-  ): Promise<Business> {
+  async createBusiness(data: BusinessCreate): Promise<Business> {
     const existingBusiness = await this.repository.findByGoogleBusinessId(data.googleBusinessId);
     if (existingBusiness) {
       throw new ConflictError("העסק כבר מחובר לחשבון זה");
@@ -35,10 +32,7 @@ export class BusinessesController {
     return this.repository.create(data);
   }
 
-  async upsertBusiness(
-    data: BusinessInsert & { config: BusinessConfigType; emailOnNewReview: boolean },
-    checkLimit?: () => Promise<boolean>
-  ): Promise<Business> {
+  async upsertBusiness(data: BusinessCreate, checkLimit?: () => Promise<boolean>): Promise<Business> {
     const existingBusiness = await this.repository.findByGoogleBusinessId(data.googleBusinessId);
 
     if (existingBusiness) {
@@ -59,8 +53,19 @@ export class BusinessesController {
     return this.repository.create(data);
   }
 
-  async updateBusiness(businessId: string, data: Partial<Business>): Promise<Business> {
+  async updateBusiness(businessId: string, data: BusinessUpdate): Promise<Business> {
     await this.getBusiness(businessId);
+
+    // Handle config updates separately if provided
+    if (data.config) {
+      await this.repository.updateConfig(businessId, data.config);
+      const { config, ...rest } = data;
+      if (Object.keys(rest).length > 0) {
+        return this.repository.update(businessId, rest);
+      }
+      return this.getBusiness(businessId);
+    }
+
     return this.repository.update(businessId, data);
   }
 

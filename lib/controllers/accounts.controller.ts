@@ -1,6 +1,5 @@
-import type { AccountFilters, AccountWithBusinesses, BusinessFilters } from "@/lib/types";
+import type { AccountFilters, AccountWithBusinesses, BusinessFilters, Account, AccountCreate } from "@/lib/types";
 import { AccountsRepository, BusinessesRepository } from "@/lib/db/repositories";
-import type { Account, AccountInsert } from "@/lib/db/schema";
 
 export class AccountsController {
   private repository: AccountsRepository;
@@ -21,7 +20,7 @@ export class AccountsController {
     return account;
   }
 
-  async createAccount(data: AccountInsert): Promise<Account> {
+  async createAccount(data: AccountCreate): Promise<Account> {
     const existing = await this.repository.findByEmail(data.email);
     if (existing) {
       return this.repository.update(existing.id, {

@@ -1,23 +1,7 @@
-import { Timestamp, WithFieldValue, PartialWithFieldValue } from "firebase/firestore";
+import type { UsersConfig, UsersConfigInsert } from "@/lib/db/schema";
 
-export interface UserCreate {
-  uid: string;
-  email: string;
-  displayName: string;
-  photoURL?: string;
-}
+export type UserConfig = UsersConfig;
 
-export interface User extends UserCreate {
-  createdAt: Timestamp;
-  updatedAt?: Timestamp;
-}
+export type UserConfigCreate = Omit<UsersConfigInsert, "id" | "createdAt" | "updatedAt">;
 
-export interface UserUpdate {
-  displayName?: string;
-  photoURL?: string;
-  updatedAt?: Timestamp;
-}
-
-// Write-time types that accept FieldValue sentinels for timestamp fields
-export type UserCreateInput = WithFieldValue<UserCreate>;
-export type UserUpdateInput = PartialWithFieldValue<UserUpdate>;
+export type UserConfigUpdate = Partial<Pick<UsersConfigInsert, "emailOnNewReview">>;

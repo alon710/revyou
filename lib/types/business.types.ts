@@ -1,4 +1,4 @@
-import { Timestamp, WithFieldValue, PartialWithFieldValue } from "firebase/firestore";
+import type { Business as DrizzleBusiness, BusinessInsert } from "@/lib/db/schema";
 
 export interface StarConfig {
   customInstructions: string;
@@ -27,40 +27,23 @@ export interface BusinessConfig {
   };
 }
 
-export interface BusinessCreate {
-  userId: string;
-  accountId: string;
-  googleBusinessId: string;
-  name: string;
-  address: string;
-  phoneNumber: string | null;
-  websiteUrl: string | null;
-  mapsUrl: string | null;
-  description: string | null;
-  photoUrl: string | null;
-  emailOnNewReview: boolean;
+export type Business = DrizzleBusiness & {
   config: BusinessConfig;
-}
+  emailOnNewReview: boolean;
+};
 
-export interface Business extends BusinessCreate {
-  id: string;
-  connected: boolean;
-  connectedAt: Timestamp;
-}
+export type BusinessCreate = Omit<BusinessInsert, "id" | "connected" | "connectedAt"> & {
+  config: BusinessConfig;
+  emailOnNewReview: boolean;
+};
 
-export interface BusinessUpdate {
-  name?: string;
-  phoneNumber?: string | null;
-  websiteUrl?: string | null;
-  description?: string | null;
-  photoUrl?: string | null;
-  emailOnNewReview?: boolean;
+export type BusinessUpdate = Partial<
+  Pick<BusinessInsert, "name" | "phoneNumber" | "websiteUrl" | "description" | "photoUrl" | "connected">
+> & {
   config?: Partial<BusinessConfig>;
-  connected?: boolean;
-}
+  emailOnNewReview?: boolean;
+};
 
-export type BusinessCreateInput = WithFieldValue<BusinessCreate>;
-export type BusinessUpdateInput = PartialWithFieldValue<BusinessUpdate>;
 export type ToneOfVoice = "friendly" | "formal" | "humorous" | "professional";
 export type LanguageMode = "hebrew" | "english" | "auto-detect";
 

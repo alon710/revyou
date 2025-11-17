@@ -1,28 +1,9 @@
-import { Timestamp, WithFieldValue, PartialWithFieldValue } from "firebase/firestore";
+import type { Account as DrizzleAccount, AccountInsert } from "@/lib/db/schema";
 import { Business } from "./business.types";
 
-export interface AccountCreate {
-  userId: string;
-  email: string;
-  accountName: string;
-  googleRefreshToken: string;
-  googleAccountName?: string;
-}
-
-export interface Account extends AccountCreate {
-  id: string;
-  connectedAt: Timestamp;
-  lastSynced?: Timestamp;
-}
-
-export interface AccountUpdate {
-  googleRefreshToken?: string;
-  lastSynced?: Timestamp;
-  googleAccountName?: string;
-}
-
-export type AccountCreateInput = WithFieldValue<AccountCreate>;
-export type AccountUpdateInput = PartialWithFieldValue<AccountUpdate>;
+export type Account = DrizzleAccount;
+export type AccountCreate = Omit<AccountInsert, "id" | "connectedAt" | "lastSynced">;
+export type AccountUpdate = Partial<Pick<AccountInsert, "googleRefreshToken" | "lastSynced" | "googleAccountName">>;
 
 export interface AccountWithBusinesses extends Account {
   businesses: Business[];

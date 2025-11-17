@@ -34,7 +34,7 @@ export async function getBusiness(userId: string, accountId: string, businessId:
 export async function upsertBusiness(
   userId: string,
   accountId: string,
-  data: Omit<BusinessCreate, "userId" | "accountId" | "emailOnNewReview" | "config"> & {
+  data: Omit<BusinessCreate, "accountId" | "emailOnNewReview" | "config"> & {
     emailOnNewReview?: boolean;
     config?: Partial<BusinessConfig>;
   }
@@ -58,7 +58,6 @@ export async function upsertBusiness(
   };
 
   const businessData: BusinessCreate = {
-    userId,
     accountId,
     googleBusinessId: data.googleBusinessId,
     name: data.name,

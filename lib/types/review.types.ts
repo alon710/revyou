@@ -1,44 +1,14 @@
-import { Timestamp, WithFieldValue, PartialWithFieldValue } from "firebase/firestore";
+import type { Review as DrizzleReview, ReviewInsert } from "@/lib/db/schema";
 
 export type ReplyStatus = "pending" | "rejected" | "posted" | "failed" | "quota_exceeded";
 
-export interface ReviewCreate {
-  userId: string;
-  accountId: string;
-  businessId: string;
-  googleReviewId: string;
-  googleReviewName?: string;
-  name: string;
-  photoUrl?: string;
-  rating: number;
-  text?: string;
-  date: Timestamp;
-  isAnonymous?: boolean;
-  replyStatus?: ReplyStatus;
-}
+export type Review = DrizzleReview;
 
-export interface Review extends Omit<ReviewCreate, "replyStatus"> {
-  id: string;
-  receivedAt: Timestamp;
-  updateTime?: Timestamp;
-  replyStatus: ReplyStatus;
-  aiReply?: string;
-  aiReplyGeneratedAt?: Timestamp;
-  postedReply?: string | null;
-  postedAt?: Timestamp | null;
-  postedBy?: string | null;
-}
+export type ReviewCreate = Omit<ReviewInsert, "id" | "receivedAt" | "updateTime">;
 
-export interface ReviewUpdate {
-  aiReply?: string;
-  aiReplyGeneratedAt?: Timestamp;
-  replyStatus?: ReplyStatus;
-  postedReply?: string | null;
-  postedAt?: Timestamp | null;
-  postedBy?: string | null;
-  updateTime?: Timestamp;
-}
-
-// Write-time types that accept FieldValue sentinels for timestamp fields
-export type ReviewCreateInput = WithFieldValue<ReviewCreate>;
-export type ReviewUpdateInput = PartialWithFieldValue<ReviewUpdate>;
+export type ReviewUpdate = Partial<
+  Pick<
+    ReviewInsert,
+    "aiReply" | "aiReplyGeneratedAt" | "replyStatus" | "postedReply" | "postedAt" | "postedBy" | "updateTime"
+  >
+>;

@@ -1,20 +1,11 @@
-import type { PlanTier } from "@/lib/subscriptions/plans";
+import type { Subscription as DrizzleSubscription, SubscriptionInsert } from "@/lib/db/schema";
 
 export type SubscriptionStatus = "active" | "canceled" | "expired";
 
 export type BillingInterval = "monthly" | "yearly";
 
-export interface Subscription {
-  id: string;
-  userId: string;
-  planTier: PlanTier;
-  status: SubscriptionStatus;
-  billingInterval: BillingInterval;
-  createdAt: Date;
-  currentPeriodStart: Date;
-  currentPeriodEnd: Date;
-  canceledAt?: Date | null;
-}
+export type Subscription = DrizzleSubscription;
 
-export type SubscriptionCreate = Omit<Subscription, "id">;
-export type SubscriptionUpdate = Partial<Omit<Subscription, "id" | "userId">>;
+export type SubscriptionCreate = Omit<SubscriptionInsert, "id" | "createdAt">;
+
+export type SubscriptionUpdate = Partial<Omit<SubscriptionInsert, "id" | "accountId" | "createdAt">>;
