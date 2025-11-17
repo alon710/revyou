@@ -13,7 +13,11 @@ export const createClient = cache(async () => {
       setAll(cookiesToSet) {
         try {
           cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
-        } catch {}
+        } catch (error) {
+          if (process.env.NODE_ENV === "development") {
+            console.error("[DEBUG] Error setting cookies", error);
+          }
+        }
       },
     },
   });
