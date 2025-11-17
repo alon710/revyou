@@ -114,9 +114,7 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
     return businessList;
   }
 
-  async create(
-    data: BusinessInsert & { config: BusinessConfigType }
-  ): Promise<BusinessWithConfig> {
+  async create(data: BusinessInsert & { config: BusinessConfigType }): Promise<BusinessWithConfig> {
     return await db.transaction(async (tx) => {
       const [business] = await tx.insert(businesses).values(data).returning();
 
