@@ -54,8 +54,5 @@ firebase-debug.log
 /types/**/*.js
 /types/**/*.js.map
 
-# Drizzle
-/drizzle
-
 # Supabase
 /supabase/.temp/*
