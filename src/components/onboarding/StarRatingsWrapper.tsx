@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "@/i18n/routing";
 import {
@@ -42,8 +42,10 @@ export function StarRatingsWrapper({ accountId, businessId }: StarRatingsWrapper
 
   const [saving, setSaving] = useState(false);
 
-  setAccountId(accountId);
-  setBusinessId(businessId);
+  useEffect(() => {
+    setAccountId(accountId);
+    setBusinessId(businessId);
+  }, [accountId, businessId, setAccountId, setBusinessId]);
 
   const handleFormChange = (rating: 1 | 2 | 3 | 4 | 5, config: { autoReply: boolean; customInstructions: string }) => {
     const updatedData = {
