@@ -170,6 +170,3 @@ export const serverEnv = new Proxy({} as z.infer<typeof serverSchema>, {
 
 export type ClientEnv = z.infer<typeof clientSchema>;
 export type ServerEnv = z.infer<typeof serverSchema>;
-
-export const INTERNAL_API_SECRET = serverEnv.INTERNAL_API_SECRET;
-export const TOKEN_ENCRYPTION_SECRET = serverEnv.TOKEN_ENCRYPTION_SECRET;
