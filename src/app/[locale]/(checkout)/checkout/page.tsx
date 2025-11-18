@@ -1,4 +1,4 @@
-import { CheckoutForm } from "./CheckoutForm";
+import { CheckoutForm } from "@/components/checkout/CheckoutForm";
 import type { PlanTier } from "@/lib/subscriptions/plans";
 import type { BillingInterval } from "@/lib/types/subscription.types";
 
