@@ -30,7 +30,6 @@ export default function AIResponseSettingsSection({ config, loading, onSave }: A
 
   return (
     <EditableSection
-      editButtonLabel={tCommon("edit")}
       title={t("title")}
       description={t("description")}
       icon={<Sparkles className="h-5 w-5" />}

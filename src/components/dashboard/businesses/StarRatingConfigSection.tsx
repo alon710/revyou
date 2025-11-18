@@ -20,7 +20,6 @@ export default function StarRatingConfigSection({ starConfigs, loading, onSave }
 
   return (
     <EditableSection
-      editButtonLabel={tCommon("edit")}
       title={t("title")}
       description={t("description")}
       icon={<Star className="h-5 w-5" />}

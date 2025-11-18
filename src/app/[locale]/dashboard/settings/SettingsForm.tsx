@@ -45,7 +45,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
 
   return (
     <EditableSection
-      editButtonLabel={tCommon("edit")}
       title={t("title")}
       description={t("description")}
       icon={<Globe className="h-5 w-5" />}

@@ -29,7 +29,6 @@ export default function BusinessIdentitySection({ config, business, loading, onS
 
   return (
     <EditableSection
-      editButtonLabel={tCommon("edit")}
       title={t("title")}
       description={t("description")}
       icon={<Building2 className="h-5 w-5" />}
