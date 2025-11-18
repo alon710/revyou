@@ -6,8 +6,9 @@ import { SettingsForm } from "./SettingsForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function SettingsPage() {
-  const t = await getTranslations("dashboard.accountSettings");
+export default async function SettingsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "dashboard.accountSettings" });
 
   const settings = await getUserSettings();
 

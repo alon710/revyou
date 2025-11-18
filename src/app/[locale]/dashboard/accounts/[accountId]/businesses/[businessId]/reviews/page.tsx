@@ -11,14 +11,14 @@ import { ReviewsList } from "./ReviewsList";
 export const dynamic = "force-dynamic";
 
 interface BusinessReviewsPageProps {
-  params: Promise<{ accountId: string; businessId: string }>;
+  params: Promise<{ locale: string; accountId: string; businessId: string }>;
 }
 
 export default async function BusinessReviewsPage({ params }: BusinessReviewsPageProps) {
-  const { accountId, businessId } = await params;
+  const { locale, accountId, businessId } = await params;
   const { userId } = await getAuthenticatedUserId();
-  const t = await getTranslations("dashboard.reviews");
-  const tCommon = await getTranslations("common");
+  const t = await getTranslations({ locale, namespace: "dashboard.reviews" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
 
   const [business, reviews] = await Promise.all([
     getBusiness(userId, accountId, businessId),

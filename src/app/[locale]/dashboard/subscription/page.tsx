@@ -10,9 +10,10 @@ import { UpgradeButton } from "./UpgradeButton";
 
 export const dynamic = "force-dynamic";
 
-export default async function SubscriptionPage() {
+export default async function SubscriptionPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const { userId } = await getAuthenticatedUserId();
-  const t = await getTranslations("dashboard.subscription");
+  const t = await getTranslations({ locale, namespace: "dashboard.subscription" });
 
   const [stats, subscription] = await Promise.all([getUserStats(userId), getActiveSubscription()]);
 

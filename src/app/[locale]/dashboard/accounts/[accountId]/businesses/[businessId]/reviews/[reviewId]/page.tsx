@@ -10,14 +10,14 @@ import { ReviewCardWrapper } from "./ReviewCardWrapper";
 export const dynamic = "force-dynamic";
 
 interface ReviewPageProps {
-  params: Promise<{ accountId: string; businessId: string; reviewId: string }>;
+  params: Promise<{ locale: string; accountId: string; businessId: string; reviewId: string }>;
 }
 
 export default async function ReviewPage({ params }: ReviewPageProps) {
-  const { accountId, businessId, reviewId } = await params;
+  const { locale, accountId, businessId, reviewId } = await params;
   const { userId } = await getAuthenticatedUserId();
-  const t = await getTranslations("dashboard.reviewDetail");
-  const tCommon = await getTranslations("common");
+  const t = await getTranslations({ locale, namespace: "dashboard.reviewDetail" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
 
   const [business, review] = await Promise.all([
     getBusiness(userId, accountId, businessId),

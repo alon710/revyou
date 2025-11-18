@@ -6,8 +6,9 @@ import { getAccountsWithBusinesses } from "@/lib/actions/accounts.actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
-  const t = await getTranslations("dashboard.home");
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "dashboard.home" });
   const accountsWithBusinesses = await getAccountsWithBusinesses();
 
   return (

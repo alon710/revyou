@@ -12,12 +12,12 @@ export const dynamic = "force-dynamic";
 export default async function BusinessSettingsPage({
   params,
 }: {
-  params: Promise<{ accountId: string; businessId: string }>;
+  params: Promise<{ locale: string; accountId: string; businessId: string }>;
 }) {
-  const { accountId, businessId } = await params;
+  const { locale, accountId, businessId } = await params;
   const { userId } = await getAuthenticatedUserId();
-  const t = await getTranslations("dashboard.settings");
-  const tCommon = await getTranslations("common");
+  const t = await getTranslations({ locale, namespace: "dashboard.settings" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
 
   const business = await getBusiness(userId, accountId, businessId);
 
