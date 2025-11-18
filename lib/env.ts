@@ -86,6 +86,10 @@ function validateServerEnv() {
     throw new Error("❌ Server environment variables cannot be accessed on the client side");
   }
 
+  if (process.env.SKIP_ENV_VALIDATION === "true") {
+    return {} as z.infer<typeof serverSchema>;
+  }
+
   const serverEnv = {
     NODE_ENV: process.env.NODE_ENV,
     DATABASE_URL: process.env.DATABASE_URL,
