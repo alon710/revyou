@@ -1,11 +1,10 @@
-import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { defaultLocale, type Locale, isValidLocale } from "@/i18n/config";
 
 const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
 
-export const getAuthenticatedUserId = cache(async (): Promise<{ userId: string }> => {
+export async function getAuthenticatedUserId(): Promise<{ userId: string }> {
   try {
     const supabase = await createClient();
     const {
@@ -22,7 +21,7 @@ export const getAuthenticatedUserId = cache(async (): Promise<{ userId: string }
     console.error("Failed to authenticate user:", error);
     throw new Error("Failed to authenticate user");
   }
-});
+}
 
 export function getLocaleFromRequest(request: NextRequest): Locale {
   const localeCookie = request.cookies.get(LOCALE_COOKIE_NAME);
