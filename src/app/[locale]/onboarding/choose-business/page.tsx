@@ -14,6 +14,7 @@ import { RadioGroup } from "@/components/ui/radio-group";
 import { useTranslations } from "next-intl";
 import { getGoogleBusinesses, subscribeToGoogleNotifications } from "@/lib/actions/google.actions";
 import { upsertBusiness } from "@/lib/actions/businesses.actions";
+import { getDefaultBusinessConfig } from "@/lib/utils/business-config";
 
 export default function OnboardingStep3() {
   const { user } = useAuth();
@@ -75,6 +76,8 @@ export default function OnboardingStep3() {
       setConnecting(true);
       setError(null);
 
+      const defaults = getDefaultBusinessConfig();
+
       const business = await upsertBusiness(user.id, accountId, {
         googleBusinessId: selectedBusiness.id,
         name: selectedBusiness.name,
@@ -84,6 +87,7 @@ export default function OnboardingStep3() {
         mapsUrl: selectedBusiness.mapsUrl,
         description: selectedBusiness.description,
         photoUrl: selectedBusiness.photoUrl,
+        ...defaults,
       });
 
       try {

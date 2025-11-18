@@ -67,9 +67,9 @@ export default function OnboardingBusinessDetails() {
         setFormData(businessDetails);
       } else {
         setFormData({
-          name: biz.config?.name || "",
-          description: biz.config?.description || "",
-          phoneNumber: biz.config?.phoneNumber || "",
+          name: biz.name || "",
+          description: biz.description || "",
+          phoneNumber: biz.phoneNumber || "",
         });
       }
     } catch (error) {

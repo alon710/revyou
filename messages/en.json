@@ -30,7 +30,12 @@
     "dangerZone": "Danger Zone",
     "irreversibleWarning": "This action is irreversible!",
     "irreversibleActions": "Irreversible actions that will affect your account",
-    "additionalInfo": "Additional Information"
+    "additionalInfo": "Additional Information",
+    "errorState": {
+      "title": "Something went wrong!",
+      "description": "An error occurred while loading this page.",
+      "retry": "Try again"
+    }
   },
   "errors": {
     "general": "Something went wrong",

@@ -1,6 +1,6 @@
 "use client";
 
-import { BusinessConfig } from "@/lib/types";
+import { Business } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
 import { StarRating } from "@/components/ui/StarRating";
@@ -9,9 +9,9 @@ import { StarRatingConfigForm } from "@/components/dashboard/businesses/forms/St
 import { useTranslations } from "next-intl";
 
 interface StarRatingConfigSectionProps {
-  starConfigs: BusinessConfig["starConfigs"];
+  starConfigs: Business["starConfigs"];
   loading?: boolean;
-  onSave: (starConfigs: BusinessConfig["starConfigs"]) => Promise<void>;
+  onSave: (starConfigs: Business["starConfigs"]) => Promise<void>;
 }
 
 export default function StarRatingConfigSection({ starConfigs, loading, onSave }: StarRatingConfigSectionProps) {
@@ -27,7 +27,7 @@ export default function StarRatingConfigSection({ starConfigs, loading, onSave }
       modalDescription={t("modalDescription")}
       loading={loading}
       data={starConfigs}
-      onSave={(configs) => onSave(configs as BusinessConfig["starConfigs"])}
+      onSave={(configs) => onSave(configs as Business["starConfigs"])}
       successMessage={tCommon("saveSuccess")}
       errorMessage={tCommon("saveError")}
       cancelLabel={tCommon("cancel")}

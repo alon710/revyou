@@ -30,7 +30,12 @@
     "dangerZone": "אזור מסוכן",
     "irreversibleWarning": "פעולה זו אינה ניתנת לביטול!",
     "irreversibleActions": "פעולות בלתי הפיכות שישפיעו על החשבון שלך",
-    "additionalInfo": "מידע נוסף"
+    "additionalInfo": "מידע נוסף",
+    "errorState": {
+      "title": "משהו השתבש!",
+      "description": "אירעה שגיאה בטעינת הדף.",
+      "retry": "נסה שוב"
+    }
   },
   "navigation": {
     "dashboard": {

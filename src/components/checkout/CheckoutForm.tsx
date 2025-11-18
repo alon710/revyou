@@ -46,6 +46,7 @@ export function CheckoutForm({ plan, period }: CheckoutFormProps) {
       hasStartedProcessing.current = true;
 
       async function processMockCheckout() {
+        if (!plan || !period) return;
         try {
           const result = await createSubscription(plan, period);
 

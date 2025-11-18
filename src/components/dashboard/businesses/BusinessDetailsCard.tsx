@@ -1,6 +1,6 @@
 "use client";
 
-import { Business, BusinessConfig } from "@/lib/types";
+import { Business } from "@/lib/types";
 import BusinessIdentitySection from "@/components/dashboard/businesses/BusinessIdentitySection";
 import AIResponseSettingsSection from "@/components/dashboard/businesses/AIResponseSettingsSection";
 import StarRatingConfigSection from "@/components/dashboard/businesses/StarRatingConfigSection";
@@ -21,9 +21,9 @@ export default function BusinessDetailsCard({
   loading = false,
   onUpdate,
 }: BusinessDetailsCardProps) {
-  const handleSaveSection = async (partialConfig: Partial<BusinessConfig>) => {
+  const handleSaveSection = async (partialData: Partial<Business>) => {
     try {
-      await updateBusinessConfig(userId, accountId, business.id, partialConfig);
+      await updateBusinessConfig(userId, accountId, business.id, partialData);
       await onUpdate();
     } catch (error) {
       console.error("Error saving config:", error);
@@ -31,26 +31,17 @@ export default function BusinessDetailsCard({
     }
   };
 
-  const handleSaveStarConfigs = async (starConfigs: BusinessConfig["starConfigs"]) => {
+  const handleSaveStarConfigs = async (starConfigs: Business["starConfigs"]) => {
     await handleSaveSection({ starConfigs });
   };
 
   return (
     <div className="space-y-6">
-      <BusinessIdentitySection
-        config={business.config}
-        business={business}
-        loading={loading}
-        onSave={handleSaveSection}
-      />
+      <BusinessIdentitySection business={business} loading={loading} onSave={handleSaveSection} />
 
-      <AIResponseSettingsSection config={business.config} loading={loading} onSave={handleSaveSection} />
+      <AIResponseSettingsSection business={business} loading={loading} onSave={handleSaveSection} />
 
-      <StarRatingConfigSection
-        starConfigs={business.config.starConfigs}
-        loading={loading}
-        onSave={handleSaveStarConfigs}
-      />
+      <StarRatingConfigSection starConfigs={business.starConfigs} loading={loading} onSave={handleSaveStarConfigs} />
     </div>
   );
 }

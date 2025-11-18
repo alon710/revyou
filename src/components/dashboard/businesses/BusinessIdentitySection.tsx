@@ -1,6 +1,6 @@
 "use client";
 
-import { Business, BusinessConfig } from "@/lib/types";
+import { Business } from "@/lib/types";
 import { DashboardCardField } from "@/components/ui/dashboard-card";
 import { Building2 } from "lucide-react";
 import EditableSection from "@/components/dashboard/shared/EditableSection";
@@ -11,20 +11,19 @@ import {
 import { useTranslations } from "next-intl";
 
 interface BusinessIdentitySectionProps {
-  config: BusinessConfig;
   business: Business;
   loading?: boolean;
-  onSave: (config: Partial<BusinessConfig>) => Promise<void>;
+  onSave: (data: Partial<Business>) => Promise<void>;
 }
 
-export default function BusinessIdentitySection({ config, business, loading, onSave }: BusinessIdentitySectionProps) {
+export default function BusinessIdentitySection({ business, loading, onSave }: BusinessIdentitySectionProps) {
   const t = useTranslations("dashboard.businesses.sections.identity");
   const tCommon = useTranslations("common");
 
   const formData: BusinessDetailsFormData = {
-    name: config.name || "",
-    description: config.description || "",
-    phoneNumber: config.phoneNumber || "",
+    name: business.name || "",
+    description: business.description || "",
+    phoneNumber: business.phoneNumber || "",
   };
 
   return (
@@ -45,17 +44,17 @@ export default function BusinessIdentitySection({ config, business, loading, onS
       renderDisplay={() => (
         <>
           <DashboardCardField label={t("fields.name")}>
-            <p className="text-sm font-medium">{config.name || business.name}</p>
+            <p className="text-sm font-medium">{business.name}</p>
           </DashboardCardField>
 
           <DashboardCardField label={t("fields.description")}>
             <p className="text-sm bg-muted/50 p-3 rounded-md whitespace-pre-wrap leading-relaxed">
-              {config.description || t("noDescription")}
+              {business.description || t("noDescription")}
             </p>
           </DashboardCardField>
 
           <DashboardCardField label={t("fields.phone")}>
-            <p className="text-sm font-medium">{config.phoneNumber || t("noPhone")}</p>
+            <p className="text-sm font-medium">{business.phoneNumber || t("noPhone")}</p>
           </DashboardCardField>
         </>
       )}

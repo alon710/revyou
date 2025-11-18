@@ -5,10 +5,10 @@ import { StarRating } from "@/components/ui/StarRating";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { TooltipIcon } from "@/components/ui/tooltip";
-import { BusinessConfig } from "@/lib/types";
+import { Business } from "@/lib/types";
 import { useTranslations } from "next-intl";
 
-export type StarRatingConfigFormData = BusinessConfig["starConfigs"];
+export type StarRatingConfigFormData = Business["starConfigs"];
 
 interface StarRatingConfigFormProps {
   values: StarRatingConfigFormData;
