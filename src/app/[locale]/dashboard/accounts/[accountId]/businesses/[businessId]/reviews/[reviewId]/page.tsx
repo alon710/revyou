@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { getBusiness } from "@/lib/actions/businesses.actions";
 import { getReview } from "@/lib/actions/reviews.actions";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
-import { ReviewDetailClient } from "./ReviewDetailClient";
+import { ReviewCardWithRefresh } from "@/components/dashboard/reviews/ReviewCard";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +32,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
       <PageHeader title={t("reviewFrom", { reviewerName: review.name })} description={business.name} />
 
       <div className="mt-6">
-        <ReviewDetailClient review={review} accountId={accountId} businessId={businessId} userId={userId} />
+        <ReviewCardWithRefresh review={review} accountId={accountId} businessId={businessId} userId={userId} />
       </div>
     </PageContainer>
   );

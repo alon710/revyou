@@ -20,6 +20,7 @@ import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/routing";
 
 interface ReviewCardProps {
   review: Review;
@@ -235,5 +236,26 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
         loadingText={t("publishDialog.loading")}
       />
     </>
+  );
+}
+
+interface ReviewCardWithRefreshProps {
+  review: Review;
+  accountId: string;
+  userId: string;
+  businessId: string;
+}
+
+export function ReviewCardWithRefresh({ review, accountId, userId, businessId }: ReviewCardWithRefreshProps) {
+  const router = useRouter();
+
+  return (
+    <ReviewCard
+      review={review}
+      accountId={accountId}
+      userId={userId}
+      businessId={businessId}
+      onUpdate={() => router.refresh()}
+    />
   );
 }
