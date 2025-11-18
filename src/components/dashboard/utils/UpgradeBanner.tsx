@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { useSubscription } from "@/hooks/useSubscription";
+import { useSubscription } from "@/hooks/use-subscription";
 import { useUIStore } from "@/lib/store/ui-store";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";

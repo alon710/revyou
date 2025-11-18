@@ -1,5 +1,6 @@
 import { OAuth2Client } from "google-auth-library";
 import * as Iron from "@hapi/iron";
+import { env } from "@/lib/env";
 
 const GOOGLE_BUSINESS_PROFILE_API_SCOPES = [
   "https://www.googleapis.com/auth/business.manage",
@@ -8,9 +9,9 @@ const GOOGLE_BUSINESS_PROFILE_API_SCOPES = [
 ];
 
 function createOAuthClient(): OAuth2Client {
-  const clientId = process.env.GOOGLE_CLIENT_ID!;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET!;
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/google/callback`;
+  const clientId = env.GOOGLE_CLIENT_ID;
+  const clientSecret = env.GOOGLE_CLIENT_SECRET;
+  const redirectUri = `${env.NEXT_PUBLIC_APP_URL}/api/google/callback`;
 
   return new OAuth2Client(clientId, clientSecret, redirectUri);
 }
@@ -42,7 +43,7 @@ export async function exchangeCodeForTokens(code: string) {
 }
 
 export async function encryptToken(token: string): Promise<string> {
-  const secret = process.env.TOKEN_ENCRYPTION_SECRET!;
+  const secret = env.TOKEN_ENCRYPTION_SECRET;
 
   try {
     return await Iron.seal(token, secret, Iron.defaults);

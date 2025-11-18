@@ -3,7 +3,7 @@
 import { Link } from "@/i18n/routing";
 import { Logo } from "@/components/ui/Logo";
 import { NavbarContainer } from "./NavbarContainer";
-import { useNavigation } from "@/hooks/useNavigation";
+import { useNavigation } from "@/hooks/use-navigation";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { useTranslations } from "next-intl";
 

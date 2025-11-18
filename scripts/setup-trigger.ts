@@ -1,20 +1,21 @@
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { sql } from "drizzle-orm";
+import { env } from "../lib/env";
 
 async function main() {
   console.log("Database Trigger Setup");
   console.log("===================\n");
 
-  if (!process.env.DATABASE_URL) {
+  if (!env.DATABASE_URL) {
     throw new Error("DATABASE_URL environment variable is not set");
   }
 
-  if (!process.env.INTERNAL_API_SECRET) {
+  if (!env.INTERNAL_API_SECRET) {
     throw new Error("INTERNAL_API_SECRET environment variable is not set");
   }
 
-  const client = postgres(process.env.DATABASE_URL, {
+  const client = postgres(env.DATABASE_URL, {
     max: 1,
   });
 
@@ -56,7 +57,7 @@ async function main() {
             url := 'https://bottie.ai/api/internal/process-review',
             headers := jsonb_build_object(
               'Content-Type', 'application/json',
-              'X-Internal-Secret', '${process.env.INTERNAL_API_SECRET}'
+              'X-Internal-Secret', '${env.INTERNAL_API_SECRET}'
             ),
             body := jsonb_build_object(
               'userId', v_user_id::text,

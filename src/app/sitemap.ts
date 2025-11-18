@@ -1,8 +1,9 @@
 import { MetadataRoute } from "next";
 import { locales } from "@/i18n/config";
+import { env } from "@/lib/env";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL!;
+  const baseUrl = env.NEXT_PUBLIC_APP_URL;
 
   const pages = [
     { path: "", priority: 1.0, changeFrequency: "daily" as const },

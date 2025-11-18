@@ -3,7 +3,7 @@
 import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { isAnchorLink } from "@/lib/navigation";
-import { useNavigation } from "@/hooks/useNavigation";
+import { useNavigation } from "@/hooks/use-navigation";
 import { useTranslations } from "next-intl";
 
 export function BottomNavigation() {
