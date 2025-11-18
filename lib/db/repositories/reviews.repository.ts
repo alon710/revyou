@@ -3,7 +3,7 @@ import { db } from "@/lib/db/client";
 import { reviews, userAccounts, type Review, type ReviewInsert } from "@/lib/db/schema";
 import type { ReviewFilters } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
-import { NotFoundError } from "@/lib/api/errors";
+import { NotFoundError, ForbiddenError } from "@/lib/api/errors";
 
 export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Partial<Review>> {
   constructor(
@@ -66,6 +66,10 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
   }
 
   async create(data: ReviewInsert): Promise<Review> {
+    if (!(await this.verifyAccess())) {
+      throw new ForbiddenError("Access denied");
+    }
+
     const reviewData: ReviewInsert = {
       ...data,
       accountId: this.accountId,
