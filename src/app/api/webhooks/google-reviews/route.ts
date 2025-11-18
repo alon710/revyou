@@ -6,7 +6,6 @@ import { getReview, starRatingToNumber, parseGoogleTimestamp } from "@/lib/googl
 import { decryptToken } from "@/lib/google/business-profile";
 import { ReviewsRepository } from "@/lib/db/repositories/reviews.repository";
 import { AccountsRepository } from "@/lib/db/repositories/accounts.repository";
-import { serverEnv } from "@/lib/env";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -140,8 +139,8 @@ export async function POST(request: NextRequest) {
     const googleReview = await getReview(
       reviewName,
       refreshToken,
-      serverEnv.GOOGLE_CLIENT_ID,
-      serverEnv.GOOGLE_CLIENT_SECRET
+      process.env.GOOGLE_CLIENT_ID!,
+      process.env.GOOGLE_CLIENT_SECRET!
     );
     console.log("Fetched Google review:", {
       reviewId: googleReview.reviewId,
@@ -187,7 +186,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Internal-Secret": serverEnv.INTERNAL_API_SECRET,
+        "X-Internal-Secret": process.env.INTERNAL_API_SECRET!,
       },
       body: JSON.stringify({
         userId,

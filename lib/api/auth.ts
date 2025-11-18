@@ -2,7 +2,6 @@ import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { defaultLocale, type Locale, isValidLocale } from "@/i18n/config";
-import { clientEnv } from "@/lib/env";
 
 const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
 
@@ -42,7 +41,7 @@ export function createLocaleAwareRedirect(
   searchParams?: Record<string, string>
 ): NextResponse {
   const locale = getLocaleFromRequest(request);
-  const baseUrl = clientEnv.NEXT_PUBLIC_APP_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL!;
 
   const localePath = `/${locale}${path}`;
 

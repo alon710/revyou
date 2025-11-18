@@ -13,7 +13,6 @@ import { UsersConfigsRepository } from "@/lib/db/repositories/users-configs.repo
 import { SubscriptionsController } from "@/lib/controllers/subscriptions.controller";
 import type { ReplyStatus, StarConfig } from "@/lib/types";
 import type { Locale } from "@/i18n/config";
-import { clientEnv, serverEnv } from "@/lib/env";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,7 +27,7 @@ interface ProcessReviewRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    const isTestMode = serverEnv.NODE_ENV === "test";
+    const isTestMode = process.env.NODE_ENV === "test";
 
     if (!isTestMode) {
       const internalSecret = request.headers.get("X-Internal-Secret");
@@ -38,7 +37,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Unauthorized: Missing authentication header" }, { status: 401 });
       }
 
-      if (internalSecret !== serverEnv.INTERNAL_API_SECRET) {
+      if (internalSecret !== process.env.INTERNAL_API_SECRET) {
         console.error("Forbidden internal API call: X-Internal-Secret header invalid");
         return NextResponse.json({ error: "Forbidden: Invalid authentication credentials" }, { status: 403 });
       }
@@ -110,7 +109,7 @@ export async function POST(request: NextRequest) {
     try {
       const prompt = buildReplyPrompt(business, review);
 
-      aiReply = await generateWithGemini(serverEnv.GEMINI_API_KEY, prompt);
+      aiReply = await generateWithGemini(process.env.GEMINI_API_KEY!, prompt);
 
       await reviewsRepo.update(reviewId, {
         aiReply,
@@ -157,8 +156,8 @@ export async function POST(request: NextRequest) {
             reviewName,
             aiReply,
             decryptedToken,
-            serverEnv.GOOGLE_CLIENT_ID,
-            serverEnv.GOOGLE_CLIENT_SECRET
+            process.env.GOOGLE_CLIENT_ID!,
+            process.env.GOOGLE_CLIENT_SECRET!
           );
 
           await reviewsRepo.update(reviewId, {
@@ -224,15 +223,15 @@ export async function POST(request: NextRequest) {
                 reviewText: review.text || "",
                 aiReply,
                 status,
-                appBaseUrl: clientEnv.NEXT_PUBLIC_APP_URL,
+                appBaseUrl: process.env.NEXT_PUBLIC_APP_URL!,
                 reviewId,
               },
               locale
             );
 
-            const resend = new Resend(serverEnv.RESEND_API_KEY);
+            const resend = new Resend(process.env.RESEND_API_KEY!);
             await resend.emails.send({
-              from: serverEnv.RESEND_FROM_EMAIL,
+              from: process.env.RESEND_FROM_EMAIL!,
               to: recipientEmail,
               subject,
               html,

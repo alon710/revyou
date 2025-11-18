@@ -7,6 +7,7 @@ RevYou is a SaaS platform that automates responses to Google Business Profile re
 ## Features
 
 ### AI-Powered Review Responses
+
 - **Smart AI Generation** - Powered by Google's Gemini 2.0 Flash model for natural, context-aware replies
 - **Customizable Tone** - Choose from friendly, formal, humorous, or professional tones
 - **Multi-Language Support** - English and Hebrew with automatic language detection and RTL support
@@ -15,6 +16,7 @@ RevYou is a SaaS platform that automates responses to Google Business Profile re
 - **Auto-Post or Approve** - Automatically post replies or review before publishing
 
 ### Google Business Profile Integration
+
 - **OAuth 2.0 Authentication** - Secure Google account connection
 - **Real-Time Notifications** - Instant review alerts via Google Pub/Sub webhooks
 - **Auto-Fetch Reviews** - Automatic review synchronization
@@ -22,6 +24,7 @@ RevYou is a SaaS platform that automates responses to Google Business Profile re
 - **Multi-Location Support** - Manage multiple business locations from one account
 
 ### Subscription Management
+
 Three flexible pricing tiers powered by Paddle:
 
 - **Free Tier** - 1 business, 10 reviews/month, manual approval required
@@ -29,6 +32,7 @@ Three flexible pricing tiers powered by Paddle:
 - **Pro Tier** - Unlimited businesses and reviews
 
 ### Multi-Business Management
+
 - Multiple Google Business Profile accounts
 - Multiple locations per account
 - Per-business AI configuration
@@ -36,6 +40,7 @@ Three flexible pricing tiers powered by Paddle:
 - Independent connection management
 
 ### Intuitive Onboarding
+
 1. Connect your Google account
 2. Choose business locations to manage
 3. Configure AI settings (tone, language, emojis)
@@ -43,6 +48,7 @@ Three flexible pricing tiers powered by Paddle:
 5. Start receiving and responding to reviews
 
 ### Comprehensive Dashboard
+
 - Review monitoring and management
 - Review statistics and analytics
 - AI reply approval and editing workflow
@@ -53,6 +59,7 @@ Three flexible pricing tiers powered by Paddle:
 ## Tech Stack
 
 ### Frontend
+
 - **Next.js 15.5.6** - React framework with App Router
 - **React 19.1** - UI library
 - **TypeScript 5.9.3** - Type safety
@@ -64,12 +71,14 @@ Three flexible pricing tiers powered by Paddle:
 - **Recharts** - Data visualization
 
 ### Backend
+
 - **Next.js API Routes** - Serverless functions
 - **Supabase** - Authentication and database
 - **Drizzle ORM** - Type-safe PostgreSQL ORM
 - **PostgreSQL** - Database with Row Level Security
 
 ### External Services
+
 - **Google Gemini AI** - AI response generation
 - **Google OAuth 2.0** - Account authentication
 - **Google Business Profile API** - Business data and reviews
@@ -157,6 +166,7 @@ See [`.env.example`](.env.example) for a complete list of required environment v
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
 - npm, yarn, pnpm, or bun
 - PostgreSQL database (via Supabase)
@@ -166,12 +176,14 @@ See [`.env.example`](.env.example) for a complete list of required environment v
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd revyou
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 # or
@@ -183,12 +195,14 @@ bun install
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env.local
 # Edit .env.local with your configuration
 ```
 
 4. Run database migrations:
+
 ```bash
 npm run db:push
 # or
@@ -196,6 +210,7 @@ yarn db:push
 ```
 
 5. Start the development server:
+
 ```bash
 npm run dev
 # or
@@ -238,6 +253,7 @@ npm run db:studio
 ### Code Quality
 
 The project uses:
+
 - **ESLint** - Code linting
 - **Prettier** - Code formatting
 - **TypeScript** - Type checking
@@ -246,6 +262,7 @@ The project uses:
 ## Key Workflows
 
 ### Review Processing Flow
+
 1. Google sends webhook to `/api/webhooks/google-reviews`
 2. Application fetches full review data from Google API
 3. Review is stored in database
@@ -256,6 +273,7 @@ The project uses:
 8. Email notification is sent to user
 
 ### Authentication Flow
+
 - Supabase Auth for user authentication
 - Google OAuth for business profile access
 - Encrypted token storage using @hapi/iron
@@ -265,6 +283,7 @@ The project uses:
 ## Internationalization
 
 The application supports multiple languages:
+
 - **English (en)** - Default language
 - **Hebrew (he)** - Full RTL support
 
@@ -297,6 +316,7 @@ See [Next.js deployment documentation](https://nextjs.org/docs/app/building-your
 ### Environment Variables
 
 Ensure all required environment variables are configured in your deployment platform:
+
 - Database connection strings
 - API keys and secrets
 - OAuth credentials

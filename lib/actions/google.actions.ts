@@ -4,7 +4,6 @@ import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { AccountsController, BusinessesController } from "@/lib/controllers";
 import { listAllBusinesses, decryptToken, subscribeToNotifications } from "@/lib/google/business-profile";
 import type { GoogleBusinessProfileBusiness } from "@/lib/types";
-import { clientEnv, serverEnv } from "@/lib/env";
 
 export async function getGoogleBusinesses(userId: string, accountId: string): Promise<GoogleBusinessProfileBusiness[]> {
   const { userId: authenticatedUserId } = await getAuthenticatedUserId();
@@ -58,8 +57,8 @@ export async function subscribeToGoogleNotifications(
 
   const googleAccountName = businesses[0].googleBusinessId.split("/locations")[0];
 
-  const projectId = clientEnv.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-  const topicName = serverEnv.PUBSUB_TOPIC_NAME;
+  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!;
+  const topicName = process.env.PUBSUB_TOPIC_NAME!;
   const pubsubTopic = `projects/${projectId}/topics/${topicName}`;
 
   const refreshToken = await decryptToken(account.googleRefreshToken);
