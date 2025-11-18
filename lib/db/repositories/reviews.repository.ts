@@ -1,4 +1,4 @@
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, gte, lte } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { reviews, userAccounts, type Review, type ReviewInsert } from "@/lib/db/schema";
 import type { ReviewFilters } from "@/lib/types";
@@ -50,6 +50,14 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
 
     if (filters.ids && filters.ids.length > 0) {
       conditions.push(inArray(reviews.id, filters.ids));
+    }
+
+    if (filters.dateFrom) {
+      conditions.push(gte(reviews.receivedAt, filters.dateFrom));
+    }
+
+    if (filters.dateTo) {
+      conditions.push(lte(reviews.receivedAt, filters.dateTo));
     }
 
     return await db.query.reviews.findMany({
