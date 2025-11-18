@@ -38,7 +38,7 @@ export async function verifyPubSubToken(
       return { valid: false, error: "Token missing email claim" };
     }
 
-    if (!payload.email.includes("gserviceaccount.com")) {
+    if (!payload.email.endsWith("@gserviceaccount.com")) {
       return { valid: false, error: `Email is not a Google service account: ${payload.email}` };
     }
 
