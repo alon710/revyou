@@ -21,15 +21,21 @@ async function main() {
   const db = drizzle(client);
 
   try {
-    console.log("Creating pg_net extension...");
-    await db.execute(sql`CREATE EXTENSION IF NOT EXISTS pg_net;`);
+    console.log("Creating extensions schema...");
+    await db.execute(sql`CREATE SCHEMA IF NOT EXISTS extensions;`);
+    console.log("✓ extensions schema created");
+
+    console.log("\nCreating pg_net extension in extensions schema...");
+    await db.execute(sql`CREATE EXTENSION IF NOT EXISTS pg_net SCHEMA extensions;`);
     console.log("✓ pg_net extension created");
 
     console.log("\nCreating trigger_process_review function...");
     await db.execute(
       sql.raw(`
         CREATE OR REPLACE FUNCTION trigger_process_review()
-        RETURNS TRIGGER AS $$
+        RETURNS TRIGGER
+        SET search_path = public, extensions, pg_temp
+        AS $$
         DECLARE
           v_user_id uuid;
         BEGIN
@@ -46,7 +52,7 @@ async function main() {
           END IF;
 
           -- Make async HTTP POST request to process-review endpoint
-          PERFORM net.http_post(
+          PERFORM extensions.net.http_post(
             url := 'https://bottie.ai/api/internal/process-review',
             headers := jsonb_build_object(
               'Content-Type', 'application/json',
