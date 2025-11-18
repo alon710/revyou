@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AIResponseSettingsForm,
   AIResponseSettingsFormData,
@@ -46,8 +46,10 @@ export function AISettingsWrapper({ accountId, businessId }: AISettingsWrapperPr
     };
   });
 
-  setAccountId(accountId);
-  setBusinessId(businessId);
+  useEffect(() => {
+    if (accountId) setAccountId(accountId);
+    if (businessId) setBusinessId(businessId);
+  }, [accountId, businessId, setAccountId, setBusinessId]);
 
   const handleFormChange = (
     field: keyof AIResponseSettingsFormData,

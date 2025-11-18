@@ -4,13 +4,9 @@ import { ConflictError, ForbiddenError } from "@/lib/api/errors";
 
 export class BusinessesController {
   private repository: BusinessesRepository;
-  private userId: string;
-  private accountId: string;
 
   constructor(userId: string, accountId: string) {
     this.repository = new BusinessesRepository(userId, accountId);
-    this.userId = userId;
-    this.accountId = accountId;
   }
 
   async getBusinesses(filters: BusinessFilters = {}): Promise<Business[]> {
@@ -63,6 +59,7 @@ export class BusinessesController {
   }
 
   async disconnectBusiness(businessId: string): Promise<Business> {
+    await this.getBusiness(businessId);
     return this.repository.disconnect(businessId);
   }
 

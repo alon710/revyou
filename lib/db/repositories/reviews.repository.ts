@@ -85,6 +85,10 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
   }
 
   async update(reviewId: string, data: Partial<Review>): Promise<Review> {
+    if (!(await this.verifyAccess())) {
+      throw new NotFoundError("Review not found or access denied");
+    }
+
     const [updated] = await db
       .update(reviews)
       .set({ ...data, updateTime: new Date() })
@@ -101,6 +105,10 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
   }
 
   async delete(reviewId: string): Promise<void> {
+    if (!(await this.verifyAccess())) {
+      throw new NotFoundError("Review not found or access denied");
+    }
+
     const [deleted] = await db
       .delete(reviews)
       .where(

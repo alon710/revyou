@@ -3,6 +3,7 @@ import { db } from "@/lib/db/client";
 import { businesses, userAccounts, type Business, type BusinessInsert } from "@/lib/db/schema";
 import type { BusinessFilters } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
+import { NotFoundError } from "@/lib/api/errors";
 
 export class BusinessesRepository extends BaseRepository<BusinessInsert, Business, Partial<Business>> {
   constructor(
@@ -58,19 +59,36 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
   }
 
   async update(businessId: string, data: Partial<Business>): Promise<Business> {
-    await db
+    if (!(await this.verifyAccess())) {
+      throw new NotFoundError("Access denied");
+    }
+
+    const [updated] = await db
       .update(businesses)
       .set({ ...data, updatedAt: new Date() })
-      .where(eq(businesses.id, businessId));
+      .where(and(eq(businesses.id, businessId), eq(businesses.accountId, this.accountId)))
+      .returning();
 
-    const updated = await this.get(businessId);
-    if (!updated) throw new Error("Business not found after update");
+    if (!updated) {
+      throw new NotFoundError("Business not found or access denied");
+    }
 
     return updated;
   }
 
   async delete(businessId: string): Promise<void> {
-    await db.delete(businesses).where(eq(businesses.id, businessId));
+    if (!(await this.verifyAccess())) {
+      throw new NotFoundError("Access denied");
+    }
+
+    const [deleted] = await db
+      .delete(businesses)
+      .where(and(eq(businesses.id, businessId), eq(businesses.accountId, this.accountId)))
+      .returning();
+
+    if (!deleted) {
+      throw new NotFoundError("Business not found or access denied");
+    }
   }
 
   async findByGoogleBusinessId(googleBusinessId: string): Promise<Business | null> {
@@ -84,6 +102,10 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
   }
 
   async disconnect(businessId: string): Promise<Business> {
+    if (!(await this.verifyAccess())) {
+      throw new NotFoundError("Access denied");
+    }
+
     return this.update(businessId, { connected: false });
   }
 
@@ -94,6 +116,10 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
       mapsUrl: string | null;
     }
   ): Promise<Business> {
+    if (!(await this.verifyAccess())) {
+      throw new NotFoundError("Access denied");
+    }
+
     return this.update(businessId, {
       address: data.address,
       mapsUrl: data.mapsUrl,

@@ -19,7 +19,7 @@ const envSchema = z.object({
   GEMINI_API_KEY: z.string().min(1),
 
   RESEND_API_KEY: z.string().min(1),
-  RESEND_FROM_EMAIL: z.string().email(),
+  RESEND_FROM_EMAIL: z.string(),
 
   TOKEN_ENCRYPTION_SECRET: z.string().min(32),
   INTERNAL_API_SECRET: z.string().min(32),
