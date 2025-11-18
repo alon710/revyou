@@ -1,8 +1,7 @@
-import { boolean, pgTable, text, timestamp, uuid, index, pgPolicy } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, pgTable, text, timestamp, uuid, index, pgPolicy } from "drizzle-orm/pg-core";
 import { sql, relations } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
 import { accounts } from "./accounts.schema";
-import { businessConfigs } from "./business-configs.schema";
 import { reviews } from "./reviews.schema";
 
 export const businesses = pgTable(
@@ -22,9 +21,28 @@ export const businesses = pgTable(
     description: text("description"),
     photoUrl: text("photo_url"),
 
+    toneOfVoice: text("tone_of_voice").notNull().default("friendly"),
+    useEmojis: boolean("use_emojis").notNull().default(true),
+    languageMode: text("language_mode").notNull().default("auto-detect"),
+    languageInstructions: text("language_instructions"),
+    maxSentences: integer("max_sentences"),
+    allowedEmojis: jsonb("allowed_emojis").$type<string[]>(),
+    signature: text("signature"),
+    starConfigs: jsonb("star_configs")
+      .$type<{
+        1: { customInstructions: string; autoReply: boolean };
+        2: { customInstructions: string; autoReply: boolean };
+        3: { customInstructions: string; autoReply: boolean };
+        4: { customInstructions: string; autoReply: boolean };
+        5: { customInstructions: string; autoReply: boolean };
+      }>()
+      .notNull(),
+
     connected: boolean("connected").notNull().default(true),
 
     connectedAt: timestamp("connected_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }),
   },
   (table) => [
     index("businesses_account_id_idx").on(table.accountId),
@@ -76,10 +94,6 @@ export const businessesRelations = relations(businesses, ({ one, many }) => ({
   account: one(accounts, {
     fields: [businesses.accountId],
     references: [accounts.id],
-  }),
-  config: one(businessConfigs, {
-    fields: [businesses.id],
-    references: [businessConfigs.businessId],
   }),
   reviews: many(reviews),
 }));

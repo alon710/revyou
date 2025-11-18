@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import { businesses, type ReviewInsert } from "@/lib/db/schema";
+import { businesses, type ReviewInsert, type Business } from "@/lib/db/schema";
 import { getReview, starRatingToNumber, parseGoogleTimestamp } from "@/lib/google/reviews";
 import { decryptToken } from "@/lib/google/business-profile";
-import type { BusinessWithConfig } from "@/lib/db/repositories/businesses.repository";
 import { ReviewsRepository } from "@/lib/db/repositories/reviews.repository";
 import { AccountsRepository } from "@/lib/db/repositories/accounts.repository";
 import { serverEnv } from "@/lib/env";
@@ -30,7 +29,7 @@ interface PubSubNotificationData {
 interface BusinessLookupResult {
   userId: string;
   accountId: string;
-  business: BusinessWithConfig;
+  business: Business;
 }
 
 async function findBusinessByGoogleBusinessId(googleBusinessId: string): Promise<BusinessLookupResult | null> {
@@ -40,7 +39,6 @@ async function findBusinessByGoogleBusinessId(googleBusinessId: string): Promise
     const business = await db.query.businesses.findFirst({
       where: eq(businesses.googleBusinessId, googleBusinessId),
       with: {
-        config: true,
         account: {
           with: {
             userAccounts: true,
@@ -54,11 +52,6 @@ async function findBusinessByGoogleBusinessId(googleBusinessId: string): Promise
       return null;
     }
 
-    if (!business.config) {
-      console.error("Business config not found for business:", business.id);
-      return null;
-    }
-
     if (!business.account.userAccounts || business.account.userAccounts.length === 0) {
       console.error("No user accounts found for business:", business.id);
       return null;
@@ -66,27 +59,10 @@ async function findBusinessByGoogleBusinessId(googleBusinessId: string): Promise
 
     const userAccount = business.account.userAccounts[0];
 
-    const businessWithConfig: BusinessWithConfig = {
-      ...business,
-      config: {
-        name: business.config.name,
-        description: business.config.description || undefined,
-        phoneNumber: business.config.phoneNumber || undefined,
-        toneOfVoice: business.config.toneOfVoice as "friendly" | "formal" | "humorous" | "professional",
-        useEmojis: business.config.useEmojis,
-        languageMode: business.config.languageMode as "hebrew" | "english" | "auto-detect",
-        languageInstructions: business.config.languageInstructions || undefined,
-        maxSentences: business.config.maxSentences || undefined,
-        allowedEmojis: business.config.allowedEmojis || undefined,
-        signature: business.config.signature || undefined,
-        starConfigs: business.config.starConfigs,
-      },
-    };
-
     return {
       userId: userAccount.userId,
       accountId: business.accountId,
-      business: businessWithConfig,
+      business: business,
     };
   } catch (error) {
     console.error("Error finding business:", error);

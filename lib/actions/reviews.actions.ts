@@ -108,7 +108,7 @@ export async function generateReviewReply(
   const businessController = new BusinessesController(userId, accountId);
   const business = await businessController.getBusiness(businessId);
 
-  const prompt = buildReplyPrompt(business.config, review, business.name, business.config.phoneNumber);
+  const prompt = buildReplyPrompt(business, review);
   const aiReply = await generateAIReply(prompt);
 
   const updatedReview = await reviewController.updateAiReply(reviewId, aiReply);

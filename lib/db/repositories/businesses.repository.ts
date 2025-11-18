@@ -1,38 +1,10 @@
 import { eq, and, inArray } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import {
-  businesses,
-  businessConfigs,
-  userAccounts,
-  type Business,
-  type BusinessInsert,
-  type BusinessConfigInsert,
-  type BusinessConfig,
-} from "@/lib/db/schema";
-import type { BusinessFilters, BusinessConfig as BusinessConfigType } from "@/lib/types";
+import { businesses, userAccounts, type Business, type BusinessInsert } from "@/lib/db/schema";
+import type { BusinessFilters } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 
-export type BusinessWithConfig = Business & {
-  config: BusinessConfigType;
-};
-
-function transformConfig(config: BusinessConfig): BusinessConfigType {
-  return {
-    name: config.name,
-    description: config.description || undefined,
-    phoneNumber: config.phoneNumber || undefined,
-    toneOfVoice: config.toneOfVoice as "friendly" | "formal" | "humorous" | "professional",
-    useEmojis: config.useEmojis,
-    languageMode: config.languageMode as "hebrew" | "english" | "auto-detect",
-    languageInstructions: config.languageInstructions || undefined,
-    maxSentences: config.maxSentences || undefined,
-    allowedEmojis: config.allowedEmojis || undefined,
-    signature: config.signature || undefined,
-    starConfigs: config.starConfigs,
-  };
-}
-
-export class BusinessesRepository extends BaseRepository<BusinessInsert, BusinessWithConfig, Partial<Business>> {
+export class BusinessesRepository extends BaseRepository<BusinessInsert, Business, Partial<Business>> {
   constructor(
     private userId: string,
     private accountId: string
@@ -47,26 +19,17 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
     return !!access;
   }
 
-  async get(businessId: string): Promise<BusinessWithConfig | null> {
+  async get(businessId: string): Promise<Business | null> {
     if (!(await this.verifyAccess())) return null;
 
     const result = await db.query.businesses.findFirst({
       where: and(eq(businesses.id, businessId), eq(businesses.accountId, this.accountId)),
-      with: { config: true },
     });
 
-    if (!result || !result.config) {
-      if (result) throw new Error(`Business ${businessId} has no configuration`);
-      return null;
-    }
-
-    return {
-      ...result,
-      config: transformConfig(result.config),
-    };
+    return result || null;
   }
 
-  async list(filters: BusinessFilters = {}): Promise<BusinessWithConfig[]> {
+  async list(filters: BusinessFilters = {}): Promise<Business[]> {
     if (!(await this.verifyAccess())) return [];
 
     const conditions = [eq(businesses.accountId, this.accountId)];
@@ -81,53 +44,24 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
 
     const results = await db.query.businesses.findMany({
       where: and(...conditions),
-      with: { config: true },
     });
 
-    return results.map((result) => {
-      if (!result.config) {
-        throw new Error(`Business ${result.id} has no configuration`);
-      }
-
-      return {
-        ...result,
-        config: transformConfig(result.config),
-      };
-    });
+    return results;
   }
 
-  async create(data: BusinessInsert & { config: BusinessConfigType }): Promise<BusinessWithConfig> {
+  async create(data: BusinessInsert): Promise<Business> {
     if (!(await this.verifyAccess())) throw new Error("Access denied");
 
-    return await db.transaction(async (tx) => {
-      const [business] = await tx.insert(businesses).values(data).returning();
+    const [business] = await db.insert(businesses).values(data).returning();
 
-      const configData: BusinessConfigInsert = {
-        businessId: business.id,
-        name: data.config.name,
-        description: data.config.description,
-        phoneNumber: data.config.phoneNumber,
-        toneOfVoice: data.config.toneOfVoice,
-        useEmojis: data.config.useEmojis,
-        languageMode: data.config.languageMode,
-        languageInstructions: data.config.languageInstructions,
-        maxSentences: data.config.maxSentences,
-        allowedEmojis: data.config.allowedEmojis,
-        signature: data.config.signature,
-        starConfigs: data.config.starConfigs,
-      };
-
-      const [config] = await tx.insert(businessConfigs).values(configData).returning();
-
-      return {
-        ...business,
-        config: transformConfig(config),
-      };
-    });
+    return business;
   }
 
-  async update(businessId: string, data: Partial<Business>): Promise<BusinessWithConfig> {
-    await db.update(businesses).set(data).where(eq(businesses.id, businessId));
+  async update(businessId: string, data: Partial<Business>): Promise<Business> {
+    await db
+      .update(businesses)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(businesses.id, businessId));
 
     const updated = await this.get(businessId);
     if (!updated) throw new Error("Business not found after update");
@@ -139,23 +73,17 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
     await db.delete(businesses).where(eq(businesses.id, businessId));
   }
 
-  async findByGoogleBusinessId(googleBusinessId: string): Promise<BusinessWithConfig | null> {
+  async findByGoogleBusinessId(googleBusinessId: string): Promise<Business | null> {
     if (!(await this.verifyAccess())) return null;
 
     const result = await db.query.businesses.findFirst({
       where: and(eq(businesses.googleBusinessId, googleBusinessId), eq(businesses.accountId, this.accountId)),
-      with: { config: true },
     });
 
-    if (!result || !result.config) return null;
-
-    return {
-      ...result,
-      config: transformConfig(result.config),
-    };
+    return result || null;
   }
 
-  async disconnect(businessId: string): Promise<BusinessWithConfig> {
+  async disconnect(businessId: string): Promise<Business> {
     return this.update(businessId, { connected: false });
   }
 
@@ -165,7 +93,7 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
       address: string;
       mapsUrl: string | null;
     }
-  ): Promise<BusinessWithConfig> {
+  ): Promise<Business> {
     await db
       .update(businesses)
       .set({
@@ -173,43 +101,12 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
         mapsUrl: data.mapsUrl,
         connected: true,
         connectedAt: new Date(),
+        updatedAt: new Date(),
       })
       .where(eq(businesses.id, businessId));
 
     const updated = await this.get(businessId);
     if (!updated) throw new Error("Business not found after reconnect");
-
-    return updated;
-  }
-
-  async updateConfig(businessId: string, configUpdate: Partial<BusinessConfigType>): Promise<BusinessWithConfig> {
-    const business = await this.get(businessId);
-    if (!business) {
-      throw new Error("Business not found");
-    }
-
-    const updatedConfig = { ...business.config, ...configUpdate };
-
-    await db
-      .update(businessConfigs)
-      .set({
-        name: updatedConfig.name,
-        description: updatedConfig.description,
-        phoneNumber: updatedConfig.phoneNumber,
-        toneOfVoice: updatedConfig.toneOfVoice,
-        useEmojis: updatedConfig.useEmojis,
-        languageMode: updatedConfig.languageMode,
-        languageInstructions: updatedConfig.languageInstructions,
-        maxSentences: updatedConfig.maxSentences,
-        allowedEmojis: updatedConfig.allowedEmojis,
-        signature: updatedConfig.signature,
-        starConfigs: updatedConfig.starConfigs,
-        updatedAt: new Date(),
-      })
-      .where(eq(businessConfigs.businessId, businessId));
-
-    const updated = await this.get(businessId);
-    if (!updated) throw new Error("Business not found after config update");
 
     return updated;
   }

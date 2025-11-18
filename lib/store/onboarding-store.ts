@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { BusinessConfig } from "@/lib/types";
 import type { BusinessDetailsFormData } from "@/components/dashboard/businesses/forms/BusinessDetailsForm";
 import type { AIResponseSettingsFormData } from "@/components/dashboard/businesses/forms/AIResponseSettingsForm";
 import type { StarRatingConfigFormData } from "@/components/dashboard/businesses/forms/StarRatingConfigForm";
@@ -21,7 +20,7 @@ interface OnboardingState {
   setStarRatings: (data: StarRatingConfigFormData) => void;
 
   reset: () => void;
-  getCombinedConfig: () => Partial<BusinessConfig>;
+  getCombinedConfig: () => ReturnType<typeof getDefaultBusinessConfig>;
 }
 
 const getInitialState = () => {
@@ -67,12 +66,10 @@ export const useOnboardingStore = create<OnboardingState>()(
         const state = get();
         const defaults = getDefaultBusinessConfig();
 
-        const config: Partial<BusinessConfig> = {
-          name: state.businessDetails?.name ?? defaults.name,
-          description: state.businessDetails?.description ?? defaults.description,
-          phoneNumber: state.businessDetails?.phoneNumber ?? defaults.phoneNumber,
+        const config = {
           toneOfVoice: state.aiSettings?.toneOfVoice ?? defaults.toneOfVoice,
           languageMode: state.aiSettings?.languageMode ?? defaults.languageMode,
+          useEmojis: true,
           allowedEmojis: state.aiSettings?.allowedEmojis ?? defaults.allowedEmojis,
           maxSentences: state.aiSettings?.maxSentences ?? defaults.maxSentences,
           signature: state.aiSettings?.signature ?? defaults.signature,

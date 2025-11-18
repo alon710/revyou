@@ -1,6 +1,5 @@
 import type { BusinessFilters, Business, BusinessCreate, BusinessUpdate } from "@/lib/types";
 import { BusinessesRepository } from "@/lib/db/repositories";
-import type { BusinessConfig as BusinessConfigType } from "@/lib/types";
 import { ConflictError, ForbiddenError } from "@/lib/api/errors";
 
 export class BusinessesController {
@@ -36,7 +35,7 @@ export class BusinessesController {
     const existingBusiness = await this.repository.findByGoogleBusinessId(data.googleBusinessId);
 
     if (existingBusiness) {
-      await this.repository.updateConfig(existingBusiness.id, data.config);
+      await this.repository.update(existingBusiness.id, data);
       return this.repository.reconnect(existingBusiness.id, {
         address: data.address,
         mapsUrl: data.mapsUrl ?? null,
@@ -55,16 +54,6 @@ export class BusinessesController {
 
   async updateBusiness(businessId: string, data: BusinessUpdate): Promise<Business> {
     await this.getBusiness(businessId);
-
-    if (data.config) {
-      await this.repository.updateConfig(businessId, data.config);
-      const { config: _config, ...rest } = data;
-      if (Object.keys(rest).length > 0) {
-        return this.repository.update(businessId, rest);
-      }
-      return this.getBusiness(businessId);
-    }
-
     return this.repository.update(businessId, data);
   }
 
@@ -84,9 +73,5 @@ export class BusinessesController {
 
   async findByGoogleBusinessId(googleBusinessId: string): Promise<Business | null> {
     return this.repository.findByGoogleBusinessId(googleBusinessId);
-  }
-
-  async updateConfig(businessId: string, config: Partial<BusinessConfigType>): Promise<Business> {
-    return this.repository.updateConfig(businessId, config);
   }
 }

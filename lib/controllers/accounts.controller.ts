@@ -85,7 +85,6 @@ export class AccountsController {
           with: {
             businesses: {
               where: businessConditions.length > 0 ? and(...businessConditions) : undefined,
-              with: { config: true },
             },
           },
         },
@@ -94,24 +93,7 @@ export class AccountsController {
 
     return accountsWithBusinesses.map((ua) => ({
       ...ua.account,
-      businesses: ua.account.businesses.map((b) => ({
-        ...b,
-        config: b.config
-          ? {
-              name: b.config.name,
-              description: b.config.description || undefined,
-              phoneNumber: b.config.phoneNumber || undefined,
-              toneOfVoice: b.config.toneOfVoice as "friendly" | "formal" | "humorous" | "professional",
-              useEmojis: b.config.useEmojis,
-              languageMode: b.config.languageMode as "hebrew" | "english" | "auto-detect",
-              languageInstructions: b.config.languageInstructions || undefined,
-              maxSentences: b.config.maxSentences || undefined,
-              allowedEmojis: b.config.allowedEmojis || undefined,
-              signature: b.config.signature || undefined,
-              starConfigs: b.config.starConfigs,
-            }
-          : undefined,
-      })),
+      businesses: ua.account.businesses,
     })) as AccountWithBusinesses[];
   }
 }

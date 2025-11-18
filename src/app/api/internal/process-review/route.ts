@@ -103,12 +103,12 @@ export async function POST(request: NextRequest) {
       limit: quotaCheck.limit,
     });
 
-    const starConfig: StarConfig = business.config.starConfigs[review.rating as 1 | 2 | 3 | 4 | 5];
+    const starConfig: StarConfig = business.starConfigs[review.rating as 1 | 2 | 3 | 4 | 5];
 
     console.log("Generating AI reply", { reviewId });
     let aiReply: string;
     try {
-      const prompt = buildReplyPrompt(business.config, review, business.name, business.config.phoneNumber);
+      const prompt = buildReplyPrompt(business, review);
 
       aiReply = await generateWithGemini(serverEnv.GEMINI_API_KEY, prompt);
 
