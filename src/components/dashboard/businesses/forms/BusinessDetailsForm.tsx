@@ -51,7 +51,7 @@ export function BusinessDetailsForm({
           disabled={disabled}
           dir={dir}
         />
-        {businessNamePlaceholder && <p className="text-xs text-muted-foreground text-end">{t("name.helper")}</p>}
+        {businessNamePlaceholder && <p className="text-xs text-muted-foreground text-start">{t("name.helper")}</p>}
       </div>
 
       <div className="space-y-2">
@@ -75,7 +75,7 @@ export function BusinessDetailsForm({
           className="resize-none"
           dir={dir}
         />
-        <p className="text-xs text-muted-foreground text-end">{t("description.helper")}</p>
+        <p className="text-xs text-muted-foreground text-start">{t("description.helper")}</p>
       </div>
 
       <div className="space-y-2">
@@ -98,7 +98,7 @@ export function BusinessDetailsForm({
           disabled={disabled}
           dir="ltr"
         />
-        <p className="text-xs text-muted-foreground text-end">{t("phone.helper")}</p>
+        <p className="text-xs text-muted-foreground text-start">{t("phone.helper")}</p>
       </div>
     </div>
   );
