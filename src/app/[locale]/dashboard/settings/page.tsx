@@ -2,7 +2,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { getTranslations } from "next-intl/server";
 import { getUserSettings } from "@/lib/actions/users.actions";
-import { SettingsForm } from "./SettingsForm";
+import { SettingsForm } from "@/components/dashboard/settings/SettingsForm";
 
 export const dynamic = "force-dynamic";
 

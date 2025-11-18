@@ -6,7 +6,7 @@ import { getActiveSubscription } from "@/lib/actions/subscription.actions";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import type { PlanTier } from "@/lib/subscriptions/plans";
 import { SubscriptionInfo } from "@/components/dashboard/dashboard/SubscriptionInfo";
-import { UpgradeButton } from "./UpgradeButton";
+import { UpgradeButton } from "@/components/dashboard/subscription/UpgradeButton";
 
 export const dynamic = "force-dynamic";
 

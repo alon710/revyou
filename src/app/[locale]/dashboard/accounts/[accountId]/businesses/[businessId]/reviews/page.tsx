@@ -6,7 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { getBusiness } from "@/lib/actions/businesses.actions";
 import { getReviews } from "@/lib/actions/reviews.actions";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
-import { ReviewsList } from "./ReviewsList";
+import { ReviewsList } from "@/components/dashboard/reviews/ReviewsList";
 
 export const dynamic = "force-dynamic";
 
