@@ -90,7 +90,46 @@
         "manual_approval": "Manual Approval",
         "auto_publish": "Auto Publish",
         "whatsapp_support": "WhatsApp Support"
-      }
+      },
+      "plans": {
+        "free": {
+          "name": "Free",
+          "description": "Get started with basic features",
+          "features": {
+            "0": "1 business location",
+            "1": "10 AI replies per month",
+            "2": "Manual approval required",
+            "3": "Email support"
+          }
+        },
+        "basic": {
+          "name": "Basic",
+          "description": "Perfect for small businesses",
+          "features": {
+            "0": "Up to 3 business locations",
+            "1": "100 AI replies per month",
+            "2": "Auto-post replies",
+            "3": "Priority email support",
+            "4": "Custom tone of voice",
+            "5": "Emoji customization"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "For growing businesses",
+          "features": {
+            "0": "Unlimited business locations",
+            "1": "Unlimited AI replies",
+            "2": "Auto-post replies",
+            "3": "WhatsApp support",
+            "4": "Custom tone of voice",
+            "5": "Emoji customization",
+            "6": "Advanced analytics",
+            "7": "Priority support"
+          }
+        }
+      },
+      "yearlySavings": "Save {percentage}% yearly"
     },
     "faq": {
       "title": "Frequently Asked Questions",

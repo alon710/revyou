@@ -91,8 +91,19 @@ export function getPlan(planTier: PlanTier): Plan {
   return PLANS[planTier];
 }
 
-export function getAllPlans(): Plan[] {
-  return Object.values(PLANS);
+export function getAllPlans(t?: (key: string) => string): Plan[] {
+  const plans = Object.values(PLANS);
+
+  if (!t) {
+    return plans;
+  }
+
+  return plans.map((plan) => ({
+    ...plan,
+    name: t(`plans.${plan.id}.name`),
+    description: t(`plans.${plan.id}.description`),
+    features: plan.features.map((_, index) => t(`plans.${plan.id}.features.${index}`)),
+  }));
 }
 
 export function calculateYearlySavings(planTier: PlanTier): number {

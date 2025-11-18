@@ -19,7 +19,7 @@ export function Pricing() {
   const { user } = useAuth();
   const t = useTranslations("landing.pricing");
 
-  const plans = getAllPlans();
+  const plans = getAllPlans(t);
 
   const handleCheckout = async (plan: Plan) => {
     setLoadingPlanId(plan.id);
@@ -193,7 +193,9 @@ export function Pricing() {
                         <span className="text-muted-foreground">{t("perMonth")}</span>
                       </div>
                       {showYearlyDiscount && getSavingsPercentage(plan) > 0 && (
-                        <span className="text-xs text-primary mt-1">Save {getSavingsPercentage(plan)}% yearly</span>
+                        <span className="text-xs text-primary mt-1">
+                          {t("yearlySavings", { percentage: getSavingsPercentage(plan) })}
+                        </span>
                       )}
                     </motion.div>
                   </div>
