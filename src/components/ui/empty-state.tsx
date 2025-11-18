@@ -1,32 +1,17 @@
-import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/routing";
-import {
-  DashboardCard,
-  DashboardCardContent,
-  DashboardCardDescription,
-  DashboardCardHeader,
-  DashboardCardTitle,
-} from "./dashboard-card";
+import { DashboardCard, DashboardCardDescription, DashboardCardHeader, DashboardCardTitle } from "./dashboard-card";
 
 interface EmptyStateProps {
   title: string;
   description: string;
-  buttonText: string;
-  buttonLink: string;
 }
 
-export function EmptyState({ title, description, buttonText, buttonLink }: EmptyStateProps) {
+export function EmptyState({ title, description }: EmptyStateProps) {
   return (
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>{title}</DashboardCardTitle>
         <DashboardCardDescription>{description}</DashboardCardDescription>
       </DashboardCardHeader>
-      <DashboardCardContent>
-        <Button asChild>
-          <Link href={buttonLink}>{buttonText}</Link>
-        </Button>
-      </DashboardCardContent>
     </DashboardCard>
   );
 }

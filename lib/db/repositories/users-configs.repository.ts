@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import {
   usersConfigs,
@@ -18,15 +18,31 @@ export class UsersConfigsRepository {
 
   async getOrCreate(userId: string): Promise<UsersConfig> {
     try {
-      return await this.create({
-        userId,
-        configs: {
-          EMAIL_ON_NEW_REVIEW: true,
-          LOCALE: "en",
-        },
-      });
+      const [config] = await db
+        .insert(usersConfigs)
+        .values({
+          userId,
+          configs: {
+            EMAIL_ON_NEW_REVIEW: true,
+            LOCALE: "en",
+          },
+        })
+        .onConflictDoUpdate({
+          target: usersConfigs.userId,
+          set: { updatedAt: sql`now()` },
+        })
+        .returning();
+
+      if (!config) {
+        throw new Error("Failed to get or create user configuration");
+      }
+
+      return config;
     } catch (error) {
-      throw error;
+      console.error("Error in getOrCreate:", error);
+      throw new Error(
+        `Failed to get or create user configuration: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 

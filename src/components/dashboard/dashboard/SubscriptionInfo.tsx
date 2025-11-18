@@ -12,7 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import type { PlanLimits, PlanTier } from "@/lib/subscriptions/plans";
 import type { Subscription } from "@/lib/types/subscription.types";
-import { formatDate, getCurrentBillingPeriod } from "@/lib/subscription/billing-period";
+import { formatDate, getCurrentBillingPeriod } from "@/lib/subscriptions/billing-period";
 import { useTranslations, useLocale } from "next-intl";
 import type { Locale } from "@/i18n/config";
 

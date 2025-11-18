@@ -3,6 +3,7 @@ import { db } from "@/lib/db/client";
 import { reviews, userAccounts, type Review, type ReviewInsert } from "@/lib/db/schema";
 import type { ReviewFilters } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
+import { NotFoundError } from "@/lib/api/errors";
 
 export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Partial<Review>> {
   constructor(
@@ -59,6 +60,8 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
   async create(data: ReviewInsert): Promise<Review> {
     const reviewData: ReviewInsert = {
       ...data,
+      accountId: this.accountId,
+      businessId: this.businessId,
       replyStatus: data.replyStatus || "pending",
     };
 
@@ -73,18 +76,29 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     const [updated] = await db
       .update(reviews)
       .set({ ...data, updateTime: new Date() })
-      .where(eq(reviews.id, reviewId))
+      .where(
+        and(eq(reviews.id, reviewId), eq(reviews.accountId, this.accountId), eq(reviews.businessId, this.businessId))
+      )
       .returning();
 
     if (!updated) {
-      throw new Error("Review not found");
+      throw new NotFoundError("Review not found or access denied");
     }
 
     return updated;
   }
 
   async delete(reviewId: string): Promise<void> {
-    await db.delete(reviews).where(eq(reviews.id, reviewId));
+    const [deleted] = await db
+      .delete(reviews)
+      .where(
+        and(eq(reviews.id, reviewId), eq(reviews.accountId, this.accountId), eq(reviews.businessId, this.businessId))
+      )
+      .returning();
+
+    if (!deleted) {
+      throw new NotFoundError("Review not found or access denied");
+    }
   }
 
   async updateAiReply(reviewId: string, aiReply: string): Promise<Review> {

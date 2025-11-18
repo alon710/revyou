@@ -16,7 +16,6 @@ import { MapPin } from "lucide-react";
 import Image from "next/image";
 import { EmptyState } from "@/components/ui/empty-state";
 import { AccountAvatarDropdown } from "./AccountAvatarDropdown";
-
 interface AccountBusinessesListProps {
   accounts: AccountWithBusinesses[];
 }
@@ -37,14 +36,7 @@ export function AccountBusinessesList({ accounts }: AccountBusinessesListProps) 
   };
 
   if (accounts.length === 0) {
-    return (
-      <EmptyState
-        title={t("noConnectedAccounts")}
-        description={t("noConnectedAccountsDescription")}
-        buttonText={t("connectAccount")}
-        buttonLink="/onboarding/connect-account"
-      />
-    );
+    return <EmptyState title={t("noConnectedAccounts")} description={t("noConnectedAccountsDescription")} />;
   }
 
   return (

@@ -19,7 +19,6 @@ export default async function BusinessReviewsPage({ params }: BusinessReviewsPag
   const { userId } = await getAuthenticatedUserId();
   const t = await getTranslations({ locale, namespace: "dashboard.reviews" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
-
   const [business, reviews] = await Promise.all([
     getBusiness(userId, accountId, businessId),
     getReviews(userId, accountId, businessId, { sort: { orderBy: "receivedAt", orderDirection: "desc" } }),
@@ -35,12 +34,7 @@ export default async function BusinessReviewsPage({ params }: BusinessReviewsPag
 
       <div className="space-y-4 mt-6">
         {reviews.length === 0 ? (
-          <EmptyState
-            title={t("noReviews")}
-            description={t("noReviewsDescription")}
-            buttonText={t("backToBusinesses")}
-            buttonLink={`/dashboard/home`}
-          />
+          <EmptyState title={t("noReviews")} description={t("noReviewsDescription")} />
         ) : (
           <ReviewsList reviews={reviews} accountId={accountId} businessId={businessId} userId={userId} />
         )}
