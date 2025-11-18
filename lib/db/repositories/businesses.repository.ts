@@ -94,20 +94,11 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
       mapsUrl: string | null;
     }
   ): Promise<Business> {
-    await db
-      .update(businesses)
-      .set({
-        address: data.address,
-        mapsUrl: data.mapsUrl,
-        connected: true,
-        connectedAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .where(eq(businesses.id, businessId));
-
-    const updated = await this.get(businessId);
-    if (!updated) throw new Error("Business not found after reconnect");
-
-    return updated;
+    return this.update(businessId, {
+      address: data.address,
+      mapsUrl: data.mapsUrl,
+      connected: true,
+      connectedAt: new Date(),
+    });
   }
 }
