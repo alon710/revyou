@@ -57,7 +57,7 @@ export async function subscribeToGoogleNotifications(
 
   const googleAccountName = businesses[0].googleBusinessId.split("/locations")[0];
 
-  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!;
+  const projectId = process.env.NEXT_PUBLIC_GCP_PROJECT_ID!;
   const topicName = process.env.PUBSUB_TOPIC_NAME!;
   const pubsubTopic = `projects/${projectId}/topics/${topicName}`;
 

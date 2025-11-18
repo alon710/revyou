@@ -36,7 +36,7 @@ async function main() {
   console.log("Finding TypeScript files...\n");
 
   const files = await glob("**/*.{ts,tsx}", {
-    ignore: ["node_modules/**", ".next/**", "dist/**", "build/**", "scripts/**"],
+    ignore: ["node_modules/**", ".next/**", "dist/**", "build/**"],
     cwd: process.cwd(),
   });
 

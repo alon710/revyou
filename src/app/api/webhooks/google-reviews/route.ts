@@ -6,6 +6,7 @@ import { getReview, starRatingToNumber, parseGoogleTimestamp } from "@/lib/googl
 import { decryptToken } from "@/lib/google/business-profile";
 import { ReviewsRepository } from "@/lib/db/repositories/reviews.repository";
 import { AccountsRepository } from "@/lib/db/repositories/accounts.repository";
+import { verifyPubSubToken, getPubSubWebhookAudience } from "@/lib/google/pubsub-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -88,6 +89,20 @@ async function getAccountRefreshToken(userId: string, accountId: string): Promis
 
 export async function POST(request: NextRequest) {
   try {
+    const authHeader = request.headers.get("authorization");
+    const expectedAudience = getPubSubWebhookAudience();
+
+    const verificationResult = await verifyPubSubToken(authHeader, expectedAudience);
+
+    if (!verificationResult.valid) {
+      console.error("Pub/Sub authentication failed:", verificationResult.error);
+      return NextResponse.json({ error: "Unauthorized", details: verificationResult.error }, { status: 401 });
+    }
+
+    console.log("Pub/Sub authentication successful:", {
+      serviceAccount: verificationResult.email,
+    });
+
     const body = (await request.json()) as PubSubMessage;
 
     console.log("Received Pub/Sub notification:", {
@@ -180,27 +195,11 @@ export async function POST(request: NextRequest) {
     console.log("Creating new review in database");
     const newReview = await reviewsRepo.create(reviewData);
     console.log("Review created successfully:", newReview.id);
-
-    const processUrl = new URL("/api/internal/process-review", request.url);
-    fetch(processUrl.toString(), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Internal-Secret": process.env.INTERNAL_API_SECRET!,
-      },
-      body: JSON.stringify({
-        userId,
-        accountId,
-        businessId: business.id,
-        reviewId: newReview.id,
-      }),
-    }).catch((error) => {
-      console.error("Failed to trigger review processing:", error);
-    });
+    console.log("Database trigger will automatically process the review");
 
     return NextResponse.json(
       {
-        message: "Review received and queued for processing",
+        message: "Review received successfully",
         reviewId: newReview.id,
       },
       { status: 200 }
