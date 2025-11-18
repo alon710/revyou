@@ -67,15 +67,10 @@ export async function deleteAccount(userId: string, accountId: string): Promise<
 }
 
 export async function getAccountsWithBusinesses(
-  userId: string,
   accountFilters: AccountFilters = {},
   businessFilters: BusinessFilters = {}
 ): Promise<AccountWithBusinesses[]> {
-  const { userId: authenticatedUserId } = await getAuthenticatedUserId();
-
-  if (authenticatedUserId !== userId) {
-    throw new Error("Forbidden: Cannot access another user's data");
-  }
+  const { userId } = await getAuthenticatedUserId();
 
   const controller = new AccountsController(userId);
   return controller.getAccountsWithBusinesses(accountFilters, businessFilters);

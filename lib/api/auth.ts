@@ -1,10 +1,12 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { defaultLocale, type Locale, isValidLocale } from "@/i18n/config";
+import { clientEnv } from "@/lib/env";
 
 const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
 
-export async function getAuthenticatedUserId(): Promise<{ userId: string }> {
+export const getAuthenticatedUserId = cache(async (): Promise<{ userId: string }> => {
   try {
     const supabase = await createClient();
     const {
@@ -21,7 +23,7 @@ export async function getAuthenticatedUserId(): Promise<{ userId: string }> {
     console.error("Failed to authenticate user:", error);
     throw new Error("Failed to authenticate user");
   }
-}
+});
 
 export function getLocaleFromRequest(request: NextRequest): Locale {
   const localeCookie = request.cookies.get(LOCALE_COOKIE_NAME);
@@ -40,7 +42,7 @@ export function createLocaleAwareRedirect(
   searchParams?: Record<string, string>
 ): NextResponse {
   const locale = getLocaleFromRequest(request);
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+  const baseUrl = clientEnv.NEXT_PUBLIC_APP_URL;
 
   const localePath = `/${locale}${path}`;
 

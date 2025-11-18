@@ -13,6 +13,7 @@ import { UsersConfigsRepository } from "@/lib/db/repositories/users-configs.repo
 import { SubscriptionsController } from "@/lib/controllers/subscriptions.controller";
 import type { ReplyStatus, StarConfig } from "@/lib/types";
 import type { Locale } from "@/i18n/config";
+import { clientEnv, serverEnv } from "@/lib/env";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,12 +28,20 @@ interface ProcessReviewRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    const internalSecret = request.headers.get("X-Internal-Secret");
-    const expectedSecret = process.env.INTERNAL_API_SECRET || "change-me-in-production";
+    const isTestMode = serverEnv.NODE_ENV === "test";
 
-    if (internalSecret !== expectedSecret) {
-      console.error("Unauthorized internal API call");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!isTestMode) {
+      const internalSecret = request.headers.get("X-Internal-Secret");
+
+      if (!internalSecret) {
+        console.error("Unauthorized internal API call: X-Internal-Secret header missing");
+        return NextResponse.json({ error: "Unauthorized: Missing authentication header" }, { status: 401 });
+      }
+
+      if (internalSecret !== serverEnv.INTERNAL_API_SECRET) {
+        console.error("Forbidden internal API call: X-Internal-Secret header invalid");
+        return NextResponse.json({ error: "Forbidden: Invalid authentication credentials" }, { status: 403 });
+      }
     }
 
     const body = (await request.json()) as ProcessReviewRequest;
@@ -101,12 +110,7 @@ export async function POST(request: NextRequest) {
     try {
       const prompt = buildReplyPrompt(business.config, review, business.name, business.config.phoneNumber);
 
-      const geminiApiKey = process.env.GEMINI_API_KEY;
-      if (!geminiApiKey) {
-        throw new Error("GEMINI_API_KEY not configured");
-      }
-
-      aiReply = await generateWithGemini(geminiApiKey, prompt);
+      aiReply = await generateWithGemini(serverEnv.GEMINI_API_KEY, prompt);
 
       await reviewsRepo.update(reviewId, {
         aiReply,
@@ -153,8 +157,8 @@ export async function POST(request: NextRequest) {
             reviewName,
             aiReply,
             decryptedToken,
-            process.env.GOOGLE_CLIENT_ID,
-            process.env.GOOGLE_CLIENT_SECRET
+            serverEnv.GOOGLE_CLIENT_ID,
+            serverEnv.GOOGLE_CLIENT_SECRET
           );
 
           await reviewsRepo.update(reviewId, {
@@ -220,28 +224,21 @@ export async function POST(request: NextRequest) {
                 reviewText: review.text || "",
                 aiReply,
                 status,
-                appBaseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+                appBaseUrl: clientEnv.NEXT_PUBLIC_APP_URL,
                 reviewId,
               },
               locale
             );
 
-            const resendApiKey = process.env.RESEND_API_KEY;
-            const fromEmail = process.env.RESEND_FROM_EMAIL || "Bottie <noreply@bottie.ai>";
+            const resend = new Resend(serverEnv.RESEND_API_KEY);
+            await resend.emails.send({
+              from: serverEnv.RESEND_FROM_EMAIL,
+              to: recipientEmail,
+              subject,
+              html,
+            });
 
-            if (!resendApiKey) {
-              console.error("RESEND_API_KEY not configured");
-            } else {
-              const resend = new Resend(resendApiKey);
-              await resend.emails.send({
-                from: fromEmail,
-                to: recipientEmail,
-                subject,
-                html,
-              });
-
-              console.log("Email sent successfully", { reviewId, replyStatus, locale });
-            }
+            console.log("Email sent successfully", { reviewId, replyStatus, locale });
           }
         }
       } catch (error) {

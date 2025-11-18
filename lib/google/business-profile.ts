@@ -1,6 +1,7 @@
 import { OAuth2Client } from "google-auth-library";
 import * as Iron from "@hapi/iron";
 import { GoogleBusinessProfileBusiness } from "@/lib/types";
+import { clientEnv, serverEnv } from "@/lib/env";
 
 const GOOGLE_MY_BUSINESS_API_BASE = "https://mybusinessbusinessinformation.googleapis.com/v1";
 
@@ -43,13 +44,9 @@ interface BusinessesResponse {
 }
 
 function createOAuthClient(accessToken: string, clientId?: string, clientSecret?: string): OAuth2Client {
-  const oauthClientId = clientId || process.env.GOOGLE_CLIENT_ID;
-  const oauthClientSecret = clientSecret || process.env.GOOGLE_CLIENT_SECRET;
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/google/callback`;
-
-  if (!oauthClientId || !oauthClientSecret) {
-    throw new Error("Google OAuth credentials not configured");
-  }
+  const oauthClientId = clientId || serverEnv.GOOGLE_CLIENT_ID;
+  const oauthClientSecret = clientSecret || serverEnv.GOOGLE_CLIENT_SECRET;
+  const redirectUri = `${clientEnv.NEXT_PUBLIC_APP_URL}/api/google/callback`;
 
   const oauth2Client = new OAuth2Client(oauthClientId, oauthClientSecret, redirectUri);
   oauth2Client.setCredentials({ access_token: accessToken });
@@ -199,11 +196,7 @@ export async function listAllBusinesses(refreshToken: string): Promise<GoogleBus
 }
 
 export async function decryptToken(encryptedToken: string, secret?: string): Promise<string> {
-  const encryptionSecret = secret || process.env.TOKEN_ENCRYPTION_SECRET;
-
-  if (!encryptionSecret) {
-    throw new Error("TOKEN_ENCRYPTION_SECRET not configured");
-  }
+  const encryptionSecret = secret || serverEnv.TOKEN_ENCRYPTION_SECRET;
 
   try {
     const unsealed = await Iron.unseal(encryptedToken, encryptionSecret, Iron.defaults);
