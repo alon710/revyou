@@ -11,7 +11,7 @@ const clientSchema = z.object({
   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: z.string().default("review-ai-reply.firebasestorage.app"),
   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: z.string().default("595883094755"),
   NEXT_PUBLIC_FIREBASE_APP_ID: z.string().default("1:595883094755:web:da0eba401707f6a2f78bd6"),
-  NEXT_PUBLIC_FIREBASE_API_KEY: z.string().min(1),
+  NEXT_PUBLIC_FIREBASE_API_KEY: z.string().optional(),
 
   NEXT_PUBLIC_SUPABASE_URL: z.string().url().default("https://ksxmuvlzsxcwbduealvd.supabase.co"),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
@@ -155,7 +155,16 @@ function validateServerEnv() {
   throw new Error("Missing required server environment variables. Check .env.example for required values.");
 }
 
-export const clientEnv = validateClientEnv();
+let _clientEnv: z.infer<typeof clientSchema> | null = null;
+
+export const clientEnv = new Proxy({} as z.infer<typeof clientSchema>, {
+  get(_target, prop) {
+    if (!_clientEnv) {
+      _clientEnv = validateClientEnv();
+    }
+    return _clientEnv[prop as keyof typeof _clientEnv];
+  },
+});
 
 let _serverEnv: z.infer<typeof serverSchema> | null = null;
 

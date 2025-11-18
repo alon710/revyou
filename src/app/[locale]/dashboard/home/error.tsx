@@ -3,10 +3,10 @@
 import { useEffect } from "react";
 import { ErrorState } from "@/components/ui/error-state";
 
-export default function Error({ error }: { error: Error & { digest?: string } }) {
+export default function Error({ error, reset }: { error: Error & { digest?: string }; reset?: () => void }) {
   useEffect(() => {
     console.error("Error in home page:", error);
   }, [error]);
 
-  return <ErrorState />;
+  return <ErrorState onRetry={reset} />;
 }

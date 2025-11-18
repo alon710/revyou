@@ -64,8 +64,14 @@ export default function EditableSection<T>({
               <DashboardCardTitle icon={icon}>{title}</DashboardCardTitle>
               <DashboardCardDescription>{description}</DashboardCardDescription>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => setShowEditModal(true)} disabled={loading}>
-              <Pencil className=" h-4 w-4" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowEditModal(true)}
+              disabled={loading}
+              aria-label={`Edit ${title}`}
+            >
+              <Pencil className="h-4 w-4" />
             </Button>
           </div>
         </DashboardCardHeader>

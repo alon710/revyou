@@ -39,7 +39,7 @@ export default async function BusinessReviewsPage({ params }: BusinessReviewsPag
             title={t("noReviews")}
             description={t("noReviewsDescription")}
             buttonText={t("backToBusinesses")}
-            buttonLink={`/dashboard/accounts/${accountId}/businesses`}
+            buttonLink={`/dashboard/home`}
           />
         ) : (
           <ReviewsList reviews={reviews} accountId={accountId} businessId={businessId} userId={userId} />

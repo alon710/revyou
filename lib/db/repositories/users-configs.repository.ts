@@ -17,19 +17,17 @@ export class UsersConfigsRepository {
   }
 
   async getOrCreate(userId: string): Promise<UsersConfig> {
-    let config = await this.get(userId);
-
-    if (!config) {
-      config = await this.create({
+    try {
+      return await this.create({
         userId,
         configs: {
           EMAIL_ON_NEW_REVIEW: true,
           LOCALE: "en",
         },
       });
+    } catch (error) {
+      throw error;
     }
-
-    return config;
   }
 
   async create(data: UsersConfigInsert): Promise<UsersConfig> {
