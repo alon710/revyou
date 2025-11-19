@@ -12,12 +12,13 @@
     "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "knip": "knip",
     "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push",
-    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push --verbose",
+    "db:migrate": "drizzle-kit migrate --verbose",
     "db:studio": "drizzle-kit studio",
     "db:drop": "drizzle-kit drop",
     "db:triggers": "dotenv -e .env -- tsx scripts/setup-trigger.ts",
-    "comments:remove": "tsx scripts/remove-comments.ts"
+    "comments:remove": "tsx scripts/remove-comments.ts",
+    "pubsub:update": "bash scripts/update-pubsub-subscription.sh"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^4.10.0",
