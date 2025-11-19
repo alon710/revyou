@@ -210,7 +210,7 @@ export async function POST(request: NextRequest) {
           } else {
             const locale = (userConfig.configs.LOCALE || "en") as Locale;
 
-            const status = replyStatus === "pending" ? "pending" : "posted";
+            const status = replyStatus;
 
             const { subject, html } = await renderReviewNotificationEmail(
               {
