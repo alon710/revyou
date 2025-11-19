@@ -1,5 +1,5 @@
 {
-  "id": "ec2d8651-ea3f-4ef1-85a6-11a42cfa443b",
+  "id": "031fb86a-d47a-40fa-80f6-fafb556fb067",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -525,6 +525,30 @@
           "primaryKey": false,
           "notNull": true
         },
+        "city": {
+          "name": "city",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "state": {
+          "name": "state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "postal_code": {
+          "name": "postal_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "phone_number": {
           "name": "phone_number",
           "type": "text",
@@ -539,6 +563,12 @@
         },
         "maps_url": {
           "name": "maps_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "review_url": {
+          "name": "review_url",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -561,13 +591,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'friendly'"
-        },
-        "use_emojis": {
-          "name": "use_emojis",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
         },
         "language_mode": {
           "name": "language_mode",

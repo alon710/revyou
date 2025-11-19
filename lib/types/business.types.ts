@@ -21,9 +21,14 @@ export interface GoogleBusinessProfileBusiness {
   id: string;
   name: string;
   address: string;
+  city: string | null;
+  state: string | null;
+  postalCode: string | null;
+  country: string | null;
   phoneNumber: string | null;
   websiteUrl: string | null;
   mapsUrl: string | null;
+  reviewUrl: string | null;
   description: string | null;
   photoUrl: string | null;
 }
