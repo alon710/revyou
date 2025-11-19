@@ -4,15 +4,7 @@ import { userAccounts, accounts } from "@/lib/db/schema";
 
 export class AccountMergeService {
   async mergeUserIntoAccount(userId: string, targetAccountId: string) {
-    const existingLink = await db.query.userAccounts.findFirst({
-      where: and(eq(userAccounts.userId, userId), eq(userAccounts.accountId, targetAccountId)),
-    });
-
-    if (existingLink) {
-      return null;
-    }
-
-    const [newLink] = await db
+    const result = await db
       .insert(userAccounts)
       .values({
         userId,
@@ -20,9 +12,10 @@ export class AccountMergeService {
         role: "member",
         addedAt: new Date(),
       })
+      .onConflictDoNothing()
       .returning();
 
-    return newLink;
+    return result.length > 0 ? result[0] : null;
   }
 
   async hasAccess(userId: string, accountId: string): Promise<boolean> {
@@ -52,10 +45,6 @@ export class AccountMergeService {
       const account = link.account;
 
       if (account.businesses.length === 0 && account.userAccounts.length === 1) {
-        await db
-          .delete(userAccounts)
-          .where(and(eq(userAccounts.userId, userId), eq(userAccounts.accountId, account.id)));
-
         await db.delete(accounts).where(eq(accounts.id, account.id));
       }
     }
