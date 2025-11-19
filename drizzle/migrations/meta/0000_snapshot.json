@@ -65,9 +65,7 @@
         "users_configs_user_id_unique": {
           "name": "users_configs_user_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user_id"
-          ]
+          "columns": ["user_id"]
         }
       },
       "policies": {
@@ -75,36 +73,28 @@
           "name": "users_configs_select_own",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(auth.uid()) = \"users_configs\".\"user_id\""
         },
         "users_configs_insert_own": {
           "name": "users_configs_insert_own",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "withCheck": "(auth.uid()) = \"users_configs\".\"user_id\""
         },
         "users_configs_update_own": {
           "name": "users_configs_update_own",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(auth.uid()) = \"users_configs\".\"user_id\""
         },
         "users_configs_delete_own": {
           "name": "users_configs_delete_own",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(auth.uid()) = \"users_configs\".\"user_id\""
         }
       },
@@ -200,36 +190,28 @@
           "name": "accounts_select_associated",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"accounts\".\"id\"\n        AND ua.user_id = (auth.uid())\n      )"
         },
         "accounts_insert_authenticated": {
           "name": "accounts_insert_authenticated",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "withCheck": "true"
         },
         "accounts_update_owner": {
           "name": "accounts_update_owner",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"accounts\".\"id\"\n        AND ua.user_id = (auth.uid())\n        AND ua.role = 'owner'\n      )"
         },
         "accounts_delete_owner": {
           "name": "accounts_delete_owner",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"accounts\".\"id\"\n        AND ua.user_id = (auth.uid())\n        AND ua.role = 'owner'\n      )"
         }
       },
@@ -304,12 +286,8 @@
           "name": "user_accounts_account_id_accounts_id_fk",
           "tableFrom": "user_accounts",
           "tableTo": "accounts",
-          "columnsFrom": [
-            "account_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["account_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -317,10 +295,7 @@
       "compositePrimaryKeys": {
         "user_accounts_user_id_account_id_pk": {
           "name": "user_accounts_user_id_account_id_pk",
-          "columns": [
-            "user_id",
-            "account_id"
-          ]
+          "columns": ["user_id", "account_id"]
         }
       },
       "uniqueConstraints": {},
@@ -329,36 +304,28 @@
           "name": "user_accounts_select_own",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(auth.uid()) = \"user_accounts\".\"user_id\""
         },
         "user_accounts_insert_owner": {
           "name": "user_accounts_insert_owner",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "withCheck": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"user_accounts\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n        AND ua.role = 'owner'\n      )"
         },
         "user_accounts_update_owner": {
           "name": "user_accounts_update_owner",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"user_accounts\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n        AND ua.role = 'owner'\n      )"
         },
         "user_accounts_delete_owner": {
           "name": "user_accounts_delete_owner",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"user_accounts\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n        AND ua.role = 'owner'\n      )"
         }
       },
@@ -487,9 +454,7 @@
         "subscriptions_user_id_unique": {
           "name": "subscriptions_user_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user_id"
-          ]
+          "columns": ["user_id"]
         }
       },
       "policies": {
@@ -497,36 +462,28 @@
           "name": "subscriptions_select_own",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(auth.uid()) = \"subscriptions\".\"user_id\""
         },
         "subscriptions_insert_own": {
           "name": "subscriptions_insert_own",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "withCheck": "(auth.uid()) = \"subscriptions\".\"user_id\""
         },
         "subscriptions_update_own": {
           "name": "subscriptions_update_own",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(auth.uid()) = \"subscriptions\".\"user_id\""
         },
         "subscriptions_delete_own": {
           "name": "subscriptions_delete_own",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(auth.uid()) = \"subscriptions\".\"user_id\""
         }
       },
@@ -744,12 +701,8 @@
           "name": "businesses_account_id_accounts_id_fk",
           "tableFrom": "businesses",
           "tableTo": "accounts",
-          "columnsFrom": [
-            "account_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["account_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -759,9 +712,7 @@
         "businesses_google_business_id_unique": {
           "name": "businesses_google_business_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "google_business_id"
-          ]
+          "columns": ["google_business_id"]
         }
       },
       "policies": {
@@ -769,36 +720,28 @@
           "name": "businesses_select_associated",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"businesses\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n      )"
         },
         "businesses_insert_associated": {
           "name": "businesses_insert_associated",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "withCheck": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"businesses\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n      )"
         },
         "businesses_update_associated": {
           "name": "businesses_update_associated",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"businesses\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n      )"
         },
         "businesses_delete_owner": {
           "name": "businesses_delete_owner",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"businesses\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n        AND ua.role = 'owner'\n      )"
         }
       },
@@ -1073,12 +1016,8 @@
           "name": "reviews_account_id_accounts_id_fk",
           "tableFrom": "reviews",
           "tableTo": "accounts",
-          "columnsFrom": [
-            "account_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["account_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1086,12 +1025,8 @@
           "name": "reviews_business_id_businesses_id_fk",
           "tableFrom": "reviews",
           "tableTo": "businesses",
-          "columnsFrom": [
-            "business_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["business_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1101,9 +1036,7 @@
         "reviews_google_review_id_unique": {
           "name": "reviews_google_review_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "google_review_id"
-          ]
+          "columns": ["google_review_id"]
         }
       },
       "policies": {
@@ -1111,36 +1044,28 @@
           "name": "reviews_select_associated",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"reviews\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n      )"
         },
         "reviews_insert_associated": {
           "name": "reviews_insert_associated",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "withCheck": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"reviews\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n      )"
         },
         "reviews_update_associated": {
           "name": "reviews_update_associated",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"reviews\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n      )"
         },
         "reviews_delete_owner": {
           "name": "reviews_delete_owner",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"reviews\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n        AND ua.role = 'owner'\n      )"
         }
       },
