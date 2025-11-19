@@ -5,12 +5,10 @@ import { DashboardCard } from "@/components/ui/dashboard-card";
 export function BusinessSettingsSkeleton() {
   return (
     <PageContainer>
-      {}
       <div className="mb-4">
         <Skeleton className="h-9 w-20" />
       </div>
 
-      {}
       <div className="flex items-start justify-between gap-4 mb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
@@ -21,11 +19,9 @@ export function BusinessSettingsSkeleton() {
         <Skeleton className="h-5 w-24 rounded-full" />
       </div>
 
-      {}
       <div className="space-y-6">
         {[1, 2, 3].map((index) => (
           <DashboardCard key={index}>
-            {}
             <div className="p-6 pb-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-2 flex-1">
@@ -39,9 +35,7 @@ export function BusinessSettingsSkeleton() {
               </div>
             </div>
 
-            {}
             <div className="flex-1 p-6 pt-4 space-y-6">
-              {}
               {index === 1 && (
                 <>
                   <div className="space-y-2">
@@ -86,7 +80,6 @@ export function BusinessSettingsSkeleton() {
           </DashboardCard>
         ))}
 
-        {}
         <DashboardCard className="border-destructive/50">
           <div className="p-6 pb-4">
             <div className="space-y-2">

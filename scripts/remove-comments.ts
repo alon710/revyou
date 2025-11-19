@@ -2,9 +2,28 @@ import decomment from "decomment";
 import * as fs from "fs";
 import { glob } from "glob";
 
+function removeJSXComments(content: string): string {
+  return content
+    .split("\n")
+    .map((line) => {
+      let cleaned = line.replace(/\{\s*\/\*.*?\*\/\s*\}/g, "");
+      if (cleaned.trim() === "{}" || (cleaned.trim() === "" && (line.includes("{/*") || line.trim() === "{}"))) {
+        return "";
+      }
+      return cleaned;
+    })
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n");
+}
+
 async function removeCommentsFromFile(filePath: string): Promise<void> {
   try {
-    const content = fs.readFileSync(filePath, "utf8");
+    const originalContent = fs.readFileSync(filePath, "utf8");
+    let content = originalContent;
+
+    if (filePath.endsWith(".tsx") || filePath.endsWith(".jsx")) {
+      content = removeJSXComments(content);
+    }
 
     const ignorePatterns: RegExp[] = [/https?:\/\/[^\s)]+/g];
 
@@ -14,8 +33,8 @@ async function removeCommentsFromFile(filePath: string): Promise<void> {
       space: false,
     });
 
-    if (content !== cleaned) {
-      const linesBefore = content.split("\n").length;
+    if (originalContent !== cleaned) {
+      const linesBefore = originalContent.split("\n").length;
       const linesAfter = cleaned.split("\n").length;
       const linesRemoved = linesBefore - linesAfter;
 
