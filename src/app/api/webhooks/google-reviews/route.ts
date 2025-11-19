@@ -57,7 +57,12 @@ async function findBusinessByGoogleBusinessId(googleBusinessId: string): Promise
       return null;
     }
 
-    const userAccount = business.account.userAccounts[0];
+    const userAccount = business.account.userAccounts.find((ua) => ua.role === "owner");
+
+    if (!userAccount) {
+      console.error("No owner user account found for business:", business.id);
+      return null;
+    }
 
     return {
       userId: userAccount.userId,
