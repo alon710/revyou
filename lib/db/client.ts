@@ -8,8 +8,15 @@ let dbInstance: ReturnType<typeof drizzle<typeof schema>> | null = null;
 
 function getDb() {
   if (!dbInstance) {
+    const poolMaxRaw = process.env.DB_POOL_MAX;
+    const poolMax = poolMaxRaw ? parseInt(poolMaxRaw, 10) : 10;
+
+    if (isNaN(poolMax) || poolMax <= 0) {
+      throw new Error(`DB_POOL_MAX must be a positive integer, got: ${poolMaxRaw}`);
+    }
+
     client = postgres(process.env.DATABASE_URL!, {
-      max: 1,
+      max: poolMax,
       idle_timeout: 20,
       connect_timeout: 10,
       max_lifetime: 60 * 30,
