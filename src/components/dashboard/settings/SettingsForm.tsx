@@ -78,7 +78,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
       )}
       renderForm={({ data, isLoading, onChange }) => (
         <div className="space-y-6">
-          {}
           <div className="space-y-4">
             <div>
               <h4 className="text-sm font-semibold mb-1">{t("languagePreferences.title")}</h4>
@@ -102,7 +101,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
             </div>
           </div>
 
-          {}
           <div className="space-y-4">
             <div>
               <h4 className="text-sm font-semibold mb-1">{t("emailNotifications.title")}</h4>

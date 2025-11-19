@@ -56,3 +56,7 @@ firebase-debug.log
 
 # Supabase
 /supabase/.temp/*
+
+
+# Claude MCP
+.mcp.json

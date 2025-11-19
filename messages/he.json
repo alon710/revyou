@@ -509,6 +509,26 @@
       "saveError": "שגיאה בשמירת ההגדרות. אנא נסה שוב.",
       "loadError": "שגיאה בטעינת ההגדרות. אנא נסה שוב."
     },
+    "team": {
+      "title": "ניהול צוות",
+      "description": "נהל את חברי הצוות והתפקידים שלהם",
+      "you": "אתה",
+      "roleOwner": "בעלים",
+      "roleMember": "חבר צוות",
+      "joinedOn": "הצטרף ב-{date}",
+      "makeOwner": "הפוך לבעלים",
+      "makeMember": "הפוך לחבר צוות",
+      "removeMember": "הסר חבר צוות",
+      "removeConfirmTitle": "הסרת חבר צוות",
+      "removeConfirmDescription": "האם אתה בטוח שברצונך להסיר את חבר הצוות הזה? הוא יאבד גישה לחשבון זה.",
+      "remove": "הסר",
+      "removing": "מסיר...",
+      "memberRemoved": "חבר הצוות הוסר בהצלחה",
+      "removeFailed": "הסרת חבר הצוות נכשלה",
+      "roleChanged": "התפקיד שונה בהצלחה",
+      "roleChangeFailed": "שינוי התפקיד נכשל",
+      "noMembers": "אין עדיין חברי צוות"
+    },
     "reviewDetail": {
       "loadingReview": "טוען ביקורת...",
       "title": "ביקורת",

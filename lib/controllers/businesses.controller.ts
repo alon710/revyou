@@ -28,14 +28,10 @@ export class BusinessesController {
   }
 
   async upsertBusiness(data: BusinessCreate, checkLimit?: () => Promise<boolean>): Promise<Business> {
-    const existingBusiness = await this.repository.findByGoogleBusinessId(data.googleBusinessId);
+    const existingBusinessGlobal = await this.repository.findByGoogleBusinessIdGlobal(data.googleBusinessId);
 
-    if (existingBusiness) {
-      await this.repository.update(existingBusiness.id, data);
-      return this.repository.reconnect(existingBusiness.id, {
-        address: data.address,
-        mapsUrl: data.mapsUrl ?? null,
-      });
+    if (existingBusinessGlobal) {
+      return this.repository.findOrCreate(data);
     }
 
     if (checkLimit) {
@@ -45,7 +41,7 @@ export class BusinessesController {
       }
     }
 
-    return this.repository.create(data);
+    return this.repository.findOrCreate(data);
   }
 
   async updateBusiness(businessId: string, data: BusinessUpdate): Promise<Business> {

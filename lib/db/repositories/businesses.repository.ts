@@ -4,6 +4,7 @@ import { businesses, userAccounts, type Business, type BusinessInsert } from "@/
 import type { BusinessFilters } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 import { NotFoundError } from "@/lib/api/errors";
+import { accountMergeService } from "./account-merge.service";
 
 export class BusinessesRepository extends BaseRepository<BusinessInsert, Business, Partial<Business>> {
   constructor(
@@ -53,9 +54,35 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
   async create(data: BusinessInsert): Promise<Business> {
     if (!(await this.verifyAccess())) throw new Error("Access denied");
 
+    const existing = await this.findByGoogleBusinessIdGlobal(data.googleBusinessId);
+    if (existing) {
+      if (existing.accountId === this.accountId) {
+        return existing;
+      }
+      throw new Error(`Business already exists in account ${existing.accountId}. Use findOrCreate() for auto-merge.`);
+    }
+
     const [business] = await db.insert(businesses).values(data).returning();
 
     return business;
+  }
+
+  async findOrCreate(data: BusinessInsert): Promise<Business> {
+    const existing = await this.findByGoogleBusinessIdGlobal(data.googleBusinessId);
+
+    if (existing) {
+      const hasAccess = await accountMergeService.hasAccess(this.userId, existing.accountId);
+
+      if (!hasAccess) {
+        await accountMergeService.mergeUserIntoAccount(this.userId, existing.accountId);
+
+        await accountMergeService.cleanupOrphanedAccounts(this.userId, existing.accountId);
+      }
+
+      return existing;
+    }
+
+    return await this.create(data);
   }
 
   async update(businessId: string, data: Partial<Business>): Promise<Business> {
@@ -96,6 +123,14 @@ export class BusinessesRepository extends BaseRepository<BusinessInsert, Busines
 
     const result = await db.query.businesses.findFirst({
       where: and(eq(businesses.googleBusinessId, googleBusinessId), eq(businesses.accountId, this.accountId)),
+    });
+
+    return result || null;
+  }
+
+  async findByGoogleBusinessIdGlobal(googleBusinessId: string): Promise<Business | null> {
+    const result = await db.query.businesses.findFirst({
+      where: eq(businesses.googleBusinessId, googleBusinessId),
     });
 
     return result || null;

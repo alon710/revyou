@@ -448,6 +448,26 @@
       "saveError": "Error saving settings. Please try again.",
       "loadError": "Error loading settings. Please try again."
     },
+    "team": {
+      "title": "Team Management",
+      "description": "Manage team members and their roles",
+      "you": "you",
+      "roleOwner": "Owner",
+      "roleMember": "Member",
+      "joinedOn": "Joined on {date}",
+      "makeOwner": "Make Owner",
+      "makeMember": "Make Member",
+      "removeMember": "Remove Member",
+      "removeConfirmTitle": "Remove Team Member",
+      "removeConfirmDescription": "Are you sure you want to remove this team member? They will lose access to this account.",
+      "remove": "Remove",
+      "removing": "Removing...",
+      "memberRemoved": "Team member removed successfully",
+      "removeFailed": "Failed to remove team member",
+      "roleChanged": "Role changed successfully",
+      "roleChangeFailed": "Failed to change role",
+      "noMembers": "No team members yet"
+    },
     "reviews": {
       "title": "Reviews",
       "description": "All reviews for the business",
