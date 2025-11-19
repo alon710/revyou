@@ -6,7 +6,7 @@ export function createAdminClient() {
       getAll() {
         return [];
       },
-      setAll() {},
+      setAll(_cookiesToSet) {},
     },
   });
 }
