@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { EmptyState } from "@/components/ui/empty-state";
 
-export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+function BusinessDetailsError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const t = useTranslations("common.errorState");
 
   useEffect(() => {
@@ -13,3 +13,5 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
 
   return <EmptyState title={t("title")} description={t("description")} actionLabel={t("retry")} onAction={reset} />;
 }
+
+export default BusinessDetailsError;
