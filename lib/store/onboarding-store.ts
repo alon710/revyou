@@ -69,7 +69,6 @@ export const useOnboardingStore = create<OnboardingState>()(
         const config = {
           toneOfVoice: state.aiSettings?.toneOfVoice ?? defaults.toneOfVoice,
           languageMode: state.aiSettings?.languageMode ?? defaults.languageMode,
-          useEmojis: true,
           allowedEmojis: state.aiSettings?.allowedEmojis ?? defaults.allowedEmojis,
           maxSentences: state.aiSettings?.maxSentences ?? defaults.maxSentences,
           signature: state.aiSettings?.signature ?? defaults.signature,
