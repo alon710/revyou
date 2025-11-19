@@ -27,7 +27,6 @@ export const businesses = pgTable(
       .default("friendly"),
     useEmojis: boolean("use_emojis").notNull().default(true),
     languageMode: text("language_mode").$type<"hebrew" | "english" | "auto-detect">().notNull().default("auto-detect"),
-    languageInstructions: text("language_instructions"),
     maxSentences: integer("max_sentences"),
     allowedEmojis: jsonb("allowed_emojis").$type<string[]>(),
     signature: text("signature"),
