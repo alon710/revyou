@@ -1,5 +1,5 @@
-import { Loading } from "@/components/ui/loading";
+import { SettingsSkeleton } from "@/components/skeletons/SettingsSkeleton";
 
 export default function SettingsLoading() {
-  return <Loading size="md" fullScreen />;
+  return <SettingsSkeleton />;
 }

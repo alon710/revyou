@@ -1,5 +1,5 @@
-import { Loading } from "@/components/ui/loading";
+import { DashboardHomeSkeleton } from "@/components/skeletons/DashboardHomeSkeleton";
 
 export default function HomeLoading() {
-  return <Loading size="md" fullScreen />;
+  return <DashboardHomeSkeleton />;
 }
