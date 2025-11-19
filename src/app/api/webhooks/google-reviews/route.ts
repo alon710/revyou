@@ -7,7 +7,6 @@ import { decryptToken } from "@/lib/google/business-profile";
 import { ReviewsRepository } from "@/lib/db/repositories/reviews.repository";
 import { AccountsRepository } from "@/lib/db/repositories/accounts.repository";
 import { verifyPubSubToken, getPubSubWebhookAudience } from "@/lib/google/pubsub-auth";
-import { env } from "@/lib/env";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -152,7 +151,12 @@ export async function POST(request: NextRequest) {
     const refreshToken = await decryptToken(encryptedToken);
 
     console.log("Fetching review from Google API:", reviewName);
-    const googleReview = await getReview(reviewName, refreshToken, env.GOOGLE_CLIENT_ID, env.GOOGLE_CLIENT_SECRET);
+    const googleReview = await getReview(
+      reviewName,
+      refreshToken,
+      process.env.GOOGLE_CLIENT_ID!,
+      process.env.GOOGLE_CLIENT_SECRET!
+    );
     console.log("Fetched Google review:", {
       reviewId: googleReview.reviewId,
       rating: googleReview.starRating,

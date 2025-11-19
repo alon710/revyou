@@ -1,5 +1,4 @@
 import { OAuth2Client } from "google-auth-library";
-import { env } from "@/lib/env";
 
 export async function verifyPubSubToken(
   authHeader: string | null,
@@ -51,5 +50,5 @@ export async function verifyPubSubToken(
 }
 
 export function getPubSubWebhookAudience(): string {
-  return `${env.NEXT_PUBLIC_APP_URL}/api/webhooks/google-reviews`;
+  return `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/google-reviews`;
 }

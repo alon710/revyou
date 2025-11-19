@@ -2,14 +2,13 @@ import "server-only";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
-import { env } from "@/lib/env";
 
 let client: ReturnType<typeof postgres> | null = null;
 let dbInstance: ReturnType<typeof drizzle<typeof schema>> | null = null;
 
 function getDb() {
   if (!dbInstance) {
-    client = postgres(env.DATABASE_URL, {
+    client = postgres(process.env.DATABASE_URL!, {
       max: 1,
       idle_timeout: 20,
       connect_timeout: 10,
