@@ -29,7 +29,9 @@ echo -e "${BLUE}===========================================\n${NC}"
 if [ -z "$NEXT_PUBLIC_APP_URL" ]; then
   if [ -f ".env.production" ]; then
     echo -e "${YELLOW}Reading NEXT_PUBLIC_APP_URL from .env.production...${NC}"
-    export $(grep -v '^#' .env.production | grep NEXT_PUBLIC_APP_URL | xargs)
+    set -a
+    source .env.production
+    set +a
   fi
 fi
 
