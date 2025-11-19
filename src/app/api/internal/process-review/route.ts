@@ -189,27 +189,50 @@ export async function POST(request: NextRequest) {
       console.log("AI reply awaiting approval", { reviewId });
     }
 
-    const usersConfigsRepo = new UsersConfigsRepository();
-    const userConfig = await usersConfigsRepo.getOrCreate(userId);
-
-    if (userConfig.configs.EMAIL_ON_NEW_REVIEW && (replyStatus === "pending" || replyStatus === "posted")) {
+    if (replyStatus === "pending" || replyStatus === "posted") {
       try {
-        console.log("Sending email notification", { reviewId, replyStatus });
+        console.log("Sending email notifications to all opted-in users", { reviewId, accountId, replyStatus });
+
+        const { db } = await import("@/lib/db/client");
+        const { userAccounts } = await import("@/lib/db/schema");
+        const { eq } = await import("drizzle-orm");
+
+        const allUserAccounts = await db.query.userAccounts.findMany({
+          where: eq(userAccounts.accountId, accountId),
+        });
+
+        console.log(`Found ${allUserAccounts.length} users in account ${accountId}`);
 
         const supabase = createAdminClient();
-        const { data: userData } = await supabase.auth.admin.getUserById(userId);
+        const usersConfigsRepo = new UsersConfigsRepository();
 
-        if (!userData.user) {
-          console.error("User not found in Supabase Auth", { userId });
-        } else {
-          const recipientEmail = userData.user.email;
-          const recipientName = userData.user.user_metadata?.display_name || userData.user.email;
+        for (const userAccount of allUserAccounts) {
+          try {
+            const currentUserId = userAccount.userId;
 
-          if (!recipientEmail) {
-            console.error("User email not found", { userId });
-          } else {
+            const userConfig = await usersConfigsRepo.getOrCreate(currentUserId);
+
+            if (!userConfig.configs.EMAIL_ON_NEW_REVIEW) {
+              console.log(`User ${currentUserId} has email notifications disabled, skipping`);
+              continue;
+            }
+
+            const { data: userData } = await supabase.auth.admin.getUserById(currentUserId);
+
+            if (!userData.user) {
+              console.error("User not found in Supabase Auth", { userId: currentUserId });
+              continue;
+            }
+
+            const recipientEmail = userData.user.email;
+            const recipientName = userData.user.user_metadata?.display_name || userData.user.email;
+
+            if (!recipientEmail) {
+              console.error("User email not found", { userId: currentUserId });
+              continue;
+            }
+
             const locale = (userConfig.configs.LOCALE || "en") as Locale;
-
             const status = replyStatus as "pending" | "posted";
 
             const { subject, html } = await renderReviewNotificationEmail(
@@ -237,11 +260,24 @@ export async function POST(request: NextRequest) {
               html,
             });
 
-            console.log("Email sent successfully", { reviewId, replyStatus, locale });
+            console.log("Email sent successfully", {
+              userId: currentUserId,
+              reviewId,
+              replyStatus,
+              locale,
+            });
+          } catch (emailError) {
+            console.error("Failed to send email to user", {
+              userId: userAccount.userId,
+              reviewId,
+              error: emailError,
+            });
           }
         }
+
+        console.log("Finished sending email notifications to all opted-in users");
       } catch (error) {
-        console.error("Failed to send email notification", { reviewId, error });
+        console.error("Failed to send email notifications", { reviewId, error });
       }
     }
 

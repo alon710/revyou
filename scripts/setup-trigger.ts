@@ -39,10 +39,12 @@ async function main() {
         DECLARE
           v_user_id uuid;
         BEGIN
-          -- Get the userId from the user_accounts junction table
+          -- Get ONE user from the account (deterministically by earliest added_at)
+          -- The process-review endpoint will handle sending emails to ALL users
           SELECT user_id INTO v_user_id
           FROM user_accounts
           WHERE account_id = NEW.account_id
+          ORDER BY added_at ASC, user_id ASC
           LIMIT 1;
 
           -- If no user found, log and return (don't fail the insert)
@@ -52,6 +54,7 @@ async function main() {
           END IF;
 
           -- Make async HTTP POST request to process-review endpoint
+          -- The endpoint will handle email notifications for ALL users in the account
           PERFORM extensions.net.http_post(
             url := 'https://bottie.ai/api/internal/process-review',
             headers := jsonb_build_object(
@@ -67,7 +70,7 @@ async function main() {
           );
 
           -- Log successful trigger
-          RAISE LOG 'Triggered review processing for review_id: %, user_id: %', NEW.id, v_user_id;
+          RAISE LOG 'Triggered review processing for review_id: %, user_id: %, account_id: %', NEW.id, v_user_id, NEW.account_id;
 
           RETURN NEW;
         END;

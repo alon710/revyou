@@ -57,7 +57,14 @@ async function findBusinessByGoogleBusinessId(googleBusinessId: string): Promise
       return null;
     }
 
-    const userAccount = business.account.userAccounts.find((ua) => ua.role === "owner");
+    const userAccount = business.account.userAccounts
+      .filter((ua) => ua.role === "owner")
+      .sort((a, b) => {
+        const dateA = a.addedAt ? new Date(a.addedAt).getTime() : 0;
+        const dateB = b.addedAt ? new Date(b.addedAt).getTime() : 0;
+        if (dateA !== dateB) return dateA - dateB;
+        return a.userId.localeCompare(b.userId);
+      })[0];
 
     if (!userAccount) {
       console.error("No owner user account found for business:", business.id);
