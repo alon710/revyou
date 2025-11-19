@@ -40,7 +40,7 @@ export async function getTeamMembers(accountId: string): Promise<TeamMember[]> {
         userId: ua.userId,
         email: userData.user.email || "",
         displayName: userData.user.user_metadata?.display_name || null,
-        role: ua.role,
+        role: ua.role as "owner" | "member",
         addedAt: ua.addedAt,
       });
     }

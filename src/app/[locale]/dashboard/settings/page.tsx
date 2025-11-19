@@ -33,7 +33,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
         accountId: ua.accountId,
         accountName: ua.account.accountName || ua.account.email,
         teamMembers,
-        currentUserRole: ua.role,
+        currentUserRole: ua.role as "owner" | "member",
       };
     })
   );
