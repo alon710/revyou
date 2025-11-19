@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/routing";
 import {
   DashboardCard,
   DashboardCardContent,
@@ -11,22 +10,22 @@ import {
 interface EmptyStateProps {
   title: string;
   description: string;
-  buttonText: string;
-  buttonLink: string;
+  actionLabel?: string;
+  onAction?: () => void;
 }
 
-export function EmptyState({ title, description, buttonText, buttonLink }: EmptyStateProps) {
+export function EmptyState({ title, description, actionLabel, onAction }: EmptyStateProps) {
   return (
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>{title}</DashboardCardTitle>
         <DashboardCardDescription>{description}</DashboardCardDescription>
       </DashboardCardHeader>
-      <DashboardCardContent>
-        <Button asChild>
-          <Link href={buttonLink}>{buttonText}</Link>
-        </Button>
-      </DashboardCardContent>
+      {actionLabel && onAction && (
+        <DashboardCardContent>
+          <Button onClick={onAction}>{actionLabel}</Button>
+        </DashboardCardContent>
+      )}
     </DashboardCard>
   );
 }

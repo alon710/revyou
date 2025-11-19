@@ -1,23 +1,22 @@
-import { getAdminAuth } from "@/lib/firebase/admin";
-import { cookies } from "next/headers";
+import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { defaultLocale, type Locale, isValidLocale } from "@/i18n/config";
 
-const SESSION_COOKIE_NAME = "session";
 const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
 
 export async function getAuthenticatedUserId(): Promise<{ userId: string }> {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME);
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
-    if (!sessionCookie) {
-      throw new Error("Session cookie not found");
+    if (error || !user) {
+      throw new Error("User not authenticated");
     }
 
-    const decodedClaims = await getAdminAuth().verifySessionCookie(sessionCookie.value, true);
-
-    return { userId: decodedClaims.uid };
+    return { userId: user.id };
   } catch (error) {
     console.error("Failed to authenticate user:", error);
     throw new Error("Failed to authenticate user");
@@ -41,7 +40,7 @@ export function createLocaleAwareRedirect(
   searchParams?: Record<string, string>
 ): NextResponse {
   const locale = getLocaleFromRequest(request);
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL!;
 
   const localePath = `/${locale}${path}`;
 

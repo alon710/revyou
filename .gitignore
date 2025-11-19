@@ -53,3 +53,6 @@ firebase-debug.log
 !/lib/**/*.config.js
 /types/**/*.js
 /types/**/*.js.map
+
+# Supabase
+/supabase/.temp/*

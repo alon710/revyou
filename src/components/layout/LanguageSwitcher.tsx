@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetTrigger, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Globe } from "lucide-react";
 import { locales, localeConfig, type Locale } from "@/i18n/config";
@@ -47,6 +47,7 @@ export function LanguageSwitcher() {
           <SheetTrigger asChild>{triggerButton}</SheetTrigger>
           <SheetContent side="bottom">
             <SheetTitle className="sr-only">{t("selectLanguage")}</SheetTitle>
+            <SheetDescription className="sr-only">{t("selectLanguageDescription")}</SheetDescription>
             <div className="grid gap-4 p-4">{languageOptions}</div>
           </SheetContent>
         </Sheet>

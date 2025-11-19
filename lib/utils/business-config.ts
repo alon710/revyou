@@ -1,10 +1,7 @@
-import type { BusinessConfig, ToneOfVoice, LanguageMode } from "@/lib/types";
+import type { ToneOfVoice, LanguageMode } from "@/lib/types";
 
-export function getDefaultBusinessConfig(): BusinessConfig {
+export function getDefaultBusinessConfig() {
   return {
-    name: "",
-    description: "",
-    phoneNumber: "",
     toneOfVoice: "professional" as ToneOfVoice,
     useEmojis: true,
     languageMode: "auto-detect" as LanguageMode,

@@ -12,6 +12,7 @@
     "edit": "Edit",
     "close": "Close",
     "selectLanguage": "Select language",
+    "selectLanguageDescription": "Choose your preferred language from the list below",
     "confirm": "Confirm",
     "back": "Back",
     "next": "Next",
@@ -29,7 +30,12 @@
     "dangerZone": "Danger Zone",
     "irreversibleWarning": "This action is irreversible!",
     "irreversibleActions": "Irreversible actions that will affect your account",
-    "additionalInfo": "Additional Information"
+    "additionalInfo": "Additional Information",
+    "errorState": {
+      "title": "Something went wrong!",
+      "description": "An error occurred while loading this page.",
+      "retry": "Try again"
+    }
   },
   "errors": {
     "general": "Something went wrong",
@@ -49,7 +55,7 @@
     "dashboard": {
       "home": "Home",
       "subscription": "Plan",
-      "insights": "Insights"
+      "settings": "Settings"
     },
     "landing": {
       "home": "Home",
@@ -84,7 +90,46 @@
         "manual_approval": "Manual Approval",
         "auto_publish": "Auto Publish",
         "whatsapp_support": "WhatsApp Support"
-      }
+      },
+      "plans": {
+        "free": {
+          "name": "Free",
+          "description": "Get started with basic features",
+          "features": {
+            "0": "1 business location",
+            "1": "10 AI replies per month",
+            "2": "Manual approval required",
+            "3": "Email support"
+          }
+        },
+        "basic": {
+          "name": "Basic",
+          "description": "Perfect for small businesses",
+          "features": {
+            "0": "Up to 3 business locations",
+            "1": "100 AI replies per month",
+            "2": "Auto-post replies",
+            "3": "Priority email support",
+            "4": "Custom tone of voice",
+            "5": "Emoji customization"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "For growing businesses",
+          "features": {
+            "0": "Unlimited business locations",
+            "1": "Unlimited AI replies",
+            "2": "Auto-post replies",
+            "3": "WhatsApp support",
+            "4": "Custom tone of voice",
+            "5": "Emoji customization",
+            "6": "Advanced analytics",
+            "7": "Priority support"
+          }
+        }
+      },
+      "yearlySavings": "Save {percentage}% yearly"
     },
     "faq": {
       "title": "Frequently Asked Questions",
@@ -116,7 +161,7 @@
         },
         "6": {
           "question": "Is the system secure? What about data privacy?",
-          "answer": "The system uses official Google Business Profile API integration with OAuth 2.0, so we never store your Google password. All information is encrypted and securely stored in Google Firebase. We comply with the highest standards of data security and privacy."
+          "answer": "The system uses official Google Business Profile API integration with OAuth 2.0, so we never store your Google password. All information is encrypted and securely stored in Supabase (PostgreSQL). We comply with the highest standards of data security and privacy."
         },
         "7": {
           "question": "Can I try the system before paying?",
@@ -195,7 +240,7 @@
       "privacyLink": "Privacy Policy"
     },
     "errors": {
-      "firebaseNotConfigured": "Firebase is not configured. Please check project settings.",
+      "firebaseNotConfigured": "Database is not configured. Please check project settings.",
       "sessionCreationFailed": "Unable to create session. Please try logging in again.",
       "googleSignInFailed": "An error occurred signing in with Google",
       "signOutFailed": "An error occurred signing out",
@@ -347,20 +392,6 @@
           "enabled": "Enabled",
           "disabled": "Disabled",
           "noInstructions": "No special instructions"
-        },
-        "notifications": {
-          "title": "Email Notifications",
-          "description": "Choose which notifications you'd like to receive by email for this business",
-          "modalTitle": "Edit Email Notifications",
-          "modalDescription": "Choose which notifications you'd like to receive by email",
-          "emailOnNewReview": {
-            "label": "New Review",
-            "description": "Receive email notification when a new review is received",
-            "tooltip": "When enabled, you'll receive an immediate email notification whenever a new review is published on your business in Google. This allows you to respond quickly to customers",
-            "helper": "Receive email notification when a new review is received"
-          },
-          "enabled": "Enabled",
-          "disabled": "Disabled"
         }
       }
     },
@@ -372,6 +403,8 @@
       "errorLoading": "Error loading data. Please try again later.",
       "upgradeComingSoon": "Subscription upgrade will be available soon",
       "invalidLink": "Invalid link. Please contact support.",
+      "currentPlan": "Current Plan",
+      "contactSupport": "To manage or cancel your subscription, please contact support.",
       "info": {
         "title": "Usage and Limits",
         "description": "Track your usage in the current plan",
@@ -394,10 +427,26 @@
         }
       }
     },
-    "insights": {
-      "title": "Insights",
-      "description": "Statistics and insights about your business",
-      "comingSoon": "Coming Soon"
+    "accountSettings": {
+      "title": "Settings",
+      "description": "Manage your account preferences",
+      "languagePreferences": {
+        "title": "Language Preferences",
+        "description": "Choose your preferred language for the interface and emails",
+        "label": "Preferred Language",
+        "tooltip": "This language will be used for all your emails and as the default interface language"
+      },
+      "emailNotifications": {
+        "title": "Email Notifications",
+        "description": "Configure which email notifications you want to receive",
+        "label": "Review Notifications",
+        "tooltip": "Receive email notifications when new reviews are received",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "saveSuccess": "Settings saved successfully",
+      "saveError": "Error saving settings. Please try again.",
+      "loadError": "Error loading settings. Please try again."
     },
     "reviews": {
       "title": "Reviews",
@@ -480,9 +529,10 @@
   },
   "checkout": {
     "missingPriceDetails": "Missing price details. Please select a plan from the pricing page.",
-    "checkoutError": "An error occurred while creating the order. Please try again or contact support.",
-    "preparingPayment": "Preparing payment...",
-    "redirectingToPayment": "Redirecting you to the secure payment page"
+    "error": "An error occurred while creating your subscription. Please try again or contact support.",
+    "processing": "Processing your subscription...",
+    "almostThere": "Almost there!",
+    "success": "Subscription activated successfully!"
   },
   "terms": {
     "title": "Terms of Service",
@@ -558,7 +608,7 @@
       },
       "informationSecurity": {
         "title": "4. Information Security",
-        "content": "We use advanced security measures to protect your information, including data encryption, OAuth 2.0 authentication with Google, and secure storage in Firebase. However, no method of transmission or storage is 100% secure."
+        "content": "We use advanced security measures to protect your information, including data encryption, OAuth 2.0 authentication with Google, and secure storage in Supabase. However, no method of transmission or storage is 100% secure."
       },
       "sharingWithThirdParties": {
         "title": "5. Sharing Information with Third Parties",
@@ -566,7 +616,7 @@
         "items": [
           "Google (for Google Business Profile API)",
           "Gemini AI (for generating responses)",
-          "Infrastructure service providers (Firebase, Cloud Storage)",
+          "Infrastructure service providers (Supabase, Vercel)",
           "When required by law"
         ]
       },
@@ -653,6 +703,20 @@
       "description": "Customize automatic responses according to rating level",
       "successMessage": "Settings saved successfully!",
       "errorMessage": "Unable to save settings"
+    }
+  },
+  "emails": {
+    "reviewNotification": {
+      "subject": "New review received: {rating} stars - {businessName}",
+      "title": "New Review Received!",
+      "greeting": "Hello {name},",
+      "body": "A new review has been received for <strong>{businessName}</strong>",
+      "noReviewText": "The customer did not leave any text in the review",
+      "aiReplyHeader": "AI Response",
+      "statusPending": "Pending Approval",
+      "statusPosted": "Posted",
+      "viewReviewButton": "View Review",
+      "footer": "You received this email because you enabled notifications for new reviews"
     }
   }
 }

@@ -1,57 +1,37 @@
-import type { Subscription, SubscriptionCreate, SubscriptionUpdate, Business } from "@/lib/types";
-import { SubscriptionsRepositoryAdmin } from "@/lib/repositories/subscriptions.repository.admin";
-import { AccountsRepositoryAdmin } from "@/lib/repositories/accounts.repository.admin";
-import { BusinessesRepositoryAdmin } from "@/lib/repositories/businesses.repository.admin";
-import { BaseController } from "./base.controller";
-import type { PlanLimits } from "@/lib/stripe/entitlements";
+import { SubscriptionsRepository, StatsRepository } from "@/lib/db/repositories";
+import type { PlanLimits } from "@/lib/subscriptions/plans";
 
-export class SubscriptionsController extends BaseController<SubscriptionCreate, Subscription, SubscriptionUpdate> {
-  constructor() {
-    const repository = new SubscriptionsRepositoryAdmin();
-    super(repository);
-  }
-
+export class SubscriptionsController {
   async getUserPlanLimits(userId: string): Promise<PlanLimits> {
-    return this.handleError(async () => {
-      const repo = this.repository as SubscriptionsRepositoryAdmin;
-      return repo.getUserPlanLimits(userId);
-    }, "Failed to get user plan limits");
+    const repo = new SubscriptionsRepository();
+    return repo.getUserPlanLimits(userId);
   }
 
   async checkBusinessLimit(userId: string): Promise<boolean> {
-    return this.handleError(async () => {
-      const repo = this.repository as SubscriptionsRepositoryAdmin;
-      const limits = await repo.getUserPlanLimits(userId);
-      const accountsRepo = new AccountsRepositoryAdmin(userId);
-      const accounts = await accountsRepo.list();
+    const repo = new SubscriptionsRepository();
+    const limits = await repo.getUserPlanLimits(userId);
 
-      const allBusinesses: Business[] = [];
-      for (const account of accounts) {
-        const businessRepo = new BusinessesRepositoryAdmin(userId, account.id);
-        const businesses = await businessRepo.list();
+    if (limits.businesses === -1) {
+      return true;
+    }
 
-        const businessesWithAccount = businesses.map((b) => ({
-          ...b,
-          accountId: account.id,
-        }));
-        allBusinesses.push(...businessesWithAccount);
-      }
+    const statsRepo = new StatsRepository();
+    const businessCount = await statsRepo.countUserBusinesses(userId);
 
-      return allBusinesses.length < limits.businesses;
-    }, "Failed to check business limit");
+    return businessCount < limits.businesses;
   }
 
   async checkReviewQuota(userId: string): Promise<{ allowed: boolean; currentCount: number; limit: number }> {
-    return this.handleError(async () => {
-      const repo = this.repository as SubscriptionsRepositoryAdmin;
-      const limits = await repo.getUserPlanLimits(userId);
-      const currentCount = await repo.countUserReviewsThisMonth(userId);
+    const repo = new SubscriptionsRepository();
+    const limits = await repo.getUserPlanLimits(userId);
+    const currentCount = await repo.countUserReviewsThisMonth(userId);
 
-      return {
-        allowed: currentCount < limits.reviewsPerMonth,
-        currentCount,
-        limit: limits.reviewsPerMonth,
-      };
-    }, "Failed to check review quota");
+    const allowed = limits.reviewsPerMonth === -1 || currentCount < limits.reviewsPerMonth;
+
+    return {
+      allowed,
+      currentCount,
+      limit: limits.reviewsPerMonth,
+    };
   }
 }

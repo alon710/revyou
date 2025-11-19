@@ -5,10 +5,10 @@ import { StarRating } from "@/components/ui/StarRating";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { TooltipIcon } from "@/components/ui/tooltip";
-import { BusinessConfig } from "@/lib/types";
+import { Business } from "@/lib/types";
 import { useTranslations } from "next-intl";
 
-export type StarRatingConfigFormData = BusinessConfig["starConfigs"];
+export type StarRatingConfigFormData = Business["starConfigs"];
 
 interface StarRatingConfigFormProps {
   values: StarRatingConfigFormData;
@@ -88,13 +88,13 @@ export function StarRatingConfigForm({
                 className="text-sm resize-none"
               />
               {rating <= 2 && (
-                <p className="text-xs text-muted-foreground text-end">{t("customInstructions.helpers.low")}</p>
+                <p className="text-xs text-muted-foreground text-start">{t("customInstructions.helpers.low")}</p>
               )}
               {rating === 3 && (
-                <p className="text-xs text-muted-foreground text-end">{t("customInstructions.helpers.medium")}</p>
+                <p className="text-xs text-muted-foreground text-start">{t("customInstructions.helpers.medium")}</p>
               )}
               {rating >= 4 && (
-                <p className="text-xs text-muted-foreground text-end">{t("customInstructions.helpers.high")}</p>
+                <p className="text-xs text-muted-foreground text-start">{t("customInstructions.helpers.high")}</p>
               )}
             </div>
           </div>

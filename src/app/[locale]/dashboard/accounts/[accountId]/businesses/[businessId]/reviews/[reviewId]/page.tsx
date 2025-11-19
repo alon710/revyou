@@ -1,79 +1,28 @@
-"use client";
-
-import { use, useState, useEffect, useCallback } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import type { Business, Review } from "@/lib/types";
-import { ReviewCard } from "@/components/dashboard/reviews/ReviewCard";
-import { Loading } from "@/components/ui/loading";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { BackButton } from "@/components/ui/back-button";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { getBusiness } from "@/lib/actions/businesses.actions";
 import { getReview } from "@/lib/actions/reviews.actions";
+import { getAuthenticatedUserId } from "@/lib/api/auth";
+import { ReviewCardWithRefresh } from "@/components/dashboard/reviews/ReviewCard";
+
+export const dynamic = "force-dynamic";
 
 interface ReviewPageProps {
-  params: Promise<{ accountId: string; businessId: string; reviewId: string }>;
+  params: Promise<{ locale: string; accountId: string; businessId: string; reviewId: string }>;
 }
 
-export default function ReviewPage({ params }: ReviewPageProps) {
-  const { accountId, businessId, reviewId } = use(params);
-  const { user } = useAuth();
-  const t = useTranslations("dashboard.reviewDetail");
-  const tCommon = useTranslations("common");
-  const [business, setBusiness] = useState<Business | null>(null);
-  const [review, setReview] = useState<Review | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default async function ReviewPage({ params }: ReviewPageProps) {
+  const { locale, accountId, businessId, reviewId } = await params;
+  const { userId } = await getAuthenticatedUserId();
+  const t = await getTranslations({ locale, namespace: "dashboard.reviewDetail" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
 
-  const loadData = useCallback(async () => {
-    if (!user || !accountId || !businessId || !reviewId) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const [biz, fetchedReview] = await Promise.all([
-        getBusiness(user.uid, accountId, businessId),
-        getReview(user.uid, accountId, businessId, reviewId),
-      ]);
-
-      setBusiness(biz);
-      setReview(fetchedReview);
-    } catch (err) {
-      console.error("Error loading data:", err);
-      setError(err instanceof Error ? err.message : t("errorLoading"));
-    } finally {
-      setLoading(false);
-    }
-  }, [user, accountId, businessId, reviewId, t]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  if (loading) {
-    return (
-      <PageContainer>
-        <Loading fullScreen text={t("loadingReview")} />
-      </PageContainer>
-    );
-  }
-
-  if (error || !review || !business || !user) {
-    return (
-      <PageContainer>
-        <div className="mb-6">
-          <BackButton label={tCommon("back")} />
-        </div>
-        <PageHeader title={t("title")} description={t("description")} />
-        <div className="text-center text-muted-foreground py-12">{error || t("reviewNotFound")}</div>
-      </PageContainer>
-    );
-  }
+  const [business, review] = await Promise.all([
+    getBusiness(userId, accountId, businessId),
+    getReview(userId, accountId, businessId, reviewId),
+  ]);
 
   return (
     <PageContainer>
@@ -83,13 +32,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
       <PageHeader title={t("reviewFrom", { reviewerName: review.name })} description={business.name} />
 
       <div className="mt-6">
-        <ReviewCard
-          review={review}
-          accountId={accountId}
-          businessId={businessId}
-          userId={user.uid}
-          onUpdate={loadData}
-        />
+        <ReviewCardWithRefresh review={review} accountId={accountId} businessId={businessId} userId={userId} />
       </div>
     </PageContainer>
   );

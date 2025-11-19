@@ -1,6 +1,6 @@
 "use client";
 
-import { BusinessConfig } from "@/lib/types";
+import { Business } from "@/lib/types";
 import { DashboardCardField } from "@/components/ui/dashboard-card";
 import { Sparkles } from "lucide-react";
 import EditableSection from "@/components/dashboard/shared/EditableSection";
@@ -11,26 +11,25 @@ import {
 import { useTranslations } from "next-intl";
 
 interface AIResponseSettingsSectionProps {
-  config: BusinessConfig;
+  business: Business;
   loading?: boolean;
-  onSave: (config: Partial<BusinessConfig>) => Promise<void>;
+  onSave: (data: Partial<Business>) => Promise<void>;
 }
 
-export default function AIResponseSettingsSection({ config, loading, onSave }: AIResponseSettingsSectionProps) {
+export default function AIResponseSettingsSection({ business, loading, onSave }: AIResponseSettingsSectionProps) {
   const t = useTranslations("dashboard.businesses.sections.aiSettings");
   const tCommon = useTranslations("common");
 
   const formData: AIResponseSettingsFormData = {
-    toneOfVoice: config.toneOfVoice,
-    languageMode: config.languageMode || "auto-detect",
-    allowedEmojis: config.allowedEmojis || [],
-    maxSentences: config.maxSentences || 2,
-    signature: config.signature || "",
+    toneOfVoice: business.toneOfVoice,
+    languageMode: business.languageMode || "auto-detect",
+    allowedEmojis: business.allowedEmojis || [],
+    maxSentences: business.maxSentences || 2,
+    signature: business.signature || "",
   };
 
   return (
     <EditableSection
-      editButtonLabel={tCommon("edit")}
       title={t("title")}
       description={t("description")}
       icon={<Sparkles className="h-5 w-5" />}
@@ -54,7 +53,7 @@ export default function AIResponseSettingsSection({ config, loading, onSave }: A
                   friendly: t("toneOptions.friendly"),
                   formal: t("toneOptions.formal"),
                   humorous: t("toneOptions.humorous"),
-                }[config.toneOfVoice]
+                }[business.toneOfVoice]
               }
             </p>
           </DashboardCardField>
@@ -66,25 +65,25 @@ export default function AIResponseSettingsSection({ config, loading, onSave }: A
                   "auto-detect": t("languageOptions.autoDetect"),
                   hebrew: t("languageOptions.hebrew"),
                   english: t("languageOptions.english"),
-                }[config.languageMode]
+                }[business.languageMode]
               }
             </p>
           </DashboardCardField>
 
           <DashboardCardField label={t("fields.emojis")}>
             <p className="text-sm font-medium">
-              {config.allowedEmojis?.length ? config.allowedEmojis.join(" ") : t("noEmojis")}
+              {business.allowedEmojis?.length ? business.allowedEmojis.join(" ") : t("noEmojis")}
             </p>
           </DashboardCardField>
 
           <DashboardCardField label={t("fields.maxSentences")}>
             <p className="text-sm font-medium">
-              {config.maxSentences || 2} {t("sentencesUnit")}
+              {business.maxSentences || 2} {t("sentencesUnit")}
             </p>
           </DashboardCardField>
 
           <DashboardCardField label={t("fields.signature")}>
-            <p className="text-sm font-medium">{config.signature || t("noSignature")}</p>
+            <p className="text-sm font-medium">{business.signature || t("noSignature")}</p>
           </DashboardCardField>
         </>
       )}

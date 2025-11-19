@@ -1,21 +1,15 @@
-import type { UserCreate, User, UserUpdate } from "@/lib/types";
-import { UsersRepositoryAdmin } from "@/lib/repositories/users.repository.admin";
-import { BaseController } from "./base.controller";
+import { UsersConfigsRepository } from "@/lib/db/repositories";
+import type { UsersConfig } from "@/lib/db/schema";
+import type { UserConfigUpdate } from "@/lib/types/user.types";
 
-export class UsersController extends BaseController<UserCreate, User, UserUpdate> {
-  constructor() {
-    const repository = new UsersRepositoryAdmin();
-    super(repository);
+export class UsersController {
+  async getUserConfig(userId: string): Promise<UsersConfig> {
+    const repo = new UsersConfigsRepository();
+    return repo.getOrCreate(userId);
   }
 
-  async getUser(userId: string): Promise<User> {
-    return this.ensureExists(userId, "User");
-  }
-
-  async updateUser(userId: string, data: UserUpdate): Promise<User> {
-    return this.handleError(async () => {
-      await this.ensureExists(userId, "User");
-      return this.repository.update(userId, data);
-    }, "Failed to update user");
+  async updateUserConfig(userId: string, data: UserConfigUpdate): Promise<UsersConfig> {
+    const repo = new UsersConfigsRepository();
+    return repo.updateConfigs(userId, data);
   }
 }

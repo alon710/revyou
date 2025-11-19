@@ -108,7 +108,7 @@ export async function generateReviewReply(
   const businessController = new BusinessesController(userId, accountId);
   const business = await businessController.getBusiness(businessId);
 
-  const prompt = buildReplyPrompt(business.config, review, business.name, business.config.phoneNumber);
+  const prompt = buildReplyPrompt(business, review);
   const aiReply = await generateAIReply(prompt);
 
   const updatedReview = await reviewController.updateAiReply(reviewId, aiReply);
@@ -158,7 +158,7 @@ export async function createReview(
   userId: string,
   accountId: string,
   businessId: string,
-  data: Omit<ReviewCreate, "userId" | "accountId" | "businessId">
+  data: Omit<ReviewCreate, "accountId" | "businessId">
 ): Promise<Review> {
   const { userId: authenticatedUserId } = await getAuthenticatedUserId();
 
@@ -168,7 +168,6 @@ export async function createReview(
 
   const controller = new ReviewsController(userId, accountId, businessId);
   const reviewData: ReviewCreate = {
-    userId,
     accountId,
     businessId,
     ...data,

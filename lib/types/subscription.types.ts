@@ -1,32 +1,11 @@
-import type { Product } from "@invertase/firestore-stripe-payments";
+import type { Subscription as DrizzleSubscription, SubscriptionInsert } from "@/lib/db/schema";
 
-export type SubscriptionStatus =
-  | "active"
-  | "trialing"
-  | "canceled"
-  | "incomplete"
-  | "incomplete_expired"
-  | "past_due"
-  | "unpaid";
+export type SubscriptionStatus = "active" | "canceled" | "expired";
 
-export interface Subscription {
-  id: string;
-  status: SubscriptionStatus;
-  product: string | { id: string };
-  price?: string | { id: string };
-  created: Date;
-  current_period_start: Date;
-  current_period_end: Date;
-  cancel_at_period_end?: boolean;
-  canceled_at?: Date | null;
-  trial_start?: Date | null;
-  trial_end?: Date | null;
-  metadata?: Record<string, unknown>;
-}
+export type BillingInterval = "monthly" | "yearly";
 
-export interface SubscriptionWithProduct extends Subscription {
-  productData: Product;
-}
+export type Subscription = DrizzleSubscription;
 
-export type SubscriptionCreate = Omit<Subscription, "id">;
-export type SubscriptionUpdate = Partial<Omit<Subscription, "id">>;
+export type SubscriptionCreate = Omit<SubscriptionInsert, "id" | "createdAt">;
+
+export type SubscriptionUpdate = Partial<Omit<SubscriptionInsert, "id" | "userId" | "createdAt">>;

@@ -137,7 +137,7 @@ export function AIResponseSettingsForm({
           />
           <EmojiPicker onEmojiSelect={handleEmojiSelect} disabled={disabled} />
         </div>
-        <p className="text-xs text-muted-foreground">{t("emojis.helper")}</p>
+        <p className="text-xs text-muted-foreground text-start">{t("emojis.helper")}</p>
       </div>
 
       <div className="space-y-2">
@@ -187,7 +187,7 @@ export function AIResponseSettingsForm({
           disabled={disabled}
           dir={dir}
         />
-        <p className="text-xs text-muted-foreground">{t("signature.helper")}</p>
+        <p className="text-xs text-muted-foreground text-start">{t("signature.helper")}</p>
       </div>
     </div>
   );

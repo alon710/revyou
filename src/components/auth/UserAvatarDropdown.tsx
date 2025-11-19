@@ -1,8 +1,8 @@
 "use client";
 
-import { LogOut, Plus, LayoutDashboard, Globe } from "lucide-react";
+import { LogOut, Plus, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { signOut } from "@/lib/firebase/auth";
+import { signOut } from "@/lib/auth/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -11,21 +11,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/routing";
-import { locales, localeConfig, type Locale } from "@/i18n/config";
 
 export function UserAvatarDropdown() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const locale = useLocale() as Locale;
   const t = useTranslations("auth");
 
   const isDashboardPage = pathname?.startsWith("/dashboard");
@@ -46,10 +40,6 @@ export function UserAvatarDropdown() {
     router.push("/dashboard/home");
   };
 
-  const handleLanguageChange = (newLocale: Locale) => {
-    router.replace(pathname, { locale: newLocale });
-  };
-
   if (loading) {
     return <Skeleton className="h-10 w-10 rounded-full" />;
   }
@@ -58,11 +48,14 @@ export function UserAvatarDropdown() {
     return null;
   }
 
+  const displayName = user.user_metadata?.full_name || user.user_metadata?.name;
+  const photoURL = user.user_metadata?.avatar_url || user.user_metadata?.picture;
+
   const getInitials = () => {
-    if (user.displayName) {
-      return user.displayName
+    if (displayName) {
+      return displayName
         .split(" ")
-        .map((n) => n[0])
+        .map((n: string) => n[0])
         .join("")
         .toUpperCase()
         .slice(0, 2);
@@ -77,14 +70,14 @@ export function UserAvatarDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">
         <Avatar className="h-10 w-10 cursor-pointer">
-          <AvatarImage src={user.photoURL || undefined} alt={user.displayName || "User"} />
+          <AvatarImage src={photoURL || undefined} alt={displayName || "User"} />
           <AvatarFallback className="bg-primary text-primary-foreground">{getInitials()}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1 text-end">
-            <p className="text-sm font-medium leading-none">{user.displayName || t("user")}</p>
+            <p className="text-sm font-medium leading-none">{displayName || t("user")}</p>
             <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>
@@ -99,26 +92,6 @@ export function UserAvatarDropdown() {
           <Plus className="h-4 w-4" />
           <span>{t("addBusiness")}</span>
         </DropdownMenuItem>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="cursor-pointer">
-            <div className="flex items-center justify-between flex-1">
-              <Globe className="h-4 w-4" />
-              <span>{t("language")}</span>
-            </div>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuPortal>
-            <DropdownMenuSubContent>
-              {locales.map((loc) => (
-                <DropdownMenuItem key={loc} onSelect={() => handleLanguageChange(loc)}>
-                  <span className="flex items-center justify-between w-full">
-                    {localeConfig[loc].label}
-                    {locale === loc && <span className="text-xs">✓</span>}
-                  </span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuSubContent>
-          </DropdownMenuPortal>
-        </DropdownMenuSub>
         <DropdownMenuItem onSelect={handleSignOut} className="cursor-pointer flex justify-between">
           <LogOut className="h-4 w-4" />
           <span>{t("signOut")}</span>

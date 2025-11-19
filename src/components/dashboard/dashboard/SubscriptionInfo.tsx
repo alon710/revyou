@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/dashboard-card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import type { PlanLimits, PlanType } from "@/lib/stripe/entitlements";
-import type { Subscription } from "@/hooks/useSubscription";
-import { formatDate, getCurrentBillingPeriod } from "@/lib/subscription/billing-period";
+import type { PlanLimits, PlanTier } from "@/lib/subscriptions/plans";
+import type { Subscription } from "@/lib/types/subscription.types";
+import { formatDate, getCurrentBillingPeriod } from "@/lib/subscriptions/billing-period";
 import { useTranslations, useLocale } from "next-intl";
 import type { Locale } from "@/i18n/config";
 
@@ -23,10 +23,10 @@ interface SubscriptionInfoProps {
   currentReviews: number;
   businessesPercent: number;
   reviewsPercent: number;
-  planType: PlanType;
+  planType: PlanTier;
 }
 
-function getPlanBadgeInfo(planType: PlanType, planLabel: string) {
+function getPlanBadgeInfo(planType: PlanTier, planLabel: string) {
   const planMap = {
     free: { label: planLabel, variant: "secondary" as const },
     basic: { label: planLabel, variant: "default" as const },

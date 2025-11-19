@@ -2,7 +2,7 @@
 
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { BusinessesController, SubscriptionsController } from "@/lib/controllers";
-import type { Business, BusinessCreate, BusinessUpdate, BusinessFilters, BusinessConfig } from "@/lib/types";
+import type { Business, BusinessCreate, BusinessUpdate, BusinessFilters } from "@/lib/types";
 import { getDefaultBusinessConfig } from "@/lib/utils/business-config";
 
 export async function getBusinesses(
@@ -34,10 +34,7 @@ export async function getBusiness(userId: string, accountId: string, businessId:
 export async function upsertBusiness(
   userId: string,
   accountId: string,
-  data: Omit<BusinessCreate, "userId" | "accountId" | "emailOnNewReview" | "config"> & {
-    emailOnNewReview?: boolean;
-    config?: Partial<BusinessConfig>;
-  }
+  data: Omit<BusinessCreate, "accountId">
 ): Promise<Business> {
   const { userId: authenticatedUserId } = await getAuthenticatedUserId();
 
@@ -49,27 +46,11 @@ export async function upsertBusiness(
   const subscriptionsController = new SubscriptionsController();
 
   const defaultConfig = getDefaultBusinessConfig();
-  const businessConfig = {
-    ...defaultConfig,
-    ...data.config,
-    name: data.config?.name || data.name,
-    description: data.config?.description || data.description || "",
-    phoneNumber: data.config?.phoneNumber || data.phoneNumber || "",
-  };
 
   const businessData: BusinessCreate = {
-    userId,
     accountId,
-    googleBusinessId: data.googleBusinessId,
-    name: data.name,
-    address: data.address,
-    phoneNumber: data.phoneNumber || null,
-    websiteUrl: data.websiteUrl || null,
-    mapsUrl: data.mapsUrl || null,
-    description: data.description || null,
-    photoUrl: data.photoUrl || null,
-    emailOnNewReview: data.emailOnNewReview ?? true,
-    config: businessConfig,
+    ...defaultConfig,
+    ...data,
   };
 
   return controller.upsertBusiness(businessData, () => subscriptionsController.checkBusinessLimit(userId));
@@ -95,7 +76,7 @@ export async function updateBusinessConfig(
   userId: string,
   accountId: string,
   businessId: string,
-  config: Partial<BusinessConfig>
+  config: Partial<BusinessUpdate>
 ): Promise<Business> {
   const { userId: authenticatedUserId } = await getAuthenticatedUserId();
 
@@ -104,7 +85,7 @@ export async function updateBusinessConfig(
   }
 
   const controller = new BusinessesController(userId, accountId);
-  return controller.updateConfig(businessId, config);
+  return controller.updateBusiness(businessId, config);
 }
 
 export async function deleteBusiness(userId: string, accountId: string, businessId: string): Promise<void> {

@@ -10,7 +10,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-secondary/30 border-t border-border">
+    <footer className="bg-secondary/30 border-t border-border pb-16 md:pb-0">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
@@ -86,8 +86,8 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border py-6">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-muted-foreground">{t("copyright", { year: currentYear })}</p>
+          <div className="flex flex-row justify-between items-center gap-2 sm:gap-4">
+            <p className="text-xs sm:text-sm text-muted-foreground">{t("copyright", { year: currentYear })}</p>
             <LanguageSwitcher />
           </div>
         </div>

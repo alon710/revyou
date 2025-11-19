@@ -9,7 +9,7 @@ import {
   DashboardCardContent,
 } from "@/components/ui/dashboard-card";
 import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { EditableFormModal } from "./EditableFormModal";
 
 interface EditableSectionProps<T> {
@@ -20,7 +20,6 @@ interface EditableSectionProps<T> {
   modalTitle: string;
   modalDescription: string;
   data: T;
-  editButtonLabel: string;
   onSave: (data: T) => Promise<void>;
   renderDisplay: () => ReactNode;
   renderForm: (props: FormRenderProps<T>) => ReactNode;
@@ -45,7 +44,6 @@ export default function EditableSection<T>({
   modalTitle,
   modalDescription,
   data,
-  editButtonLabel,
   onSave,
   renderDisplay,
   renderForm,
@@ -66,9 +64,14 @@ export default function EditableSection<T>({
               <DashboardCardTitle icon={icon}>{title}</DashboardCardTitle>
               <DashboardCardDescription>{description}</DashboardCardDescription>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setShowEditModal(true)} disabled={loading}>
-              <Settings className="ms-2 h-4 w-4" />
-              {editButtonLabel}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowEditModal(true)}
+              disabled={loading}
+              aria-label={`Edit ${title}`}
+            >
+              <Pencil className="h-4 w-4" />
             </Button>
           </div>
         </DashboardCardHeader>
