@@ -1,10 +1,5 @@
-import { Loading } from "@/components/ui/loading";
-import { PageContainer } from "@/components/layout/PageContainer";
+import { ReviewsListSkeleton } from "@/components/skeletons/ReviewsListSkeleton";
 
 export default function ReviewsLoading() {
-  return (
-    <PageContainer>
-      <Loading fullScreen />
-    </PageContainer>
-  );
+  return <ReviewsListSkeleton />;
 }

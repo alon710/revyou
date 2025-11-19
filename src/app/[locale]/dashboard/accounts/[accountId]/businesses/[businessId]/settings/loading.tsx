@@ -1,9 +1,5 @@
-import { Loading } from "@/components/ui/loading";
+import { BusinessSettingsSkeleton } from "@/components/skeletons/BusinessSettingsSkeleton";
 
 export default function BusinessSettingsLoading() {
-  return (
-    <div className="flex items-center justify-center min-h-[400px]">
-      <Loading size="md" />
-    </div>
-  );
+  return <BusinessSettingsSkeleton />;
 }

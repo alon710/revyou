@@ -1,5 +1,5 @@
-import { Loading } from "@/components/ui/loading";
+import { CheckoutSkeleton } from "@/components/skeletons/CheckoutSkeleton";
 
 export default function CheckoutLoading() {
-  return <Loading size="md" fullScreen />;
+  return <CheckoutSkeleton />;
 }

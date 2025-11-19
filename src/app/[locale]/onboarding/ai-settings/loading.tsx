@@ -1,5 +1,5 @@
-import { Loading } from "@/components/ui/loading";
+import { OnboardingSkeleton } from "@/components/skeletons/OnboardingSkeleton";
 
 export default function AISettingsLoading() {
-  return <Loading size="md" fullScreen />;
+  return <OnboardingSkeleton />;
 }

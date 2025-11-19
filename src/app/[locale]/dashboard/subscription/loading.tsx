@@ -1,5 +1,5 @@
-import { Loading } from "@/components/ui/loading";
+import { GenericPageSkeleton } from "@/components/skeletons/GenericPageSkeleton";
 
 export default function SubscriptionLoading() {
-  return <Loading size="md" fullScreen />;
+  return <GenericPageSkeleton />;
 }
