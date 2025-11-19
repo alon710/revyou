@@ -31,13 +31,7 @@ export class BusinessesController {
     const existingBusinessGlobal = await this.repository.findByGoogleBusinessIdGlobal(data.googleBusinessId);
 
     if (existingBusinessGlobal) {
-      const business = await this.repository.findOrCreate(data);
-
-      await this.repository.update(business.id, data);
-      return this.repository.reconnect(business.id, {
-        address: data.address,
-        mapsUrl: data.mapsUrl ?? null,
-      });
+      return this.repository.findOrCreate(data);
     }
 
     if (checkLimit) {
