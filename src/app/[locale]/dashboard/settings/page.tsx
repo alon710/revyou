@@ -49,6 +49,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
           <TeamManagement
             key={account.accountId}
             accountId={account.accountId}
+            accountName={account.accountName}
             teamMembers={account.teamMembers}
             currentUserId={userId}
             currentUserRole={account.currentUserRole}
