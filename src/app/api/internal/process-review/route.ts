@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { Resend } from "resend";
 import { generateWithGemini } from "@/lib/ai/core/gemini-client";
 import { buildReplyPrompt } from "@/lib/ai/prompts/builder";
@@ -192,11 +192,11 @@ export async function POST(request: NextRequest) {
     const usersConfigsRepo = new UsersConfigsRepository();
     const userConfig = await usersConfigsRepo.getOrCreate(userId);
 
-    if (userConfig.configs.EMAIL_ON_NEW_REVIEW) {
+    if (userConfig.configs.EMAIL_ON_NEW_REVIEW && (replyStatus === "pending" || replyStatus === "posted")) {
       try {
         console.log("Sending email notification", { reviewId, replyStatus });
 
-        const supabase = await createClient();
+        const supabase = createAdminClient();
         const { data: userData } = await supabase.auth.admin.getUserById(userId);
 
         if (!userData.user) {
@@ -210,7 +210,7 @@ export async function POST(request: NextRequest) {
           } else {
             const locale = (userConfig.configs.LOCALE || "en") as Locale;
 
-            const status = replyStatus;
+            const status = replyStatus as "pending" | "posted";
 
             const { subject, html } = await renderReviewNotificationEmail(
               {
