@@ -8,7 +8,6 @@ export default defineConfig({
     url: process.env.DATABASE_URL!,
   },
   schemaFilter: ["public"],
-  extensionsFilters: ["postgis"],
   verbose: true,
   strict: true,
   entities: {
