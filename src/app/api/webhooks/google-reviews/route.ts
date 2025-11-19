@@ -167,6 +167,31 @@ export async function POST(request: NextRequest) {
     const existingReview = await reviewsRepo.findByGoogleReviewId(googleReview.reviewId);
 
     if (existingReview) {
+      if (notificationType === "UPDATED_REVIEW") {
+        try {
+          const updatedReview = await reviewsRepo.update(existingReview.id, {
+            rating: starRatingToNumber(googleReview.starRating),
+            text: googleReview.comment || "",
+            updateTime: parseGoogleTimestamp(googleReview.updateTime),
+            name: googleReview.reviewer.displayName,
+            photoUrl: googleReview.reviewer.profilePhotoUrl || null,
+            isAnonymous: googleReview.reviewer.isAnonymous || false,
+          });
+
+          console.log("Review updated successfully:", updatedReview.id);
+          return NextResponse.json(
+            {
+              message: "Review updated",
+              reviewId: updatedReview.id,
+            },
+            { status: 200 }
+          );
+        } catch (error) {
+          console.error("Failed to update review:", error);
+          return NextResponse.json({ error: "Failed to update review" }, { status: 500 });
+        }
+      }
+
       console.log("Review already exists, skipping:", existingReview.id);
       return NextResponse.json({ message: "Review already exists" }, { status: 200 });
     }
