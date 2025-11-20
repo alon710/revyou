@@ -11,7 +11,9 @@ function OnboardingChooseBusinessError({ error, reset }: { error: Error & { dige
     console.error("Error in choose business page:", error);
   }, [error]);
 
-  return <EmptyState title={t("title")} description={t("description")} actionLabel={t("retry")} onAction={reset} />;
+  const errorDescription = error.message || t("description");
+
+  return <EmptyState title={t("title")} description={errorDescription} actionLabel={t("retry")} onAction={reset} />;
 }
 
 export default OnboardingChooseBusinessError;
