@@ -2,11 +2,14 @@ import { pgTable, primaryKey, text, timestamp, uuid, index, pgPolicy } from "dri
 import { sql, relations } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
 import { accounts } from "./accounts.schema";
+import { authUsers } from "./auth.schema";
 
 export const userAccounts = pgTable(
   "user_accounts",
   {
-    userId: uuid("user_id").notNull(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "cascade" }),
     accountId: uuid("account_id")
       .notNull()
       .references(() => accounts.id, { onDelete: "cascade" }),
