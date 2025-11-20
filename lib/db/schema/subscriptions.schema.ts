@@ -14,13 +14,12 @@ export const subscriptions = pgTable(
 
     planTier: text("plan_tier").notNull().default("free"),
     status: text("status").notNull().default("active"),
-    billingInterval: text("billing_interval"),
 
-    currentPeriodStart: timestamp("current_period_start", { withTimezone: true }),
-    currentPeriodEnd: timestamp("current_period_end", { withTimezone: true }),
+    stripeCustomerId: text("stripe_customer_id"),
+    stripeSubscriptionId: text("stripe_subscription_id"),
+    stripePriceId: text("stripe_price_id"),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    canceledAt: timestamp("canceled_at", { withTimezone: true }),
   },
   (table) => [
     index("subscriptions_user_id_idx").on(table.userId),

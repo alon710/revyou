@@ -21,10 +21,8 @@ export class StatsController {
       subRepo.getUserPlanLimits(userId),
     ]);
 
-    const businessesPercent =
-      limits.businesses > 0 ? Math.min(100, Math.round((businesses * 100) / limits.businesses)) : 0;
-    const reviewsPercent =
-      limits.reviewsPerMonth > 0 ? Math.min(100, Math.round((reviews * 100) / limits.reviewsPerMonth)) : 0;
+    const businessesPercent = Math.min(100, Math.round((businesses * 100) / limits.businesses));
+    const reviewsPercent = Math.min(100, Math.round((reviews * 100) / limits.reviewsPerMonth));
 
     return {
       businesses,

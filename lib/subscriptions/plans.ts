@@ -65,8 +65,8 @@ export const PLANS: Record<PlanTier, Plan> = {
     monthlyPrice: 79,
     yearlyPrice: 790,
     features: [
-      "Unlimited business locations",
-      "Unlimited AI replies",
+      "Up to 5 business locations",
+      "250 AI replies per month",
       "Auto-post replies",
       "WhatsApp support",
       "Custom tone of voice",
@@ -75,8 +75,8 @@ export const PLANS: Record<PlanTier, Plan> = {
       "Priority support",
     ],
     limits: {
-      businesses: -1,
-      reviewsPerMonth: -1,
+      businesses: 5,
+      reviewsPerMonth: 250,
       autoPost: true,
       requireApproval: false,
     },

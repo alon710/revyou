@@ -5,7 +5,6 @@ import { useRouter } from "@/i18n/routing";
 import { Loading } from "@/components/ui/loading";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { createSubscription } from "@/lib/actions/subscription.actions";
 import type { PlanTier } from "@/lib/subscriptions/plans";
 import type { BillingInterval } from "@/lib/types/subscription.types";
 import { useAuth } from "@/contexts/AuthContext";
@@ -45,26 +44,39 @@ export function CheckoutForm({ plan, period }: CheckoutFormProps) {
     if (plan && period && !error) {
       hasStartedProcessing.current = true;
 
-      async function processMockCheckout() {
+      async function processStripeCheckout() {
         if (!plan || !period) return;
         try {
-          const result = await createSubscription(plan, period);
+          const response = await fetch("/api/stripe/checkout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              plan,
+              interval: period,
+            }),
+          });
 
-          if (result.success) {
-            toast.success(t("success"));
-            setTimeout(() => {
-              router.push("/dashboard/home");
-            }, 1000);
+          const data = await response.json();
+
+          if (!response.ok) {
+            setError(data.error || t("error"));
+            return;
+          }
+
+          if (data.url) {
+            window.location.href = data.url;
           } else {
-            setError(result.error || t("error"));
+            setError(t("error"));
           }
         } catch (err) {
-          console.error("Error creating subscription:", err);
+          console.error("Error creating checkout session:", err);
           setError(t("error"));
         }
       }
 
-      processMockCheckout();
+      processStripeCheckout();
     }
   }, [plan, period, router, error, t, user]);
 

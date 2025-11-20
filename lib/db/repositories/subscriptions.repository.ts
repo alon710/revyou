@@ -27,36 +27,51 @@ export class SubscriptionsRepository {
     }
   }
 
-  async upsert(userId: string, data: Omit<SubscriptionInsert, "userId">): Promise<Subscription> {
-    const existing = await this.getActiveSubscriptionForUser(userId);
+  async getByUserId(userId: string): Promise<Subscription | null> {
+    try {
+      const [result] = await db.select().from(subscriptions).where(eq(subscriptions.userId, userId)).limit(1);
 
-    if (existing) {
-      const [updated] = await db
-        .update(subscriptions)
-        .set({
-          planTier: data.planTier,
-          status: data.status,
-          billingInterval: data.billingInterval,
-          currentPeriodStart: data.currentPeriodStart,
-          currentPeriodEnd: data.currentPeriodEnd,
-          canceledAt: data.canceledAt,
-        })
-        .where(eq(subscriptions.id, existing.id))
-        .returning();
+      return result || null;
+    } catch (error) {
+      console.error("Error fetching subscription by user ID:", error);
+      return null;
+    }
+  }
 
-      if (!updated) throw new Error("Failed to update subscription");
-      return updated;
-    } else {
-      const [created] = await db
-        .insert(subscriptions)
-        .values({
-          userId,
-          ...data,
-        })
-        .returning();
+  async create(data: SubscriptionInsert): Promise<Subscription> {
+    try {
+      const [created] = await db.insert(subscriptions).values(data).returning();
 
       if (!created) throw new Error("Failed to create subscription");
       return created;
+    } catch (error) {
+      console.error("Error creating subscription:", error);
+      throw error;
+    }
+  }
+
+  async update(id: string, data: Partial<Omit<Subscription, "id" | "userId" | "createdAt">>): Promise<Subscription> {
+    try {
+      const [updated] = await db.update(subscriptions).set(data).where(eq(subscriptions.id, id)).returning();
+
+      if (!updated) throw new Error("Failed to update subscription");
+      return updated;
+    } catch (error) {
+      console.error("Error updating subscription:", error);
+      throw error;
+    }
+  }
+
+  async upsert(userId: string, data: Omit<SubscriptionInsert, "userId">): Promise<Subscription> {
+    const existing = await this.getByUserId(userId);
+
+    if (existing) {
+      return this.update(existing.id, data);
+    } else {
+      return this.create({
+        userId,
+        ...data,
+      });
     }
   }
 
@@ -67,17 +82,10 @@ export class SubscriptionsRepository {
       throw new Error("No active subscription found");
     }
 
-    const [canceled] = await db
-      .update(subscriptions)
-      .set({
-        status: "canceled",
-        canceledAt: new Date(),
-      })
-      .where(eq(subscriptions.id, existing.id))
-      .returning();
-
-    if (!canceled) throw new Error("Failed to cancel subscription");
-    return canceled;
+    return this.update(existing.id, {
+      status: "canceled",
+      planTier: "free",
+    });
   }
 
   async getUserPlanLimits(userId: string): Promise<PlanLimits> {
