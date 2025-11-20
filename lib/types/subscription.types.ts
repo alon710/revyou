@@ -1,6 +1,7 @@
 import type { Subscription as DrizzleSubscription, SubscriptionInsert } from "@/lib/db/schema";
+import type Stripe from "stripe";
 
-export type SubscriptionStatus = "active" | "canceled" | "expired";
+export type SubscriptionStatus = Stripe.Subscription.Status;
 
 export type BillingInterval = "monthly" | "yearly";
 
