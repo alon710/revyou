@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 export async function generateWithGemini(
   apiKey: string,
   prompt: string,
-  modelName: string = "gemini-2.0-flash",
+  modelName: string = "gemini-2.5-flash",
   maxOutputTokens: number = 8192
 ): Promise<string> {
   if (!apiKey) {
