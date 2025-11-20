@@ -1,12 +1,16 @@
 import { pgTable, text, timestamp, uuid, index, pgPolicy } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
+import { authUsers } from "./auth.schema";
 
 export const subscriptions = pgTable(
   "subscriptions",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    userId: uuid("user_id").notNull().unique(),
+    userId: uuid("user_id")
+      .notNull()
+      .unique()
+      .references(() => authUsers.id, { onDelete: "cascade" }),
 
     planTier: text("plan_tier").notNull().default("free"),
     status: text("status").notNull().default("active"),

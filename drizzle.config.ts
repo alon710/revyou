@@ -8,6 +8,7 @@ export default defineConfig({
     url: process.env.DATABASE_URL!,
   },
   schemaFilter: ["public"],
+  tablesFilter: ["!auth.*"],
   verbose: true,
   strict: true,
   entities: {

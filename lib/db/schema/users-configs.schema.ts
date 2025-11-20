@@ -1,6 +1,7 @@
 import { pgTable, timestamp, uuid, index, pgPolicy, jsonb } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
+import { authUsers } from "./auth.schema";
 
 export const USER_CONFIG_KEYS = {
   EMAIL_ON_NEW_REVIEW: "EMAIL_ON_NEW_REVIEW",
@@ -20,7 +21,10 @@ export const usersConfigs = pgTable(
   "users_configs",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    userId: uuid("user_id").notNull().unique(),
+    userId: uuid("user_id")
+      .notNull()
+      .unique()
+      .references(() => authUsers.id, { onDelete: "cascade" }),
 
     configs: jsonb("configs")
       .$type<UserConfigMap>()
