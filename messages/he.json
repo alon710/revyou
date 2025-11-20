@@ -746,7 +746,7 @@
       "subject": "ביקורת חדשה התקבלה: {rating} כוכבים - {businessName}",
       "title": "ביקורת חדשה התקבלה!",
       "greeting": "שלום {name},",
-      "body": "התקבלה ביקורת חדשה עבור <strong>{businessName}</strong>",
+      "body": "התקבלה ביקורת חדשה עבור {businessName}",
       "noReviewText": "הלקוח לא השאיר טקסט בביקורת",
       "aiReplyHeader": "תגובת הבינה המלאכותית",
       "statusPending": "ממתינה לאישור",

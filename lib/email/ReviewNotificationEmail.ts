@@ -2,6 +2,7 @@ export interface ReviewNotificationEmailProps {
   title: string;
   greeting: string;
   body: string;
+  businessName: string;
   noReviewText: string;
   aiReplyHeader: string;
   statusText: string;
@@ -23,6 +24,7 @@ export function ReviewNotificationEmail(props: ReviewNotificationEmailProps): st
     title,
     greeting,
     body,
+    businessName,
     noReviewText,
     aiReplyHeader,
     statusText,
@@ -37,20 +39,31 @@ export function ReviewNotificationEmail(props: ReviewNotificationEmailProps): st
     locale,
   } = props;
 
-  const isRTL = locale === "he";
-  const dir = isRTL ? "rtl" : "ltr";
-  const textAlign = isRTL ? "right" : "left";
+  const dir = locale === "he" ? "rtl" : "ltr";
   const statusColor = status === "pending" ? "#f59e0b" : "#10b981";
-  const fontFamily = isRTL
-    ? "Rubik, 'Segoe UI', sans-serif, -apple-system, BlinkMacSystemFont"
-    : "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+  const fontFamily =
+    locale === "he"
+      ? "Rubik, 'Segoe UI', sans-serif, -apple-system, BlinkMacSystemFont"
+      : "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
   const stars = Array.from({ length: 5 })
     .map(
       (_, i) =>
-        `<span style="color: ${i < rating ? "#fbbf24" : "#d1d5db"}; font-size: 24px; margin-${isRTL ? "left" : "right"}: 2px;">★</span>`
+        `<span style="color: ${i < rating ? "#fbbf24" : "#d1d5db"}; font-size: 24px; margin-inline-end: 2px;">★</span>`
     )
     .join("");
+
+  const escapeHtml = (text: string) =>
+    text.replace(/[&<>"']/g, (match) => {
+      const escapes: Record<string, string> = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+      return escapes[match];
+    });
 
   return `
 <!DOCTYPE html>
@@ -69,59 +82,59 @@ export function ReviewNotificationEmail(props: ReviewNotificationEmailProps): st
           <!-- Header -->
           <tr>
             <td style="background: linear-gradient(135deg, #6366f1, #818cf8); padding: 32px 24px; text-align: center;">
-              <h1 style="color: #ffffff; font-size: 26px; font-weight: 700; margin: 0; direction: ${dir};">${title}</h1>
+              <h1 style="color: #ffffff; font-size: 26px; font-weight: 700; margin: 0;">${escapeHtml(title)}</h1>
             </td>
           </tr>
 
           <!-- Content -->
           <tr>
-            <td style="direction: ${dir}; text-align: ${textAlign}; padding: 32px 24px; color: #1f2937;">
-              <p style="font-size: 18px; font-weight: 500; margin: 0 0 16px 0;">${greeting}</p>
-              <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">${body}</p>
+            <td style="padding: 32px 24px; color: #1f2937;">
+              <p style="font-size: 18px; font-weight: 500; margin: 0 0 16px 0;">${escapeHtml(greeting)}</p>
+              <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">${escapeHtml(body)} <strong>${escapeHtml(businessName)}</strong></p>
 
               <!-- Review Box -->
-              <table width="100%" cellpadding="20" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; margin-bottom: 20px; border: 1px solid #d1d5db;">
+              <table width="100%" cellpadding="20" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; margin-block-end: 20px; border: 1px solid #d1d5db;">
                 <tr>
                   <td>
-                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 12px;">
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-block-end: 12px;">
                       <tr>
-                        <td style="text-align: ${textAlign};">
+                        <td style="text-align: start;">
                           <p style="font-size: 20px; color: #111827; margin: 0 0 8px 0; font-weight: 600;">
-                            <strong>${reviewerName}</strong>
+                            <strong>${escapeHtml(reviewerName)}</strong>
                           </p>
                         </td>
-                        <td style="text-align: ${isRTL ? "left" : "right"}; width: auto; direction: ltr;">
+                        <td style="text-align: end; width: auto; direction: ltr;">
                           ${stars}
                         </td>
                       </tr>
                     </table>
                     ${
                       reviewText
-                        ? `<p style="font-size: 16px; line-height: 1.6; color: #111827; margin: 0; white-space: pre-wrap;">${reviewText}</p>`
-                        : `<p style="font-size: 15px; line-height: 1.6; color: #9ca3af; margin: 0; font-style: italic;">${noReviewText}</p>`
+                        ? `<p style="font-size: 16px; line-height: 1.6; color: #111827; margin: 0; white-space: pre-wrap;">${escapeHtml(reviewText)}</p>`
+                        : `<p style="font-size: 15px; line-height: 1.6; color: #9ca3af; margin: 0; font-style: italic;">${escapeHtml(noReviewText)}</p>`
                     }
                   </td>
                 </tr>
               </table>
 
               <!-- AI Reply Box -->
-              <table width="100%" cellpadding="20" cellspacing="0" style="background-color: #eef2ff; border-radius: 8px; margin-bottom: 24px; border: 1px solid #c7d2fe;">
+              <table width="100%" cellpadding="20" cellspacing="0" style="background-color: #eef2ff; border-radius: 8px; margin-block-end: 24px; border: 1px solid #c7d2fe;">
                 <tr>
                   <td>
-                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 12px;">
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-block-end: 12px;">
                       <tr>
-                        <td style="text-align: ${textAlign};">
-                          <p style="direction: ${dir}; font-size: 14px; font-weight: 600; color: #3730a3; margin: 0;">${aiReplyHeader}</p>
+                        <td style="text-align: start;">
+                          <p style="font-size: 14px; font-weight: 600; color: #3730a3; margin: 0;">${escapeHtml(aiReplyHeader)}</p>
                         </td>
-                        <td style="text-align: ${isRTL ? "left" : "right"}; width: auto;">
-                          <span style="direction: ${dir}; display: inline-block; padding: 3px 10px; border-radius: 12px; color: #fff; font-size: 13px; font-weight: 600; background-color: ${statusColor};">
-                            ${statusText}
+                        <td style="text-align: end; width: auto;">
+                          <span style="display: inline-block; padding: 3px 10px; border-radius: 12px; color: #fff; font-size: 13px; font-weight: 600; background-color: ${statusColor};">
+                            ${escapeHtml(statusText)}
                           </span>
                         </td>
                       </tr>
                     </table>
                     <div style="background-color: #ffffff; padding: 16px; border-radius: 6px; font-size: 15px; line-height: 1.6; color: #1e3a8a; white-space: pre-wrap; border: 1px solid #dbeafe;">
-                      ${aiReply}
+                      ${escapeHtml(aiReply)}
                     </div>
                   </td>
                 </tr>
@@ -130,9 +143,9 @@ export function ReviewNotificationEmail(props: ReviewNotificationEmailProps): st
               <!-- Button -->
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td align="center" style="padding-top: 8px;">
-                    <a href="${reviewPageUrl}" style="background-color: #6366f1; border-radius: 12px; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 14px 48px; display: inline-block; min-width: 250px; text-align: center;">
-                      ${viewReviewButton}
+                  <td align="center" style="padding-block-start: 8px;">
+                    <a href="${escapeHtml(reviewPageUrl)}" style="background-color: #6366f1; border-radius: 12px; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 14px 48px; display: inline-block; min-width: 250px; text-align: center;">
+                      ${escapeHtml(viewReviewButton)}
                     </a>
                   </td>
                 </tr>
@@ -145,7 +158,7 @@ export function ReviewNotificationEmail(props: ReviewNotificationEmailProps): st
             <td style="padding: 0 24px 24px 24px;">
               <hr style="border-color: #e5e7eb; margin: 0 0 16px 0;">
               <p style="color: #6b7280; font-size: 13px; line-height: 1.6; text-align: center; margin: 0;">
-                ${footer}
+                ${escapeHtml(footer)}
               </p>
             </td>
           </tr>

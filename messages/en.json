@@ -730,7 +730,7 @@
       "subject": "New review received: {rating} stars - {businessName}",
       "title": "New Review Received!",
       "greeting": "Hello {name},",
-      "body": "A new review has been received for <strong>{businessName}</strong>",
+      "body": "A new review has been received for {businessName}",
       "noReviewText": "The customer did not leave any text in the review",
       "aiReplyHeader": "AI Response",
       "statusPending": "Pending Approval",

@@ -27,12 +27,13 @@ export async function renderReviewNotificationEmail(
 ): Promise<RenderReviewNotificationEmailResult> {
   const t = await getTranslations({ locale, namespace: "emails.reviewNotification" });
 
-  const reviewPageUrl = `${data.appBaseUrl}/dashboard/account/${data.accountId}/business/${data.businessId}/reviews/${data.reviewId}`;
+  const reviewPageUrl = `${data.appBaseUrl}/${locale}/dashboard/accounts/${data.accountId}/businesses/${data.businessId}/reviews/${data.reviewId}`;
 
   const emailProps: ReviewNotificationEmailProps = {
     title: t("title"),
     greeting: t("greeting", { name: data.recipientName }),
     body: t("body", { businessName: data.businessName }),
+    businessName: data.businessName,
     noReviewText: t("noReviewText"),
     aiReplyHeader: t("aiReplyHeader"),
     statusText: data.status === "pending" ? t("statusPending") : t("statusPosted"),
