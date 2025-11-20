@@ -19,8 +19,11 @@ export async function POST(req: NextRequest) {
     const subscriptionsRepo = new SubscriptionsRepository();
     const subscription = await subscriptionsRepo.getByUserId(user.id);
 
-    if (!subscription?.stripeCustomerId) {
-      return NextResponse.json({ error: "No active subscription found" }, { status: 404 });
+    if (!subscription?.stripeCustomerId || subscription.status !== "active") {
+      return NextResponse.json(
+        { error: "Billing portal is only available for active paid subscriptions" },
+        { status: 403 }
+      );
     }
 
     const locale = getLocaleFromRequest(req);
