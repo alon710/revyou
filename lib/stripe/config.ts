@@ -18,9 +18,7 @@ const missingPriceIds = [
 
 if (missingPriceIds.length > 0) {
   const missing = missingPriceIds.map((env) => env.name).join(", ");
-  throw new Error(
-    `Missing required Stripe price ID environment variable(s): ${missing}`
-  );
+  throw new Error(`Missing required Stripe price ID environment variable(s): ${missing}`);
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {

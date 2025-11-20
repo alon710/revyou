@@ -48,8 +48,18 @@ export async function POST(req: NextRequest) {
         }
 
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-        const priceId = subscription.items.data[0]?.price.id;
-        const planTier = priceId ? getPlanTierFromPriceId(priceId) : "free";
+
+        let priceId: string | undefined;
+        let planTier: string;
+
+        if (subscription.items?.data?.length > 0) {
+          priceId = subscription.items.data[0].price.id;
+          planTier = getPlanTierFromPriceId(priceId);
+        } else {
+          console.warn("No subscription items found for checkout session, defaulting to free tier");
+          priceId = undefined;
+          planTier = "free";
+        }
 
         const existingSubscription = await subscriptionsRepo.getByUserId(userId);
 
@@ -85,8 +95,17 @@ export async function POST(req: NextRequest) {
           break;
         }
 
-        const priceId = subscription.items.data[0]?.price.id;
-        const planTier = priceId ? getPlanTierFromPriceId(priceId) : "free";
+        let priceId: string | undefined;
+        let planTier: string;
+
+        if (subscription.items?.data?.length > 0) {
+          priceId = subscription.items.data[0].price.id;
+          planTier = getPlanTierFromPriceId(priceId);
+        } else {
+          console.warn("No subscription items found for subscription update, defaulting to free tier");
+          priceId = undefined;
+          planTier = "free";
+        }
 
         const existingSubscription = await subscriptionsRepo.getByUserId(userId);
         if (existingSubscription) {
