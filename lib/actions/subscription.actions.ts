@@ -2,49 +2,7 @@
 
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { SubscriptionsRepository } from "@/lib/db/repositories";
-import type { BillingInterval } from "@/lib/types/subscription.types";
-import type { PlanTier } from "@/lib/subscriptions/plans";
 import type { Subscription } from "@/lib/db/schema";
-
-export async function createSubscription(
-  planTier: PlanTier,
-  billingInterval: BillingInterval = "monthly"
-): Promise<{ success: boolean; subscriptionId?: string; error?: string }> {
-  try {
-    const { userId } = await getAuthenticatedUserId();
-
-    const now = new Date();
-    const currentPeriodEnd = new Date(now);
-
-    if (billingInterval === "monthly") {
-      currentPeriodEnd.setMonth(currentPeriodEnd.getMonth() + 1);
-    } else {
-      currentPeriodEnd.setFullYear(currentPeriodEnd.getFullYear() + 1);
-    }
-
-    const repo = new SubscriptionsRepository();
-    const subscription = await repo.upsert(userId, {
-      planTier,
-      status: "active",
-      billingInterval,
-      currentPeriodStart: now,
-      currentPeriodEnd,
-      createdAt: now,
-      canceledAt: null,
-    });
-
-    return {
-      success: true,
-      subscriptionId: subscription.id,
-    };
-  } catch (error) {
-    console.error("Error creating subscription:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
-    };
-  }
-}
 
 export async function getActiveSubscription(): Promise<Subscription | null> {
   try {

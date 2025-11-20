@@ -1,5 +1,5 @@
 {
-  "id": "c3e9cf14-ded8-4464-8002-024cf1385203",
+  "id": "076463dd-ca57-477b-9349-181082310c25",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -384,21 +384,21 @@
           "notNull": true,
           "default": "'active'"
         },
-        "billing_interval": {
-          "name": "billing_interval",
+        "stripe_customer_id": {
+          "name": "stripe_customer_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "current_period_start": {
-          "name": "current_period_start",
-          "type": "timestamp with time zone",
+        "stripe_subscription_id": {
+          "name": "stripe_subscription_id",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "current_period_end": {
-          "name": "current_period_end",
-          "type": "timestamp with time zone",
+        "stripe_price_id": {
+          "name": "stripe_price_id",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -408,12 +408,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
-        },
-        "canceled_at": {
-          "name": "canceled_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {

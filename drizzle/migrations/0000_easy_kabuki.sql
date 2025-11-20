@@ -33,11 +33,10 @@ CREATE TABLE "subscriptions" (
 	"user_id" uuid NOT NULL,
 	"plan_tier" text DEFAULT 'free' NOT NULL,
 	"status" text DEFAULT 'active' NOT NULL,
-	"billing_interval" text,
-	"current_period_start" timestamp with time zone,
-	"current_period_end" timestamp with time zone,
+	"stripe_customer_id" text,
+	"stripe_subscription_id" text,
+	"stripe_price_id" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"canceled_at" timestamp with time zone,
 	CONSTRAINT "subscriptions_user_id_unique" UNIQUE("user_id")
 );
 --> statement-breakpoint
