@@ -36,24 +36,33 @@ export async function upsertBusiness(
   accountId: string,
   data: Omit<BusinessCreate, "accountId">
 ): Promise<Business> {
-  const { userId: authenticatedUserId } = await getAuthenticatedUserId();
+  try {
+    const { userId: authenticatedUserId } = await getAuthenticatedUserId();
 
-  if (authenticatedUserId !== userId) {
-    throw new Error("Forbidden: Cannot create business for another user");
+    if (authenticatedUserId !== userId) {
+      throw new Error("Forbidden: Cannot create business for another user");
+    }
+
+    const controller = new BusinessesController(userId, accountId);
+    const subscriptionsController = new SubscriptionsController();
+
+    const defaultConfig = getDefaultBusinessConfig();
+
+    const businessData: BusinessCreate = {
+      accountId,
+      ...defaultConfig,
+      ...data,
+    };
+
+    return await controller.upsertBusiness(businessData, () => subscriptionsController.checkBusinessLimit(userId));
+  } catch (error) {
+    if (error instanceof Error) {
+      const serializedError = new Error(error.message);
+      serializedError.name = error.name;
+      throw serializedError;
+    }
+    throw error;
   }
-
-  const controller = new BusinessesController(userId, accountId);
-  const subscriptionsController = new SubscriptionsController();
-
-  const defaultConfig = getDefaultBusinessConfig();
-
-  const businessData: BusinessCreate = {
-    accountId,
-    ...defaultConfig,
-    ...data,
-  };
-
-  return controller.upsertBusiness(businessData, () => subscriptionsController.checkBusinessLimit(userId));
 }
 
 export async function updateBusiness(

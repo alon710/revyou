@@ -1,9 +1,10 @@
-import { boolean, integer, pgTable, text, timestamp, uuid, index, pgPolicy } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, text, timestamp, uuid, index, pgPolicy, check } from "drizzle-orm/pg-core";
 import { sql, relations } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
 import { businesses } from "./businesses.schema";
 import { accounts } from "./accounts.schema";
 import { authUsers } from "./auth.schema";
+import type { ReplyStatus } from "../../types/review.types";
 
 export const reviews = pgTable(
   "reviews",
@@ -30,7 +31,7 @@ export const reviews = pgTable(
     aiReply: text("ai_reply"),
     aiReplyGeneratedAt: timestamp("ai_reply_generated_at", { withTimezone: true }),
 
-    replyStatus: text("reply_status").notNull().default("pending"),
+    replyStatus: text("reply_status").$type<ReplyStatus>().notNull().default("pending"),
     postedReply: text("posted_reply"),
     postedAt: timestamp("posted_at", { withTimezone: true }),
     postedBy: uuid("posted_by").references(() => authUsers.id, { onDelete: "set null" }),
@@ -47,6 +48,11 @@ export const reviews = pgTable(
     index("reviews_account_business_idx").on(table.accountId, table.businessId),
     index("reviews_business_status_idx").on(table.businessId, table.replyStatus),
     index("reviews_received_status_idx").on(table.receivedAt, table.replyStatus),
+
+    check(
+      "reviews_reply_status_check",
+      sql`${table.replyStatus} IN ('pending', 'rejected', 'posted', 'failed', 'quota_exceeded')`
+    ),
 
     pgPolicy("reviews_select_associated", {
       for: "select",
