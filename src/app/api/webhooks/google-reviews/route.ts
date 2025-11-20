@@ -232,7 +232,25 @@ export async function POST(request: NextRequest) {
     console.log("Creating new review in database");
     const newReview = await reviewsRepo.create(reviewData);
     console.log("Review created successfully:", newReview.id);
-    console.log("Database trigger will automatically process the review");
+
+    const processReviewUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/internal/process-review`;
+    fetch(processReviewUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Internal-Secret": process.env.INTERNAL_API_SECRET!,
+      },
+      body: JSON.stringify({
+        userId,
+        accountId,
+        businessId: business.id,
+        reviewId: newReview.id,
+      }),
+    }).catch((error) => {
+      console.error("Failed to trigger review processing:", error);
+    });
+
+    console.log("Triggered async review processing");
 
     return NextResponse.json(
       {
