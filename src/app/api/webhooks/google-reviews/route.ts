@@ -234,6 +234,14 @@ export async function POST(request: NextRequest) {
     console.log("Review created successfully:", newReview.id);
 
     const processReviewUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/internal/process-review`;
+    console.log("Triggering async review processing:", {
+      url: processReviewUrl,
+      reviewId: newReview.id,
+      userId,
+      accountId,
+      businessId: business.id,
+    });
+
     fetch(processReviewUrl, {
       method: "POST",
       headers: {
@@ -246,11 +254,24 @@ export async function POST(request: NextRequest) {
         businessId: business.id,
         reviewId: newReview.id,
       }),
-    }).catch((error) => {
-      console.error("Failed to trigger review processing:", error);
-    });
-
-    console.log("Triggered async review processing");
+    })
+      .then((response) => {
+        console.log("Process-review endpoint responded:", {
+          status: response.status,
+          statusText: response.statusText,
+          reviewId: newReview.id,
+        });
+        return response.text();
+      })
+      .then((body) => {
+        console.log("Process-review response body:", body.substring(0, 200));
+      })
+      .catch((error) => {
+        console.error("Failed to trigger review processing:", {
+          error: error.message,
+          reviewId: newReview.id,
+        });
+      });
 
     return NextResponse.json(
       {
