@@ -9,7 +9,8 @@ export const dynamic = "force-dynamic";
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "dashboard.home" });
-  const accountsWithBusinesses = await getAccountsWithBusinesses();
+  const allAccounts = await getAccountsWithBusinesses();
+  const accountsWithBusinesses = allAccounts.filter((account) => account.businesses.length > 0);
 
   return (
     <PageContainer>
