@@ -16,9 +16,10 @@
     "db:migrate": "drizzle-kit migrate --verbose",
     "db:studio": "drizzle-kit studio",
     "db:drop": "drizzle-kit drop",
-    "db:triggers": "dotenv -e .env -- tsx scripts/setup-trigger.ts",
     "comments:remove": "tsx scripts/remove-comments.ts",
-    "pubsub:update": "bash scripts/update-pubsub-subscription.sh"
+    "pubsub:update": "bash scripts/update-pubsub-subscription.sh",
+    "list:reviews": "dotenv -e .env -- tsx scripts/list-google-reviews.ts",
+    "test:webhook": "dotenv -e .env -- tsx scripts/test-pubsub-webhook.ts"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^4.10.0",

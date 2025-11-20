@@ -89,6 +89,27 @@ export async function getReview(
   }
 }
 
+export async function listReviews(
+  locationName: string,
+  refreshToken: string,
+  clientId?: string,
+  clientSecret?: string
+): Promise<GoogleReview[]> {
+  try {
+    const accessToken = await getAccessTokenFromRefreshToken(refreshToken, clientId, clientSecret);
+    const url = `${GOOGLE_MY_BUSINESS_API_BASE}/${locationName}/reviews`;
+
+    const response = await makeAuthorizedRequest<{ reviews?: GoogleReview[] }>(url, accessToken);
+    return response.reviews || [];
+  } catch (error) {
+    console.error("Error listing reviews:", {
+      locationName,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
+  }
+}
+
 export async function postReplyToGoogle(
   reviewName: string,
   replyText: string,
