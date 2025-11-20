@@ -1,5 +1,5 @@
 {
-  "id": "031fb86a-d47a-40fa-80f6-fafb556fb067",
+  "id": "c3e9cf14-ded8-4464-8002-024cf1385203",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -59,7 +59,18 @@
           "with": {}
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "users_configs_user_id_users_id_fk": {
+          "name": "users_configs_user_id_users_id_fk",
+          "tableFrom": "users_configs",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users_configs_user_id_unique": {
@@ -282,6 +293,16 @@
         }
       },
       "foreignKeys": {
+        "user_accounts_user_id_users_id_fk": {
+          "name": "user_accounts_user_id_users_id_fk",
+          "tableFrom": "user_accounts",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
         "user_accounts_account_id_accounts_id_fk": {
           "name": "user_accounts_account_id_accounts_id_fk",
           "tableFrom": "user_accounts",
@@ -448,7 +469,18 @@
           "with": {}
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "subscriptions_user_id_users_id_fk": {
+          "name": "subscriptions_user_id_users_id_fk",
+          "tableFrom": "subscriptions",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "subscriptions_user_id_unique": {
@@ -1052,6 +1084,16 @@
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "reviews_posted_by_users_id_fk": {
+          "name": "reviews_posted_by_users_id_fk",
+          "tableFrom": "reviews",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": ["posted_by"],
+          "columnsTo": ["id"],
+          "onDelete": "set null",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1092,7 +1134,12 @@
           "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"reviews\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n        AND ua.role = 'owner'\n      )"
         }
       },
-      "checkConstraints": {},
+      "checkConstraints": {
+        "reviews_reply_status_check": {
+          "name": "reviews_reply_status_check",
+          "value": "\"reviews\".\"reply_status\" IN ('pending', 'rejected', 'posted', 'failed', 'quota_exceeded')"
+        }
+      },
       "isRLSEnabled": false
     }
   },
