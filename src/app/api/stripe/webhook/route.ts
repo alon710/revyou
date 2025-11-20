@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
         const userId = session.metadata?.userId || session.client_reference_id;
         if (!userId) {
           console.error("No userId found in checkout session");
-          break;
+          return NextResponse.json({ error: "Missing userId in checkout session" }, { status: 400 });
         }
 
         const subscriptionId =
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 
         if (!subscriptionId) {
           console.error("No subscription ID found in checkout session");
-          break;
+          return NextResponse.json({ error: "Missing subscription ID in checkout session" }, { status: 400 });
         }
 
         const subscription = await getStripe().subscriptions.retrieve(subscriptionId);
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
             stripeSubscriptionId: subscription.id,
             stripePriceId: priceId,
             planTier,
-            status: subscription.status === "active" ? "active" : subscription.status,
+            status: subscription.status,
           });
         } else {
           await subscriptionsRepo.create({
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
             stripeSubscriptionId: subscription.id,
             stripePriceId: priceId,
             planTier,
-            status: subscription.status === "active" ? "active" : subscription.status,
+            status: subscription.status,
           });
         }
 
@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
 
         if (!userId) {
           console.error("No userId found in subscription metadata");
-          break;
+          return NextResponse.json({ error: "Missing userId in subscription metadata" }, { status: 400 });
         }
 
         let priceId: string | undefined;
@@ -108,14 +108,30 @@ export async function POST(req: NextRequest) {
         }
 
         const existingSubscription = await subscriptionsRepo.getByUserId(userId);
+
         if (existingSubscription) {
           await subscriptionsRepo.update(existingSubscription.id, {
+            stripeCustomerId: subscription.customer as string,
             stripeSubscriptionId: subscription.id,
             stripePriceId: priceId,
             planTier,
-            status: subscription.status === "active" ? "active" : subscription.status,
+            status: subscription.status,
           });
-          console.log(`Subscription updated for user ${userId}`);
+          console.log(
+            `Subscription updated for user ${userId}: plan=${planTier}, status=${subscription.status}, subscriptionId=${subscription.id}`
+          );
+        } else {
+          await subscriptionsRepo.create({
+            userId,
+            stripeCustomerId: subscription.customer as string,
+            stripeSubscriptionId: subscription.id,
+            stripePriceId: priceId,
+            planTier,
+            status: subscription.status,
+          });
+          console.log(
+            `Subscription created for user ${userId}: plan=${planTier}, status=${subscription.status}, subscriptionId=${subscription.id}`
+          );
         }
 
         break;
@@ -127,7 +143,7 @@ export async function POST(req: NextRequest) {
 
         if (!userId) {
           console.error("No userId found in subscription metadata");
-          break;
+          return NextResponse.json({ error: "Missing userId in subscription metadata" }, { status: 400 });
         }
 
         const existingSubscription = await subscriptionsRepo.getByUserId(userId);
