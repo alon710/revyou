@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
             replyStatus: "posted" as ReplyStatus,
             postedReply: aiReply,
             postedAt: new Date(),
-            postedBy: "system",
+            postedBy: null,
           });
 
           console.log("AI reply auto-posted to Google", { reviewId });
