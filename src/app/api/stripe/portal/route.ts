@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe/config";
+import { getStripe } from "@/lib/stripe/config";
 import { createClient } from "@/lib/supabase/server";
 import { SubscriptionsRepository } from "@/lib/db/repositories/subscriptions.repository";
 import { getLocaleFromRequest } from "@/lib/api/auth";
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     const locale = getLocaleFromRequest(req);
 
-    const session = await stripe.billingPortal.sessions.create({
+    const session = await getStripe().billingPortal.sessions.create({
       customer: subscription.stripeCustomerId,
       return_url: `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/dashboard/subscription`,
     });

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe, getStripePriceId } from "@/lib/stripe/config";
+import { getStripe, getStripePriceId } from "@/lib/stripe/config";
 import { createClient } from "@/lib/supabase/server";
 import { getLocaleFromRequest } from "@/lib/api/auth";
 
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     const locale = getLocaleFromRequest(req);
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [

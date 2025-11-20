@@ -1,7 +1,18 @@
 import Stripe from "stripe";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("Missing STRIPE_SECRET_KEY environment variable");
+let _stripe: Stripe | null = null;
+
+export function getStripe(): Stripe {
+  if (!_stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error("Missing STRIPE_SECRET_KEY environment variable");
+    }
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2025-11-17.clover",
+      typescript: true,
+    });
+  }
+  return _stripe;
 }
 
 const BASIC_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_BASIC_MONTHLY;
@@ -9,22 +20,19 @@ const BASIC_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_BASIC_YEARLY;
 const PRO_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY;
 const PRO_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_YEARLY;
 
-const missingPriceIds = [
-  { name: "NEXT_PUBLIC_STRIPE_PRICE_ID_BASIC_MONTHLY", value: BASIC_MONTHLY },
-  { name: "NEXT_PUBLIC_STRIPE_PRICE_ID_BASIC_YEARLY", value: BASIC_YEARLY },
-  { name: "NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY", value: PRO_MONTHLY },
-  { name: "NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_YEARLY", value: PRO_YEARLY },
-].filter((env) => !env.value);
+function validatePriceIds(): void {
+  const missingPriceIds = [
+    { name: "NEXT_PUBLIC_STRIPE_PRICE_ID_BASIC_MONTHLY", value: BASIC_MONTHLY },
+    { name: "NEXT_PUBLIC_STRIPE_PRICE_ID_BASIC_YEARLY", value: BASIC_YEARLY },
+    { name: "NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY", value: PRO_MONTHLY },
+    { name: "NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_YEARLY", value: PRO_YEARLY },
+  ].filter((env) => !env.value);
 
-if (missingPriceIds.length > 0) {
-  const missing = missingPriceIds.map((env) => env.name).join(", ");
-  throw new Error(`Missing required Stripe price ID environment variable(s): ${missing}`);
+  if (missingPriceIds.length > 0) {
+    const missing = missingPriceIds.map((env) => env.name).join(", ");
+    throw new Error(`Missing required Stripe price ID environment variable(s): ${missing}`);
+  }
 }
-
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-11-17.clover",
-  typescript: true,
-});
 
 export const STRIPE_PRICE_IDS = {
   basic: {
@@ -38,6 +46,7 @@ export const STRIPE_PRICE_IDS = {
 } as const;
 
 export function getStripePriceId(plan: "basic" | "pro", interval: "monthly" | "yearly"): string {
+  validatePriceIds();
   const priceId = STRIPE_PRICE_IDS[plan]?.[interval];
   if (!priceId) {
     throw new Error(`Invalid plan/interval combination: ${plan}/${interval}`);
@@ -46,6 +55,7 @@ export function getStripePriceId(plan: "basic" | "pro", interval: "monthly" | "y
 }
 
 export function getPlanTierFromPriceId(priceId: string): "free" | "basic" | "pro" {
+  validatePriceIds();
   if (priceId === STRIPE_PRICE_IDS.basic.monthly || priceId === STRIPE_PRICE_IDS.basic.yearly) {
     return "basic";
   }

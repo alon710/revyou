@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { stripe, getPlanTierFromPriceId } from "@/lib/stripe/config";
+import { getStripe, getPlanTierFromPriceId } from "@/lib/stripe/config";
 import { SubscriptionsRepository } from "@/lib/db/repositories/subscriptions.repository";
 
 export const runtime = "nodejs";
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!);
+    event = getStripe().webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!);
   } catch (error) {
     console.error("Webhook signature verification failed:", error);
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
           break;
         }
 
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        const subscription = await getStripe().subscriptions.retrieve(subscriptionId);
 
         let priceId: string | undefined;
         let planTier: string;
@@ -149,7 +149,7 @@ export async function POST(req: NextRequest) {
         const subscriptionId = typeof invoice.subscription === "string" ? invoice.subscription : null;
 
         if (subscriptionId) {
-          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+          const subscription = await getStripe().subscriptions.retrieve(subscriptionId);
           const userId = subscription.metadata?.userId;
 
           if (userId) {
@@ -171,7 +171,7 @@ export async function POST(req: NextRequest) {
         const subscriptionId = typeof invoice.subscription === "string" ? invoice.subscription : null;
 
         if (subscriptionId) {
-          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+          const subscription = await getStripe().subscriptions.retrieve(subscriptionId);
           const userId = subscription.metadata?.userId;
 
           if (userId) {
