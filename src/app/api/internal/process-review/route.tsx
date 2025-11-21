@@ -5,7 +5,7 @@ import { generateWithGemini } from "@/lib/ai/core/gemini-client";
 import { buildReplyPrompt } from "@/lib/ai/prompts/builder";
 import { postReplyToGoogle } from "@/lib/google/reviews";
 import { decryptToken } from "@/lib/google/business-profile";
-import { renderReviewNotificationEmail } from "@/lib/email/render";
+import { getTranslations } from "next-intl/server";
 import { ReviewsRepository } from "@/lib/db/repositories/reviews.repository";
 import { BusinessesRepository } from "@/lib/db/repositories/businesses.repository";
 import { AccountsRepository } from "@/lib/db/repositories/accounts.repository";
@@ -13,6 +13,7 @@ import { UsersConfigsRepository } from "@/lib/db/repositories/users-configs.repo
 import { SubscriptionsController } from "@/lib/controllers/subscriptions.controller";
 import type { ReplyStatus, StarConfig } from "@/lib/types";
 import type { Locale } from "@/i18n/config";
+import type { ReviewNotificationEmailProps } from "@/lib/emails/review-notification";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -235,29 +236,38 @@ export async function POST(request: NextRequest) {
             const locale = (userConfig.configs.LOCALE || "en") as Locale;
             const status = replyStatus as "pending" | "posted";
 
-            const { subject, html } = await renderReviewNotificationEmail(
-              {
-                recipientName: recipientName || recipientEmail,
-                businessName: business.name,
-                accountId,
-                businessId: business.id,
-                reviewerName: review.name,
-                rating: review.rating,
-                reviewText: review.text || "",
-                aiReply,
-                status,
-                appBaseUrl: process.env.NEXT_PUBLIC_APP_URL!,
-                reviewId,
-              },
-              locale
-            );
+            const t = await getTranslations({ locale, namespace: "emails.reviewNotification" });
+            const reviewPageUrl = `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/dashboard/accounts/${accountId}/businesses/${business.id}/reviews/${reviewId}`;
+
+            const emailProps: ReviewNotificationEmailProps = {
+              title: t("title"),
+              greeting: t("greeting", { name: recipientName || recipientEmail }),
+              body: t("body", { businessName: business.name }),
+              businessName: business.name,
+              noReviewText: t("noReviewText"),
+              aiReplyHeader: t("aiReplyHeader"),
+              statusText: status === "pending" ? t("statusPending") : t("statusPosted"),
+              viewReviewButton: t("viewReviewButton"),
+              footer: t("footer"),
+              reviewerName: review.name,
+              rating: review.rating,
+              reviewText: review.text || "",
+              aiReply,
+              status,
+              reviewPageUrl,
+              locale,
+            };
+
+            const { default: ReviewNotificationEmail } = await import("@/lib/emails/review-notification");
+            const emailComponent = <ReviewNotificationEmail {...emailProps} />;
+            const subject = t("subject", { rating: review.rating, businessName: business.name });
 
             const resend = new Resend(process.env.RESEND_API_KEY!);
             await resend.emails.send({
               from: process.env.RESEND_FROM_EMAIL!,
               to: recipientEmail,
               subject,
-              html,
+              react: emailComponent,
             });
 
             console.log("Email sent successfully", {
