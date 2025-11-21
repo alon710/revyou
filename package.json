@@ -18,7 +18,9 @@
     "db:drop": "drizzle-kit drop",
     "db:triggers": "dotenv -e .env -- tsx scripts/setup-trigger.ts",
     "comments:remove": "tsx scripts/remove-comments.ts",
-    "pubsub:update": "bash scripts/update-pubsub-subscription.sh"
+    "pubsub:update": "bash scripts/update-pubsub-subscription.sh",
+    "email:dev": "npx react-email dev --dir lib/emails",
+    "email:export": "npx react-email export --dir lib/emails"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^4.10.0",
@@ -37,6 +39,8 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@react-email/components": "^0.0.32",
+    "@react-email/render": "^1.0.1",
     "@stripe/stripe-js": "^8.5.2",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.81.1",
@@ -90,6 +94,7 @@
     "googleapis": "^165.0.0",
     "knip": "^5.66.3",
     "prettier": "^3.6.2",
+    "react-email": "^3.0.3",
     "tailwindcss": "^4.1.16",
     "tsx": "^4.20.6",
     "typescript": "5.9.3",

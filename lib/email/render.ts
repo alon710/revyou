@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
-import { ReviewNotificationEmail, type ReviewNotificationEmailProps } from "./ReviewNotificationEmail";
+import { render } from "@react-email/render";
+import  { type ReviewNotificationEmailProps } from "@/lib/emails/review-notification";
 import type { Locale } from "@/i18n/config";
 
 interface ReviewNotificationData {
@@ -50,7 +51,7 @@ export async function renderReviewNotificationEmail(
     locale,
   };
 
-  const html = ReviewNotificationEmail(emailProps);
+  const html = await render(<ReviewNotificationEmail {...emailProps} />);
 
   const subject = t("subject", { rating: data.rating, businessName: data.businessName });
 
