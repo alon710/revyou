@@ -129,7 +129,14 @@
           }
         }
       },
-      "yearlySavings": "Save {percentage}% yearly"
+      "yearlySavings": "Save {percentage}% yearly",
+      "yourCurrentPlan": "Your Current Plan",
+      "managePlanDescription": "Manage your subscription and view your current plan details",
+      "manageBilling": "Manage Billing",
+      "viewAllPlans": "View All Plans",
+      "status": "Status",
+      "statusActive": "Active",
+      "billedYearly": "Billed yearly"
     },
     "faq": {
       "title": "Frequently Asked Questions",
