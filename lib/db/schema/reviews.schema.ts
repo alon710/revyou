@@ -5,6 +5,7 @@ import { businesses } from "./businesses.schema";
 import { accounts } from "./accounts.schema";
 import { authUsers } from "./auth.schema";
 import type { ReplyStatus } from "../../types/review.types";
+import { reviewResponses } from "./review-responses.schema";
 
 export const reviews = pgTable(
   "reviews",
@@ -27,9 +28,6 @@ export const reviews = pgTable(
     rating: integer("rating").notNull(),
     text: text("text"),
     date: timestamp("date", { withTimezone: true }).notNull(),
-
-    aiReply: text("ai_reply"),
-    aiReplyGeneratedAt: timestamp("ai_reply_generated_at", { withTimezone: true }),
 
     replyStatus: text("reply_status").$type<ReplyStatus>().notNull().default("pending"),
     postedReply: text("posted_reply"),
@@ -94,7 +92,7 @@ export const reviews = pgTable(
   ]
 );
 
-export const reviewsRelations = relations(reviews, ({ one }) => ({
+export const reviewsRelations = relations(reviews, ({ one, many }) => ({
   business: one(businesses, {
     fields: [reviews.businessId],
     references: [businesses.id],
@@ -103,6 +101,7 @@ export const reviewsRelations = relations(reviews, ({ one }) => ({
     fields: [reviews.accountId],
     references: [accounts.id],
   }),
+  responses: many(reviewResponses),
 }));
 
 export type Review = typeof reviews.$inferSelect;

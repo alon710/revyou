@@ -1,9 +1,14 @@
-import { eq, and, inArray, gte, lte, exists } from "drizzle-orm";
+import { eq, and, inArray, gte, lte, exists, desc } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import { reviews, userAccounts, type Review, type ReviewInsert } from "@/lib/db/schema";
+import { reviews, reviewResponses, userAccounts, type Review, type ReviewInsert } from "@/lib/db/schema";
 import type { ReviewFilters } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 import { NotFoundError, ForbiddenError } from "@/lib/api/errors";
+
+export type ReviewWithLatestGeneration = Review & {
+  latestAiReply?: string;
+  latestAiReplyId?: string;
+};
 
 export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Partial<Review>> {
   constructor(
@@ -30,8 +35,8 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     );
   }
 
-  async get(reviewId: string): Promise<Review | null> {
-    const result = await db.query.reviews.findFirst({
+  async get(reviewId: string): Promise<ReviewWithLatestGeneration | null> {
+    const review = await db.query.reviews.findFirst({
       where: and(
         eq(reviews.id, reviewId),
         eq(reviews.accountId, this.accountId),
@@ -40,10 +45,21 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
       ),
     });
 
-    return result ?? null;
+    if (!review) return null;
+
+    const latestGen = await db.query.reviewResponses.findFirst({
+      where: and(eq(reviewResponses.reviewId, reviewId), eq(reviewResponses.status, "generated")),
+      orderBy: [desc(reviewResponses.createdAt)],
+    });
+
+    return {
+      ...review,
+      latestAiReply: latestGen?.text,
+      latestAiReplyId: latestGen?.id,
+    };
   }
 
-  async list(filters: ReviewFilters = {}): Promise<Review[]> {
+  async list(filters: ReviewFilters = {}): Promise<ReviewWithLatestGeneration[]> {
     const conditions = [
       eq(reviews.accountId, this.accountId),
       eq(reviews.businessId, this.businessId),
@@ -70,9 +86,25 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
       conditions.push(lte(reviews.receivedAt, filters.dateTo));
     }
 
-    return await db.query.reviews.findMany({
+    const reviewsData = await db.query.reviews.findMany({
       where: and(...conditions),
     });
+
+    const reviewsWithGen = await Promise.all(
+      reviewsData.map(async (review) => {
+        const latestGen = await db.query.reviewResponses.findFirst({
+          where: and(eq(reviewResponses.reviewId, review.id), eq(reviewResponses.status, "generated")),
+          orderBy: [desc(reviewResponses.createdAt)],
+        });
+        return {
+          ...review,
+          latestAiReply: latestGen?.text,
+          latestAiReplyId: latestGen?.id,
+        };
+      })
+    );
+
+    return reviewsWithGen;
   }
 
   async create(data: ReviewInsert): Promise<Review> {
@@ -133,14 +165,7 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     }
   }
 
-  async updateAiReply(reviewId: string, aiReply: string): Promise<Review> {
-    return this.update(reviewId, {
-      aiReply,
-      aiReplyGeneratedAt: new Date(),
-    });
-  }
-
-  async markAsPosted(reviewId: string, postedReply: string, postedBy: string): Promise<Review> {
+  async markAsPosted(reviewId: string, postedReply: string, postedBy: string | null): Promise<Review> {
     return this.update(reviewId, {
       replyStatus: "posted",
       postedReply,

@@ -1,7 +1,7 @@
 import type { AccountFilters, AccountWithBusinesses, BusinessFilters, Account, AccountCreate } from "@/lib/types";
 import { AccountsRepository } from "@/lib/db/repositories";
 import { db } from "@/lib/db/client";
-import { accounts, businesses, userAccounts } from "@/lib/db/schema";
+import { businesses, userAccounts } from "@/lib/db/schema";
 import { eq, and, inArray, type SQL } from "drizzle-orm";
 
 export class AccountsController {
@@ -65,7 +65,7 @@ export class AccountsController {
     const accountConditions = [eq(userAccounts.userId, this.userId)];
 
     if (accountFilters.ids && accountFilters.ids.length > 0) {
-      accountConditions.push(inArray(accounts.id, accountFilters.ids));
+      accountConditions.push(inArray(userAccounts.accountId, accountFilters.ids));
     }
 
     const businessConditions: SQL[] = [];
@@ -78,20 +78,18 @@ export class AccountsController {
       businessConditions.push(inArray(businesses.id, businessFilters.ids));
     }
 
-    const accountsWithBusinesses = await db.query.userAccounts.findMany({
+    const userAccountsResult = await db.query.userAccounts.findMany({
       where: and(...accountConditions),
       with: {
         account: {
           with: {
-            businesses: {
-              where: businessConditions.length > 0 ? and(...businessConditions) : undefined,
-            },
+            businesses: businessConditions.length > 0 ? { where: and(...businessConditions) } : true,
           },
         },
       },
     });
 
-    return accountsWithBusinesses.map((ua) => ({
+    return userAccountsResult.map((ua) => ({
       ...ua.account,
       businesses: ua.account.businesses,
     })) as AccountWithBusinesses[];

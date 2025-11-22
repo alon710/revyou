@@ -6,10 +6,25 @@ function getStarCustomInstructions(star: 1 | 2 | 3 | 4 | 5, business: Business):
   return business.starConfigs?.[star]?.customInstructions || "";
 }
 
-export function buildReplyPrompt(business: Business, review: Review): string {
+export interface PromptSample {
+  review: Review;
+  reply: string;
+}
+
+export function buildReplyPrompt(
+  business: Business,
+  review: Review,
+  approvedSamples: PromptSample[] = [],
+  rejectedSamples: PromptSample[] = []
+): string {
   const languageMode = business.languageMode;
   const isAutoDetect = languageMode === "auto-detect";
   const targetLanguage = isAutoDetect ? undefined : languageMode;
+
+  const formatSample = (s: PromptSample) => {
+    const reviewText = s.review.text ? `"${s.review.text}"` : "(no text)";
+    return `Review (${s.review.rating}★): ${reviewText}\nReply: "${s.reply}"`;
+  };
 
   const templateData = {
     BUSINESS_NAME: business.name || "",
@@ -29,6 +44,8 @@ export function buildReplyPrompt(business: Business, review: Review): string {
     RATING: review.rating,
     REVIEWER_NAME: review.name || "",
     REVIEW_TEXT: review.text || "(no text)",
+    APPROVED_SAMPLES: approvedSamples.length > 0 ? approvedSamples.map(formatSample).join("\n\n") : undefined,
+    REJECTED_SAMPLES: rejectedSamples.length > 0 ? rejectedSamples.map(formatSample).join("\n\n") : undefined,
   };
 
   const template = DEFAULT_BUSINESS_PROMPT_TEMPLATE;

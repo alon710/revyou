@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Review, ReplyStatus } from "@/lib/types";
+import { ReplyStatus } from "@/lib/types";
 import { StarRating } from "@/components/ui/StarRating";
 import {
   DashboardCard,
@@ -21,9 +21,10 @@ import { User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
+import type { ReviewWithLatestGeneration } from "@/lib/db/repositories";
 
 interface ReviewCardProps {
-  review: Review;
+  review: ReviewWithLatestGeneration;
   accountId: string;
   userId: string;
   businessId: string;
@@ -140,7 +141,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
             </div>
           )}
 
-          {review.aiReply && (
+          {review.latestAiReply && (
             <DashboardCardSection withBorder={!!review.text}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -148,7 +149,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
                 </span>
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
-                <p className="text-sm leading-relaxed">{review.aiReply}</p>
+                <p className="text-sm leading-relaxed">{review.latestAiReply}</p>
               </div>
             </DashboardCardSection>
           )}
@@ -225,7 +226,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
             </div>
             <div className="rounded-md border border-accent bg-accent/10 p-3">
               <p className="text-sm font-medium mb-1">{t("publishDialog.replyPreview")}</p>
-              <p className="text-sm text-foreground">{review.aiReply}</p>
+              <p className="text-sm text-foreground">{review.latestAiReply}</p>
             </div>
           </div>
         }
@@ -240,7 +241,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 }
 
 interface ReviewCardWithRefreshProps {
-  review: Review;
+  review: ReviewWithLatestGeneration;
   accountId: string;
   userId: string;
   businessId: string;

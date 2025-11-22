@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Resend } from "resend";
-import { generateWithGemini } from "@/lib/ai/core/gemini-client";
-import { buildReplyPrompt } from "@/lib/ai/prompts/builder";
-import { postReplyToGoogle } from "@/lib/google/reviews";
-import { decryptToken } from "@/lib/google/business-profile";
 import { getTranslations } from "next-intl/server";
 import { ReviewsRepository } from "@/lib/db/repositories/reviews.repository";
 import { BusinessesRepository } from "@/lib/db/repositories/businesses.repository";
 import { AccountsRepository } from "@/lib/db/repositories/accounts.repository";
 import { UsersConfigsRepository } from "@/lib/db/repositories/users-configs.repository";
 import { SubscriptionsController } from "@/lib/controllers/subscriptions.controller";
+import { ReviewsController } from "@/lib/controllers/reviews.controller";
 import type { ReplyStatus, StarConfig } from "@/lib/types";
 import type { Locale } from "@/i18n/config";
 import type { ReviewNotificationEmailProps } from "@/lib/emails/review-notification";
@@ -57,6 +54,7 @@ export async function POST(request: NextRequest) {
     const reviewsRepo = new ReviewsRepository(userId, accountId, businessId);
     const businessesRepo = new BusinessesRepository(userId, accountId);
     const accountsRepo = new AccountsRepository(userId);
+    const reviewsController = new ReviewsController(userId, accountId, businessId);
 
     const review = await reviewsRepo.get(reviewId);
     if (!review) {
@@ -83,7 +81,6 @@ export async function POST(request: NextRequest) {
 
       await reviewsRepo.update(reviewId, {
         replyStatus: "quota_exceeded" as ReplyStatus,
-        aiReplyGeneratedAt: new Date(),
       });
 
       console.log("Review saved without AI reply due to quota limit", { reviewId });
@@ -108,21 +105,13 @@ export async function POST(request: NextRequest) {
     console.log("Generating AI reply", { reviewId });
     let aiReply: string;
     try {
-      const prompt = buildReplyPrompt(business, review);
-
-      aiReply = await generateWithGemini(process.env.GEMINI_API_KEY!, prompt);
-
-      await reviewsRepo.update(reviewId, {
-        aiReply,
-        aiReplyGeneratedAt: new Date(),
-      });
-
+      const result = await reviewsController.generateReply(reviewId);
+      aiReply = result.aiReply;
       console.log("AI reply generated successfully", { reviewId });
     } catch (error) {
       console.error("Failed to generate AI reply", { error });
       await reviewsRepo.update(reviewId, {
         replyStatus: "failed" as ReplyStatus,
-        aiReplyGeneratedAt: new Date(),
       });
       return NextResponse.json(
         {
@@ -146,28 +135,7 @@ export async function POST(request: NextRequest) {
         replyStatus = "failed";
       } else {
         try {
-          const reviewName = review.googleReviewName;
-          if (!reviewName) {
-            throw new Error("Google review name not found - review may not be from Google My Business");
-          }
-
-          const decryptedToken = await decryptToken(encryptedToken);
-
-          await postReplyToGoogle(
-            reviewName,
-            aiReply,
-            decryptedToken,
-            process.env.GOOGLE_CLIENT_ID!,
-            process.env.GOOGLE_CLIENT_SECRET!
-          );
-
-          await reviewsRepo.update(reviewId, {
-            replyStatus: "posted" as ReplyStatus,
-            postedReply: aiReply,
-            postedAt: new Date(),
-            postedBy: null,
-          });
-
+          await reviewsController.postReply(reviewId);
           console.log("AI reply auto-posted to Google", { reviewId });
           replyStatus = "posted";
         } catch (error) {

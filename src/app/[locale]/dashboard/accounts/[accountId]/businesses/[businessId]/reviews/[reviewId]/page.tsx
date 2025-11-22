@@ -6,6 +6,7 @@ import { getBusiness } from "@/lib/actions/businesses.actions";
 import { getReview } from "@/lib/actions/reviews.actions";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { ReviewCardWithRefresh } from "@/components/dashboard/reviews/ReviewCard";
+import type { ReviewWithLatestGeneration } from "@/lib/db/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
 
   const [business, review] = await Promise.all([
     getBusiness(userId, accountId, businessId),
-    getReview({ accountId, businessId, reviewId }),
+    getReview({ accountId, businessId, reviewId }) as Promise<ReviewWithLatestGeneration>,
   ]);
 
   return (

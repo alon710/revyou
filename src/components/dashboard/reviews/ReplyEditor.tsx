@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Review } from "@/lib/types";
 import {
   Dialog,
   DialogContent,
@@ -12,13 +11,14 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { updateAiReply } from "@/lib/actions/reviews.actions";
+import { postReviewReply } from "@/lib/actions/reviews.actions";
 import { Edit } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { getLocaleDir, type Locale } from "@/i18n/config";
+import type { ReviewWithLatestGeneration } from "@/lib/db/repositories";
 
 interface ReplyEditorProps {
-  review: Review;
+  review: ReviewWithLatestGeneration;
   accountId: string;
   userId: string;
   businessId: string;
@@ -42,14 +42,20 @@ export function ReplyEditor({
   const t = useTranslations("dashboard.reviews.editor");
   const locale = useLocale();
   const dir = getLocaleDir(locale as Locale);
-  const [replyText, setReplyText] = useState(review.aiReply || "");
+  const [replyText, setReplyText] = useState(review.latestAiReply || "");
   const [isLoading, setIsLoading] = useState(false);
   const defaultLoadingText = loadingText || t("saving");
 
   const handleSave = async () => {
     try {
       setIsLoading(true);
-      await updateAiReply({ accountId, businessId, reviewId: review.id, aiReply: replyText });
+
+      await postReviewReply({
+        accountId,
+        businessId,
+        reviewId: review.id,
+        customReply: replyText,
+      });
       onSave();
     } catch (error) {
       console.error("Error saving reply:", error);
@@ -59,7 +65,7 @@ export function ReplyEditor({
   };
 
   const handleCancel = () => {
-    setReplyText(review.aiReply || "");
+    setReplyText(review.latestAiReply || "");
     onClose();
   };
 

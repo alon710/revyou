@@ -1,11 +1,7 @@
 "use server";
 
-import { ReviewsController, BusinessesController, AccountsController } from "@/lib/controllers";
+import { ReviewsController } from "@/lib/controllers/reviews.controller";
 import type { ReviewCreate, ReviewUpdate } from "@/lib/types";
-import { generateAIReply } from "@/lib/ai/gemini";
-import { buildReplyPrompt } from "@/lib/ai/prompts/builder";
-import { postReplyToGoogle } from "@/lib/google/reviews";
-import { decryptToken } from "@/lib/google/business-profile";
 import { createSafeAction } from "./safe-action";
 import { z } from "zod";
 
@@ -44,10 +40,6 @@ const UpdateReviewSchema = ReviewIdSchema.extend({
   data: z.custom<ReviewUpdate>(),
 });
 
-const UpdateAiReplySchema = ReviewIdSchema.extend({
-  aiReply: z.string(),
-});
-
 const PostReviewReplySchema = ReviewIdSchema.extend({
   customReply: z.string().optional(),
 });
@@ -74,18 +66,11 @@ export const updateReview = createSafeAction(
   }
 );
 
-export const updateAiReply = createSafeAction(
-  UpdateAiReplySchema,
-  async ({ accountId, businessId, reviewId, aiReply }, { userId }) => {
-    const controller = new ReviewsController(userId, accountId, businessId);
-    return controller.updateAiReply(reviewId, aiReply);
-  }
-);
-
 export const rejectReview = createSafeAction(
   ReviewIdSchema,
   async ({ accountId, businessId, reviewId }, { userId }) => {
     const controller = new ReviewsController(userId, accountId, businessId);
+
     return controller.markAsRejected(reviewId);
   }
 );
@@ -93,47 +78,17 @@ export const rejectReview = createSafeAction(
 export const generateReviewReply = createSafeAction(
   ReviewIdSchema,
   async ({ accountId, businessId, reviewId }, { userId }) => {
-    const reviewController = new ReviewsController(userId, accountId, businessId);
-    const review = await reviewController.getReview(reviewId);
-
-    const businessController = new BusinessesController(userId, accountId);
-    const business = await businessController.getBusiness(businessId);
-
-    const prompt = buildReplyPrompt(business, review);
-    const aiReply = await generateAIReply(prompt);
-
-    const updatedReview = await reviewController.updateAiReply(reviewId, aiReply);
-
-    return {
-      review: updatedReview,
-      aiReply,
-    };
+    const controller = new ReviewsController(userId, accountId, businessId);
+    return controller.generateReply(reviewId);
   }
 );
 
 export const postReviewReply = createSafeAction(
   PostReviewReplySchema,
   async ({ accountId, businessId, reviewId, customReply }, { userId }) => {
-    const reviewController = new ReviewsController(userId, accountId, businessId);
-    const review = await reviewController.getReview(reviewId);
-
-    const replyToPost = customReply || review.aiReply;
-    if (!replyToPost) {
-      throw new Error("No reply to post. Generate AI reply first or provide custom reply.");
-    }
-
-    const accountController = new AccountsController(userId);
-    const account = await accountController.getAccount(accountId);
-
-    try {
-      const refreshToken = await decryptToken(account.googleRefreshToken);
-      await postReplyToGoogle(review.googleReviewName || review.googleReviewId, replyToPost, refreshToken);
-
-      return reviewController.markAsPosted(reviewId, replyToPost, userId);
-    } catch (error) {
-      await reviewController.updateReview(reviewId, { replyStatus: "failed" });
-      throw error;
-    }
+    const controller = new ReviewsController(userId, accountId, businessId);
+    const { review } = await controller.postReply(reviewId, customReply, userId);
+    return review;
   }
 );
 

@@ -1,6 +1,6 @@
 {
-  "id": "076463dd-ca57-477b-9349-181082310c25",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "08614246-acea-4e8d-8845-10bb9891e5b6",
+  "prevId": "076463dd-ca57-477b-9349-181082310c25",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -869,18 +869,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "ai_reply": {
-          "name": "ai_reply",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "ai_reply_generated_at": {
-          "name": "ai_reply_generated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
         "reply_status": {
           "name": "reply_status",
           "type": "text",
@@ -1132,6 +1120,206 @@
         "reviews_reply_status_check": {
           "name": "reviews_reply_status_check",
           "value": "\"reviews\".\"reply_status\" IN ('pending', 'rejected', 'posted', 'failed', 'quota_exceeded')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.review_responses": {
+      "name": "review_responses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "review_id": {
+          "name": "review_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "business_id": {
+          "name": "business_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "account_id": {
+          "name": "account_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text": {
+          "name": "text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "generated_at": {
+          "name": "generated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "review_responses_business_id_idx": {
+          "name": "review_responses_business_id_idx",
+          "columns": [
+            {
+              "expression": "business_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "review_responses_review_id_idx": {
+          "name": "review_responses_review_id_idx",
+          "columns": [
+            {
+              "expression": "review_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "review_responses_status_idx": {
+          "name": "review_responses_status_idx",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "review_responses_created_at_idx": {
+          "name": "review_responses_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "review_responses_business_status_created_idx": {
+          "name": "review_responses_business_status_created_idx",
+          "columns": [
+            {
+              "expression": "business_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "review_responses_review_id_reviews_id_fk": {
+          "name": "review_responses_review_id_reviews_id_fk",
+          "tableFrom": "review_responses",
+          "tableTo": "reviews",
+          "columnsFrom": ["review_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "review_responses_business_id_businesses_id_fk": {
+          "name": "review_responses_business_id_businesses_id_fk",
+          "tableFrom": "review_responses",
+          "tableTo": "businesses",
+          "columnsFrom": ["business_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "review_responses_account_id_accounts_id_fk": {
+          "name": "review_responses_account_id_accounts_id_fk",
+          "tableFrom": "review_responses",
+          "tableTo": "accounts",
+          "columnsFrom": ["account_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "review_responses_select_associated": {
+          "name": "review_responses_select_associated",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": ["authenticated"],
+          "using": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"review_responses\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n      )"
+        },
+        "review_responses_insert_associated": {
+          "name": "review_responses_insert_associated",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": ["authenticated"],
+          "withCheck": "EXISTS (\n        SELECT 1 FROM user_accounts ua\n        WHERE ua.account_id = \"review_responses\".\"account_id\"\n        AND ua.user_id = (auth.uid())\n      )"
+        }
+      },
+      "checkConstraints": {
+        "review_responses_status_check": {
+          "name": "review_responses_status_check",
+          "value": "\"review_responses\".\"status\" IN ('generated', 'approved', 'rejected')"
         }
       },
       "isRLSEnabled": false

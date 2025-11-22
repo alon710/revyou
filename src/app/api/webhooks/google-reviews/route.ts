@@ -225,8 +225,6 @@ export async function POST(request: NextRequest) {
       postedReply: null,
       postedAt: null,
       postedBy: null,
-      aiReply: null,
-      aiReplyGeneratedAt: null,
     };
 
     console.log("Creating new review in database");
