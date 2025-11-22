@@ -10,14 +10,12 @@ export function useNavigation(variant?: "landing" | "dashboard") {
   const { user } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const [hash, setHash] = useState("");
+  const [hash, setHash] = useState(() => (typeof window !== "undefined" ? window.location.hash : ""));
 
   const navigationVariant = variant || getNavigationVariant(pathname);
   const navItems = navigationVariant === "dashboard" ? dashboardNavItems : landingNavItems;
 
   useEffect(() => {
-    setHash(window.location.hash);
-
     const handleHashChange = () => {
       setHash(window.location.hash);
     };
