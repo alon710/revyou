@@ -32,7 +32,6 @@ interface ReplyEditorProps {
 export function ReplyEditor({
   review,
   accountId,
-  userId,
   businessId,
   open,
   onClose,
@@ -50,7 +49,7 @@ export function ReplyEditor({
   const handleSave = async () => {
     try {
       setIsLoading(true);
-      await updateAiReply(userId, accountId, businessId, review.id, replyText);
+      await updateAiReply({ accountId, businessId, reviewId: review.id, aiReply: replyText });
       onSave();
     } catch (error) {
       console.error("Error saving reply:", error);

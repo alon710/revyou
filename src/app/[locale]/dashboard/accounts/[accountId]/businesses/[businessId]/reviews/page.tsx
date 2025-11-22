@@ -21,7 +21,11 @@ export default async function BusinessReviewsPage({ params }: BusinessReviewsPag
   const tCommon = await getTranslations({ locale, namespace: "common" });
   const [business, reviews] = await Promise.all([
     getBusiness(userId, accountId, businessId),
-    getReviews(userId, accountId, businessId, { sort: { orderBy: "receivedAt", orderDirection: "desc" } }),
+    getReviews({
+      accountId,
+      businessId,
+      filters: { sort: { orderBy: "receivedAt", orderDirection: "desc" } },
+    }),
   ]);
 
   return (

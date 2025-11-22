@@ -66,7 +66,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 
     try {
       setIsLoading(true);
-      await rejectReview(userId, accountId, businessId, review.id);
+      await rejectReview({ accountId, businessId, reviewId: review.id });
       onUpdate?.();
     } catch (error) {
       console.error("Error rejecting reply:", error);
@@ -79,7 +79,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
     if (!user) return;
 
     try {
-      await postReviewReply(userId, accountId, businessId, review.id);
+      await postReviewReply({ accountId, businessId, reviewId: review.id });
       onUpdate?.();
     } catch (error) {
       console.error("Error publishing reply:", error);
@@ -94,7 +94,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 
     try {
       setIsLoading(true);
-      await generateReviewReply(userId, accountId, businessId, review.id);
+      await generateReviewReply({ accountId, businessId, reviewId: review.id });
       onUpdate?.();
     } catch (error) {
       console.error("Error regenerating reply:", error);

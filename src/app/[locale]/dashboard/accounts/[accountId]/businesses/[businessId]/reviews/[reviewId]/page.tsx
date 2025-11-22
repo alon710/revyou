@@ -21,7 +21,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
 
   const [business, review] = await Promise.all([
     getBusiness(userId, accountId, businessId),
-    getReview(userId, accountId, businessId, reviewId),
+    getReview({ accountId, businessId, reviewId }),
   ]);
 
   return (

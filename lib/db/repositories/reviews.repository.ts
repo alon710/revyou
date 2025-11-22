@@ -1,4 +1,4 @@
-import { eq, and, inArray, gte, lte } from "drizzle-orm";
+import { eq, and, inArray, gte, lte, exists } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { reviews, userAccounts, type Review, type ReviewInsert } from "@/lib/db/schema";
 import type { ReviewFilters } from "@/lib/types";
@@ -21,14 +21,22 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     return !!access;
   }
 
-  async get(reviewId: string): Promise<Review | null> {
-    if (!(await this.verifyAccess())) return null;
+  private getAccessCondition() {
+    return exists(
+      db
+        .select()
+        .from(userAccounts)
+        .where(and(eq(userAccounts.userId, this.userId), eq(userAccounts.accountId, this.accountId)))
+    );
+  }
 
+  async get(reviewId: string): Promise<Review | null> {
     const result = await db.query.reviews.findFirst({
       where: and(
         eq(reviews.id, reviewId),
         eq(reviews.accountId, this.accountId),
-        eq(reviews.businessId, this.businessId)
+        eq(reviews.businessId, this.businessId),
+        this.getAccessCondition()
       ),
     });
 
@@ -36,9 +44,11 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
   }
 
   async list(filters: ReviewFilters = {}): Promise<Review[]> {
-    if (!(await this.verifyAccess())) return [];
-
-    const conditions = [eq(reviews.accountId, this.accountId), eq(reviews.businessId, this.businessId)];
+    const conditions = [
+      eq(reviews.accountId, this.accountId),
+      eq(reviews.businessId, this.businessId),
+      this.getAccessCondition(),
+    ];
 
     if (filters.replyStatus && filters.replyStatus.length > 0) {
       conditions.push(inArray(reviews.replyStatus, filters.replyStatus));
@@ -85,15 +95,16 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
   }
 
   async update(reviewId: string, data: Partial<Review>): Promise<Review> {
-    if (!(await this.verifyAccess())) {
-      throw new NotFoundError("Review not found or access denied");
-    }
-
     const [updated] = await db
       .update(reviews)
       .set({ ...data, updateTime: new Date() })
       .where(
-        and(eq(reviews.id, reviewId), eq(reviews.accountId, this.accountId), eq(reviews.businessId, this.businessId))
+        and(
+          eq(reviews.id, reviewId),
+          eq(reviews.accountId, this.accountId),
+          eq(reviews.businessId, this.businessId),
+          this.getAccessCondition()
+        )
       )
       .returning();
 
@@ -105,14 +116,15 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
   }
 
   async delete(reviewId: string): Promise<void> {
-    if (!(await this.verifyAccess())) {
-      throw new NotFoundError("Review not found or access denied");
-    }
-
     const [deleted] = await db
       .delete(reviews)
       .where(
-        and(eq(reviews.id, reviewId), eq(reviews.accountId, this.accountId), eq(reviews.businessId, this.businessId))
+        and(
+          eq(reviews.id, reviewId),
+          eq(reviews.accountId, this.accountId),
+          eq(reviews.businessId, this.businessId),
+          this.getAccessCondition()
+        )
       )
       .returning();
 
@@ -144,13 +156,12 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
   }
 
   async findByGoogleReviewId(googleReviewId: string): Promise<Review | null> {
-    if (!(await this.verifyAccess())) return null;
-
     const result = await db.query.reviews.findFirst({
       where: and(
         eq(reviews.googleReviewId, googleReviewId),
         eq(reviews.accountId, this.accountId),
-        eq(reviews.businessId, this.businessId)
+        eq(reviews.businessId, this.businessId),
+        this.getAccessCondition()
       ),
     });
 
