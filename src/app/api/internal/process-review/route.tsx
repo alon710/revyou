@@ -207,6 +207,8 @@ export async function POST(request: NextRequest) {
         const supabase = createAdminClient();
         const usersConfigsRepo = new UsersConfigsRepository();
 
+        const { default: ReviewNotificationEmailComponent } = await import("@/lib/emails/review-notification");
+
         for (const userAccount of allUserAccounts) {
           try {
             const currentUserId = userAccount.userId;
@@ -258,8 +260,7 @@ export async function POST(request: NextRequest) {
               locale,
             };
 
-            const { default: ReviewNotificationEmail } = await import("@/lib/emails/review-notification");
-            const emailComponent = <ReviewNotificationEmail {...emailProps} />;
+            const emailComponent = <ReviewNotificationEmailComponent {...emailProps} />;
             const subject = t("subject", { rating: review.rating, businessName: business.name });
 
             const resend = new Resend(process.env.RESEND_API_KEY!);
