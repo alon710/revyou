@@ -78,6 +78,7 @@ export async function GET(request: NextRequest) {
     if (reconnect && existingAccountId) {
       await accountsController.updateAccount(existingAccountId, {
         googleRefreshToken: encryptedToken,
+        lastSynced: new Date(),
       });
       accountId = existingAccountId;
     } else {
@@ -90,6 +91,7 @@ export async function GET(request: NextRequest) {
       if (existingAccount) {
         await accountsController.updateAccount(existingAccount.id, {
           googleRefreshToken: encryptedToken,
+          lastSynced: new Date(),
         });
         accountId = existingAccount.id;
       } else {
