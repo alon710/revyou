@@ -103,7 +103,7 @@ export async function GET(req: NextRequest) {
             const subject = locale === "he" ? `סיכום שבועי: ${business.name}` : `Weekly Summary: ${business.name}`;
 
             await resend.emails.send({
-              from: "Bottie <notifications@Bottie.co>",
+              from: process.env.RESEND_FROM_EMAIL!,
               to: user.email,
               subject: subject,
               react: WeeklySummaryEmail({
@@ -124,7 +124,7 @@ export async function GET(req: NextRequest) {
                 recommendationsTitle: locale === "he" ? "המלצות" : "Recommendations",
                 recommendations: summaryData.recommendations,
                 viewDashboardButton: locale === "he" ? "צפייה בלוח הבקרה" : "View Dashboard",
-                dashboardUrl: `https://app.Bottie.co/${locale}/dashboard/home`,
+                dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/dashboard/home`,
                 footer: locale === "he" ? "נשלח על ידי Bottie" : "Sent by Bottie",
                 locale: locale as "en" | "he",
               }),
