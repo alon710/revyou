@@ -25,6 +25,7 @@ export class UsersConfigsRepository {
           configs: {
             EMAIL_ON_NEW_REVIEW: true,
             LOCALE: "en",
+            WEEKLY_SUMMARY_ENABLED: true,
           },
         })
         .onConflictDoUpdate({
