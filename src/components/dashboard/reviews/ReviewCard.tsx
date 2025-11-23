@@ -58,6 +58,17 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
     };
 
     const statusInfo = statusMap[status] || statusMap.pending;
+
+    if (status === "posted") {
+      const Icon = review.latestAiReplyPostedBy ? User : Bot;
+      return (
+        <Badge variant={statusInfo.variant} className="gap-1">
+          <Icon className="h-3 w-3" />
+          {statusInfo.label}
+        </Badge>
+      );
+    }
+
     return <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>;
   };
 
@@ -128,27 +139,10 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 
           {review.latestAiReply && (
             <DashboardCardSection withBorder={!!review.text}>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    {t("aiReplyLabel")}
-                  </span>
-                  {review.replyStatus === "posted" && (
-                    <Badge variant="outline" className="gap-1 text-[10px] h-5">
-                      {review.latestAiReplyGeneratedBy ? (
-                        <>
-                          <User className="h-3 w-3" />
-                          {t("status.postedUser")}
-                        </>
-                      ) : (
-                        <>
-                          <Bot className="h-3 w-3" />
-                          {t("status.postedAi")}
-                        </>
-                      )}
-                    </Badge>
-                  )}
-                </div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  {t("aiReplyLabel")}
+                </span>
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
                 <p className="text-sm leading-relaxed">{review.latestAiReply}</p>
