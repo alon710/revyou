@@ -17,6 +17,7 @@
     "db:studio": "drizzle-kit studio",
     "db:drop": "drizzle-kit drop",
     "db:triggers": "dotenv -e .env -- tsx scripts/setup-trigger.ts",
+    "webhook:trigger": "tsx scripts/trigger-review-webhook.ts",
     "comments:remove": "tsx scripts/remove-comments.ts",
     "pubsub:update": "bash scripts/update-pubsub-subscription.sh",
     "email:dev": "npx react-email dev --dir lib/emails",
@@ -75,6 +76,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@inquirer/prompts": "^8.0.1",
     "@lingual/i18n-check": "^0.8.13",
     "@tailwindcss/postcss": "^4",
     "@types/decomment": "^0.9.5",
@@ -85,6 +87,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "decomment": "^0.9.5",
+    "dotenv": "^17.2.3",
     "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.31.7",
     "eslint": "^9",

@@ -492,10 +492,13 @@
           "posted": "Published",
           "rejected": "Rejected",
           "failed": "Failed",
-          "quotaExceeded": "Quota Exceeded"
+          "quotaExceeded": "Quota Exceeded",
+          "postedUser": "Posted by User",
+          "postedAi": "Posted by AI"
         },
         "reviewLabel": "Review",
         "aiReplyLabel": "AI Response",
+        "postedReplyLabel": "Posted Reply",
         "actions": {
           "reject": "Reject",
           "regenerate": "Regenerate",

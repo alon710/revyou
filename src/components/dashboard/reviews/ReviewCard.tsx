@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { rejectReview, postReviewReply, generateReviewReply } from "@/lib/actions/reviews.actions";
+import { postReviewReply, generateReviewReply } from "@/lib/actions/reviews.actions";
 import { useAuth } from "@/contexts/AuthContext";
 import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
@@ -59,21 +59,6 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 
     const statusInfo = statusMap[status] || statusMap.pending;
     return <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>;
-  };
-
-  const handleReject = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    try {
-      setIsLoading(true);
-      await rejectReview({ accountId, businessId, reviewId: review.id });
-      onUpdate?.();
-    } catch (error) {
-      console.error("Error rejecting reply:", error);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const handlePublishConfirm = async () => {
@@ -146,7 +131,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    {review.replyStatus === "posted" ? t("postedReplyLabel") : t("aiReplyLabel")}
+                    {t("aiReplyLabel")}
                   </span>
                   {review.replyStatus === "posted" && (
                     <Badge variant="outline" className="gap-1 text-[10px] h-5">
@@ -165,56 +150,48 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
                   )}
                 </div>
               </div>
-              <div
-                className={cn(
-                  "rounded-md border p-3",
-                  review.replyStatus === "posted"
-                    ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/20"
-                    : "border-primary/20 bg-primary/5"
-                )}
-              >
+              <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
                 <p className="text-sm leading-relaxed">{review.latestAiReply}</p>
               </div>
             </DashboardCardSection>
           )}
         </DashboardCardContent>
 
-        {(review.replyStatus === "pending" || review.replyStatus === "failed") && (
-          <DashboardCardFooter>
-            <Button type="button" onClick={handleReject} disabled={isLoading} variant="outline" size="sm">
-              {t("actions.reject")}
-            </Button>
-            <Button type="button" onClick={handleRegenerate} disabled={isLoading} size="sm" variant="outline">
-              {t("actions.regenerate")}
-            </Button>
-            <Button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setShowEditor(true);
-              }}
-              disabled={isLoading}
-              size="sm"
-              variant="outline"
-            >
-              {t("actions.edit")}
-            </Button>
-            <Button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setShowPublishDialog(true);
-              }}
-              disabled={isLoading}
-              size="sm"
-              variant="default"
-            >
-              {t("actions.publish")}
-            </Button>
-          </DashboardCardFooter>
-        )}
+        <DashboardCardFooter>
+          {(review.replyStatus === "pending" || review.replyStatus === "failed") && (
+            <>
+              <Button type="button" onClick={handleRegenerate} disabled={isLoading} size="sm" variant="outline">
+                {t("actions.regenerate")}
+              </Button>
+              <Button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowEditor(true);
+                }}
+                disabled={isLoading}
+                size="sm"
+                variant="outline"
+              >
+                {t("actions.edit")}
+              </Button>
+              <Button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowPublishDialog(true);
+                }}
+                disabled={isLoading}
+                size="sm"
+                variant="default"
+              >
+                {t("actions.publish")}
+              </Button>
+            </>
+          )}
+        </DashboardCardFooter>
       </DashboardCard>
 
       <ReplyEditor

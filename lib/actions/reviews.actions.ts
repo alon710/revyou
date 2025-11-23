@@ -70,15 +70,6 @@ export const updateReview = createSafeAction(
   }
 );
 
-export const rejectReview = createSafeAction(
-  ReviewIdSchema,
-  async ({ accountId, businessId, reviewId }, { userId }) => {
-    const controller = new ReviewsController(userId, accountId, businessId);
-
-    return controller.markAsRejected(reviewId);
-  }
-);
-
 export const generateReviewReply = createSafeAction(
   ReviewIdSchema,
   async ({ accountId, businessId, reviewId }, { userId }) => {

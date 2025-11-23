@@ -425,10 +425,13 @@
           "posted": "פורסם",
           "rejected": "נדחה",
           "failed": "נכשל",
-          "quotaExceeded": "חריגה ממכסה"
+          "quotaExceeded": "חריגה ממכסה",
+          "postedUser": "פורסם ע״י משתמש",
+          "postedAi": "פורסם ע״י AI"
         },
         "reviewLabel": "ביקורת",
         "aiReplyLabel": "תגובת בינה מלאכותית",
+        "postedReplyLabel": "תגובה שפורסמה",
         "actions": {
           "reject": "דחה",
           "regenerate": "צור מחדש",

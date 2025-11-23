@@ -156,12 +156,14 @@ export class ReviewsController {
 
     const updatedReview = await this.markAsPosted(reviewId);
 
+    const generatedBy =
+      customReply && customReply !== latestDraft?.text ? (userId ?? null) : (latestDraft?.generatedBy ?? null);
+
     await this.responsesRepo.create({
       reviewId,
       text: replyToPost,
       status: "posted",
-      generatedBy:
-        latestDraft?.generatedBy || (latestDraft?.text === replyToPost ? latestDraft.generatedBy : userId || null),
+      generatedBy,
       postedBy: userId || null,
       postedAt: new Date(),
     });
