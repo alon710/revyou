@@ -40,7 +40,9 @@ export async function generateWeeklySummary(
   });
 
   try {
-    const response = await generateWithGemini(process.env.GEMINI_API_KEY!, prompt);
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) throw new Error("Missing GEMINI_API_KEY");
+    const response = await generateWithGemini(key, prompt);
 
     const cleanedResponse = response.replace(/```json\n?|\n?```/g, "").trim();
 

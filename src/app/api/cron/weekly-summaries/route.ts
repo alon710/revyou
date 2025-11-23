@@ -15,6 +15,11 @@ const usersConfigsRepo = new UsersConfigsRepository();
 export const maxDuration = 300;
 
 export async function GET(req: NextRequest) {
+  if (!process.env.CRON_SECRET) {
+    console.error("CRON_SECRET is not set - endpoint is misconfigured");
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+
   const authHeader = req.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return new NextResponse("Unauthorized", { status: 401 });
