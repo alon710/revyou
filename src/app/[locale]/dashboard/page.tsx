@@ -1,9 +1,9 @@
 import { redirect } from "@/i18n/routing";
-import { detectLocale } from "@/lib/locale-detection";
+import { resolveLocale } from "@/lib/locale-detection";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const locale = await detectLocale();
+  const locale = await resolveLocale();
   redirect({ href: "/dashboard/home", locale });
 }

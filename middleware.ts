@@ -2,6 +2,10 @@ import createMiddleware from "next-intl/middleware";
 import { routing } from "./src/i18n/routing";
 import { updateSession } from "@/lib/supabase/middleware";
 import { type NextRequest } from "next/server";
+import { initAcceptLanguage } from "@/lib/locale-detection";
+import { locales } from "@/lib/locale";
+
+initAcceptLanguage(locales);
 
 const intlMiddleware = createMiddleware(routing);
 

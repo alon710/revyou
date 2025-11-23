@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe/config";
 import { createClient } from "@/lib/supabase/server";
 import { SubscriptionsRepository } from "@/lib/db/repositories/subscriptions.repository";
-import { getLocaleFromRequest } from "@/lib/api/auth";
+import { resolveLocale } from "@/lib/locale-detection";
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   try {
     const supabase = await createClient();
     const {
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const locale = getLocaleFromRequest(req);
+    const locale = await resolveLocale();
 
     const session = await getStripe().billingPortal.sessions.create({
       customer: subscription.stripeCustomerId,

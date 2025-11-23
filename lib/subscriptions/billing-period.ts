@@ -1,6 +1,6 @@
 import { startOfMonth, addMonths, format } from "date-fns";
 import { he, enUS } from "date-fns/locale";
-import type { Locale } from "@/i18n/config";
+import type { Locale } from "@/lib/locale";
 
 export function getCurrentBillingPeriod(): {
   start: Date;

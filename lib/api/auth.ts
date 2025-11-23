@@ -1,8 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
-import { defaultLocale, type Locale, isValidLocale } from "@/i18n/config";
-
-const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
+import { NextResponse } from "next/server";
+import { resolveLocale } from "@/lib/locale-detection";
 
 export async function getAuthenticatedUserId(): Promise<{ userId: string }> {
   try {
@@ -23,23 +21,11 @@ export async function getAuthenticatedUserId(): Promise<{ userId: string }> {
   }
 }
 
-export function getLocaleFromRequest(request: NextRequest): Locale {
-  const localeCookie = request.cookies.get(LOCALE_COOKIE_NAME);
-  const locale = localeCookie?.value;
-
-  if (locale && isValidLocale(locale)) {
-    return locale;
-  }
-
-  return defaultLocale;
-}
-
-export function createLocaleAwareRedirect(
-  request: NextRequest,
+export async function createLocaleAwareRedirect(
   path: string,
   searchParams?: Record<string, string>
-): NextResponse {
-  const locale = getLocaleFromRequest(request);
+): Promise<NextResponse> {
+  const locale = await resolveLocale();
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL!;
 
   const localePath = `/${locale}${path}`;

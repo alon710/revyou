@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe, getStripePriceId } from "@/lib/stripe/config";
 import { createClient } from "@/lib/supabase/server";
-import { getLocaleFromRequest } from "@/lib/api/auth";
+import { resolveLocale } from "@/lib/locale-detection";
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     const priceId = getStripePriceId(plan, interval);
 
-    const locale = getLocaleFromRequest(req);
+    const locale = await resolveLocale();
 
     const session = await getStripe().checkout.sessions.create({
       mode: "subscription",

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { UsersController } from "@/lib/controllers/users.controller";
 import type { UserConfigUpdate } from "@/lib/types/user.types";
+import { isValidLocale } from "@/lib/locale";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -47,7 +48,7 @@ export async function PATCH(request: NextRequest) {
     const updates: UserConfigUpdate = {};
 
     if (body.locale !== undefined) {
-      if (!["en", "he"].includes(body.locale)) {
+      if (!isValidLocale(body.locale)) {
         return NextResponse.json({ error: "Invalid locale" }, { status: 400 });
       }
       updates.LOCALE = body.locale;
@@ -63,10 +64,20 @@ export async function PATCH(request: NextRequest) {
     const controller = new UsersController();
     const updatedConfig = await controller.updateUserConfig(user.id, updates);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       locale: updatedConfig.configs.LOCALE,
       emailOnNewReview: updatedConfig.configs.EMAIL_ON_NEW_REVIEW,
     });
+
+    if (body.locale !== undefined && updatedConfig.configs.LOCALE) {
+      response.cookies.set("NEXT_LOCALE", updatedConfig.configs.LOCALE, {
+        maxAge: 365 * 24 * 60 * 60,
+        path: "/",
+        sameSite: "lax",
+      });
+    }
+
+    return response;
   } catch (error) {
     console.error("Error updating user settings:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

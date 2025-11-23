@@ -8,7 +8,7 @@ import { EmojiPicker } from "@/components/ui/emoji-picker";
 import { ToneOfVoice, LanguageMode } from "@/lib/types";
 import emojiRegex from "emoji-regex";
 import { useTranslations, useLocale } from "next-intl";
-import { getLocaleDir, type Locale } from "@/i18n/config";
+import { getLocaleDir, type Locale } from "@/lib/locale";
 
 export interface AIResponseSettingsFormData {
   toneOfVoice: ToneOfVoice;

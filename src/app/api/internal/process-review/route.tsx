@@ -9,8 +9,8 @@ import { UsersConfigsRepository } from "@/lib/db/repositories/users-configs.repo
 import { SubscriptionsController } from "@/lib/controllers/subscriptions.controller";
 import { ReviewsController } from "@/lib/controllers/reviews.controller";
 import type { ReplyStatus, StarConfig } from "@/lib/types";
-import type { Locale } from "@/i18n/config";
 import type { ReviewNotificationEmailProps } from "@/lib/emails/review-notification";
+import { resolveLocale } from "@/lib/locale-detection";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
               continue;
             }
 
-            const locale = (userConfig.configs.LOCALE || "en") as Locale;
+            const locale = await resolveLocale({ userId: currentUserId, userConfig });
             const status = replyStatus as "pending" | "posted";
 
             const t = await getTranslations({ locale, namespace: "emails.reviewNotification" });
