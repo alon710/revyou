@@ -6,12 +6,12 @@ import { AccountsController, UsersController } from "@/lib/controllers";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const redirectToBusinesses = async (success?: boolean, accountId?: string) => {
+const redirectToBusinesses = async (success?: boolean, accountId?: string, userId?: string) => {
   if (success && accountId) {
-    return await createLocaleAwareRedirect("/onboarding/choose-business", { accountId });
+    return await createLocaleAwareRedirect("/onboarding/choose-business", { accountId }, userId);
   }
 
-  return await createLocaleAwareRedirect("/onboarding/connect-account");
+  return await createLocaleAwareRedirect("/onboarding/connect-account", undefined, userId);
 };
 
 export async function GET(request: NextRequest) {
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return redirectToBusinesses(true, accountId);
+    return redirectToBusinesses(true, accountId, authenticatedUserId);
   } catch (error) {
     console.error("OAuth callback - Error:", error);
     return redirectToBusinesses(false, undefined);

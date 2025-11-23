@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     const priceId = getStripePriceId(plan, interval);
 
-    const locale = await resolveLocale();
+    const locale = await resolveLocale({ userId: user.id });
 
     const session = await getStripe().checkout.sessions.create({
       mode: "subscription",

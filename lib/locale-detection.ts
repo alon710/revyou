@@ -1,10 +1,10 @@
 import { cookies, headers } from "next/headers";
 import { unstable_noStore } from "next/cache";
 import acceptLanguage from "accept-language";
-import { createClient } from "@/lib/supabase/server";
 import { UsersConfigsRepository } from "@/lib/db/repositories/users-configs.repository";
 import { defaultLocale, isValidLocale, type Locale } from "./locale";
 import type { UsersConfig } from "@/lib/db/schema/users-configs.schema";
+import { getUserIdFromHeaders } from "@/lib/user-context";
 
 let initialized = false;
 
@@ -43,11 +43,7 @@ export async function resolveLocale(options?: ResolveLocaleOptions): Promise<Loc
     if (userId) {
       targetUserId = userId;
     } else {
-      const supabase = await createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      targetUserId = user?.id;
+      targetUserId = await getUserIdFromHeaders();
     }
 
     if (targetUserId) {

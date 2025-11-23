@@ -10,7 +10,11 @@ initAcceptLanguage(locales);
 const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
-  const { supabaseResponse } = await updateSession(request);
+  const { supabaseResponse, user } = await updateSession(request);
+
+  if (user) {
+    request.headers.set("x-user-id", user.id);
+  }
 
   const intlResponse = intlMiddleware(request);
 

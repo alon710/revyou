@@ -6,3 +6,4 @@ export * from "./businesses.repository";
 export * from "./users-configs.repository";
 export * from "./subscriptions.repository";
 export * from "./stats.repository";
+export * from "./weekly-summaries.repository";

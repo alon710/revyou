@@ -451,6 +451,14 @@
         "enabled": "Enabled",
         "disabled": "Disabled"
       },
+      "weeklySummary": {
+        "title": "Weekly AI Summary",
+        "description": "Receive a weekly AI-generated summary of your reviews",
+        "label": "Weekly Summary Emails",
+        "tooltip": "Receive an email every Sunday with insights and recommendations",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
       "saveSuccess": "Settings saved successfully",
       "saveError": "Error saving settings. Please try again.",
       "loadError": "Error loading settings. Please try again."

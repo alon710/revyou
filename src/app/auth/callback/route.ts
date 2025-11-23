@@ -9,9 +9,9 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = await createActionClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return await createLocaleAwareRedirect(next);
+      return await createLocaleAwareRedirect(next, undefined, data.user?.id);
     }
   }
 
