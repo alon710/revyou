@@ -91,8 +91,13 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
       conditions.push(lte(reviews.receivedAt, filters.dateTo));
     }
 
+    const limit = filters.limit || undefined;
+    const offset = filters.offset || undefined;
+
     const reviewsData = await db.query.reviews.findMany({
       where: and(...conditions),
+      limit,
+      offset,
     });
 
     if (reviewsData.length === 0) {

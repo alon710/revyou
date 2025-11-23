@@ -24,7 +24,10 @@ export default async function BusinessReviewsPage({ params }: BusinessReviewsPag
     getReviews({
       accountId,
       businessId,
-      filters: { sort: { orderBy: "receivedAt", orderDirection: "desc" } },
+      filters: {
+        sort: { orderBy: "receivedAt", orderDirection: "desc" },
+        limit: 10,
+      },
     }),
   ]);
 
