@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { UsersController } from "@/lib/controllers/users.controller";
 import type { UserConfigUpdate } from "@/lib/types/user.types";
+import { isValidLocale } from "@/lib/locale";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -47,7 +48,7 @@ export async function PATCH(request: NextRequest) {
     const updates: UserConfigUpdate = {};
 
     if (body.locale !== undefined) {
-      if (!["en", "he"].includes(body.locale)) {
+      if (!isValidLocale(body.locale)) {
         return NextResponse.json({ error: "Invalid locale" }, { status: 400 });
       }
       updates.LOCALE = body.locale;

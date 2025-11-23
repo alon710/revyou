@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
               continue;
             }
 
-            const locale = await resolveLocale({ userId: currentUserId });
+            const locale = await resolveLocale({ userId: currentUserId, userConfig });
             const status = replyStatus as "pending" | "posted";
 
             const t = await getTranslations({ locale, namespace: "emails.reviewNotification" });

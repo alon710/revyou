@@ -3,20 +3,29 @@ import { unstable_noStore } from "next/cache";
 import acceptLanguage from "accept-language";
 import { createClient } from "@/lib/supabase/server";
 import { UsersConfigsRepository } from "@/lib/db/repositories/users-configs.repository";
-import { defaultLocale, isValidLocale, type Locale } from "./locale";
+import { defaultLocale, isValidLocale, locales, type Locale } from "./locale";
+import type { UsersConfig } from "@/lib/db/schema/users-configs.schema";
 
-acceptLanguage.languages(["en", "he"] as unknown as string[]);
+acceptLanguage.languages(locales as unknown as string[]);
 
 interface ResolveLocaleOptions {
   urlLocale?: string;
   userId?: string;
+  userConfig?: UsersConfig;
 }
 
 export async function resolveLocale(options?: ResolveLocaleOptions): Promise<Locale> {
-  const { urlLocale, userId } = options || {};
+  const { urlLocale, userId, userConfig } = options || {};
 
   if (urlLocale && isValidLocale(urlLocale)) {
     return urlLocale;
+  }
+
+  if (userConfig) {
+    if (userConfig.configs.LOCALE && isValidLocale(userConfig.configs.LOCALE)) {
+      return userConfig.configs.LOCALE as Locale;
+    }
+    return defaultLocale;
   }
 
   unstable_noStore();

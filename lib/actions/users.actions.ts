@@ -3,7 +3,7 @@
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { UsersController } from "@/lib/controllers/users.controller";
 import type { UserConfigUpdate } from "@/lib/types/user.types";
-import type { Locale } from "@/lib/locale";
+import { isValidLocale, type Locale } from "@/lib/locale";
 import { cookies } from "next/headers";
 
 interface UserSettings {
@@ -29,7 +29,7 @@ export async function updateUserSettings(settings: Partial<UserSettings>): Promi
   const updates: UserConfigUpdate = {};
 
   if (settings.locale !== undefined) {
-    if (!["en", "he"].includes(settings.locale)) {
+    if (!isValidLocale(settings.locale)) {
       throw new Error("Invalid locale");
     }
     updates.LOCALE = settings.locale;
