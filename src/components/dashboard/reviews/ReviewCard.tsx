@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Review, ReplyStatus } from "@/lib/types";
+import { ReplyStatus } from "@/lib/types";
 import { StarRating } from "@/components/ui/StarRating";
 import {
   DashboardCard,
@@ -13,17 +13,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { rejectReview, postReviewReply, generateReviewReply } from "@/lib/actions/reviews.actions";
+import { postReviewReply, generateReviewReply } from "@/lib/actions/reviews.actions";
 import { useAuth } from "@/contexts/AuthContext";
 import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import { User } from "lucide-react";
+import { User, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
+import type { ReviewWithLatestGeneration } from "@/lib/db/repositories";
 
 interface ReviewCardProps {
-  review: Review;
+  review: ReviewWithLatestGeneration;
   accountId: string;
   userId: string;
   businessId: string;
@@ -57,29 +58,25 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
     };
 
     const statusInfo = statusMap[status] || statusMap.pending;
-    return <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>;
-  };
 
-  const handleReject = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    try {
-      setIsLoading(true);
-      await rejectReview(userId, accountId, businessId, review.id);
-      onUpdate?.();
-    } catch (error) {
-      console.error("Error rejecting reply:", error);
-    } finally {
-      setIsLoading(false);
+    if (status === "posted") {
+      const Icon = review.latestAiReplyPostedBy ? User : Bot;
+      return (
+        <Badge variant={statusInfo.variant} className="gap-1">
+          <Icon className="h-3 w-3" />
+          {statusInfo.label}
+        </Badge>
+      );
     }
+
+    return <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>;
   };
 
   const handlePublishConfirm = async () => {
     if (!user) return;
 
     try {
-      await postReviewReply(userId, accountId, businessId, review.id);
+      await postReviewReply({ accountId, businessId, reviewId: review.id });
       onUpdate?.();
     } catch (error) {
       console.error("Error publishing reply:", error);
@@ -94,7 +91,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 
     try {
       setIsLoading(true);
-      await generateReviewReply(userId, accountId, businessId, review.id);
+      await generateReviewReply({ accountId, businessId, reviewId: review.id });
       onUpdate?.();
     } catch (error) {
       console.error("Error regenerating reply:", error);
@@ -140,7 +137,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
             </div>
           )}
 
-          {review.aiReply && (
+          {review.latestAiReply && (
             <DashboardCardSection withBorder={!!review.text}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -148,48 +145,47 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
                 </span>
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
-                <p className="text-sm leading-relaxed">{review.aiReply}</p>
+                <p className="text-sm leading-relaxed">{review.latestAiReply}</p>
               </div>
             </DashboardCardSection>
           )}
         </DashboardCardContent>
 
-        {(review.replyStatus === "pending" || review.replyStatus === "failed") && (
-          <DashboardCardFooter>
-            <Button type="button" onClick={handleReject} disabled={isLoading} variant="outline" size="sm">
-              {t("actions.reject")}
-            </Button>
-            <Button type="button" onClick={handleRegenerate} disabled={isLoading} size="sm" variant="outline">
-              {t("actions.regenerate")}
-            </Button>
-            <Button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setShowEditor(true);
-              }}
-              disabled={isLoading}
-              size="sm"
-              variant="outline"
-            >
-              {t("actions.edit")}
-            </Button>
-            <Button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setShowPublishDialog(true);
-              }}
-              disabled={isLoading}
-              size="sm"
-              variant="default"
-            >
-              {t("actions.publish")}
-            </Button>
-          </DashboardCardFooter>
-        )}
+        <DashboardCardFooter>
+          {(review.replyStatus === "pending" || review.replyStatus === "failed") && (
+            <>
+              <Button type="button" onClick={handleRegenerate} disabled={isLoading} size="sm" variant="outline">
+                {t("actions.regenerate")}
+              </Button>
+              <Button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowEditor(true);
+                }}
+                disabled={isLoading}
+                size="sm"
+                variant="outline"
+              >
+                {t("actions.edit")}
+              </Button>
+              <Button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowPublishDialog(true);
+                }}
+                disabled={isLoading}
+                size="sm"
+                variant="default"
+              >
+                {t("actions.publish")}
+              </Button>
+            </>
+          )}
+        </DashboardCardFooter>
       </DashboardCard>
 
       <ReplyEditor
@@ -225,7 +221,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
             </div>
             <div className="rounded-md border border-accent bg-accent/10 p-3">
               <p className="text-sm font-medium mb-1">{t("publishDialog.replyPreview")}</p>
-              <p className="text-sm text-foreground">{review.aiReply}</p>
+              <p className="text-sm text-foreground">{review.latestAiReply}</p>
             </div>
           </div>
         }
@@ -240,7 +236,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 }
 
 interface ReviewCardWithRefreshProps {
-  review: Review;
+  review: ReviewWithLatestGeneration;
   accountId: string;
   userId: string;
   businessId: string;

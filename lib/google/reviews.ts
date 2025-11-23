@@ -89,6 +89,40 @@ export async function getReview(
   }
 }
 
+interface ListReviewsResponse {
+  reviews: GoogleReview[];
+  nextPageToken?: string;
+  totalReviewCount: number;
+  averageRating: number;
+}
+
+export async function listReviews(
+  locationName: string,
+  refreshToken: string,
+  clientId?: string,
+  clientSecret?: string,
+  pageSize: number = 10,
+  pageToken?: string
+): Promise<ListReviewsResponse> {
+  try {
+    const accessToken = await getAccessTokenFromRefreshToken(refreshToken, clientId, clientSecret);
+    const url = new URL(`${GOOGLE_MY_BUSINESS_API_BASE}/${locationName}/reviews`);
+    url.searchParams.set("pageSize", pageSize.toString());
+    if (pageToken) {
+      url.searchParams.set("pageToken", pageToken);
+    }
+
+    const response = await makeAuthorizedRequest<ListReviewsResponse>(url.toString(), accessToken);
+    return response;
+  } catch (error) {
+    console.error("Error listing reviews:", {
+      locationName,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
+  }
+}
+
 export async function postReplyToGoogle(
   reviewName: string,
   replyText: string,

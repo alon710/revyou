@@ -8,6 +8,11 @@ export async function verifyPubSubToken(
   console.log("Expected audience:", expectedAudience);
   console.log("NEXT_PUBLIC_APP_URL:", process.env.NEXT_PUBLIC_APP_URL);
 
+  if (process.env.SKIP_PUBSUB_VERIFICATION === "true" || process.env.NODE_ENV === "development") {
+    console.warn("⚠️ Skipping Pub/Sub token verification (SKIP_PUBSUB_VERIFICATION=true or NODE_ENV=development)");
+    return { valid: true, email: "skipped-verification@example.com" };
+  }
+
   if (!authHeader) {
     return { valid: false, error: "Missing Authorization header" };
   }

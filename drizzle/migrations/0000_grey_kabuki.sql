@@ -83,12 +83,7 @@ CREATE TABLE "reviews" (
 	"rating" integer NOT NULL,
 	"text" text,
 	"date" timestamp with time zone NOT NULL,
-	"ai_reply" text,
-	"ai_reply_generated_at" timestamp with time zone,
 	"reply_status" text DEFAULT 'pending' NOT NULL,
-	"posted_reply" text,
-	"posted_at" timestamp with time zone,
-	"posted_by" uuid,
 	"received_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"update_time" timestamp with time zone,
 	CONSTRAINT "reviews_google_review_id_unique" UNIQUE("google_review_id"),
@@ -96,6 +91,22 @@ CREATE TABLE "reviews" (
 );
 --> statement-breakpoint
 ALTER TABLE "reviews" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "review_responses" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"review_id" uuid NOT NULL,
+	"business_id" uuid NOT NULL,
+	"account_id" uuid NOT NULL,
+	"text" text NOT NULL,
+	"status" text NOT NULL,
+	"generated_by" uuid,
+	"posted_by" uuid,
+	"posted_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"generated_at" timestamp with time zone DEFAULT now(),
+	CONSTRAINT "review_responses_status_check" CHECK ("review_responses"."status" IN ('draft', 'posted', 'rejected'))
+);
+--> statement-breakpoint
+ALTER TABLE "review_responses" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 ALTER TABLE "users_configs" ADD CONSTRAINT "users_configs_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_accounts" ADD CONSTRAINT "user_accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_accounts" ADD CONSTRAINT "user_accounts_account_id_accounts_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."accounts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -103,7 +114,11 @@ ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_user_id_users_id_fk" F
 ALTER TABLE "businesses" ADD CONSTRAINT "businesses_account_id_accounts_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."accounts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_account_id_accounts_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."accounts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_business_id_businesses_id_fk" FOREIGN KEY ("business_id") REFERENCES "public"."businesses"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "reviews" ADD CONSTRAINT "reviews_posted_by_users_id_fk" FOREIGN KEY ("posted_by") REFERENCES "auth"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "review_responses" ADD CONSTRAINT "review_responses_review_id_reviews_id_fk" FOREIGN KEY ("review_id") REFERENCES "public"."reviews"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "review_responses" ADD CONSTRAINT "review_responses_business_id_businesses_id_fk" FOREIGN KEY ("business_id") REFERENCES "public"."businesses"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "review_responses" ADD CONSTRAINT "review_responses_account_id_accounts_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."accounts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "review_responses" ADD CONSTRAINT "review_responses_generated_by_users_id_fk" FOREIGN KEY ("generated_by") REFERENCES "auth"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "review_responses" ADD CONSTRAINT "review_responses_posted_by_users_id_fk" FOREIGN KEY ("posted_by") REFERENCES "auth"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "users_configs_user_id_idx" ON "users_configs" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "accounts_email_idx" ON "accounts" USING btree ("email");--> statement-breakpoint
 CREATE INDEX "accounts_connected_at_idx" ON "accounts" USING btree ("connected_at");--> statement-breakpoint
@@ -124,6 +139,11 @@ CREATE INDEX "reviews_received_at_idx" ON "reviews" USING btree ("received_at");
 CREATE INDEX "reviews_account_business_idx" ON "reviews" USING btree ("account_id","business_id");--> statement-breakpoint
 CREATE INDEX "reviews_business_status_idx" ON "reviews" USING btree ("business_id","reply_status");--> statement-breakpoint
 CREATE INDEX "reviews_received_status_idx" ON "reviews" USING btree ("received_at","reply_status");--> statement-breakpoint
+CREATE INDEX "review_responses_business_id_idx" ON "review_responses" USING btree ("business_id");--> statement-breakpoint
+CREATE INDEX "review_responses_review_id_idx" ON "review_responses" USING btree ("review_id");--> statement-breakpoint
+CREATE INDEX "review_responses_status_idx" ON "review_responses" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "review_responses_created_at_idx" ON "review_responses" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "review_responses_business_status_created_idx" ON "review_responses" USING btree ("business_id","status","created_at");--> statement-breakpoint
 CREATE POLICY "users_configs_select_own" ON "users_configs" AS PERMISSIVE FOR SELECT TO "authenticated" USING ((auth.uid()) = "users_configs"."user_id");--> statement-breakpoint
 CREATE POLICY "users_configs_insert_own" ON "users_configs" AS PERMISSIVE FOR INSERT TO "authenticated" WITH CHECK ((auth.uid()) = "users_configs"."user_id");--> statement-breakpoint
 CREATE POLICY "users_configs_update_own" ON "users_configs" AS PERMISSIVE FOR UPDATE TO "authenticated" USING ((auth.uid()) = "users_configs"."user_id");--> statement-breakpoint
@@ -210,4 +230,14 @@ CREATE POLICY "reviews_delete_owner" ON "reviews" AS PERMISSIVE FOR DELETE TO "a
         WHERE ua.account_id = "reviews"."account_id"
         AND ua.user_id = (auth.uid())
         AND ua.role = 'owner'
+      ));--> statement-breakpoint
+CREATE POLICY "review_responses_select_associated" ON "review_responses" AS PERMISSIVE FOR SELECT TO "authenticated" USING (EXISTS (
+        SELECT 1 FROM user_accounts ua
+        WHERE ua.account_id = "review_responses"."account_id"
+        AND ua.user_id = (auth.uid())
+      ));--> statement-breakpoint
+CREATE POLICY "review_responses_insert_associated" ON "review_responses" AS PERMISSIVE FOR INSERT TO "authenticated" WITH CHECK (EXISTS (
+        SELECT 1 FROM user_accounts ua
+        WHERE ua.account_id = "review_responses"."account_id"
+        AND ua.user_id = (auth.uid())
       ));
