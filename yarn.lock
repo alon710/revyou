@@ -3839,6 +3839,11 @@ cors@~2.8.5:
     object-assign "^4"
     vary "^1"
 
+country-codes-list@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/country-codes-list/-/country-codes-list-2.0.0.tgz#162c49028a0a9fe64503ed146980e0bb8529c170"
+  integrity sha512-KZqq/LBdCD76hQCa6nOx0bA/nIjYly1OtV8+Bbt/4SW+mJEqGk7oZHjUj7PRrV0gXJJKs6Tv2cIntFdofBByvA==
+
 cross-spawn@^7.0.6:
   version "7.0.6"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.6.tgz#8a58fe78f00dcd70c370451759dfbfaf03e8ee9f"

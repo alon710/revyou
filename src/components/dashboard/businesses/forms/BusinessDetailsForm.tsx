@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { TooltipIcon } from "@/components/ui/tooltip";
 import { useTranslations, useLocale } from "next-intl";
-import { getLocaleDir, type Locale } from "@/i18n/config";
+import { getLocaleDir, type Locale } from "@/lib/locale";
 
 export interface BusinessDetailsFormData {
   name: string;

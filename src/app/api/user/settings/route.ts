@@ -63,10 +63,20 @@ export async function PATCH(request: NextRequest) {
     const controller = new UsersController();
     const updatedConfig = await controller.updateUserConfig(user.id, updates);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       locale: updatedConfig.configs.LOCALE,
       emailOnNewReview: updatedConfig.configs.EMAIL_ON_NEW_REVIEW,
     });
+
+    if (body.locale !== undefined && updatedConfig.configs.LOCALE) {
+      response.cookies.set("NEXT_LOCALE", updatedConfig.configs.LOCALE, {
+        maxAge: 365 * 24 * 60 * 60,
+        path: "/",
+        sameSite: "lax",
+      });
+    }
+
+    return response;
   } catch (error) {
     console.error("Error updating user settings:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

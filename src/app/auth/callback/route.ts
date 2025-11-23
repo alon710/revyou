@@ -11,9 +11,9 @@ export async function GET(request: NextRequest) {
     const supabase = await createActionClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return createLocaleAwareRedirect(request, next);
+      return await createLocaleAwareRedirect(next);
     }
   }
 
-  return createLocaleAwareRedirect(request, "/auth/auth-code-error");
+  return await createLocaleAwareRedirect("/auth/auth-code-error");
 }

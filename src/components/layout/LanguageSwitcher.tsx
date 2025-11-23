@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Globe } from "lucide-react";
-import { locales, localeConfig, type Locale } from "@/i18n/config";
+import { locales, localeConfig, type Locale } from "@/lib/locale";
 import React from "react";
 
 export function LanguageSwitcher() {

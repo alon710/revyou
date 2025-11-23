@@ -14,7 +14,7 @@ import type { PlanLimits, PlanTier } from "@/lib/subscriptions/plans";
 import type { Subscription } from "@/lib/types/subscription.types";
 import { formatDate, getCurrentBillingPeriod } from "@/lib/subscriptions/billing-period";
 import { useTranslations, useLocale } from "next-intl";
-import type { Locale } from "@/i18n/config";
+import type { Locale } from "@/lib/locale";
 
 interface SubscriptionInfoProps {
   limits: PlanLimits;

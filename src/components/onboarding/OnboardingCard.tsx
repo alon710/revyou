@@ -10,7 +10,7 @@ import {
   DashboardCardHeader,
   DashboardCardTitle,
 } from "@/components/ui/dashboard-card";
-import { getLocaleDir, type Locale } from "@/i18n/config";
+import { getLocaleDir, type Locale } from "@/lib/locale";
 
 interface OnboardingCardProps {
   title: string;

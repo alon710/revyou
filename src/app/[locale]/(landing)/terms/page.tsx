@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
-import type { Locale } from "@/i18n/config";
+import type { Locale } from "@/lib/locale";
 
 const LAST_UPDATED_DATE = new Date("2025-11-09");
 

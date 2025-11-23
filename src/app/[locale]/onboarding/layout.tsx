@@ -5,7 +5,7 @@ import { useLocale } from "next-intl";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loading } from "@/components/ui/loading";
 import { useRouter } from "@/i18n/routing";
-import { getLocaleDir, type Locale } from "@/i18n/config";
+import { getLocaleDir, type Locale } from "@/lib/locale";
 
 export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();

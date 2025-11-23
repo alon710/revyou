@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { saveReviewDraft } from "@/lib/actions/reviews.actions";
 import { Edit } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
-import { getLocaleDir, type Locale } from "@/i18n/config";
+import { getLocaleDir, type Locale } from "@/lib/locale";
 import type { ReviewWithLatestGeneration } from "@/lib/db/repositories";
 
 interface ReplyEditorProps {

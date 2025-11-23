@@ -3,7 +3,8 @@
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { UsersController } from "@/lib/controllers/users.controller";
 import type { UserConfigUpdate } from "@/lib/types/user.types";
-import type { Locale } from "@/i18n/config";
+import type { Locale } from "@/lib/locale";
+import { cookies } from "next/headers";
 
 interface UserSettings {
   locale: Locale;
@@ -43,6 +44,15 @@ export async function updateUserSettings(settings: Partial<UserSettings>): Promi
 
   const controller = new UsersController();
   const updatedConfig = await controller.updateUserConfig(userId, updates);
+
+  if (settings.locale !== undefined && updatedConfig.configs.LOCALE) {
+    const cookieStore = await cookies();
+    cookieStore.set("NEXT_LOCALE", updatedConfig.configs.LOCALE, {
+      maxAge: 365 * 24 * 60 * 60,
+      path: "/",
+      sameSite: "lax",
+    });
+  }
 
   return {
     locale: updatedConfig.configs.LOCALE as Locale,

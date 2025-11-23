@@ -5,7 +5,7 @@ import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
-import { locales, getLocaleDir, type Locale } from "@/i18n/config";
+import { locales, getLocaleDir, type Locale } from "@/lib/locale";
 import "../globals.css";
 
 const rubik = Rubik({

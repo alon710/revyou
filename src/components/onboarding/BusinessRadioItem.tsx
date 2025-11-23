@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { getLocaleDir, type Locale } from "@/i18n/config";
+import { getLocaleDir, type Locale } from "@/lib/locale";
 import { GoogleBusinessProfileBusiness } from "@/lib/types";
 import { RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";

@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { Locale } from "@/i18n/config";
-import { localeConfig } from "@/i18n/config";
+import type { Locale } from "@/lib/locale";
+import { localeConfig } from "@/lib/locale";
 import EditableSection from "@/components/dashboard/shared/EditableSection";
 import { DashboardCardField } from "@/components/ui/dashboard-card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";

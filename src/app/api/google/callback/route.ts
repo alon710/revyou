@@ -6,12 +6,12 @@ import { AccountsController, UsersController } from "@/lib/controllers";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const redirectToBusinesses = (request: NextRequest, success?: boolean, accountId?: string) => {
+const redirectToBusinesses = async (success?: boolean, accountId?: string) => {
   if (success && accountId) {
-    return createLocaleAwareRedirect(request, "/onboarding/choose-business", { accountId });
+    return await createLocaleAwareRedirect("/onboarding/choose-business", { accountId });
   }
 
-  return createLocaleAwareRedirect(request, "/onboarding/connect-account");
+  return await createLocaleAwareRedirect("/onboarding/connect-account");
 };
 
 export async function GET(request: NextRequest) {
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         hasCode: !!code,
         hasState: !!state,
       });
-      return redirectToBusinesses(request, false, undefined);
+      return redirectToBusinesses(false, undefined);
     }
 
     const stateData = JSON.parse(Buffer.from(state, "base64").toString());
@@ -37,13 +37,13 @@ export async function GET(request: NextRequest) {
 
     if (!stateUserId) {
       console.error("OAuth callback - Invalid state: missing userId");
-      return redirectToBusinesses(request, false, undefined);
+      return redirectToBusinesses(false, undefined);
     }
 
     const authResult = await getAuthenticatedUserId();
     if (authResult instanceof NextResponse) {
       console.error("OAuth callback - User not authenticated");
-      return redirectToBusinesses(request, false, undefined);
+      return redirectToBusinesses(false, undefined);
     }
 
     const { userId: authenticatedUserId } = authResult;
@@ -53,19 +53,19 @@ export async function GET(request: NextRequest) {
         stateUserId,
         authenticatedUserId,
       });
-      return redirectToBusinesses(request, false, undefined);
+      return redirectToBusinesses(false, undefined);
     }
 
     const tokens = await exchangeCodeForTokens(code);
 
     if (!tokens.refresh_token) {
       console.error("OAuth callback - No refresh token received from Google");
-      return redirectToBusinesses(request, false, undefined);
+      return redirectToBusinesses(false, undefined);
     }
 
     if (!tokens.access_token) {
       console.error("OAuth callback - No access token received from Google");
-      return redirectToBusinesses(request, false, undefined);
+      return redirectToBusinesses(false, undefined);
     }
 
     const encryptedToken = await encryptToken(tokens.refresh_token);
@@ -104,9 +104,9 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return redirectToBusinesses(request, true, accountId);
+    return redirectToBusinesses(true, accountId);
   } catch (error) {
     console.error("OAuth callback - Error:", error);
-    return redirectToBusinesses(request, false, undefined);
+    return redirectToBusinesses(false, undefined);
   }
 }
