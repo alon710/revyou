@@ -1,5 +1,3 @@
-import acceptLanguage from "accept-language";
-
 export type Locale = "en" | "he";
 
 export const locales: Locale[] = ["en", "he"] as const;
@@ -23,5 +21,3 @@ export function getLocaleDir(locale: Locale): "ltr" | "rtl" {
 export function isValidLocale(locale: string): locale is Locale {
   return locales.includes(locale as Locale);
 }
-
-acceptLanguage.languages(locales as unknown as string[]);
