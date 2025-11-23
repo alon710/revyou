@@ -6,3 +6,4 @@ export * from "./subscriptions.schema";
 export * from "./businesses.schema";
 export * from "./reviews.schema";
 export * from "./review-responses.schema";
+export * from "./weekly-summaries.schema";

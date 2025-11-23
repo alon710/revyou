@@ -1,8 +1,8 @@
-# RevYou
+# Bottie
 
 **AI-Powered Google Review Management Platform**
 
-RevYou is a SaaS platform that automates responses to Google Business Profile reviews using AI. Help businesses manage their online reputation by generating personalized, AI-powered replies to customer reviews with smart customization and multi-language support.
+Bottie is a SaaS platform that automates responses to Google Business Profile reviews using AI. Help businesses manage their online reputation by generating personalized, AI-powered replies to customer reviews with smart customization and multi-language support.
 
 ## Features
 
@@ -89,7 +89,7 @@ Three flexible pricing tiers powered by Paddle:
 ## Project Structure
 
 ```
-revyou/
+Bottie/
 ├── src/
 │   ├── app/                        # Next.js App Router
 │   │   ├── [locale]/              # Internationalized routes
@@ -179,7 +179,7 @@ See [`.env.example`](.env.example) for a complete list of required environment v
 
 ```bash
 git clone <repository-url>
-cd revyou
+cd Bottie
 ```
 
 2. Install dependencies:

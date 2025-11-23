@@ -9,6 +9,7 @@ import { cookies } from "next/headers";
 interface UserSettings {
   locale: Locale;
   emailOnNewReview: boolean;
+  weeklySummaryEnabled: boolean;
 }
 
 export async function getUserSettings(): Promise<UserSettings> {
@@ -20,6 +21,7 @@ export async function getUserSettings(): Promise<UserSettings> {
   return {
     locale: config.configs.LOCALE as Locale,
     emailOnNewReview: config.configs.EMAIL_ON_NEW_REVIEW,
+    weeklySummaryEnabled: config.configs.WEEKLY_SUMMARY_ENABLED ?? true,
   };
 }
 
@@ -42,6 +44,13 @@ export async function updateUserSettings(settings: Partial<UserSettings>): Promi
     updates.EMAIL_ON_NEW_REVIEW = settings.emailOnNewReview;
   }
 
+  if (settings.weeklySummaryEnabled !== undefined) {
+    if (typeof settings.weeklySummaryEnabled !== "boolean") {
+      throw new Error("Invalid weeklySummaryEnabled value");
+    }
+    updates.WEEKLY_SUMMARY_ENABLED = settings.weeklySummaryEnabled;
+  }
+
   const controller = new UsersController();
   const updatedConfig = await controller.updateUserConfig(userId, updates);
 
@@ -57,5 +66,6 @@ export async function updateUserSettings(settings: Partial<UserSettings>): Promi
   return {
     locale: updatedConfig.configs.LOCALE as Locale,
     emailOnNewReview: updatedConfig.configs.EMAIL_ON_NEW_REVIEW,
+    weeklySummaryEnabled: updatedConfig.configs.WEEKLY_SUMMARY_ENABLED ?? true,
   };
 }

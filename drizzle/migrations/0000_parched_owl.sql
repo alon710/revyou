@@ -107,6 +107,20 @@ CREATE TABLE "review_responses" (
 );
 --> statement-breakpoint
 ALTER TABLE "review_responses" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "weekly_summaries" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"business_id" uuid NOT NULL,
+	"week_start_date" date NOT NULL,
+	"week_end_date" date NOT NULL,
+	"total_reviews" integer NOT NULL,
+	"average_rating" real NOT NULL,
+	"positive_themes" jsonb DEFAULT '[]'::jsonb,
+	"negative_themes" jsonb DEFAULT '[]'::jsonb,
+	"recommendations" jsonb DEFAULT '[]'::jsonb,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+ALTER TABLE "weekly_summaries" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 ALTER TABLE "users_configs" ADD CONSTRAINT "users_configs_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_accounts" ADD CONSTRAINT "user_accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_accounts" ADD CONSTRAINT "user_accounts_account_id_accounts_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."accounts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -119,6 +133,7 @@ ALTER TABLE "review_responses" ADD CONSTRAINT "review_responses_business_id_busi
 ALTER TABLE "review_responses" ADD CONSTRAINT "review_responses_account_id_accounts_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."accounts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "review_responses" ADD CONSTRAINT "review_responses_generated_by_users_id_fk" FOREIGN KEY ("generated_by") REFERENCES "auth"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "review_responses" ADD CONSTRAINT "review_responses_posted_by_users_id_fk" FOREIGN KEY ("posted_by") REFERENCES "auth"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "weekly_summaries" ADD CONSTRAINT "weekly_summaries_business_id_businesses_id_fk" FOREIGN KEY ("business_id") REFERENCES "public"."businesses"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "users_configs_user_id_idx" ON "users_configs" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "accounts_email_idx" ON "accounts" USING btree ("email");--> statement-breakpoint
 CREATE INDEX "accounts_connected_at_idx" ON "accounts" USING btree ("connected_at");--> statement-breakpoint
@@ -240,4 +255,9 @@ CREATE POLICY "review_responses_insert_associated" ON "review_responses" AS PERM
         SELECT 1 FROM user_accounts ua
         WHERE ua.account_id = "review_responses"."account_id"
         AND ua.user_id = (auth.uid())
+      ));--> statement-breakpoint
+CREATE POLICY "weekly_summaries_select_own" ON "weekly_summaries" AS PERMISSIVE FOR SELECT TO "authenticated" USING (EXISTS (
+        SELECT 1 FROM "businesses" b
+        WHERE b.id = "weekly_summaries"."business_id"
+        AND b.owner_id = (auth.uid())
       ));
