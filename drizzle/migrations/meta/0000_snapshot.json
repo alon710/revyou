@@ -1,9 +1,40 @@
 {
-  "id": "9fadb3bd-13de-41f4-a646-8e57010b5572",
+  "id": "d46978ae-d721-448c-adfe-104082fc48e8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "auth.users": {
+      "name": "users",
+      "schema": "auth",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.users_configs": {
       "name": "users_configs",
       "schema": "",
@@ -1404,7 +1435,35 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "weekly_summaries_business_week_idx": {
+          "name": "weekly_summaries_business_week_idx",
+          "columns": [
+            {
+              "expression": "business_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "week_start_date",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "week_end_date",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "weekly_summaries_business_id_businesses_id_fk": {
           "name": "weekly_summaries_business_id_businesses_id_fk",
@@ -1417,14 +1476,20 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "weekly_summaries_business_week_unique": {
+          "name": "weekly_summaries_business_week_unique",
+          "nullsNotDistinct": false,
+          "columns": ["business_id", "week_start_date", "week_end_date"]
+        }
+      },
       "policies": {
-        "weekly_summaries_select_own": {
-          "name": "weekly_summaries_select_own",
+        "weekly_summaries_select_associated": {
+          "name": "weekly_summaries_select_associated",
           "as": "PERMISSIVE",
           "for": "SELECT",
           "to": ["authenticated"],
-          "using": "EXISTS (\n        SELECT 1 FROM \"businesses\" b\n        WHERE b.id = \"weekly_summaries\".\"business_id\"\n        AND b.owner_id = (auth.uid())\n      )"
+          "using": "EXISTS (\n        SELECT 1 FROM \"businesses\" b\n        JOIN \"user_accounts\" ua ON ua.account_id = b.account_id\n        WHERE b.id = \"weekly_summaries\".\"business_id\"\n        AND ua.user_id = (auth.uid())\n      )"
         }
       },
       "checkConstraints": {},
@@ -1432,7 +1497,9 @@
     }
   },
   "enums": {},
-  "schemas": {},
+  "schemas": {
+    "auth": "auth"
+  },
   "sequences": {},
   "roles": {},
   "policies": {},

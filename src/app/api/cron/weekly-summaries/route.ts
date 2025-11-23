@@ -90,7 +90,7 @@ export async function GET(req: NextRequest) {
 
           const summaryData = await generateWeeklySummary(business.name, businessReviews, locale as "en" | "he");
 
-          await weeklySummariesRepo.create({
+          const { created } = await weeklySummariesRepo.upsert({
             businessId: business.id,
             weekStartDate: lastSunday.toISOString().split("T")[0],
             weekEndDate: lastSaturday.toISOString().split("T")[0],
@@ -100,6 +100,11 @@ export async function GET(req: NextRequest) {
             negativeThemes: summaryData.negativeThemes,
             recommendations: summaryData.recommendations,
           });
+
+          if (!created) {
+            continue;
+          }
+
           summariesGenerated++;
 
           if (resend) {

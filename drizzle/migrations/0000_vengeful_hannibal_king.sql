@@ -1,3 +1,11 @@
+CREATE SCHEMA "auth";
+--> statement-breakpoint
+CREATE TABLE "auth"."users" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"email" varchar(255),
+	"created_at" timestamp with time zone
+);
+--> statement-breakpoint
 CREATE TABLE "users_configs" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
@@ -117,7 +125,8 @@ CREATE TABLE "weekly_summaries" (
 	"positive_themes" jsonb DEFAULT '[]'::jsonb,
 	"negative_themes" jsonb DEFAULT '[]'::jsonb,
 	"recommendations" jsonb DEFAULT '[]'::jsonb,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "weekly_summaries_business_week_unique" UNIQUE("business_id","week_start_date","week_end_date")
 );
 --> statement-breakpoint
 ALTER TABLE "weekly_summaries" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -159,6 +168,7 @@ CREATE INDEX "review_responses_review_id_idx" ON "review_responses" USING btree 
 CREATE INDEX "review_responses_status_idx" ON "review_responses" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "review_responses_created_at_idx" ON "review_responses" USING btree ("created_at");--> statement-breakpoint
 CREATE INDEX "review_responses_business_status_created_idx" ON "review_responses" USING btree ("business_id","status","created_at");--> statement-breakpoint
+CREATE INDEX "weekly_summaries_business_week_idx" ON "weekly_summaries" USING btree ("business_id","week_start_date","week_end_date");--> statement-breakpoint
 CREATE POLICY "users_configs_select_own" ON "users_configs" AS PERMISSIVE FOR SELECT TO "authenticated" USING ((auth.uid()) = "users_configs"."user_id");--> statement-breakpoint
 CREATE POLICY "users_configs_insert_own" ON "users_configs" AS PERMISSIVE FOR INSERT TO "authenticated" WITH CHECK ((auth.uid()) = "users_configs"."user_id");--> statement-breakpoint
 CREATE POLICY "users_configs_update_own" ON "users_configs" AS PERMISSIVE FOR UPDATE TO "authenticated" USING ((auth.uid()) = "users_configs"."user_id");--> statement-breakpoint
@@ -256,8 +266,9 @@ CREATE POLICY "review_responses_insert_associated" ON "review_responses" AS PERM
         WHERE ua.account_id = "review_responses"."account_id"
         AND ua.user_id = (auth.uid())
       ));--> statement-breakpoint
-CREATE POLICY "weekly_summaries_select_own" ON "weekly_summaries" AS PERMISSIVE FOR SELECT TO "authenticated" USING (EXISTS (
+CREATE POLICY "weekly_summaries_select_associated" ON "weekly_summaries" AS PERMISSIVE FOR SELECT TO "authenticated" USING (EXISTS (
         SELECT 1 FROM "businesses" b
+        JOIN "user_accounts" ua ON ua.account_id = b.account_id
         WHERE b.id = "weekly_summaries"."business_id"
-        AND b.owner_id = (auth.uid())
+        AND ua.user_id = (auth.uid())
       ));

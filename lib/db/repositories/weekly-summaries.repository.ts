@@ -8,6 +8,23 @@ export class WeeklySummariesRepository {
     return summary;
   }
 
+  async upsert(data: WeeklySummaryInsert): Promise<{ summary: WeeklySummary; created: boolean }> {
+    const [insertedSummary] = await db
+      .insert(weeklySummaries)
+      .values(data)
+      .onConflictDoNothing({
+        target: [weeklySummaries.businessId, weeklySummaries.weekStartDate, weeklySummaries.weekEndDate],
+      })
+      .returning();
+
+    if (!insertedSummary) {
+      const existingSummary = await this.getLatestForBusiness(data.businessId, data.weekStartDate, data.weekEndDate);
+      return { summary: existingSummary!, created: false };
+    }
+
+    return { summary: insertedSummary, created: true };
+  }
+
   async getLatestForBusiness(
     businessId: string,
     weekStartDate: string,

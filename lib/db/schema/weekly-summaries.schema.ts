@@ -1,6 +1,7 @@
-import { pgTable, timestamp, uuid, integer, jsonb, pgPolicy, date, real } from "drizzle-orm/pg-core";
+import { pgTable, timestamp, uuid, integer, jsonb, pgPolicy, date, real, unique, index } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { businesses } from "./businesses.schema";
+import { userAccounts } from "./user-accounts.schema";
 import { authenticatedRole, authUid } from "./roles";
 
 export const weeklySummaries = pgTable(
@@ -24,13 +25,16 @@ export const weeklySummaries = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    pgPolicy("weekly_summaries_select_own", {
+    unique("weekly_summaries_business_week_unique").on(table.businessId, table.weekStartDate, table.weekEndDate),
+    index("weekly_summaries_business_week_idx").on(table.businessId, table.weekStartDate, table.weekEndDate),
+    pgPolicy("weekly_summaries_select_associated", {
       for: "select",
       to: authenticatedRole,
       using: sql`EXISTS (
         SELECT 1 FROM ${businesses} b
+        JOIN ${userAccounts} ua ON ua.account_id = b.account_id
         WHERE b.id = ${table.businessId}
-        AND b.owner_id = ${authUid()}
+        AND ua.user_id = ${authUid()}
       )`,
     }),
   ]
