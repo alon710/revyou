@@ -3,14 +3,7 @@ import unusedImportsPlugin from "eslint-plugin-unused-imports";
 
 const eslintConfig = [
   {
-    ignores: [
-      "node_modules/**",
-      ".next/**",
-      "out/**",
-      "build/**",
-      "next-env.d.ts",
-      "functions/lib/**",
-    ],
+    ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "functions/lib/**"],
   },
   ...nextConfig,
   {
