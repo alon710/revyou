@@ -95,23 +95,35 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
       where: and(...conditions),
     });
 
-    const reviewsWithGen = await Promise.all(
-      reviewsData.map(async (review) => {
-        const latestGen = await db.query.reviewResponses.findFirst({
-          where: and(eq(reviewResponses.reviewId, review.id), inArray(reviewResponses.status, ["draft", "posted"])),
-          orderBy: [desc(reviewResponses.createdAt)],
-        });
-        return {
-          ...review,
-          latestAiReply: latestGen?.text,
-          latestAiReplyId: latestGen?.id,
-          latestAiReplyGeneratedBy: latestGen?.generatedBy,
-          latestAiReplyPostedBy: latestGen?.postedBy,
-        };
-      })
-    );
+    if (reviewsData.length === 0) {
+      return [];
+    }
 
-    return reviewsWithGen;
+    const reviewIds = reviewsData.map((r) => r.id);
+
+    const responses = await db.query.reviewResponses.findMany({
+      where: and(inArray(reviewResponses.reviewId, reviewIds), inArray(reviewResponses.status, ["draft", "posted"])),
+      orderBy: [desc(reviewResponses.createdAt)],
+    });
+
+    const responseMap = new Map<string, (typeof responses)[0]>();
+
+    for (const resp of responses) {
+      if (!responseMap.has(resp.reviewId)) {
+        responseMap.set(resp.reviewId, resp);
+      }
+    }
+
+    return reviewsData.map((review) => {
+      const latestGen = responseMap.get(review.id);
+      return {
+        ...review,
+        latestAiReply: latestGen?.text,
+        latestAiReplyId: latestGen?.id,
+        latestAiReplyGeneratedBy: latestGen?.generatedBy,
+        latestAiReplyPostedBy: latestGen?.postedBy,
+      };
+    });
   }
 
   async create(data: ReviewInsert): Promise<Review> {

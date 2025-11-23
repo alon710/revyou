@@ -21,7 +21,6 @@ export function createSafeAction<TInput, TOutput>(
     try {
       return await handler(validationResult.data, { userId });
     } catch (error) {
-      console.error("Action execution failed:", error);
       throw error instanceof Error ? error : new Error("An unexpected error occurred");
     }
   };

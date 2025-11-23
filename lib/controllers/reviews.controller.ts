@@ -106,8 +106,7 @@ export class ReviewsController {
     const latestDraft = await this.responsesRepo.getLatestDraft(reviewId);
 
     if (latestDraft && latestDraft.text === customReply && latestDraft.status === "draft") {
-      if (!latestDraft.generatedBy) {
-      } else {
+      if (latestDraft.generatedBy) {
         return { review, savedDraft: customReply };
       }
     }
