@@ -6,6 +6,4 @@ export type Review = DrizzleReview;
 
 export type ReviewCreate = Omit<ReviewInsert, "id" | "receivedAt" | "updateTime">;
 
-export type ReviewUpdate = Partial<
-  Pick<ReviewInsert, "replyStatus" | "postedReply" | "postedAt" | "postedBy" | "updateTime">
->;
+export type ReviewUpdate = Partial<Pick<ReviewInsert, "replyStatus" | "updateTime">>;

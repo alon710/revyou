@@ -1,4 +1,4 @@
-import { eq, and, desc, exists } from "drizzle-orm";
+import { eq, and, desc, exists, isNull } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import {
   reviewResponses,
@@ -54,7 +54,7 @@ export class ReviewResponsesRepository {
     return created;
   }
 
-  async updateStatus(id: string, status: "approved" | "rejected"): Promise<ReviewResponse | undefined> {
+  async updateStatus(id: string, status: "draft" | "posted" | "rejected"): Promise<ReviewResponse | undefined> {
     if (!(await this.verifyAccess())) {
       throw new ForbiddenError("Access denied");
     }
@@ -74,20 +74,34 @@ export class ReviewResponsesRepository {
     return updated;
   }
 
-  async getLatestGenerated(reviewId: string): Promise<ReviewResponse | undefined> {
+  async getLatestDraft(reviewId: string): Promise<ReviewResponse | undefined> {
     return await db.query.reviewResponses.findFirst({
       where: and(
         eq(reviewResponses.reviewId, reviewId),
         eq(reviewResponses.accountId, this.accountId),
         eq(reviewResponses.businessId, this.businessId),
-        eq(reviewResponses.status, "generated"),
+        eq(reviewResponses.status, "draft"),
         this.getAccessCondition()
       ),
       orderBy: [desc(reviewResponses.createdAt)],
     });
   }
 
-  async getRecent(status: "approved" | "rejected", limit: number = 5): Promise<ReviewResponseWithReview[]> {
+  async getLatestGenerated(reviewId: string): Promise<ReviewResponse | undefined> {
+    return await db.query.reviewResponses.findFirst({
+      where: and(
+        eq(reviewResponses.reviewId, reviewId),
+        eq(reviewResponses.accountId, this.accountId),
+        eq(reviewResponses.businessId, this.businessId),
+        eq(reviewResponses.status, "draft"),
+        isNull(reviewResponses.generatedBy),
+        this.getAccessCondition()
+      ),
+      orderBy: [desc(reviewResponses.createdAt)],
+    });
+  }
+
+  async getRecent(status: "draft" | "posted" | "rejected", limit: number = 5): Promise<ReviewResponseWithReview[]> {
     return await db.query.reviewResponses.findMany({
       where: and(
         eq(reviewResponses.accountId, this.accountId),

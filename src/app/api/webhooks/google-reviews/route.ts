@@ -222,9 +222,6 @@ export async function POST(request: NextRequest) {
       receivedAt: new Date(),
       isAnonymous: googleReview.reviewer.isAnonymous || false,
       replyStatus: "pending",
-      postedReply: null,
-      postedAt: null,
-      postedBy: null,
     };
 
     console.log("Creating new review in database");

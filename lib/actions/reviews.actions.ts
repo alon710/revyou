@@ -44,6 +44,10 @@ const PostReviewReplySchema = ReviewIdSchema.extend({
   customReply: z.string().optional(),
 });
 
+const SaveReviewDraftSchema = ReviewIdSchema.extend({
+  customReply: z.string(),
+});
+
 const CreateReviewSchema = ContextSchema.extend({
   data: z.custom<Omit<ReviewCreate, "accountId" | "businessId">>(),
 });
@@ -80,6 +84,14 @@ export const generateReviewReply = createSafeAction(
   async ({ accountId, businessId, reviewId }, { userId }) => {
     const controller = new ReviewsController(userId, accountId, businessId);
     return controller.generateReply(reviewId);
+  }
+);
+
+export const saveReviewDraft = createSafeAction(
+  SaveReviewDraftSchema,
+  async ({ accountId, businessId, reviewId, customReply }, { userId }) => {
+    const controller = new ReviewsController(userId, accountId, businessId);
+    return controller.saveDraft(reviewId, customReply);
   }
 );
 

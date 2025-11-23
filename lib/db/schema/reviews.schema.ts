@@ -3,7 +3,6 @@ import { sql, relations } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
 import { businesses } from "./businesses.schema";
 import { accounts } from "./accounts.schema";
-import { authUsers } from "./auth.schema";
 import type { ReplyStatus } from "../../types/review.types";
 import { reviewResponses } from "./review-responses.schema";
 
@@ -30,9 +29,6 @@ export const reviews = pgTable(
     date: timestamp("date", { withTimezone: true }).notNull(),
 
     replyStatus: text("reply_status").$type<ReplyStatus>().notNull().default("pending"),
-    postedReply: text("posted_reply"),
-    postedAt: timestamp("posted_at", { withTimezone: true }),
-    postedBy: uuid("posted_by").references(() => authUsers.id, { onDelete: "set null" }),
 
     receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
     updateTime: timestamp("update_time", { withTimezone: true }),

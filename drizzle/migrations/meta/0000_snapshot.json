@@ -1,6 +1,6 @@
 {
-  "id": "08614246-acea-4e8d-8845-10bb9891e5b6",
-  "prevId": "076463dd-ca57-477b-9349-181082310c25",
+  "id": "70afd48b-77dd-4ca5-a4a4-1e3a9b294448",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -876,24 +876,6 @@
           "notNull": true,
           "default": "'pending'"
         },
-        "posted_reply": {
-          "name": "posted_reply",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "posted_at": {
-          "name": "posted_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "posted_by": {
-          "name": "posted_by",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
         "received_at": {
           "name": "received_at",
           "type": "timestamp with time zone",
@@ -1066,16 +1048,6 @@
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
-        },
-        "reviews_posted_by_users_id_fk": {
-          "name": "reviews_posted_by_users_id_fk",
-          "tableFrom": "reviews",
-          "tableTo": "users",
-          "schemaTo": "auth",
-          "columnsFrom": ["posted_by"],
-          "columnsTo": ["id"],
-          "onDelete": "set null",
-          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1164,6 +1136,24 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "generated_by": {
+          "name": "generated_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "posted_by": {
+          "name": "posted_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "posted_at": {
+          "name": "posted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -1296,6 +1286,26 @@
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "review_responses_generated_by_users_id_fk": {
+          "name": "review_responses_generated_by_users_id_fk",
+          "tableFrom": "review_responses",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": ["generated_by"],
+          "columnsTo": ["id"],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "review_responses_posted_by_users_id_fk": {
+          "name": "review_responses_posted_by_users_id_fk",
+          "tableFrom": "review_responses",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": ["posted_by"],
+          "columnsTo": ["id"],
+          "onDelete": "set null",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1319,7 +1329,7 @@
       "checkConstraints": {
         "review_responses_status_check": {
           "name": "review_responses_status_check",
-          "value": "\"review_responses\".\"status\" IN ('generated', 'approved', 'rejected')"
+          "value": "\"review_responses\".\"status\" IN ('draft', 'posted', 'rejected')"
         }
       },
       "isRLSEnabled": false

@@ -4,10 +4,12 @@ import { reviews, reviewResponses, userAccounts, type Review, type ReviewInsert 
 import type { ReviewFilters } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 import { NotFoundError, ForbiddenError } from "@/lib/api/errors";
+import { type ReviewResponseWithReview } from "./review-responses.repository";
 
 export type ReviewWithLatestGeneration = Review & {
   latestAiReply?: string;
   latestAiReplyId?: string;
+  latestAiReplyGeneratedBy?: string | null;
 };
 
 export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Partial<Review>> {
@@ -48,7 +50,7 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     if (!review) return null;
 
     const latestGen = await db.query.reviewResponses.findFirst({
-      where: and(eq(reviewResponses.reviewId, reviewId), eq(reviewResponses.status, "generated")),
+      where: and(eq(reviewResponses.reviewId, reviewId), inArray(reviewResponses.status, ["draft", "posted"])),
       orderBy: [desc(reviewResponses.createdAt)],
     });
 
@@ -56,6 +58,7 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
       ...review,
       latestAiReply: latestGen?.text,
       latestAiReplyId: latestGen?.id,
+      latestAiReplyGeneratedBy: latestGen?.generatedBy,
     };
   }
 
@@ -93,13 +96,14 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     const reviewsWithGen = await Promise.all(
       reviewsData.map(async (review) => {
         const latestGen = await db.query.reviewResponses.findFirst({
-          where: and(eq(reviewResponses.reviewId, review.id), eq(reviewResponses.status, "generated")),
+          where: and(eq(reviewResponses.reviewId, review.id), inArray(reviewResponses.status, ["draft", "posted"])),
           orderBy: [desc(reviewResponses.createdAt)],
         });
         return {
           ...review,
           latestAiReply: latestGen?.text,
           latestAiReplyId: latestGen?.id,
+          latestAiReplyGeneratedBy: latestGen?.generatedBy,
         };
       })
     );
@@ -165,12 +169,9 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     }
   }
 
-  async markAsPosted(reviewId: string, postedReply: string, postedBy: string | null): Promise<Review> {
+  async markAsPosted(reviewId: string): Promise<Review> {
     return this.update(reviewId, {
       replyStatus: "posted",
-      postedReply,
-      postedAt: new Date(),
-      postedBy,
     });
   }
 
@@ -191,5 +192,21 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     });
 
     return result ?? null;
+  }
+
+  async getRecentPosted(limit: number = 5): Promise<ReviewResponseWithReview[]> {
+    return await db.query.reviewResponses.findMany({
+      where: and(
+        eq(reviewResponses.accountId, this.accountId),
+        eq(reviewResponses.businessId, this.businessId),
+        eq(reviewResponses.status, "posted"),
+        this.getAccessCondition()
+      ),
+      orderBy: [desc(reviewResponses.postedAt)],
+      limit,
+      with: {
+        review: true,
+      },
+    });
   }
 }

@@ -17,7 +17,7 @@ import { rejectReview, postReviewReply, generateReviewReply } from "@/lib/action
 import { useAuth } from "@/contexts/AuthContext";
 import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import { User } from "lucide-react";
+import { User, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
@@ -143,12 +143,36 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 
           {review.latestAiReply && (
             <DashboardCardSection withBorder={!!review.text}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  {t("aiReplyLabel")}
-                </span>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                    {review.replyStatus === "posted" ? t("postedReplyLabel") : t("aiReplyLabel")}
+                  </span>
+                  {review.replyStatus === "posted" && (
+                    <Badge variant="outline" className="gap-1 text-[10px] h-5">
+                      {review.latestAiReplyGeneratedBy ? (
+                        <>
+                          <User className="h-3 w-3" />
+                          {t("status.postedUser")}
+                        </>
+                      ) : (
+                        <>
+                          <Bot className="h-3 w-3" />
+                          {t("status.postedAi")}
+                        </>
+                      )}
+                    </Badge>
+                  )}
+                </div>
               </div>
-              <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
+              <div
+                className={cn(
+                  "rounded-md border p-3",
+                  review.replyStatus === "posted"
+                    ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/20"
+                    : "border-primary/20 bg-primary/5"
+                )}
+              >
                 <p className="text-sm leading-relaxed">{review.latestAiReply}</p>
               </div>
             </DashboardCardSection>

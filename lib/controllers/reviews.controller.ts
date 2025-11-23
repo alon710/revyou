@@ -16,8 +16,10 @@ export class ReviewsController {
   private responsesRepo: ReviewResponsesRepository;
   private accountsRepo: AccountsRepository;
   private businessesRepo: BusinessesRepository;
+  private userId: string;
 
   constructor(userId: string, accountId: string, businessId: string) {
+    this.userId = userId;
     this.repository = new ReviewsRepository(userId, accountId, businessId);
     this.responsesRepo = new ReviewResponsesRepository(userId, accountId, businessId);
     this.accountsRepo = new AccountsRepository(userId);
@@ -39,8 +41,8 @@ export class ReviewsController {
     return this.repository.update(reviewId, data);
   }
 
-  async markAsPosted(reviewId: string, postedReply: string, postedBy: string | null): Promise<Review> {
-    return this.repository.markAsPosted(reviewId, postedReply, postedBy);
+  async markAsPosted(reviewId: string): Promise<Review> {
+    return this.repository.markAsPosted(reviewId);
   }
 
   async markAsRejected(reviewId: string): Promise<Review> {
@@ -60,20 +62,20 @@ export class ReviewsController {
     const business = await this.businessesRepo.get(review.businessId);
     if (!business) throw new Error("Business not found");
 
-    const approvedGenerations = await this.responsesRepo.getRecent("approved", 5);
-    const rejectedGenerations = await this.responsesRepo.getRecent("rejected", 5);
+    const approvedGenerations = await this.responsesRepo.getRecent("posted", 5);
 
     const approvedSamples: PromptSample[] = approvedGenerations.map((g) => ({
       review: g.review,
       reply: g.text,
     }));
 
+    const rejectedGenerations = await this.responsesRepo.getRecent("rejected", 5);
     const rejectedSamples: PromptSample[] = rejectedGenerations.map((g) => ({
       review: g.review,
       reply: g.text,
     }));
 
-    const latestGen = await this.responsesRepo.getLatestGenerated(reviewId);
+    const latestGen = await this.responsesRepo.getLatestDraft(reviewId);
     if (latestGen) {
       await this.responsesRepo.updateStatus(latestGen.id, "rejected");
     }
@@ -84,7 +86,8 @@ export class ReviewsController {
     await this.responsesRepo.create({
       reviewId,
       text: aiReply,
-      status: "generated",
+      status: "draft",
+      generatedBy: null,
     });
 
     const updatedReview = await this.getReview(reviewId);
@@ -95,15 +98,44 @@ export class ReviewsController {
     };
   }
 
+  async saveDraft(
+    reviewId: string,
+    customReply: string
+  ): Promise<{ review: ReviewWithLatestGeneration; savedDraft: string }> {
+    const review = await this.getReview(reviewId);
+    const latestDraft = await this.responsesRepo.getLatestDraft(reviewId);
+
+    if (latestDraft && latestDraft.text === customReply && latestDraft.status === "draft") {
+      if (!latestDraft.generatedBy) {
+      } else {
+        return { review, savedDraft: customReply };
+      }
+    }
+
+    await this.responsesRepo.create({
+      reviewId,
+      text: customReply,
+      status: "draft",
+      generatedBy: this.userId,
+    });
+
+    if (latestDraft) {
+      await this.responsesRepo.updateStatus(latestDraft.id, "rejected");
+    }
+
+    const updatedReview = await this.getReview(reviewId);
+    return { review: updatedReview, savedDraft: customReply };
+  }
+
   async postReply(
     reviewId: string,
     customReply?: string,
     userId?: string
   ): Promise<{ review: Review; replyPosted: string }> {
     const review = await this.getReview(reviewId);
-    const latestGen = await this.responsesRepo.getLatestGenerated(reviewId);
+    const latestDraft = await this.responsesRepo.getLatestDraft(reviewId);
 
-    const replyToPost = customReply || latestGen?.text;
+    const replyToPost = customReply || latestDraft?.text;
 
     if (!replyToPost) {
       throw new Error("No reply to post. Generate AI reply first or provide custom reply.");
@@ -122,21 +154,17 @@ export class ReviewsController {
       process.env.GOOGLE_CLIENT_SECRET!
     );
 
-    const updatedReview = await this.markAsPosted(reviewId, replyToPost, userId || null);
+    const updatedReview = await this.markAsPosted(reviewId);
 
-    if (latestGen && latestGen.text === replyToPost) {
-      await this.responsesRepo.updateStatus(latestGen.id, "approved");
-    } else {
-      await this.responsesRepo.create({
-        reviewId,
-        text: replyToPost,
-        status: "approved",
-      });
-
-      if (latestGen) {
-        await this.responsesRepo.updateStatus(latestGen.id, "rejected");
-      }
-    }
+    await this.responsesRepo.create({
+      reviewId,
+      text: replyToPost,
+      status: "posted",
+      generatedBy:
+        latestDraft?.generatedBy || (latestDraft?.text === replyToPost ? latestDraft.generatedBy : userId || null),
+      postedBy: userId || null,
+      postedAt: new Date(),
+    });
 
     return { review: updatedReview, replyPosted: replyToPost };
   }

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { postReviewReply } from "@/lib/actions/reviews.actions";
+import { saveReviewDraft } from "@/lib/actions/reviews.actions";
 import { Edit } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { getLocaleDir, type Locale } from "@/i18n/config";
@@ -50,7 +50,7 @@ export function ReplyEditor({
     try {
       setIsLoading(true);
 
-      await postReviewReply({
+      await saveReviewDraft({
         accountId,
         businessId,
         reviewId: review.id,
