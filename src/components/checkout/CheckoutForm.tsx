@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import type { PlanTier } from "@/lib/subscriptions/plans";
 import type { BillingInterval } from "@/lib/types/subscription.types";
 import { useAuth } from "@/contexts/AuthContext";
+import { createCheckoutSession } from "@/lib/actions/subscription.actions";
 
 interface CheckoutFormProps {
   plan: PlanTier | null;
@@ -46,27 +47,18 @@ export function CheckoutForm({ plan, period }: CheckoutFormProps) {
 
       async function processStripeCheckout() {
         if (!plan || !period) return;
+        if (plan === "free") return;
+
         try {
-          const response = await fetch("/api/stripe/checkout", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              plan,
-              interval: period,
-            }),
-          });
+          const { url, error: actionError } = await createCheckoutSession(plan, period);
 
-          const data = await response.json();
-
-          if (!response.ok) {
-            setError(data.error || t("error"));
+          if (actionError) {
+            setError(actionError || t("error"));
             return;
           }
 
-          if (data.url) {
-            window.location.href = data.url;
+          if (url) {
+            window.location.href = url;
           } else {
             setError(t("error"));
           }
