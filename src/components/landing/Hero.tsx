@@ -81,7 +81,7 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <Link href="/">
+              <Link href="/login">
                 <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.98 }}>
                   <Button className="relative text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-[0_8px_24px_hsl(var(--primary)/0.4)] hover:shadow-[0_12px_32px_hsl(var(--primary)/0.5)] transition-all duration-300 group overflow-hidden">
                     <span className="relative z-10">{t("cta")}</span>
