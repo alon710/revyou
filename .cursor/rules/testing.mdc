@@ -1,0 +1,64 @@
+---
+description: Testing standards, tools, and patterns for the project.
+globs: **/*.test.ts,test/**/*,**test**
+alwaysApply: false
+---
+
+# Testing Standards
+
+## Framework
+
+- **Runner:** Vitest
+- **Environment:** `happy-dom` (configured in `vitest.config.mts`)
+- **Setup:** Global setup in `./test/setup.ts`
+
+## File Naming & Location
+
+- Test files must be **colocated** with the source file they test.
+- **Naming Convention:** `filename.test.ts` or `filename.test.tsx`.
+  - Example: `src/components/Button.tsx` -> `src/components/Button.test.tsx`
+  - Example: `lib/utils.ts` -> `lib/utils.test.ts`
+
+## Structure
+
+- Use `describe` blocks to group tests by Class, Component, or Function.
+- Nested `describe` blocks should correspond to methods or specific behaviors.
+- Use `it` blocks for individual test cases.
+- Follow the **Arrange-Act-Assert** pattern within tests.
+
+```typescript
+describe("UsersController", () => {
+  describe("getUserConfig", () => {
+    it("should return user config when it exists", async () => {
+      // Arrange
+      // ... mocks and setup
+      // Act
+      // ... call the function
+      // Assert
+      // ... check results
+    });
+  });
+});
+```
+
+## Mocking Strategies
+
+- Use `vi.mock()` for external dependencies and modules.
+- **Repositories:** Mock database repositories to isolate business logic.
+  ```typescript
+  vi.mock("@/lib/db/repositories");
+  ```
+- **Database Client:** Mock `@/lib/db/client` if raw queries are used.
+- **Reset Mocks:** Always clear mocks in `beforeEach`.
+  ```typescript
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+  ```
+- **Next.js Mocks:** `next/navigation`, `next-intl`, and `server-only` are globally mocked in `test/setup.ts`, but can be overridden locally if needed.
+
+## Best Practices
+
+- Do not test implementation details; test public interfaces.
+- Use `vi.fn()` to spy on callbacks or injected dependencies.
+- Ensure all async operations are awaited.
