@@ -129,7 +129,7 @@ export function getAllPlans(t?: (key: string, params?: Record<string, string | n
 
       if (!config) return;
 
-      if (!limitValue) return;
+      if (limitValue === undefined || limitValue === null) return;
 
       const value = config.getValue ? config.getValue(plan.limits as PlanLimits) : undefined;
 
