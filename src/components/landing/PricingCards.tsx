@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getAllPlans, type Plan, calculateYearlySavingsPercentage } from "@/lib/subscriptions/plans";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
 
 type BillingPeriod = "monthly" | "yearly";
 
@@ -73,19 +73,29 @@ export function PricingCards() {
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">{t("title")}</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">{t("subtitle")}</p>
 
-          <Tabs
-            value={billingPeriod}
-            onValueChange={(value) => setBillingPeriod(value as BillingPeriod)}
-            className="w-auto"
-          >
-            <TabsList>
-              <TabsTrigger value="yearly">
-                <span className="ms-1 text-xs text-primary">{t("yearlyDiscount")}</span>
-                {t("yearly")}
-              </TabsTrigger>
-              <TabsTrigger value="monthly">{t("monthly")}</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground w-auto">
+            <button
+              type="button"
+              onClick={() => setBillingPeriod("yearly")}
+              className={cn(
+                "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+                billingPeriod === "yearly" && "bg-background text-foreground shadow"
+              )}
+            >
+              <span className="ms-1 text-xs text-primary">{t("yearlyDiscount")}</span>
+              {t("yearly")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setBillingPeriod("monthly")}
+              className={cn(
+                "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+                billingPeriod === "monthly" && "bg-background text-foreground shadow"
+              )}
+            >
+              {t("monthly")}
+            </button>
+          </div>
         </div>
 
         <AnimatePresence mode="wait">
