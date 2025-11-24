@@ -6,8 +6,28 @@ import { Link } from "@/i18n/routing";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 
-const STEPS_COUNT = 4;
-const stepIcons = [Link2, Settings, MessageSquare, CheckCircle];
+const STEPS = [
+  {
+    icon: Link2,
+    titleKey: "steps.0.title",
+    descKey: "steps.0.description",
+  },
+  {
+    icon: Settings,
+    titleKey: "steps.1.title",
+    descKey: "steps.1.description",
+  },
+  {
+    icon: MessageSquare,
+    titleKey: "steps.2.title",
+    descKey: "steps.2.description",
+  },
+  {
+    icon: CheckCircle,
+    titleKey: "steps.3.title",
+    descKey: "steps.3.description",
+  },
+] as const;
 
 export function HowItWorks() {
   const t = useTranslations("landing.howItWorks");
@@ -21,8 +41,7 @@ export function HowItWorks() {
 
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-8">
-            {Array.from({ length: STEPS_COUNT }).map((_, index) => {
-              const Icon = stepIcons[index];
+            {STEPS.map((step, index) => {
               const stepNumber = index + 1;
               return (
                 <motion.div
@@ -84,7 +103,7 @@ export function HowItWorks() {
                         ease: "backOut",
                       }}
                     >
-                      <Icon className="h-7 w-7 text-primary group-hover:scale-110 transition-transform duration-300" />
+                      <step.icon className="h-7 w-7 text-primary group-hover:scale-110 transition-transform duration-300" />
                     </motion.div>
                     <motion.h3
                       className="text-2xl font-semibold mb-3 text-foreground"
@@ -97,7 +116,7 @@ export function HowItWorks() {
                         ease: "easeOut",
                       }}
                     >
-                      {t(`steps.${index}.title`)}
+                      {t(step.titleKey)}
                     </motion.h3>
                     <motion.p
                       className="text-muted-foreground leading-relaxed"
@@ -110,7 +129,7 @@ export function HowItWorks() {
                         ease: "easeOut",
                       }}
                     >
-                      {t(`steps.${index}.description`)}
+                      {t(step.descKey)}
                     </motion.p>
                   </div>
                 </motion.div>

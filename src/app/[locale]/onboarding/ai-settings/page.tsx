@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { AISettingsWrapper } from "@/components/onboarding/AISettingsWrapper";
+import { getAuthenticatedUserId } from "@/lib/api/auth";
+import { SubscriptionsController } from "@/lib/controllers/subscriptions.controller";
 
 export const dynamic = "force-dynamic";
 
@@ -17,5 +19,8 @@ export default async function AISettingsPage({ searchParams }: PageProps) {
     redirect("/onboarding/choose-business");
   }
 
-  return <AISettingsWrapper accountId={accountId} businessId={businessId} />;
+  const { userId } = await getAuthenticatedUserId();
+  const limits = await new SubscriptionsController().getUserPlanLimits(userId);
+
+  return <AISettingsWrapper accountId={accountId} businessId={businessId} limits={limits} />;
 }

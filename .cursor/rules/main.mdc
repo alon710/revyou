@@ -1,0 +1,89 @@
+---
+description: General project rules, tech stack, and coding standards for Bottie (bottie.ai).
+globs: **/*
+alwaysApply: true
+---
+# Project Context
+You are an expert full-stack developer working on a Next.js 15 (App Router) project named "Bottie" (domain: bottie.ai).
+The project uses React 19, TypeScript, Drizzle ORM, Supabase, and Tailwind CSS v4.
+
+# Tech Stack
+- **Framework:** Next.js 15.5.6 (App Router)
+- **Language:** TypeScript 5.9
+- **UI:** React 19, Tailwind CSS v4, Shadcn/UI, Lucide React
+- **Database:** PostgreSQL (via Supabase), Drizzle ORM
+- **Auth:** Supabase Auth
+- **State Management:** Zustand
+- **Internationalization:** next-intl
+- **Validation:** Zod
+- **Payments:** Stripe
+
+# Project Structure
+- `src/app`: App Router routes and pages
+- `src/components`: React components
+  - `src/components/ui`: Shadcn/UI primitive components
+- `lib`: Shared utilities and business logic
+  - `lib/actions`: Server Actions (mutation logic)
+  - `lib/db`: Database configuration and schema
+    - `lib/db/schema`: Drizzle schema definitions
+    - `lib/db/repositories`: Data access layer
+  - `lib/utils.ts`: Utility functions (including `cn`)
+- `messages`: I18n translation files (`en.json`, `he.json`)
+- `drizzle`: Database migrations
+
+# Coding Rules
+
+## General
+- Write concise, readable, and idiomatic TypeScript code.
+- Use functional components with hooks.
+- Type everything strictly. Avoid `any`.
+- Prefer `const` over `let`.
+- Use `async/await` for asynchronous operations.
+
+## Next.js 15 & App Router
+- **Async Params:** In Next.js 15, `params` and `searchParams` in Pages, Layouts, and Route Handlers are Promises. Always `await` them before accessing properties.
+  ```typescript
+  // Correct
+  export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    // ...
+  }
+  ```
+- **Server Components:** Default to Server Components. Add `'use client'` only when necessary (state, effects, event listeners).
+- **Server Actions:** Place server actions in `lib/actions`. Use `safe-action` pattern if available or standard server action syntax.
+- **Data Fetching:** Fetch data directly in Server Components using `lib/db/repositories` or raw Drizzle queries. avoiding `fetch` for DB calls unless communicating with external APIs.
+
+## Drizzle ORM & Database
+- **Schema:** Define schemas in `lib/db/schema`.
+- **Queries:** Use the Drizzle client exported from `lib/db/client.ts`.
+- **Repositories:** Prefer using the repository pattern located in `lib/db/repositories` for complex data access.
+- **Migrations:** Generate migrations with `yarn db:generate` and apply with `yarn db:migrate` (or `db:push` for prototyping).
+
+## UI & Styling (Tailwind v4)
+- Use **Tailwind CSS v4** syntax.
+- Use the `cn` utility (`lib/utils.ts`) for conditionally merging class names.
+  ```typescript
+  <div className={cn("bg-white p-4", className)}>...</div>
+  ```
+- Use **Lucide React** for icons.
+- Prioritize accessibility (ARIA attributes) when building custom components.
+
+## Internationalization (next-intl)
+- Use `next-intl` hooks (`useTranslations`) for UI text.
+- keys should be grouped nested in `messages/*.json`.
+- Example: `t('common.submit')`.
+
+## Error Handling
+- Use `sonner` for toast notifications on the client side.
+- Handle errors gracefully in Server Actions and return structured error responses.
+
+## Imports
+- Use absolute imports with `@/` alias.
+  - `@/*` -> `./src/*`
+  - `@/lib/*` -> `./lib/*`
+  - `@/emails/*` -> `./lib/emails/*` (based on tsconfig paths)
+
+# Workflow
+- When creating new features, check for existing reusable components in `src/components/ui`.
+- Ensure all new code passes linting (`yarn lint:check`).
+- Update database schema in `lib/db/schema` if the data model changes.

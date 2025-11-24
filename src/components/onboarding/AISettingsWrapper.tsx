@@ -14,13 +14,15 @@ import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { updateBusinessConfig } from "@/lib/actions/businesses.actions";
+import type { PlanLimits } from "@/lib/subscriptions/plans";
 
 interface AISettingsWrapperProps {
   accountId: string;
   businessId: string;
+  limits: PlanLimits;
 }
 
-export function AISettingsWrapper({ accountId, businessId }: AISettingsWrapperProps) {
+export function AISettingsWrapper({ accountId, businessId, limits }: AISettingsWrapperProps) {
   const { user } = useAuth();
   const router = useRouter();
   const t = useTranslations("onboarding.aiSettings");
@@ -94,7 +96,7 @@ export function AISettingsWrapper({ accountId, businessId }: AISettingsWrapperPr
       backButton={{ onClick: handleBack, loading: saving, label: tCommon("back") }}
       nextButton={{ label: tCommon("next"), loadingLabel: tCommon("saving"), onClick: handleNext, loading: saving }}
     >
-      <AIResponseSettingsForm values={formData} onChange={handleFormChange} />
+      <AIResponseSettingsForm values={formData} onChange={handleFormChange} limits={limits} />
     </OnboardingCard>
   );
 }

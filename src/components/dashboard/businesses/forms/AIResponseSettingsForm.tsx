@@ -9,6 +9,7 @@ import { ToneOfVoice, LanguageMode } from "@/lib/types";
 import emojiRegex from "emoji-regex";
 import { useTranslations, useLocale } from "next-intl";
 import { getLocaleDir, type Locale } from "@/lib/locale";
+import type { PlanLimits } from "@/lib/subscriptions/plans";
 
 export interface AIResponseSettingsFormData {
   toneOfVoice: ToneOfVoice;
@@ -26,6 +27,7 @@ interface AIResponseSettingsFormProps {
   ) => void;
   showTooltips?: boolean;
   disabled?: boolean;
+  limits: PlanLimits;
 }
 
 const extractEmojis = (text: string): string[] => {
@@ -39,6 +41,7 @@ export function AIResponseSettingsForm({
   onChange,
   showTooltips = true,
   disabled = false,
+  limits: _limits,
 }: AIResponseSettingsFormProps) {
   const t = useTranslations("dashboard.businesses.forms.aiSettings");
   const tCommon = useTranslations("common");

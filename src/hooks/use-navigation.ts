@@ -1,27 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/lib/auth/auth";
 import { dashboardNavItems, landingNavItems, getNavigationVariant, getIsActive } from "@/lib/navigation";
 import { usePathname, useRouter } from "@/i18n/routing";
 
+function subscribe(callback: () => void) {
+  window.addEventListener("hashchange", callback);
+  return () => window.removeEventListener("hashchange", callback);
+}
+
+function getSnapshot() {
+  return window.location.hash;
+}
+
+function getServerSnapshot() {
+  return "";
+}
+
 export function useNavigation(variant?: "landing" | "dashboard") {
   const { user } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const [hash, setHash] = useState(() => (typeof window !== "undefined" ? window.location.hash : ""));
+
+  const hash = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const navigationVariant = variant || getNavigationVariant(pathname);
   const navItems = navigationVariant === "dashboard" ? dashboardNavItems : landingNavItems;
-
-  useEffect(() => {
-    const handleHashChange = () => {
-      setHash(window.location.hash);
-    };
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
 
   const handleSignOut = async () => {
     const { error } = await signOut();
@@ -39,9 +45,13 @@ export function useNavigation(variant?: "landing" | "dashboard") {
       router.push(`/${href}`);
       return;
     }
-    setHash(anchorHash);
-    document.getElementById(anchorHash.replace("#", ""))?.scrollIntoView({ behavior: "smooth" });
+
     window.history.pushState(null, "", href);
+    window.dispatchEvent(new Event("hashchange"));
+
+    const element = document.getElementById(anchorHash.replace("#", ""));
+    element?.scrollIntoView({ behavior: "smooth" });
+    element?.focus({ preventScroll: true });
   };
 
   const isActive = (href: string) => {
