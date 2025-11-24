@@ -771,6 +771,18 @@
       "statusPosted": "פורסמה",
       "viewReviewButton": "צפייה בביקורת",
       "footer": "קיבלת הודעת דוא״ל זו כי הפעלת התראות עבור ביקורות חדשות"
+    },
+    "weeklySummary": {
+      "subject": "סיכום שבועי: {businessName}",
+      "title": "סיכום שבועי",
+      "statsTitle": "סקירה",
+      "totalReviewsLabel": "סה״כ ביקורות",
+      "averageRatingLabel": "דירוג ממוצע",
+      "positiveThemesTitle": "מה לקוחות אהבו",
+      "negativeThemesTitle": "נקודות לשיפור",
+      "recommendationsTitle": "המלצות",
+      "viewDashboardButton": "צפייה בלוח הבקרה",
+      "footer": "נשלח על ידי Bottie"
     }
   },
   "errors": {

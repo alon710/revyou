@@ -755,6 +755,18 @@
       "statusPosted": "Posted",
       "viewReviewButton": "View Review",
       "footer": "You received this email because you enabled notifications for new reviews"
+    },
+    "weeklySummary": {
+      "subject": "Weekly Summary: {businessName}",
+      "title": "Weekly Summary",
+      "statsTitle": "Overview",
+      "totalReviewsLabel": "Total Reviews",
+      "averageRatingLabel": "Avg Rating",
+      "positiveThemesTitle": "What Customers Loved",
+      "negativeThemesTitle": "Areas for Improvement",
+      "recommendationsTitle": "Recommendations",
+      "viewDashboardButton": "View Dashboard",
+      "footer": "Sent by Bottie"
     }
   }
 }
