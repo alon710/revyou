@@ -13,7 +13,7 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden min-h-[60vh] md:min-h-[90vh] flex items-center rounded-b-[2rem] md:rounded-b-[3rem] lg:rounded-b-[4rem] pt-32">
       <div className="absolute inset-0 bg-linear-to-br from-background via-background to-muted" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.08)_0%,transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(from_var(--primary)_l_c_h/0.08)_0%,transparent_70%)]" />
 
       <div className="absolute top-20 end-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl" />
       <div className="absolute bottom-20 start-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
@@ -60,7 +60,7 @@ export function Hero() {
             </motion.h1>
 
             <motion.div
-              className="h-1 md:h-1.5 w-28 sm:w-32 md:w-44 lg:w-52 mx-auto md:me-0 rounded-full bg-linear-to-r from-primary/70 via-primary to-primary/70 shadow-[0_0_18px_hsl(var(--primary)/0.25)] mb-8"
+              className="h-1 md:h-1.5 w-28 sm:w-32 md:w-44 lg:w-52 mx-auto md:me-0 rounded-full bg-linear-to-r from-primary/70 via-primary to-primary/70 shadow-[0_0_18px_oklch(from_var(--primary)_l_c_h/0.25)] mb-8"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.8, delay: 0.3 }}
@@ -83,7 +83,7 @@ export function Hero() {
             >
               <Link href="/login">
                 <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.98 }}>
-                  <Button className="relative text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-[0_8px_24px_hsl(var(--primary)/0.4)] hover:shadow-[0_12px_32px_hsl(var(--primary)/0.5)] transition-all duration-300 group overflow-hidden">
+                  <Button className="relative text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-[0_8px_24px_oklch(from_var(--primary)_l_c_h/0.4)] hover:shadow-[0_12px_32px_oklch(from_var(--primary)_l_c_h/0.5)] transition-all duration-300 group overflow-hidden">
                     <span className="relative z-10">{t("cta")}</span>
                     <div className="absolute inset-0 bg-primary/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </Button>
