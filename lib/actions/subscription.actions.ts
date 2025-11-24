@@ -1,5 +1,6 @@
 "use server";
 
+import Stripe from "stripe";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { SubscriptionsRepository } from "@/lib/db/repositories";
 import type { Subscription } from "@/lib/db/schema";
@@ -40,7 +41,8 @@ export async function cancelSubscription(): Promise<{
 
 export async function createCheckoutSession(
   plan: "basic" | "pro",
-  interval: "monthly" | "yearly"
+  interval: "monthly" | "yearly",
+  couponCode?: string
 ): Promise<{ url?: string; error?: string }> {
   try {
     const supabase = await createClient();
@@ -68,7 +70,27 @@ export async function createCheckoutSession(
     const priceId = getStripePriceId(plan, interval);
     const locale = await resolveLocale({ userId: user.id });
 
-    const session = await getStripe().checkout.sessions.create({
+    let discountObj: { coupon?: string; promotion_code?: string } | undefined;
+
+    if (couponCode) {
+      const cleanCode = couponCode.trim();
+
+      try {
+        const promotionCodes = await getStripe().promotionCodes.list({
+          code: cleanCode,
+          active: true,
+          limit: 1,
+        });
+
+        if (promotionCodes.data.length > 0) {
+          discountObj = { promotion_code: promotionCodes.data[0].id };
+        }
+      } catch (err) {
+        console.error("Error resolving coupon/promo code:", err);
+      }
+    }
+
+    const sessionConfig: Stripe.Checkout.SessionCreateParams = {
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [
@@ -81,7 +103,6 @@ export async function createCheckoutSession(
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/pricing`,
       customer_email: user.email,
       client_reference_id: user.id,
-      allow_promotion_codes: true,
       metadata: {
         userId: user.id,
         planTier: plan,
@@ -94,7 +115,15 @@ export async function createCheckoutSession(
           interval: interval,
         },
       },
-    });
+    };
+
+    if (discountObj) {
+      sessionConfig.discounts = [discountObj];
+    } else {
+      sessionConfig.allow_promotion_codes = true;
+    }
+
+    const session = await getStripe().checkout.sessions.create(sessionConfig);
 
     if (!session.url) {
       return { error: "Failed to create checkout session" };
