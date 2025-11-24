@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "@/i18n/routing";
+import { useSearchParams } from "next/navigation";
 import { Loading } from "@/components/ui/loading";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -17,10 +18,12 @@ interface CheckoutFormProps {
 
 export function CheckoutForm({ plan, period }: CheckoutFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("checkout");
   const { user } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const hasStartedProcessing = useRef(false);
+  const coupon = searchParams.get("coupon");
 
   useEffect(() => {
     if (error) {
@@ -50,7 +53,7 @@ export function CheckoutForm({ plan, period }: CheckoutFormProps) {
         if (plan === "free") return;
 
         try {
-          const { url, error: actionError } = await createCheckoutSession(plan, period);
+          const { url, error: actionError } = await createCheckoutSession(plan, period, coupon || undefined);
 
           if (actionError) {
             setError(actionError || t("error"));
@@ -70,7 +73,7 @@ export function CheckoutForm({ plan, period }: CheckoutFormProps) {
 
       processStripeCheckout();
     }
-  }, [plan, period, router, error, t, user]);
+  }, [plan, period, router, error, t, user, coupon]);
 
   if (!error && plan && period) {
     return <Loading fullScreen text={t("processing")} description={t("almostThere")} size="lg" />;
