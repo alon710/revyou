@@ -2,12 +2,35 @@ import mustache from "mustache";
 import { generateWithGemini } from "./core/gemini-client";
 import { WEEKLY_SUMMARY_PROMPT } from "./prompts/weekly-summary-template";
 import type { Review } from "@/lib/db/schema";
+import { SchemaType, type ResponseSchema } from "@google/generative-ai";
 
 export interface WeeklySummaryData {
   positiveThemes: string[];
   negativeThemes: string[];
   recommendations: string[];
 }
+
+const summarySchema: ResponseSchema = {
+  type: SchemaType.OBJECT,
+  properties: {
+    positiveThemes: {
+      type: SchemaType.ARRAY,
+      items: { type: SchemaType.STRING },
+      description: "List of positive themes identified in the reviews",
+    },
+    negativeThemes: {
+      type: SchemaType.ARRAY,
+      items: { type: SchemaType.STRING },
+      description: "List of negative themes or areas for improvement",
+    },
+    recommendations: {
+      type: SchemaType.ARRAY,
+      items: { type: SchemaType.STRING },
+      description: "List of actionable recommendations based on the reviews",
+    },
+  },
+  required: ["positiveThemes", "negativeThemes", "recommendations"],
+};
 
 export async function generateWeeklySummary(
   businessName: string,
@@ -42,11 +65,10 @@ export async function generateWeeklySummary(
   try {
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("Missing GEMINI_API_KEY");
-    const response = await generateWithGemini(key, prompt);
 
-    const cleanedResponse = response.replace(/```json\n?|\n?```/g, "").trim();
+    const response = await generateWithGemini(key, prompt, "gemini-3-pro-preview", 8192, summarySchema);
 
-    const data = JSON.parse(cleanedResponse) as WeeklySummaryData;
+    const data = JSON.parse(response) as WeeklySummaryData;
 
     return {
       positiveThemes: data.positiveThemes || [],
@@ -58,7 +80,7 @@ export async function generateWeeklySummary(
     return {
       positiveThemes: [],
       negativeThemes: [],
-      recommendations: ["Could not generate recommendations at this time."],
+      recommendations: ["Could not generate recommendations at this time due to an error."],
     };
   }
 }

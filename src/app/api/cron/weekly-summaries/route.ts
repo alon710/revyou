@@ -7,6 +7,9 @@ import { WeeklySummariesRepository } from "@/lib/db/repositories/weekly-summarie
 import { Resend } from "resend";
 import WeeklySummaryEmail from "@/lib/emails/weekly-summary";
 import { UsersConfigsRepository } from "@/lib/db/repositories/users-configs.repository";
+import { getTranslations } from "next-intl/server";
+import { resolveLocale } from "@/lib/locale-detection";
+import { Locale } from "@/lib/locale";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const weeklySummariesRepo = new WeeklySummariesRepository();
@@ -63,7 +66,8 @@ export async function GET(req: NextRequest) {
           continue;
         }
 
-        const locale = userConfig?.configs?.LOCALE || "en";
+        const locale = await resolveLocale({ userId, userConfig: userConfig ?? undefined });
+        const t = await getTranslations({ locale, namespace: "emails.weeklySummary" });
 
         const [user] = await db.select().from(authUsers).where(eq(authUsers.id, userId));
         if (!user || !user.email) continue;
@@ -110,33 +114,33 @@ export async function GET(req: NextRequest) {
           if (resend) {
             const dateRangeStr = `${lastSunday.toLocaleDateString(locale, { day: "numeric", month: "short" })} - ${lastSaturday.toLocaleDateString(locale, { day: "numeric", month: "short" })}`;
 
-            const subject = locale === "he" ? `סיכום שבועי: ${business.name}` : `Weekly Summary: ${business.name}`;
+            const subject = t("subject", { businessName: business.name });
 
             await resend.emails.send({
               from: process.env.RESEND_FROM_EMAIL!,
               to: user.email,
               subject: subject,
               react: WeeklySummaryEmail({
-                title: locale === "he" ? "סיכום שבועי" : "Weekly Summary",
+                title: t("title"),
                 dateRange: dateRangeStr,
                 businessName: business.name,
-                statsTitle: locale === "he" ? "סקירה" : "Overview",
-                totalReviewsLabel: locale === "he" ? "סה״כ ביקורות" : "Total Reviews",
-                averageRatingLabel: locale === "he" ? "דירוג ממוצע" : "Avg Rating",
+                statsTitle: t("statsTitle"),
+                totalReviewsLabel: t("totalReviewsLabel"),
+                averageRatingLabel: t("averageRatingLabel"),
                 totalReviews: businessReviews.length,
                 averageRating: (businessReviews.reduce((acc, r) => acc + r.rating, 0) / businessReviews.length).toFixed(
                   1
                 ),
-                positiveThemesTitle: locale === "he" ? "מה לקוחות אהבו" : "What Customers Loved",
+                positiveThemesTitle: t("positiveThemesTitle"),
                 positiveThemes: summaryData.positiveThemes,
-                negativeThemesTitle: locale === "he" ? "נקודות לשיפור" : "Areas for Improvement",
+                negativeThemesTitle: t("negativeThemesTitle"),
                 negativeThemes: summaryData.negativeThemes,
-                recommendationsTitle: locale === "he" ? "המלצות" : "Recommendations",
+                recommendationsTitle: t("recommendationsTitle"),
                 recommendations: summaryData.recommendations,
-                viewDashboardButton: locale === "he" ? "צפייה בלוח הבקרה" : "View Dashboard",
+                viewDashboardButton: t("viewDashboardButton"),
                 dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/dashboard/home`,
-                footer: locale === "he" ? "נשלח על ידי Bottie" : "Sent by Bottie",
-                locale: locale as "en" | "he",
+                footer: t("footer"),
+                locale: locale as Locale,
               }),
             });
             emailsSent++;
