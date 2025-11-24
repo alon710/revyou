@@ -35,8 +35,19 @@ export function AccountBusinessesList({ accounts }: AccountBusinessesListProps) 
     router.push(`/dashboard/accounts/${accountId}/businesses/${businessId}/settings`);
   };
 
+  const handleAddBusiness = () => {
+    router.push("/onboarding/connect-account");
+  };
+
   if (accounts.length === 0) {
-    return <EmptyState title={t("noConnectedAccounts")} description={t("noConnectedAccountsDescription")} />;
+    return (
+      <EmptyState
+        title={t("noConnectedAccounts")}
+        description={t("noConnectedAccountsDescription")}
+        actionLabel={t("connectAccount")}
+        onAction={handleAddBusiness}
+      />
+    );
   }
 
   return (
