@@ -49,7 +49,9 @@ export function useNavigation(variant?: "landing" | "dashboard") {
     window.history.pushState(null, "", href);
     window.dispatchEvent(new Event("hashchange"));
 
-    document.getElementById(anchorHash.replace("#", ""))?.scrollIntoView({ behavior: "smooth" });
+    const element = document.getElementById(anchorHash.replace("#", ""));
+    element?.scrollIntoView({ behavior: "smooth" });
+    element?.focus({ preventScroll: true });
   };
 
   const isActive = (href: string) => {

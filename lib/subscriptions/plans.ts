@@ -20,7 +20,7 @@ export interface Plan {
   monthlyPrice: number;
   yearlyPrice: number;
   features: string[];
-  limits: Partial<PlanLimits>;
+  limits: PlanLimits;
 }
 
 export const PLANS: Record<PlanTier, Plan> = {
@@ -36,6 +36,7 @@ export const PLANS: Record<PlanTier, Plan> = {
       reviewsPerMonth: 10,
       autoPost: false,
       requireApproval: true,
+      analytics: false,
     },
   },
   basic: {
@@ -71,7 +72,7 @@ export const PLANS: Record<PlanTier, Plan> = {
 };
 
 export function getPlanLimits(planTier: PlanTier): PlanLimits {
-  return PLANS[planTier].limits as PlanLimits;
+  return PLANS[planTier].limits;
 }
 
 export function getPlan(planTier: PlanTier): Plan {
@@ -113,12 +114,8 @@ const FEATURE_CONFIGS: Partial<Record<FeatureKey, FeatureConfig>> = {
   },
 };
 
-export function getAllPlans(t?: (key: string, params?: Record<string, string | number | Date>) => string): Plan[] {
+export function getAllPlans(t: (key: string, params?: Record<string, string | number | Date>) => string): Plan[] {
   const plans = Object.values(PLANS);
-
-  if (!t) {
-    return plans;
-  }
 
   return plans.map((plan) => {
     const features: string[] = [];
@@ -131,7 +128,7 @@ export function getAllPlans(t?: (key: string, params?: Record<string, string | n
 
       if (limitValue === undefined || limitValue === null) return;
 
-      const value = config.getValue ? config.getValue(plan.limits as PlanLimits) : undefined;
+      const value = config.getValue ? config.getValue(plan.limits) : undefined;
 
       features.push(t(config.translationKey, value !== undefined ? { count: value } : undefined));
     });
