@@ -89,44 +89,31 @@
         "monthly_reviews": "Reviews per Month",
         "manual_approval": "Manual Approval",
         "auto_publish": "Auto Publish",
-        "whatsapp_support": "WhatsApp Support"
+        "whatsapp_support": "WhatsApp Support",
+        "businesses": "{count, select, 1 {1 business location} other {Up to {count} business locations}}",
+        "reviews": "{count} AI replies per month",
+        "autoPost": "Auto-post replies",
+        "manualApproval": "Manual approval required",
+        "whatsappSupport": "WhatsApp support",
+        "prioritySupport": "Priority support",
+        "priorityEmailSupport": "Priority email support",
+        "emailSupport": "Email support",
+        "customTone": "Custom tone of voice",
+        "emojiCustomization": "Emoji customization",
+        "analytics": "Advanced analytics"
       },
       "plans": {
         "free": {
           "name": "Free",
-          "description": "Get started with basic features",
-          "features": {
-            "0": "1 business location",
-            "1": "10 AI replies per month",
-            "2": "Manual approval required",
-            "3": "Email support"
-          }
+          "description": "Get started with basic features"
         },
         "basic": {
           "name": "Basic",
-          "description": "Perfect for small businesses",
-          "features": {
-            "0": "Up to 3 business locations",
-            "1": "100 AI replies per month",
-            "2": "Auto-post replies",
-            "3": "Priority email support",
-            "4": "Custom tone of voice",
-            "5": "Emoji customization"
-          }
+          "description": "Perfect for small businesses"
         },
         "pro": {
           "name": "Pro",
-          "description": "For growing businesses",
-          "features": {
-            "0": "Unlimited business locations",
-            "1": "Unlimited AI replies",
-            "2": "Auto-post replies",
-            "3": "WhatsApp support",
-            "4": "Custom tone of voice",
-            "5": "Emoji customization",
-            "6": "Advanced analytics",
-            "7": "Priority support"
-          }
+          "description": "For growing businesses"
         }
       },
       "yearlySavings": "Save {percentage}% yearly",

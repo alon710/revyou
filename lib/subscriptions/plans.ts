@@ -5,6 +5,7 @@ export interface PlanLimits {
   reviewsPerMonth: number;
   autoPost: boolean;
   requireApproval: boolean;
+  analytics: boolean;
 }
 
 export interface PlanFeature {
@@ -19,7 +20,7 @@ export interface Plan {
   monthlyPrice: number;
   yearlyPrice: number;
   features: string[];
-  limits: PlanLimits;
+  limits: Partial<PlanLimits>;
 }
 
 export const PLANS: Record<PlanTier, Plan> = {
@@ -29,7 +30,7 @@ export const PLANS: Record<PlanTier, Plan> = {
     description: "Get started with basic features",
     monthlyPrice: 0,
     yearlyPrice: 0,
-    features: ["1 business location", "10 AI replies per month", "Manual approval required", "Email support"],
+    features: [],
     limits: {
       businesses: 1,
       reviewsPerMonth: 10,
@@ -43,19 +44,13 @@ export const PLANS: Record<PlanTier, Plan> = {
     description: "Perfect for small businesses",
     monthlyPrice: 29,
     yearlyPrice: 290,
-    features: [
-      "Up to 3 business locations",
-      "100 AI replies per month",
-      "Auto-post replies",
-      "Priority email support",
-      "Custom tone of voice",
-      "Emoji customization",
-    ],
+    features: [],
     limits: {
       businesses: 3,
       reviewsPerMonth: 100,
       autoPost: true,
       requireApproval: false,
+      analytics: false,
     },
   },
   pro: {
@@ -64,46 +59,90 @@ export const PLANS: Record<PlanTier, Plan> = {
     description: "For growing businesses",
     monthlyPrice: 79,
     yearlyPrice: 790,
-    features: [
-      "Up to 5 business locations",
-      "250 AI replies per month",
-      "Auto-post replies",
-      "WhatsApp support",
-      "Custom tone of voice",
-      "Emoji customization",
-      "Advanced analytics",
-      "Priority support",
-    ],
+    features: [],
     limits: {
       businesses: 5,
       reviewsPerMonth: 250,
       autoPost: true,
       requireApproval: false,
+      analytics: true,
     },
   },
 };
 
 export function getPlanLimits(planTier: PlanTier): PlanLimits {
-  return PLANS[planTier].limits;
+  return PLANS[planTier].limits as PlanLimits;
 }
 
 export function getPlan(planTier: PlanTier): Plan {
   return PLANS[planTier];
 }
 
-export function getAllPlans(t?: (key: string) => string): Plan[] {
+type FeatureKey = keyof PlanLimits;
+
+interface FeatureConfig {
+  translationKey: string;
+  getValue?: (limits: PlanLimits) => string | number;
+}
+
+const FEATURE_DISPLAY_ORDER: FeatureKey[] = [
+  "businesses",
+  "reviewsPerMonth",
+  "autoPost",
+  "requireApproval",
+  "analytics",
+];
+
+const FEATURE_CONFIGS: Partial<Record<FeatureKey, FeatureConfig>> = {
+  businesses: {
+    translationKey: "features.businesses",
+    getValue: (limits) => limits.businesses,
+  },
+  reviewsPerMonth: {
+    translationKey: "features.reviews",
+    getValue: (limits) => limits.reviewsPerMonth,
+  },
+  autoPost: {
+    translationKey: "features.autoPost",
+  },
+  requireApproval: {
+    translationKey: "features.manualApproval",
+  },
+  analytics: {
+    translationKey: "features.analytics",
+  },
+};
+
+export function getAllPlans(t?: (key: string, params?: Record<string, string | number | Date>) => string): Plan[] {
   const plans = Object.values(PLANS);
 
   if (!t) {
     return plans;
   }
 
-  return plans.map((plan) => ({
-    ...plan,
-    name: t(`plans.${plan.id}.name`),
-    description: t(`plans.${plan.id}.description`),
-    features: plan.features.map((_, index) => t(`plans.${plan.id}.features.${index}`)),
-  }));
+  return plans.map((plan) => {
+    const features: string[] = [];
+
+    FEATURE_DISPLAY_ORDER.forEach((key) => {
+      const limitValue = plan.limits[key];
+      const config = FEATURE_CONFIGS[key];
+
+      if (!config) return;
+
+      if (!limitValue) return;
+
+      const value = config.getValue ? config.getValue(plan.limits as PlanLimits) : undefined;
+
+      features.push(t(config.translationKey, value !== undefined ? { count: value } : undefined));
+    });
+
+    return {
+      ...plan,
+      name: t(`plans.${plan.id}.name`),
+      description: t(`plans.${plan.id}.description`),
+      features,
+    };
+  });
 }
 
 export function calculateYearlySavings(planTier: PlanTier): number {

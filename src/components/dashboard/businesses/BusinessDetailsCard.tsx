@@ -5,11 +5,13 @@ import BusinessIdentitySection from "@/components/dashboard/businesses/BusinessI
 import AIResponseSettingsSection from "@/components/dashboard/businesses/AIResponseSettingsSection";
 import StarRatingConfigSection from "@/components/dashboard/businesses/StarRatingConfigSection";
 import { updateBusinessConfig } from "@/lib/actions/businesses.actions";
+import type { PlanLimits } from "@/lib/subscriptions/plans";
 
 interface BusinessDetailsCardProps {
   business: Business;
   accountId: string;
   userId: string;
+  limits: PlanLimits;
   loading?: boolean;
   onUpdate: () => Promise<void>;
 }
@@ -18,6 +20,7 @@ export default function BusinessDetailsCard({
   business,
   accountId,
   userId,
+  limits,
   loading = false,
   onUpdate,
 }: BusinessDetailsCardProps) {
@@ -39,7 +42,7 @@ export default function BusinessDetailsCard({
     <div className="space-y-6">
       <BusinessIdentitySection business={business} loading={loading} onSave={handleSaveSection} />
 
-      <AIResponseSettingsSection business={business} loading={loading} onSave={handleSaveSection} />
+      <AIResponseSettingsSection business={business} limits={limits} loading={loading} onSave={handleSaveSection} />
 
       <StarRatingConfigSection starConfigs={business.starConfigs} loading={loading} onSave={handleSaveStarConfigs} />
     </div>

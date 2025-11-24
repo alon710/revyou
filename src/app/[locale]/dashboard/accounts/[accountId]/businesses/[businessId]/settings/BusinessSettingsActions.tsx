@@ -6,11 +6,13 @@ import type { Business } from "@/lib/types";
 import BusinessDetailsCard from "@/components/dashboard/businesses/BusinessDetailsCard";
 import { DeleteConfirmation } from "@/components/ui/delete-confirmation";
 import { deleteBusiness } from "@/lib/actions/businesses.actions";
+import type { PlanLimits } from "@/lib/subscriptions/plans";
 
 interface BusinessSettingsActionsProps {
   business: Business;
   accountId: string;
   userId: string;
+  limits: PlanLimits;
   translations: {
     deleteBusiness: string;
     deleteConfirmation: string;
@@ -25,7 +27,13 @@ interface BusinessSettingsActionsProps {
   };
 }
 
-export function BusinessSettingsActions({ business, accountId, userId, translations }: BusinessSettingsActionsProps) {
+export function BusinessSettingsActions({
+  business,
+  accountId,
+  userId,
+  limits,
+  translations,
+}: BusinessSettingsActionsProps) {
   const router = useRouter();
   const [loading, _setLoading] = useState(false);
 
@@ -48,6 +56,7 @@ export function BusinessSettingsActions({ business, accountId, userId, translati
         business={business}
         accountId={accountId}
         userId={userId}
+        limits={limits}
         loading={loading}
         onUpdate={handleUpdate}
       />

@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { getBusiness } from "@/lib/actions/businesses.actions";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { BusinessSettingsActions } from "./BusinessSettingsActions";
+import { SubscriptionsController } from "@/lib/controllers/subscriptions.controller";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,7 @@ export default async function BusinessSettingsPage({
   const tCommon = await getTranslations({ locale, namespace: "common" });
 
   const business = await getBusiness(userId, accountId, businessId);
+  const limits = await new SubscriptionsController().getUserPlanLimits(userId);
 
   return (
     <PageContainer>
@@ -37,6 +39,7 @@ export default async function BusinessSettingsPage({
         business={business}
         accountId={accountId}
         userId={userId}
+        limits={limits}
         translations={{
           deleteBusiness: t("deleteBusiness"),
           deleteConfirmation: t("deleteConfirmation", { businessName: business.name }),
