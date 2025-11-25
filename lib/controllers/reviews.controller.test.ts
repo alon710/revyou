@@ -101,6 +101,7 @@ describe("ReviewsController", () => {
         text: mockAiReply,
         status: "draft",
         generatedBy: null,
+        type: "ai_generated",
       });
       expect(result.aiReply).toBe(mockAiReply);
     });
@@ -229,6 +230,7 @@ describe("ReviewsController", () => {
         text: customReply,
         status: "draft",
         generatedBy: userId,
+        type: "human_generated",
       });
     });
 
