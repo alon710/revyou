@@ -7,8 +7,9 @@ import { listReviews, starRatingToNumber, parseGoogleTimestamp } from "@/lib/goo
 import { AccountsRepository } from "@/lib/db/repositories/accounts.repository";
 import { BusinessesRepository } from "@/lib/db/repositories/businesses.repository";
 import { ReviewsRepository, ReviewWithLatestGeneration } from "@/lib/db/repositories/reviews.repository";
+import { ReviewResponsesRepository } from "@/lib/db/repositories/review-responses.repository";
 import type { GoogleBusinessProfileBusiness } from "@/lib/types";
-import type { ReviewInsert } from "@/lib/db/schema";
+import type { ReviewInsert, ReviewResponseInsert } from "@/lib/db/schema";
 
 export async function getGoogleBusinesses(userId: string, accountId: string): Promise<GoogleBusinessProfileBusiness[]> {
   const { userId: authenticatedUserId } = await getAuthenticatedUserId();
@@ -89,6 +90,7 @@ export async function importRecentReviews(
   const accountsRepo = new AccountsRepository(userId);
   const businessesRepo = new BusinessesRepository(userId, accountId);
   const reviewsRepo = new ReviewsRepository(userId, accountId, businessId);
+  const reviewResponsesRepo = new ReviewResponsesRepository(userId, accountId, businessId);
 
   const account = await accountsRepo.get(accountId);
   if (!account || !account.googleRefreshToken) {
@@ -114,6 +116,8 @@ export async function importRecentReviews(
         const existingReview = await reviewsRepo.findByGoogleReviewId(googleReview.reviewId);
 
         if (!existingReview) {
+          const hasReply = !!googleReview.reviewReply;
+
           const reviewData: ReviewInsert = {
             accountId,
             businessId,
@@ -127,34 +131,54 @@ export async function importRecentReviews(
             updateTime: parseGoogleTimestamp(googleReview.updateTime),
             receivedAt: new Date(),
             isAnonymous: googleReview.reviewer.isAnonymous || false,
-            replyStatus: "pending",
+            replyStatus: hasReply ? "posted" : "pending",
             consumesQuota: false,
           };
 
           try {
             const newReview = await reviewsRepo.create(reviewData);
 
-            try {
-              const processReviewUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/internal/process-review`;
-              const response = await fetch(processReviewUrl, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "X-Internal-Secret": process.env.INTERNAL_API_SECRET!,
-                },
-                body: JSON.stringify({
-                  userId,
-                  accountId,
-                  businessId,
-                  reviewId: newReview.id,
-                }),
-              });
+            if (hasReply && googleReview.reviewReply && googleReview.reviewReply.comment) {
+              const responseData: Omit<ReviewResponseInsert, "accountId" | "businessId"> = {
+                reviewId: newReview.id,
+                text: googleReview.reviewReply.comment,
+                status: "posted",
+                postedAt: parseGoogleTimestamp(googleReview.reviewReply.updateTime),
+                createdAt: new Date(),
+                generatedBy: null,
+                type: "imported",
+              };
 
-              if (response.ok) {
-                await response.json();
+              try {
+                await reviewResponsesRepo.create(responseData);
+              } catch (error) {
+                console.error(`Failed to create ReviewResponse for review ${newReview.id}:`, error);
               }
-            } catch (error) {
-              console.error(`Failed to trigger AI reply for review ${newReview.id}:`, error);
+            }
+
+            if (!hasReply) {
+              try {
+                const processReviewUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/internal/process-review`;
+                const response = await fetch(processReviewUrl, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-Internal-Secret": process.env.INTERNAL_API_SECRET!,
+                  },
+                  body: JSON.stringify({
+                    userId,
+                    accountId,
+                    businessId,
+                    reviewId: newReview.id,
+                  }),
+                });
+
+                if (response.ok) {
+                  await response.json();
+                }
+              } catch (error) {
+                console.error(`Failed to trigger AI reply for review ${newReview.id}:`, error);
+              }
             }
           } catch (error) {
             if (

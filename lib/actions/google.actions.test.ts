@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { importRecentReviews } from "./google.actions";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { ReviewsRepository } from "@/lib/db/repositories/reviews.repository";
+import { ReviewResponsesRepository } from "@/lib/db/repositories/review-responses.repository";
 import { AccountsRepository } from "@/lib/db/repositories/accounts.repository";
 import { BusinessesRepository } from "@/lib/db/repositories/businesses.repository";
 import { listReviews } from "@/lib/google/reviews";
@@ -16,6 +17,9 @@ vi.mock("@/lib/db/repositories/accounts.repository", () => ({
 }));
 vi.mock("@/lib/db/repositories/businesses.repository", () => ({
   BusinessesRepository: vi.fn(),
+}));
+vi.mock("@/lib/db/repositories/review-responses.repository", () => ({
+  ReviewResponsesRepository: vi.fn(),
 }));
 vi.mock("@/lib/google/reviews");
 vi.mock("@/lib/google/business-profile");
@@ -97,6 +101,85 @@ describe("importRecentReviews", () => {
         method: "POST",
         body: expect.stringContaining("new-rev-1"),
       })
+    );
+  });
+
+  it("should import reviews with existing replies and create ReviewResponse records", async () => {
+    const mockAccount = { googleRefreshToken: "token" };
+    const mockBusiness = { googleBusinessId: "loc/123" };
+    const mockReviews = [
+      {
+        reviewId: "g-rev-1",
+        reviewer: { displayName: "John Doe" },
+        starRating: "FIVE",
+        comment: "Great service!",
+        createTime: "2023-01-01T00:00:00Z",
+        updateTime: "2023-01-01T00:00:00Z",
+        reviewReply: {
+          comment: "Thank you for your feedback!",
+          updateTime: "2023-01-02T00:00:00Z",
+        },
+      },
+    ];
+
+    vi.mocked(AccountsRepository).mockImplementation(function () {
+      return {
+        get: vi.fn().mockResolvedValue(mockAccount),
+      } as unknown as AccountsRepository;
+    });
+
+    vi.mocked(BusinessesRepository).mockImplementation(function () {
+      return {
+        get: vi.fn().mockResolvedValue(mockBusiness),
+      } as unknown as BusinessesRepository;
+    });
+
+    const mockCreate = vi.fn().mockResolvedValue({ id: "new-rev-1" });
+    const mockFindByGoogleReviewId = vi.fn().mockResolvedValue(null);
+    const mockList = vi.fn().mockResolvedValue([]);
+
+    vi.mocked(ReviewsRepository).mockImplementation(function () {
+      return {
+        create: mockCreate,
+        findByGoogleReviewId: mockFindByGoogleReviewId,
+        list: mockList,
+      } as unknown as ReviewsRepository;
+    });
+
+    const mockResponseCreate = vi.fn().mockResolvedValue({ id: "resp-1" });
+    vi.mocked(ReviewResponsesRepository).mockImplementation(function () {
+      return {
+        create: mockResponseCreate,
+      } as unknown as ReviewResponsesRepository;
+    });
+
+    (decryptToken as Mock).mockResolvedValue("decrypted-token");
+
+    (listReviews as Mock).mockImplementation(async function* () {
+      yield { reviews: mockReviews };
+    });
+
+    await importRecentReviews(userId, accountId, businessId);
+
+    expect(mockCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        replyStatus: "posted",
+      })
+    );
+
+    expect(mockResponseCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        reviewId: "new-rev-1",
+        text: "Thank you for your feedback!",
+        status: "posted",
+        type: "imported",
+        generatedBy: null,
+      })
+    );
+
+    expect(global.fetch).not.toHaveBeenCalledWith(
+      expect.stringContaining("/api/internal/process-review"),
+      expect.anything()
     );
   });
 
