@@ -131,29 +131,42 @@ export async function importRecentReviews(
             consumesQuota: false,
           };
 
-          const newReview = await reviewsRepo.create(reviewData);
-
           try {
-            const processReviewUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/internal/process-review`;
-            const response = await fetch(processReviewUrl, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-Internal-Secret": process.env.INTERNAL_API_SECRET!,
-              },
-              body: JSON.stringify({
-                userId,
-                accountId,
-                businessId,
-                reviewId: newReview.id,
-              }),
-            });
+            const newReview = await reviewsRepo.create(reviewData);
 
-            if (response.ok) {
-              await response.json();
+            try {
+              const processReviewUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/internal/process-review`;
+              const response = await fetch(processReviewUrl, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-Internal-Secret": process.env.INTERNAL_API_SECRET!,
+                },
+                body: JSON.stringify({
+                  userId,
+                  accountId,
+                  businessId,
+                  reviewId: newReview.id,
+                }),
+              });
+
+              if (response.ok) {
+                await response.json();
+              }
+            } catch (error) {
+              console.error(`Failed to trigger AI reply for review ${newReview.id}:`, error);
             }
           } catch (error) {
-            console.error(`Failed to trigger AI reply for review ${newReview.id}:`, error);
+            if (
+              error instanceof Error &&
+              error.cause &&
+              typeof error.cause === "object" &&
+              "code" in error.cause &&
+              (error.cause as { code: unknown }).code === "23505"
+            ) {
+              return;
+            }
+            throw error;
           }
         }
       });

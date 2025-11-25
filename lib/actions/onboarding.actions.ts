@@ -88,7 +88,13 @@ export async function triggerReviewImport(accountId: string, businessId: string)
               await reviewResponsesRepo.create(responseData);
             }
           } catch (error) {
-            if (error instanceof Error && error.message.includes("23505")) {
+            if (
+              error instanceof Error &&
+              error.cause &&
+              typeof error.cause === "object" &&
+              "code" in error.cause &&
+              (error.cause as { code: unknown }).code === "23505"
+            ) {
               return;
             }
             throw error;
