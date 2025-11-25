@@ -417,6 +417,7 @@
           "postedAi": "פורסם ע״י AI"
         },
         "reviewLabel": "ביקורת",
+        "noText": "(אין טקסט)",
         "imported": "מיובא",
         "aiReplyLabel": "תגובת בינה מלאכותית",
         "externalReplyLabel": "תגובה חיצונית",
