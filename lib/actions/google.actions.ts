@@ -128,6 +128,7 @@ export async function importRecentReviews(
             receivedAt: new Date(),
             isAnonymous: googleReview.reviewer.isAnonymous || false,
             replyStatus: "pending",
+            consumesQuota: false,
           };
 
           const newReview = await reviewsRepo.create(reviewData);
