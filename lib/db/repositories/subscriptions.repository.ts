@@ -1,4 +1,4 @@
-import { eq, and, gte } from "drizzle-orm";
+import { eq, and, gte, countDistinct } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import {
   subscriptions,
@@ -108,13 +108,15 @@ export class SubscriptionsRepository {
       const startDate = startOfMonth(new Date());
 
       const result = await db
-        .select({ count: reviews.id })
+        .select({ count: countDistinct(reviews.id) })
         .from(reviews)
         .innerJoin(accounts, eq(reviews.accountId, accounts.id))
         .innerJoin(userAccounts, eq(accounts.id, userAccounts.accountId))
-        .where(and(eq(userAccounts.userId, userId), gte(reviews.receivedAt, startDate)));
+        .where(
+          and(eq(userAccounts.userId, userId), gte(reviews.receivedAt, startDate), eq(reviews.consumesQuota, true))
+        );
 
-      return result.length;
+      return result[0]?.count || 0;
     } catch (error) {
       console.error("Error counting user reviews this month:", error);
       return 0;

@@ -96,24 +96,29 @@ interface ListReviewsResponse {
   averageRating: number;
 }
 
-export async function listReviews(
+export async function* listReviews(
   locationName: string,
   refreshToken: string,
   clientId?: string,
   clientSecret?: string,
-  pageSize: number = 10,
-  pageToken?: string
-): Promise<ListReviewsResponse> {
+  pageSize: number = 50
+): AsyncGenerator<ListReviewsResponse> {
   try {
     const accessToken = await getAccessTokenFromRefreshToken(refreshToken, clientId, clientSecret);
-    const url = new URL(`${GOOGLE_MY_BUSINESS_API_BASE}/${locationName}/reviews`);
-    url.searchParams.set("pageSize", pageSize.toString());
-    if (pageToken) {
-      url.searchParams.set("pageToken", pageToken);
-    }
+    let pageToken: string | undefined = undefined;
 
-    const response = await makeAuthorizedRequest<ListReviewsResponse>(url.toString(), accessToken);
-    return response;
+    do {
+      const url = new URL(`${GOOGLE_MY_BUSINESS_API_BASE}/${locationName}/reviews`);
+      url.searchParams.set("pageSize", pageSize.toString());
+      if (pageToken) {
+        url.searchParams.set("pageToken", pageToken);
+      }
+
+      const response = await makeAuthorizedRequest<ListReviewsResponse>(url.toString(), accessToken);
+      yield response;
+
+      pageToken = response.nextPageToken;
+    } while (pageToken);
   } catch (error) {
     console.error("Error listing reviews:", {
       locationName,

@@ -13,6 +13,7 @@ import { useOnboardingStore } from "@/lib/store/onboarding-store";
 import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 import { useTranslations } from "next-intl";
 import { updateBusinessConfig } from "@/lib/actions/businesses.actions";
+import { triggerReviewImport } from "@/lib/actions/onboarding.actions";
 
 interface StarRatingsWrapperProps {
   accountId: string;
@@ -60,7 +61,7 @@ export function StarRatingsWrapper({ accountId, businessId }: StarRatingsWrapper
     router.push(`/onboarding/ai-settings?accountId=${accountId}&businessId=${businessId}`);
   };
 
-  const handleFinish = async () => {
+  const handleNext = async () => {
     if (!user || !accountId || !businessId) return;
 
     try {
@@ -70,9 +71,11 @@ export function StarRatingsWrapper({ accountId, businessId }: StarRatingsWrapper
 
       await updateBusinessConfig(user.id, accountId, businessId, config);
 
-      reset();
+      triggerReviewImport(accountId, businessId).catch((error) => {
+        console.error("Failed to trigger review import:", error);
+      });
 
-      toast.success(t("successMessage"));
+      reset();
 
       router.push("/dashboard/home");
     } catch (error) {
@@ -91,7 +94,7 @@ export function StarRatingsWrapper({ accountId, businessId }: StarRatingsWrapper
       nextButton={{
         label: tCommon("finish"),
         loadingLabel: tCommon("saving"),
-        onClick: handleFinish,
+        onClick: handleNext,
         loading: saving,
       }}
     >

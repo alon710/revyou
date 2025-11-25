@@ -69,7 +69,7 @@ async function main() {
     });
 
     if (!account?.googleRefreshToken) {
-      console.error("❌ No refresh token found for this account.");
+      console.error("No refresh token found for this account.");
       return;
     }
 
@@ -78,18 +78,21 @@ async function main() {
     console.log(`🔄 Fetching reviews for ${selectedBusiness.name}...`);
     let reviewsResponse;
     try {
-      reviewsResponse = await listReviews(
+      for await (const response of listReviews(
         selectedBusiness.googleBusinessId,
         refreshToken,
         process.env.GOOGLE_CLIENT_ID,
         process.env.GOOGLE_CLIENT_SECRET
-      );
+      )) {
+        reviewsResponse = response;
+        break;
+      }
     } catch (error) {
-      console.error("❌ Failed to fetch reviews:", error);
+      console.error("Failed to fetch reviews:", error);
       return;
     }
 
-    if (!reviewsResponse.reviews || reviewsResponse.reviews.length === 0) {
+    if (!reviewsResponse || !reviewsResponse.reviews || reviewsResponse.reviews.length === 0) {
       console.log("No reviews found.");
       return;
     }

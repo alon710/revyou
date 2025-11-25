@@ -22,6 +22,7 @@ export const reviewResponses = pgTable(
 
     text: text("text").notNull(),
     status: text("status").notNull(),
+    type: text("type").$type<"imported" | "ai_generated" | "human_generated">().notNull().default("ai_generated"),
 
     generatedBy: uuid("generated_by").references(() => authUsers.id, { onDelete: "set null" }),
     postedBy: uuid("posted_by").references(() => authUsers.id, { onDelete: "set null" }),
