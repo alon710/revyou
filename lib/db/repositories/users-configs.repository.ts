@@ -8,6 +8,7 @@ import {
   type UserConfigMap,
   type UserConfigValue,
 } from "@/lib/db/schema";
+import type { Locale } from "@/lib/locale";
 
 export class UsersConfigsRepository {
   async get(userId: string): Promise<UsersConfig | null> {
@@ -16,7 +17,7 @@ export class UsersConfigsRepository {
     return config || null;
   }
 
-  async getOrCreate(userId: string): Promise<UsersConfig> {
+  async getOrCreate(userId: string, locale?: Locale): Promise<UsersConfig> {
     try {
       const [config] = await db
         .insert(usersConfigs)
@@ -24,7 +25,7 @@ export class UsersConfigsRepository {
           userId,
           configs: {
             EMAIL_ON_NEW_REVIEW: true,
-            LOCALE: "en",
+            LOCALE: locale ?? "en",
             WEEKLY_SUMMARY_ENABLED: true,
           },
         })

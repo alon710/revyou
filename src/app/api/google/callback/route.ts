@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { exchangeCodeForTokens, encryptToken, getUserInfo } from "@/lib/google/oauth";
 import { getAuthenticatedUserId, createLocaleAwareRedirect } from "@/lib/api/auth";
 import { AccountsController, UsersController } from "@/lib/controllers";
+import { resolveLocale } from "@/lib/locale-detection";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -84,7 +85,8 @@ export async function GET(request: NextRequest) {
     } else {
       const userInfo = await getUserInfo(tokens.access_token);
 
-      await usersController.getUserConfig(authenticatedUserId);
+      const detectedLocale = await resolveLocale();
+      await usersController.getUserConfig(authenticatedUserId, detectedLocale);
 
       const existingAccount = await accountsController.findByEmail(userInfo.email);
 
