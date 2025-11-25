@@ -444,7 +444,8 @@
         "label": "Weekly Summary Emails",
         "tooltip": "Receive an email every Sunday with insights and recommendations",
         "enabled": "Enabled",
-        "disabled": "Disabled"
+        "disabled": "Disabled",
+        "proRequired": "Upgrade to Pro to receive weekly AI-generated summaries of your reviews with insights and recommendations."
       },
       "saveSuccess": "Settings saved successfully",
       "saveError": "Error saving settings. Please try again.",

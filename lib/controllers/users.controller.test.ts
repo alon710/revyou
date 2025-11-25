@@ -32,7 +32,7 @@ describe("UsersController", () => {
   describe("getUserConfig", () => {
     it("should get or create user config without locale parameter", async () => {
       const userId = "user-123";
-      const mockConfig = { userId, locale: "en" };
+      const mockConfig = { userId, configs: { LOCALE: "en", EMAIL_ON_NEW_REVIEW: true, WEEKLY_SUMMARY_ENABLED: true } };
       mockRepo.getOrCreate.mockResolvedValue(mockConfig);
 
       const result = await controller.getUserConfig(userId);
@@ -74,7 +74,7 @@ describe("UsersController", () => {
     it("should update user config", async () => {
       const userId = "user-123";
       const data = { locale: "he" as const };
-      const mockConfig = { userId, locale: "he" };
+      const mockConfig = { userId, configs: { LOCALE: "he", EMAIL_ON_NEW_REVIEW: true, WEEKLY_SUMMARY_ENABLED: true } };
       mockRepo.updateConfigs.mockResolvedValue(mockConfig);
 
       const result = await controller.updateUserConfig(userId, data as unknown as Partial<UserConfigMap>);
