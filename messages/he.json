@@ -418,6 +418,7 @@
         },
         "reviewLabel": "ביקורת",
         "aiReplyLabel": "תגובת בינה מלאכותית",
+        "externalReplyLabel": "תגובה חיצונית",
         "postedReplyLabel": "תגובה שפורסמה",
         "actions": {
           "reject": "דחה",

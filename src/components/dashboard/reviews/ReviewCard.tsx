@@ -141,7 +141,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
             <DashboardCardSection withBorder={!!review.text}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  {t("aiReplyLabel")}
+                  {review.latestAiReplyIsImported ? t("externalReplyLabel") : t("aiReplyLabel")}
                 </span>
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">

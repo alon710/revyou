@@ -11,6 +11,7 @@ export type ReviewWithLatestGeneration = Review & {
   latestAiReplyId?: string;
   latestAiReplyGeneratedBy?: string | null;
   latestAiReplyPostedBy?: string | null;
+  latestAiReplyIsImported?: boolean;
 };
 
 export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Partial<Review>> {
@@ -61,6 +62,7 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
       latestAiReplyId: latestGen?.id,
       latestAiReplyGeneratedBy: latestGen?.generatedBy,
       latestAiReplyPostedBy: latestGen?.postedBy,
+      latestAiReplyIsImported: latestGen?.isImported,
     };
   }
 
@@ -127,6 +129,7 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
         latestAiReplyId: latestGen?.id,
         latestAiReplyGeneratedBy: latestGen?.generatedBy,
         latestAiReplyPostedBy: latestGen?.postedBy,
+        latestAiReplyIsImported: latestGen?.isImported,
       };
     });
   }

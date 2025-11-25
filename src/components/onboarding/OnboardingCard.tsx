@@ -23,21 +23,31 @@ interface OnboardingCardProps {
     disabled?: boolean;
     loading?: boolean;
   };
-  nextButton: {
+  nextButton?: {
     label: string;
     loadingLabel?: string;
     onClick: () => void;
     disabled?: boolean;
     loading?: boolean;
   };
+  hideNavigation?: boolean;
 }
 
-export function OnboardingCard({ title, description, children, backButton, nextButton }: OnboardingCardProps) {
+export function OnboardingCard({
+  title,
+  description,
+  children,
+  backButton,
+  nextButton,
+  hideNavigation = false,
+}: OnboardingCardProps) {
   const locale = useLocale() as Locale;
   const dir = getLocaleDir(locale);
   const isRTL = dir === "rtl";
 
   const renderButtons = () => {
+    if (hideNavigation) return null;
+
     const backBtn = backButton && (
       <Button
         onClick={backButton.onClick}
@@ -48,11 +58,14 @@ export function OnboardingCard({ title, description, children, backButton, nextB
         {backButton.loading ? backButton.loadingLabel || backButton.label : backButton.label}
       </Button>
     );
-    const nextBtn = (
+
+    const nextBtn = nextButton && (
       <Button onClick={nextButton.onClick} className="flex-1" disabled={nextButton.disabled || nextButton.loading}>
         {nextButton.loading ? nextButton.loadingLabel || nextButton.label : nextButton.label}
       </Button>
     );
+
+    if (!backBtn && !nextBtn) return null;
 
     return isRTL ? (
       <>
@@ -77,7 +90,7 @@ export function OnboardingCard({ title, description, children, backButton, nextB
         <DashboardCardContent className="space-y-6">
           {children}
 
-          <div className="flex gap-3">{renderButtons()}</div>
+          {!hideNavigation && <div className="flex gap-3">{renderButtons()}</div>}
         </DashboardCardContent>
       </DashboardCard>
     </div>

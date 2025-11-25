@@ -493,6 +493,7 @@
         },
         "reviewLabel": "Review",
         "aiReplyLabel": "AI Response",
+        "externalReplyLabel": "External Response",
         "postedReplyLabel": "Posted Reply",
         "actions": {
           "reject": "Reject",

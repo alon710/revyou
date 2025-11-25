@@ -106,6 +106,7 @@ CREATE TABLE "review_responses" (
 	"account_id" uuid NOT NULL,
 	"text" text NOT NULL,
 	"status" text NOT NULL,
+	"is_imported" boolean DEFAULT false NOT NULL,
 	"generated_by" uuid,
 	"posted_by" uuid,
 	"posted_at" timestamp with time zone,

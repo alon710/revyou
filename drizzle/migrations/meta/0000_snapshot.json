@@ -1,5 +1,5 @@
 {
-  "id": "d46978ae-d721-448c-adfe-104082fc48e8",
+  "id": "6a290445-bbb4-4438-a136-be832d14de97",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1167,6 +1167,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "is_imported": {
+          "name": "is_imported",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "generated_by": {
           "name": "generated_by",
