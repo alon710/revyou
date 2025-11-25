@@ -30,6 +30,8 @@ export const reviews = pgTable(
 
     replyStatus: text("reply_status").$type<ReplyStatus>().notNull().default("pending"),
 
+    consumesQuota: boolean("consumes_quota").notNull().default(true),
+
     receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
     updateTime: timestamp("update_time", { withTimezone: true }),
   },

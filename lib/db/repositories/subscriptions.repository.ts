@@ -112,7 +112,9 @@ export class SubscriptionsRepository {
         .from(reviews)
         .innerJoin(accounts, eq(reviews.accountId, accounts.id))
         .innerJoin(userAccounts, eq(accounts.id, userAccounts.accountId))
-        .where(and(eq(userAccounts.userId, userId), gte(reviews.receivedAt, startDate)));
+        .where(
+          and(eq(userAccounts.userId, userId), gte(reviews.receivedAt, startDate), eq(reviews.consumesQuota, true))
+        );
 
       return result.length;
     } catch (error) {

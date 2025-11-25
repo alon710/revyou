@@ -88,6 +88,7 @@ export class ReviewsController {
       text: aiReply,
       status: "draft",
       generatedBy: null,
+      type: "ai_generated",
     });
 
     const updatedReview = await this.getReview(reviewId);
@@ -116,6 +117,7 @@ export class ReviewsController {
       text: customReply,
       status: "draft",
       generatedBy: this.userId,
+      type: "human_generated",
     });
 
     if (latestDraft) {
@@ -158,6 +160,8 @@ export class ReviewsController {
     const generatedBy =
       customReply && customReply !== latestDraft?.text ? (userId ?? null) : (latestDraft?.generatedBy ?? null);
 
+    const type = generatedBy ? "human_generated" : "ai_generated";
+
     await this.responsesRepo.create({
       reviewId,
       text: replyToPost,
@@ -165,6 +169,7 @@ export class ReviewsController {
       generatedBy,
       postedBy: userId || null,
       postedAt: new Date(),
+      type,
     });
 
     return { review: updatedReview, replyPosted: replyToPost };

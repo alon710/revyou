@@ -492,6 +492,7 @@
           "postedAi": "Posted by AI"
         },
         "reviewLabel": "Review",
+        "imported": "Imported",
         "aiReplyLabel": "AI Response",
         "externalReplyLabel": "External Response",
         "postedReplyLabel": "Posted Reply",

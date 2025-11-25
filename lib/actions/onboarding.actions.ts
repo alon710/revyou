@@ -42,6 +42,7 @@ export async function triggerReviewImport(accountId: string, businessId: string)
 
     let importedCount = 0;
     let totalFetchedCount = 0;
+    const MAX_IMPORT_COUNT = 500;
     const BATCH_SIZE = 500;
     let reviewBuffer: GoogleReview[] = [];
 
@@ -66,23 +67,31 @@ export async function triggerReviewImport(accountId: string, businessId: string)
             receivedAt: new Date(),
             isAnonymous: googleReview.reviewer.isAnonymous || false,
             replyStatus: hasReply ? "posted" : "pending",
+            consumesQuota: false,
           };
 
-          const newReview = await reviewsRepo.create(reviewData);
-          importedCount++;
+          try {
+            const newReview = await reviewsRepo.create(reviewData);
+            importedCount++;
 
-          if (hasReply && googleReview.reviewReply && googleReview.reviewReply.comment) {
-            const responseData: Omit<ReviewResponseInsert, "accountId" | "businessId"> = {
-              reviewId: newReview.id,
-              text: googleReview.reviewReply.comment,
-              status: "posted",
-              postedAt: parseGoogleTimestamp(googleReview.reviewReply.updateTime),
-              createdAt: new Date(),
-              generatedBy: null,
-              isImported: true,
-            };
+            if (hasReply && googleReview.reviewReply && googleReview.reviewReply.comment) {
+              const responseData: Omit<ReviewResponseInsert, "accountId" | "businessId"> = {
+                reviewId: newReview.id,
+                text: googleReview.reviewReply.comment,
+                status: "posted",
+                postedAt: parseGoogleTimestamp(googleReview.reviewReply.updateTime),
+                createdAt: new Date(),
+                generatedBy: null,
+                type: "imported",
+              };
 
-            await reviewResponsesRepo.create(responseData);
+              await reviewResponsesRepo.create(responseData);
+            }
+          } catch (error) {
+            if (error instanceof Error && error.message.includes("23505")) {
+              return;
+            }
+            throw error;
           }
         }
       });
@@ -97,15 +106,26 @@ export async function triggerReviewImport(accountId: string, businessId: string)
       process.env.GOOGLE_CLIENT_SECRET
     )) {
       if (reviewsResponse.reviews && reviewsResponse.reviews.length > 0) {
-        totalFetchedCount += reviewsResponse.reviews.length;
-        console.log(`Fetched ${reviewsResponse.reviews.length} reviews from Google (total: ${totalFetchedCount})`);
+        let newReviews = reviewsResponse.reviews;
 
-        reviewBuffer.push(...reviewsResponse.reviews);
+        if (totalFetchedCount + newReviews.length > MAX_IMPORT_COUNT) {
+          newReviews = newReviews.slice(0, MAX_IMPORT_COUNT - totalFetchedCount);
+        }
+
+        totalFetchedCount += newReviews.length;
+        console.log(`Fetched ${newReviews.length} reviews from Google (total: ${totalFetchedCount})`);
+
+        reviewBuffer.push(...newReviews);
 
         if (reviewBuffer.length >= BATCH_SIZE) {
           console.log(`Processing batch of ${reviewBuffer.length} reviews...`);
           await processReviewBatch(reviewBuffer);
           reviewBuffer = [];
+        }
+
+        if (totalFetchedCount >= MAX_IMPORT_COUNT) {
+          console.log(`Reached max import count of ${MAX_IMPORT_COUNT}, stopping import`);
+          break;
         }
       }
     }

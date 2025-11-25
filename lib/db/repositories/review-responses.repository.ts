@@ -1,4 +1,4 @@
-import { eq, and, desc, exists, isNull } from "drizzle-orm";
+import { eq, and, desc, exists } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import {
   reviewResponses,
@@ -94,7 +94,7 @@ export class ReviewResponsesRepository {
         eq(reviewResponses.accountId, this.accountId),
         eq(reviewResponses.businessId, this.businessId),
         eq(reviewResponses.status, "draft"),
-        isNull(reviewResponses.generatedBy),
+        eq(reviewResponses.type, "ai_generated"),
         this.getAccessCondition()
       ),
       orderBy: [desc(reviewResponses.createdAt)],

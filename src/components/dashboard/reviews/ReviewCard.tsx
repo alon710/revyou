@@ -116,7 +116,14 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
                   )}
                 </AvatarFallback>
               </Avatar>
-              <h3 className="font-semibold truncate">{review.name}</h3>
+              <div className="min-w-0">
+                <h3 className="font-semibold truncate">{review.name}</h3>
+                {!review.consumesQuota && (
+                  <span className="text-[10px] text-muted-foreground font-medium border rounded px-1 bg-muted/30">
+                    {t("imported")}
+                  </span>
+                )}
+              </div>
             </div>
             <StarRating rating={review.rating} size={18} />
             {getStatusBadge(review.replyStatus as ReplyStatus)}
@@ -141,7 +148,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
             <DashboardCardSection withBorder={!!review.text}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  {review.latestAiReplyIsImported ? t("externalReplyLabel") : t("aiReplyLabel")}
+                  {review.latestAiReplyType === "imported" ? t("externalReplyLabel") : t("aiReplyLabel")}
                 </span>
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">

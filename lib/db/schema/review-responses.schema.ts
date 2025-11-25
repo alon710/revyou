@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid, index, check, pgPolicy, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, index, check, pgPolicy } from "drizzle-orm/pg-core";
 import { sql, relations } from "drizzle-orm";
 import { authenticatedRole, authUid } from "./roles";
 import { businesses } from "./businesses.schema";
@@ -22,7 +22,7 @@ export const reviewResponses = pgTable(
 
     text: text("text").notNull(),
     status: text("status").notNull(),
-    isImported: boolean("is_imported").notNull().default(false),
+    type: text("type").$type<"imported" | "ai_generated" | "human_generated">().notNull().default("ai_generated"),
 
     generatedBy: uuid("generated_by").references(() => authUsers.id, { onDelete: "set null" }),
     postedBy: uuid("posted_by").references(() => authUsers.id, { onDelete: "set null" }),

@@ -1,6 +1,6 @@
 import { eq, and, gte, countDistinct } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import { businesses, reviews, userAccounts, reviewResponses } from "@/lib/db/schema";
+import { businesses, reviews, userAccounts } from "@/lib/db/schema";
 import { startOfMonth } from "date-fns";
 
 export class StatsRepository {
@@ -27,14 +27,8 @@ export class StatsRepository {
         .select({ count: countDistinct(reviews.id) })
         .from(reviews)
         .innerJoin(userAccounts, eq(reviews.accountId, userAccounts.accountId))
-        .innerJoin(reviewResponses, eq(reviews.id, reviewResponses.reviewId))
         .where(
-          and(
-            eq(userAccounts.userId, userId),
-            gte(reviews.receivedAt, startDate),
-            eq(reviewResponses.status, "posted"),
-            eq(reviewResponses.isImported, false)
-          )
+          and(eq(userAccounts.userId, userId), gte(reviews.receivedAt, startDate), eq(reviews.consumesQuota, true))
         );
 
       return result[0]?.count || 0;

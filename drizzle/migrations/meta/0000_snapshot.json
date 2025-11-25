@@ -1,5 +1,5 @@
 {
-  "id": "6a290445-bbb4-4438-a136-be832d14de97",
+  "id": "9e1750ca-212f-4fd5-99bd-88e0dd947b70",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -907,6 +907,13 @@
           "notNull": true,
           "default": "'pending'"
         },
+        "consumes_quota": {
+          "name": "consumes_quota",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
         "received_at": {
           "name": "received_at",
           "type": "timestamp with time zone",
@@ -1168,12 +1175,12 @@
           "primaryKey": false,
           "notNull": true
         },
-        "is_imported": {
-          "name": "is_imported",
-          "type": "boolean",
+        "type": {
+          "name": "type",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "default": false
+          "default": "'ai_generated'"
         },
         "generated_by": {
           "name": "generated_by",
