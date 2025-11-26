@@ -48,7 +48,12 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
       .slice(0, 2);
   };
 
-  const getStatusBadge = (status: ReplyStatus) => {
+  const getStatusBadge = (review: ReviewWithLatestGeneration) => {
+    if (!review.consumesQuota) {
+      return <Badge variant="secondary">{t("imported")}</Badge>;
+    }
+
+    const status = review.replyStatus as ReplyStatus;
     const statusMap = {
       pending: { label: t("status.pending"), variant: "secondary" as const },
       posted: { label: t("status.posted"), variant: "default" as const },
@@ -118,15 +123,10 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
               </Avatar>
               <div className="min-w-0">
                 <h3 className="font-semibold truncate">{review.name}</h3>
-                {!review.consumesQuota && (
-                  <span className="text-[10px] text-muted-foreground font-medium border rounded px-1 bg-muted/30">
-                    {t("imported")}
-                  </span>
-                )}
               </div>
             </div>
             <StarRating rating={review.rating} size={18} />
-            {getStatusBadge(review.replyStatus as ReplyStatus)}
+            {getStatusBadge(review)}
           </div>
         </DashboardCardHeader>
 

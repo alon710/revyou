@@ -19,7 +19,7 @@ export interface Plan {
   description: string;
   monthlyPrice: number;
   yearlyPrice: number;
-  features: string[];
+  features: PlanFeature[];
   limits: PlanLimits;
 }
 
@@ -34,8 +34,8 @@ export const PLANS: Record<PlanTier, Plan> = {
     limits: {
       businesses: 1,
       reviewsPerMonth: 10,
-      autoPost: false,
       requireApproval: true,
+      autoPost: false,
       analytics: false,
     },
   },
@@ -49,8 +49,8 @@ export const PLANS: Record<PlanTier, Plan> = {
     limits: {
       businesses: 3,
       reviewsPerMonth: 100,
+      requireApproval: true,
       autoPost: true,
-      requireApproval: false,
       analytics: false,
     },
   },
@@ -64,8 +64,8 @@ export const PLANS: Record<PlanTier, Plan> = {
     limits: {
       businesses: 5,
       reviewsPerMonth: 250,
+      requireApproval: true,
       autoPost: true,
-      requireApproval: false,
       analytics: true,
     },
   },
@@ -118,7 +118,7 @@ export function getAllPlans(t: (key: string, params?: Record<string, string | nu
   const plans = Object.values(PLANS);
 
   return plans.map((plan) => {
-    const features: string[] = [];
+    const features: PlanFeature[] = [];
 
     FEATURE_DISPLAY_ORDER.forEach((key) => {
       const limitValue = plan.limits[key];
@@ -130,7 +130,15 @@ export function getAllPlans(t: (key: string, params?: Record<string, string | nu
 
       const value = config.getValue ? config.getValue(plan.limits) : undefined;
 
-      features.push(t(config.translationKey, value !== undefined ? { count: value } : undefined));
+      features.push({
+        text: t(config.translationKey, value !== undefined ? { count: value } : undefined),
+        included: !!limitValue,
+      });
+    });
+
+    features.sort((a, b) => {
+      if (a.included === b.included) return 0;
+      return a.included ? -1 : 1;
     });
 
     return {

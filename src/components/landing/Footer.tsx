@@ -14,15 +14,17 @@ export function Footer() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-lg font-bold text-foreground mb-4">{t("company.name")}</h3>
+            <h3 dir="ltr" className="text-lg font-bold text-foreground mb-4 text-end">
+              {t("company.name")}
+            </h3>
             <p className="text-sm text-muted-foreground mb-4">{t("company.description")}</p>
             <div className="flex flex-col gap-2">
               <a
-                href="mailto:alon710@gmail.com"
+                href={`mailto:${t("company.email")}`}
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Mail className="h-4 w-4" />
-                <span>alon710@gmail.com</span>
+                <span>{t("company.email")}</span>
               </a>
               <a
                 href="tel:+972-50-671-5060"
