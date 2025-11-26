@@ -177,7 +177,8 @@
       "company": {
         "name": "Bottie.",
         "description": "פתרון AI מתקדם לניהול ותשובות אוטומטיות לביקורות לקוחות. חסכו זמן ושפרו את המוניטין העסקי שלכם.",
-        "location": "תל אביב, ישראל"
+        "location": "תל אביב, ישראל",
+        "email": "alon@bottie.ai"
       },
       "product": {
         "title": "המוצר",
@@ -613,7 +614,7 @@
       "contact": {
         "title": "9. צור קשר",
         "content": "לשאלות או הבהרות לגבי תנאי השימוש, ניתן ליצור קשר בכתובת:",
-        "email": "alon710@gmail.com"
+        "email": "alon@bottie.ai"
       }
     }
   },
@@ -689,7 +690,7 @@
         "content": "לשאלות או בקשות הנוגעות למדיניות הפרטיות או למימוש זכויותיך, ניתן ליצור קשר:",
         "email": "דוא\"ל: {email}",
         "phone": "טלפון: {phone}",
-        "emailValue": "alon710@gmail.com",
+        "emailValue": "alon@bottie.ai",
         "phoneValue": "+972-50-671-5060"
       }
     }

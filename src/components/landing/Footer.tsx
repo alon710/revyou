@@ -20,11 +20,11 @@ export function Footer() {
             <p className="text-sm text-muted-foreground mb-4">{t("company.description")}</p>
             <div className="flex flex-col gap-2">
               <a
-                href="mailto:alon710@gmail.com"
+                href={`mailto:${t("company.email")}`}
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Mail className="h-4 w-4" />
-                <span>alon710@gmail.com</span>
+                <span>{t("company.email")}</span>
               </a>
               <a
                 href="tel:+972-50-671-5060"

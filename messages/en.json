@@ -191,7 +191,8 @@
       "company": {
         "name": "AI Responses",
         "description": "Advanced AI solution for managing and automating customer review responses. Save time and improve your business reputation.",
-        "location": "Tel Aviv, Israel"
+        "location": "Tel Aviv, Israel",
+        "email": "alon@bottie.ai"
       },
       "product": {
         "title": "Product",
@@ -602,7 +603,7 @@
       "contact": {
         "title": "9. Contact",
         "content": "For questions or clarifications regarding the terms of service, please contact:",
-        "email": "alon710@gmail.com"
+        "email": "alon@bottie.ai"
       }
     }
   },
@@ -678,7 +679,7 @@
         "content": "For questions or requests regarding the privacy policy or exercising your rights, please contact:",
         "email": "Email: {email}",
         "phone": "Phone: {phone}",
-        "emailValue": "alon710@gmail.com",
+        "emailValue": "alon@bottie.ai",
         "phoneValue": "+972-50-671-5060"
       }
     }
