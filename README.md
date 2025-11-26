@@ -167,7 +167,7 @@ See [`.env.example`](.env.example) for a complete list of required environment v
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22.13.1 (see `.nvmrc` so `nvm use` sets the runtime; installs work without `--ignore-engines`)
 - npm, yarn, pnpm, or bun
 - PostgreSQL database (via Supabase)
 - Google Cloud project with required APIs enabled
