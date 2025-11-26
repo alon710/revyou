@@ -49,7 +49,9 @@ export async function updateUserSettings(settings: Partial<UserSettings>): Promi
       throw new Error("Invalid weeklySummaryEnabled value");
     }
 
-    if (settings.weeklySummaryEnabled) {
+    const enableWeeklySummary = settings.weeklySummaryEnabled ?? false;
+
+    if (enableWeeklySummary) {
       const { getActiveSubscription } = await import("@/lib/actions/subscription.actions");
       const subscription = await getActiveSubscription();
       const isPro = subscription?.planTier === "pro" && subscription?.status === "active";
@@ -59,7 +61,7 @@ export async function updateUserSettings(settings: Partial<UserSettings>): Promi
       }
     }
 
-    updates.WEEKLY_SUMMARY_ENABLED = settings.weeklySummaryEnabled;
+    updates.WEEKLY_SUMMARY_ENABLED = enableWeeklySummary;
   }
 
   const controller = new UsersController();
@@ -77,6 +79,6 @@ export async function updateUserSettings(settings: Partial<UserSettings>): Promi
   return {
     locale: updatedConfig.configs.LOCALE as Locale,
     emailOnNewReview: updatedConfig.configs.EMAIL_ON_NEW_REVIEW,
-    weeklySummaryEnabled: updatedConfig.configs.WEEKLY_SUMMARY_ENABLED ?? true,
+    weeklySummaryEnabled: updatedConfig.configs.WEEKLY_SUMMARY_ENABLED ?? false,
   };
 }
