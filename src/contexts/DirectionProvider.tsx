@@ -28,14 +28,15 @@ export function DirectionProvider({ children }: DirectionProviderProps) {
   const [dir, setDir] = React.useState<Direction>("ltr");
 
   React.useEffect(() => {
-    const htmlDir = document.documentElement.dir as Direction;
-    setDir(htmlDir ?? "ltr");
+    const getDocumentDir = (): Direction => {
+      const raw = document.documentElement.dir;
+      return raw === "rtl" ? "rtl" : "ltr";
+    };
+
+    setDir(getDocumentDir());
 
     const observer = new MutationObserver(() => {
-      const newDir = document.documentElement.dir as Direction;
-      if (newDir && newDir !== dir) {
-        setDir(newDir);
-      }
+      setDir(getDocumentDir());
     });
 
     observer.observe(document.documentElement, {
@@ -44,7 +45,7 @@ export function DirectionProvider({ children }: DirectionProviderProps) {
     });
 
     return () => observer.disconnect();
-  }, [dir]);
+  }, []);
 
   const value = React.useMemo(() => ({ dir, isRTL: dir === "rtl" }), [dir]);
 
