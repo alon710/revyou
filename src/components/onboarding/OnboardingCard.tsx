@@ -59,12 +59,7 @@ export function OnboardingCard({
       </Button>
     );
 
-    return isRTL ? (
-      <>
-        {nextBtn}
-        {backBtn}
-      </>
-    ) : (
+    return (
       <>
         {backBtn}
         {nextBtn}
