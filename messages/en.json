@@ -93,7 +93,7 @@
         "businesses": "{count, select, 1 {1 business location} other {Up to {count} business locations}}",
         "reviews": "{count} AI replies per month",
         "autoPost": "Auto-post replies",
-        "manualApproval": "Manual approval required",
+        "manualApproval": "Manual approval option for AI replies",
         "whatsappSupport": "WhatsApp support",
         "prioritySupport": "Priority support",
         "priorityEmailSupport": "Priority email support",

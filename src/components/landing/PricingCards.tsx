@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -223,8 +223,14 @@ export function PricingCards() {
                           ease: "easeOut",
                         }}
                       >
-                        <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                        <span className="text-sm text-foreground">{feature}</span>
+                        {feature.included ? (
+                          <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                        ) : (
+                          <X className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+                        )}
+                        <span className={cn("text-sm", feature.included ? "text-foreground" : "text-muted-foreground")}>
+                          {feature.text}
+                        </span>
                       </motion.li>
                     ))}
                   </ul>

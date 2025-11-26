@@ -79,7 +79,7 @@
         "businesses": "{count, select, 1 {מיקום עסק אחד} other {עד {count} מיקומי עסק}}",
         "reviews": "{count} תשובות AI בחודש",
         "autoPost": "פרסום תשובות אוטומטי",
-        "manualApproval": "אישור ידני נדרש",
+        "manualApproval": "אפשרות לאישור ידני של תגובות AI",
         "whatsappSupport": "תמיכה בוואטסאפ",
         "prioritySupport": "תמיכה מועדפת",
         "priorityEmailSupport": "תמיכה מועדפת במייל",
