@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "@/i18n/routing";
-import { useSearchParams } from "next/navigation";
 import { Loading } from "@/components/ui/loading";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
