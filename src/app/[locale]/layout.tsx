@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { DirectionProvider } from "@/contexts/DirectionProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { locales, getLocaleDir, type Locale } from "@/lib/locale";
 import "../globals.css";
@@ -55,10 +56,12 @@ export default async function LocaleLayout({
     <html lang={locale} dir={dir} className={`${rubik.variable} ${nunito.variable}`}>
       <body className="font-sans antialiased" suppressHydrationWarning={true}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <AuthProvider>
-            {children}
-            <Toaster dir={dir} richColors />
-          </AuthProvider>
+          <DirectionProvider>
+            <AuthProvider>
+              {children}
+              <Toaster dir={dir} richColors />
+            </AuthProvider>
+          </DirectionProvider>
         </NextIntlClientProvider>
       </body>
     </html>

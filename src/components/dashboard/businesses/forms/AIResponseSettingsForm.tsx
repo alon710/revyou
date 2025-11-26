@@ -80,7 +80,7 @@ export function AIResponseSettingsForm({
           <SelectTrigger id="toneOfVoice">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent dir={dir}>
+          <SelectContent>
             <SelectItem value="professional">{t("toneOfVoice.options.professional")}</SelectItem>
             <SelectItem value="friendly">{t("toneOfVoice.options.friendly")}</SelectItem>
             <SelectItem value="formal">{t("toneOfVoice.options.formal")}</SelectItem>
@@ -108,7 +108,7 @@ export function AIResponseSettingsForm({
           <SelectTrigger id="languageMode">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent dir={dir}>
+          <SelectContent>
             <SelectItem value="auto-detect">{t("languageMode.options.autoDetect")}</SelectItem>
             <SelectItem value="hebrew">{t("languageMode.options.hebrew")}</SelectItem>
             <SelectItem value="english">{t("languageMode.options.english")}</SelectItem>
@@ -162,7 +162,7 @@ export function AIResponseSettingsForm({
           <SelectTrigger id="maxSentences">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent dir={dir}>
+          <SelectContent>
             <SelectItem value="1">{t("maxSentences.options.one")}</SelectItem>
             <SelectItem value="2">{t("maxSentences.options.two")}</SelectItem>
             <SelectItem value="3">{t("maxSentences.options.three")}</SelectItem>
