@@ -1,6 +1,4 @@
 import { Body, Button, Container, Head, Heading, Hr, Html, Section, Text } from "@react-email/components";
-import * as React from "react";
-
 export interface ReviewNotificationEmailProps {
   title: string;
   greeting: string;
@@ -11,14 +9,12 @@ export interface ReviewNotificationEmailProps {
   statusText: string;
   viewReviewButton: string;
   footer: string;
-
   reviewerName: string;
   rating: number;
   reviewText: string;
   aiReply: string;
   status: "pending" | "posted";
   reviewPageUrl: string;
-
   locale: "en" | "he";
 }
 

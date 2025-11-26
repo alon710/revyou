@@ -1,6 +1,4 @@
 import { Body, Button, Container, Head, Heading, Hr, Html, Section, Text, Column, Row } from "@react-email/components";
-import * as React from "react";
-
 export interface WeeklySummaryEmailProps {
   title: string;
   dateRange: string;

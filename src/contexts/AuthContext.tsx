@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode } from "react";
 import { User } from "@supabase/supabase-js";
 import { useAuth as useSupabaseAuth } from "@/lib/auth/auth";
 
