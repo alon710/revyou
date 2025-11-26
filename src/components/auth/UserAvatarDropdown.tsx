@@ -83,16 +83,22 @@ export function UserAvatarDropdown() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {!isDashboardPage && (
-          <DropdownMenuItem onSelect={handleDashboard} className="cursor-pointer flex justify-between">
+          <DropdownMenuItem
+            onSelect={handleDashboard}
+            className="cursor-pointer flex justify-between rtl:flex-row-reverse"
+          >
             <LayoutDashboard className="h-4 w-4" />
             <span>{t("dashboard")}</span>
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem onSelect={handleAddBusiness} className="cursor-pointer flex justify-between">
+        <DropdownMenuItem
+          onSelect={handleAddBusiness}
+          className="cursor-pointer flex justify-between rtl:flex-row-reverse"
+        >
           <Plus className="h-4 w-4" />
           <span>{t("addBusiness")}</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={handleSignOut} className="cursor-pointer flex justify-between">
+        <DropdownMenuItem onSelect={handleSignOut} className="cursor-pointer flex justify-between rtl:flex-row-reverse">
           <LogOut className="h-4 w-4" />
           <span>{t("signOut")}</span>
         </DropdownMenuItem>

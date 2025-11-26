@@ -13,8 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { saveReviewDraft } from "@/lib/actions/reviews.actions";
 import { Edit } from "lucide-react";
-import { useTranslations, useLocale } from "next-intl";
-import { getLocaleDir, type Locale } from "@/lib/locale";
+import { useTranslations } from "next-intl";
+import { useDirection } from "@/contexts/DirectionProvider";
 import type { ReviewWithLatestGeneration } from "@/lib/db/repositories";
 
 interface ReplyEditorProps {
@@ -40,8 +40,7 @@ export function ReplyEditor({
   loadingText,
 }: ReplyEditorProps) {
   const t = useTranslations("dashboard.reviews.editor");
-  const locale = useLocale();
-  const dir = getLocaleDir(locale as Locale);
+  const { dir } = useDirection();
   const [replyText, setReplyText] = useState(review.latestAiReply || "");
   const [isLoading, setIsLoading] = useState(false);
   const defaultLoadingText = loadingText || t("saving");

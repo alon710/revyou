@@ -3,11 +3,26 @@
 import * as React from "react";
 import { DirectionProvider as RadixDirectionProvider } from "@radix-ui/react-direction";
 
+type Direction = "ltr" | "rtl";
+
+interface DirectionContextValue {
+  dir: Direction;
+  isRTL: boolean;
+}
+
+const DirectionContext = React.createContext<DirectionContextValue | undefined>(undefined);
+
+export function useDirection() {
+  const context = React.useContext(DirectionContext);
+  if (!context) {
+    throw new Error("useDirection must be used within DirectionProvider");
+  }
+  return context;
+}
+
 interface DirectionProviderProps {
   children: React.ReactNode;
 }
-
-type Direction = "ltr" | "rtl";
 
 export function DirectionProvider({ children }: DirectionProviderProps) {
   const [dir, setDir] = React.useState<Direction>("ltr");
@@ -31,5 +46,11 @@ export function DirectionProvider({ children }: DirectionProviderProps) {
     return () => observer.disconnect();
   }, [dir]);
 
-  return <RadixDirectionProvider dir={dir}>{children}</RadixDirectionProvider>;
+  const value = React.useMemo(() => ({ dir, isRTL: dir === "rtl" }), [dir]);
+
+  return (
+    <DirectionContext.Provider value={value}>
+      <RadixDirectionProvider dir={dir}>{children}</RadixDirectionProvider>
+    </DirectionContext.Provider>
+  );
 }

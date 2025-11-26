@@ -1,7 +1,6 @@
 "use client";
 
-import { useLocale } from "next-intl";
-import { getLocaleDir, type Locale } from "@/lib/locale";
+import { useDirection } from "@/contexts/DirectionProvider";
 import { GoogleBusinessProfileBusiness } from "@/lib/types";
 import { RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -13,9 +12,7 @@ interface BusinessRadioItemProps {
 }
 
 export function BusinessRadioItem({ business, selected }: BusinessRadioItemProps) {
-  const locale = useLocale() as Locale;
-  const dir = getLocaleDir(locale);
-  const isRTL = dir === "rtl";
+  const { isRTL } = useDirection();
 
   return (
     <div
