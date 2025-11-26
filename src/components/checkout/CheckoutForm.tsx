@@ -14,16 +14,15 @@ import { createCheckoutSession } from "@/lib/actions/subscription.actions";
 interface CheckoutFormProps {
   plan: PlanTier | null;
   period: BillingInterval | null;
+  coupon: string | null;
 }
 
-export function CheckoutForm({ plan, period }: CheckoutFormProps) {
+export function CheckoutForm({ plan, period, coupon }: CheckoutFormProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const t = useTranslations("checkout");
   const { user } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const hasStartedProcessing = useRef(false);
-  const coupon = searchParams.get("coupon");
 
   useEffect(() => {
     if (error) {

@@ -7,13 +7,13 @@ export default async function CheckoutPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ plan?: string; period?: string }>;
+  searchParams: Promise<{ plan?: string; period?: string; coupon?: string }>;
 }) {
   await params;
   const search = await searchParams;
 
   const plan = (search.plan as PlanTier) || null;
   const period = (search.period as BillingInterval) || null;
-
-  return <CheckoutForm plan={plan} period={period} />;
+  const coupon = search.coupon as string | null;
+  return <CheckoutForm plan={plan} period={period} coupon={coupon} />;
 }
