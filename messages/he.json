@@ -76,7 +76,7 @@
         "manual_approval": "אישור ידני",
         "auto_publish": "פרסום אוטומטי",
         "whatsapp_support": "תמיכה בוואטסאפ",
-        "businesses": "{count, select, 1 {מיקום עסק אחד} other {עד {count} מיקומי עסק}}",
+        "businesses": "{count, select, 1 {עסק אחד} other {עד {count} עסקים}}",
         "reviews": "{count} תשובות AI בחודש",
         "autoPost": "פרסום תשובות אוטומטי",
         "manualApproval": "אפשרות לאישור ידני של תגובות AI",
