@@ -21,7 +21,7 @@ export async function getUserSettings(): Promise<UserSettings> {
   return {
     locale: config.configs.LOCALE as Locale,
     emailOnNewReview: config.configs.EMAIL_ON_NEW_REVIEW,
-    weeklySummaryEnabled: config.configs.WEEKLY_SUMMARY_ENABLED ?? true,
+    weeklySummaryEnabled: config.configs.WEEKLY_SUMMARY_ENABLED ?? false,
   };
 }
 
@@ -48,7 +48,20 @@ export async function updateUserSettings(settings: Partial<UserSettings>): Promi
     if (typeof settings.weeklySummaryEnabled !== "boolean") {
       throw new Error("Invalid weeklySummaryEnabled value");
     }
-    updates.WEEKLY_SUMMARY_ENABLED = settings.weeklySummaryEnabled;
+
+    const enableWeeklySummary = settings.weeklySummaryEnabled ?? false;
+
+    if (enableWeeklySummary) {
+      const { getActiveSubscription } = await import("@/lib/actions/subscription.actions");
+      const subscription = await getActiveSubscription();
+      const isPro = subscription?.planTier === "pro" && subscription?.status === "active";
+
+      if (!isPro) {
+        throw new Error("Weekly summary is only available for Pro users");
+      }
+    }
+
+    updates.WEEKLY_SUMMARY_ENABLED = enableWeeklySummary;
   }
 
   const controller = new UsersController();
@@ -66,6 +79,6 @@ export async function updateUserSettings(settings: Partial<UserSettings>): Promi
   return {
     locale: updatedConfig.configs.LOCALE as Locale,
     emailOnNewReview: updatedConfig.configs.EMAIL_ON_NEW_REVIEW,
-    weeklySummaryEnabled: updatedConfig.configs.WEEKLY_SUMMARY_ENABLED ?? true,
+    weeklySummaryEnabled: updatedConfig.configs.WEEKLY_SUMMARY_ENABLED ?? false,
   };
 }

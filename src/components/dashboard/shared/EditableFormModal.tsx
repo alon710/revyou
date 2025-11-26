@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { FormRenderProps } from "./EditableSection";
 import { toast } from "sonner";
-import { useLocale } from "next-intl";
+import { useDirection } from "@/contexts/DirectionProvider";
 
 interface EditableFormModalProps<T> {
   icon: ReactNode;
@@ -45,11 +45,10 @@ export function EditableFormModal<T>({
   saveLabel,
   savingLabel,
 }: EditableFormModalProps<T>) {
-  const locale = useLocale();
+  const { dir } = useDirection();
   const [formData, setFormData] = useState<T>(data);
   const [isLoading, setIsLoading] = useState(false);
   const prevOpenRef = useRef(open);
-  const dir = locale === "he" ? "rtl" : "ltr";
 
   useEffect(() => {
     if (open && !prevOpenRef.current) {

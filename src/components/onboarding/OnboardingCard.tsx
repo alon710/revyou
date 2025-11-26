@@ -1,7 +1,6 @@
 "use client";
 
 import { ReactNode } from "react";
-import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   DashboardCard,
@@ -10,7 +9,6 @@ import {
   DashboardCardHeader,
   DashboardCardTitle,
 } from "@/components/ui/dashboard-card";
-import { getLocaleDir, type Locale } from "@/lib/locale";
 
 interface OnboardingCardProps {
   title: string;
@@ -41,10 +39,6 @@ export function OnboardingCard({
   nextButton,
   hideNavigation = false,
 }: OnboardingCardProps) {
-  const locale = useLocale() as Locale;
-  const dir = getLocaleDir(locale);
-  const isRTL = dir === "rtl";
-
   const renderButtons = () => {
     if (hideNavigation) return null;
 
@@ -65,14 +59,7 @@ export function OnboardingCard({
       </Button>
     );
 
-    if (!backBtn && !nextBtn) return null;
-
-    return isRTL ? (
-      <>
-        {nextBtn}
-        {backBtn}
-      </>
-    ) : (
+    return (
       <>
         {backBtn}
         {nextBtn}

@@ -30,14 +30,42 @@ describe("UsersController", () => {
   });
 
   describe("getUserConfig", () => {
-    it("should get or create user config", async () => {
+    it("should get or create user config without locale parameter", async () => {
       const userId = "user-123";
-      const mockConfig = { userId, locale: "en" };
+      const mockConfig = { userId, configs: { LOCALE: "en", EMAIL_ON_NEW_REVIEW: true, WEEKLY_SUMMARY_ENABLED: true } };
       mockRepo.getOrCreate.mockResolvedValue(mockConfig);
 
       const result = await controller.getUserConfig(userId);
 
-      expect(mockRepo.getOrCreate).toHaveBeenCalledWith(userId);
+      expect(mockRepo.getOrCreate).toHaveBeenCalledWith(userId, undefined);
+      expect(result).toBe(mockConfig);
+    });
+
+    it("should create user config with detected Hebrew locale", async () => {
+      const userId = "user-123";
+      const mockConfig = {
+        userId,
+        configs: { LOCALE: "he", EMAIL_ON_NEW_REVIEW: true, WEEKLY_SUMMARY_ENABLED: true },
+      };
+      mockRepo.getOrCreate.mockResolvedValue(mockConfig);
+
+      const result = await controller.getUserConfig(userId, "he");
+
+      expect(mockRepo.getOrCreate).toHaveBeenCalledWith(userId, "he");
+      expect(result).toBe(mockConfig);
+    });
+
+    it("should create user config with detected English locale", async () => {
+      const userId = "user-123";
+      const mockConfig = {
+        userId,
+        configs: { LOCALE: "en", EMAIL_ON_NEW_REVIEW: true, WEEKLY_SUMMARY_ENABLED: true },
+      };
+      mockRepo.getOrCreate.mockResolvedValue(mockConfig);
+
+      const result = await controller.getUserConfig(userId, "en");
+
+      expect(mockRepo.getOrCreate).toHaveBeenCalledWith(userId, "en");
       expect(result).toBe(mockConfig);
     });
   });
@@ -46,7 +74,7 @@ describe("UsersController", () => {
     it("should update user config", async () => {
       const userId = "user-123";
       const data = { locale: "he" as const };
-      const mockConfig = { userId, locale: "he" };
+      const mockConfig = { userId, configs: { LOCALE: "he", EMAIL_ON_NEW_REVIEW: true, WEEKLY_SUMMARY_ENABLED: true } };
       mockRepo.updateConfigs.mockResolvedValue(mockConfig);
 
       const result = await controller.updateUserConfig(userId, data as unknown as Partial<UserConfigMap>);

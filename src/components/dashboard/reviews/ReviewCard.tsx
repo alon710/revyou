@@ -131,18 +131,18 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
         </DashboardCardHeader>
 
         <DashboardCardContent className="space-y-4">
-          {review.text && (
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  {t("reviewLabel")}
-                </span>
-              </div>
-              <div className="rounded-md bg-muted/50 p-3">
-                <p className="text-sm leading-relaxed">{review.text}</p>
-              </div>
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                {t("reviewLabel")}
+              </span>
             </div>
-          )}
+            <div className="rounded-md bg-muted/50 p-3">
+              <p className={cn("text-sm leading-relaxed", !review.text && "italic text-muted-foreground")}>
+                {review.text || t("noText")}
+              </p>
+            </div>
+          </div>
 
           {review.latestAiReply && (
             <DashboardCardSection withBorder={!!review.text}>

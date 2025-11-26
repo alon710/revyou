@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "@/i18n/routing";
-import { useLocale } from "next-intl";
-import { getLocaleDir, type Locale } from "@/lib/locale";
+import { useDirection } from "@/contexts/DirectionProvider";
 
 interface BackButtonProps {
   label: string;
@@ -14,9 +13,7 @@ interface BackButtonProps {
 
 export function BackButton({ label, className }: BackButtonProps) {
   const router = useRouter();
-  const locale = useLocale() as Locale;
-  const dir = getLocaleDir(locale);
-  const isRTL = dir === "rtl";
+  const { isRTL } = useDirection();
 
   return (
     <Button variant="ghost" size="sm" onClick={() => router.back()} className={cn(className)}>

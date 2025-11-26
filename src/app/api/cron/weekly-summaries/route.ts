@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
     for (const userId of proUserIds) {
       try {
         const userConfig = await usersConfigsRepo.get(userId);
-        const isEnabled = userConfig?.configs?.WEEKLY_SUMMARY_ENABLED ?? true;
+        const isEnabled = userConfig?.configs?.WEEKLY_SUMMARY_ENABLED ?? false;
 
         if (!isEnabled) {
           continue;
