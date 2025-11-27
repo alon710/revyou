@@ -100,7 +100,7 @@ export async function createCheckoutSession(
         },
       ],
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/dashboard/subscription?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/pricing`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/#pricing`,
       customer_email: user.email,
       client_reference_id: user.id,
       metadata: {
