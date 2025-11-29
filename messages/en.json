@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "AI Responses for Reviews - Google Review AI Reply",
+    "title": "Bottie.ai - AI Responses for Reviews - Google Review AI Reply",
     "description": "Automatically generate professional responses to customer reviews using artificial intelligence"
   },
   "common": {
@@ -189,7 +189,7 @@
     },
     "footer": {
       "company": {
-        "name": "AI Responses",
+        "name": "Bottie.ai",
         "description": "Advanced AI solution for managing and automating customer review responses. Save time and improve your business reputation.",
         "location": "Tel Aviv, Israel",
         "email": "alon@bottie.ai"
@@ -209,7 +209,7 @@
         "privacy": "Privacy Policy",
         "terms": "Terms of Service"
       },
-      "copyright": "© {year} AI Responses. All rights reserved."
+      "copyright": "© {year} Bottie.ai. All rights reserved."
     }
   },
   "auth": {
