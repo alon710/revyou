@@ -89,7 +89,7 @@ export async function importRecentReviews(
 
   const accountsRepo = new AccountsRepository(userId);
   const businessesRepo = new BusinessesRepository(userId, accountId);
-  const reviewsRepo = new ReviewsRepository(userId, accountId, businessId);
+  const reviewsRepo = new ReviewsRepository(userId, businessId);
   const reviewResponsesRepo = new ReviewResponsesRepository(userId, accountId, businessId);
 
   const account = await accountsRepo.get(accountId);
@@ -119,7 +119,6 @@ export async function importRecentReviews(
           const hasReply = !!googleReview.reviewReply;
 
           const reviewData: ReviewInsert = {
-            accountId,
             businessId,
             googleReviewId: googleReview.reviewId,
             googleReviewName: googleReview.name,

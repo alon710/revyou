@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
       reviewer: googleReview.reviewer.displayName,
     });
 
-    const reviewsRepo = new ReviewsRepository(userId, accountId, business.id);
+    const reviewsRepo = new ReviewsRepository(userId, business.id);
     const existingReview = await reviewsRepo.findByGoogleReviewId(googleReview.reviewId);
 
     if (existingReview) {
@@ -209,7 +209,6 @@ export async function POST(request: NextRequest) {
     }
 
     const reviewData: ReviewInsert = {
-      accountId,
       businessId: business.id,
       googleReviewId: googleReview.reviewId,
       googleReviewName: googleReview.name,
