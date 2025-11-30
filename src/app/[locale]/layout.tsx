@@ -8,6 +8,7 @@ import { DirectionProvider } from "@/contexts/DirectionProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { locales, getLocaleDir, type Locale } from "@/lib/locale";
 import "../globals.css";
+import Script from "next/script";
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -62,6 +63,7 @@ export default async function LocaleLayout({
               <Toaster dir={dir} richColors />
             </AuthProvider>
           </DirectionProvider>
+          <Script src="https://app.rybbit.io/api/script.js" data-site-id="91604d9cddac" strategy="afterInteractive" />
         </NextIntlClientProvider>
       </body>
     </html>

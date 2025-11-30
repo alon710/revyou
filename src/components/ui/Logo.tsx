@@ -5,11 +5,13 @@ import { Link } from "@/i18n/routing";
 
 import { cn } from "@/lib/utils";
 
+import Image from "next/image";
+
 interface SiteLogoProps {
   href: Route;
-  color?: string;
   className?: string;
   size?: "sm" | "md" | "lg" | "xl";
+  variant?: "icon" | "full";
 }
 
 const sizePx = {
@@ -19,38 +21,22 @@ const sizePx = {
   xl: 52,
 };
 
-export function Logo({ href, className, size = "lg" }: SiteLogoProps) {
+export function Logo({ href, className, size = "lg", variant = "full" }: SiteLogoProps) {
   const height = sizePx[size];
 
-  const width = Math.round(height * (122.03 / 45.69));
-
-  const fontSizeClasses = {
-    sm: "text-base",
-    md: "text-lg",
-    lg: "text-2xl",
-    xl: "text-4xl",
-  };
+  const imageSrc = variant === "icon" ? "/images/logo-icon.png" : "/images/logo-full.png";
 
   return (
     <Link href={href} className={cn("flex items-center", className)}>
-      <div
-        className={cn("relative content-center")}
-        style={{
-          height,
-          width,
-        }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span
-            dir="ltr"
-            className={cn(
-              "font-nunito font-extrabold tracking-tight bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent",
-              fontSizeClasses[size]
-            )}
-          >
-            Bottie.
-          </span>
-        </div>
+      <div style={{ height }} className="relative aspect-auto">
+        <Image
+          src={imageSrc}
+          alt="Bottie Logo"
+          height={height}
+          width={variant === "icon" ? height : height * 3}
+          className="h-full w-auto object-contain"
+          priority
+        />
       </div>
     </Link>
   );
