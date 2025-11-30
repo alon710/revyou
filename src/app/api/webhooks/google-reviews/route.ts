@@ -282,17 +282,12 @@ export async function POST(request: NextRequest) {
         { status: 200 }
       );
     } catch (error) {
-      if (
-        error instanceof Error &&
-        (error as any).code === "23505"
-      ) {
+      if (error instanceof Error && (error as any).code === "23505") {
         console.log("Review already exists (race condition), skipping:", googleReview.reviewId);
         return NextResponse.json({ message: "Review already exists" }, { status: 200 });
       }
       throw error;
     }
-
-
   } catch (error) {
     console.error("Error processing Google review notification:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
