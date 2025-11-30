@@ -138,8 +138,12 @@ describe("ReviewsController", () => {
       const customReply = "My custom reply";
       const mockReview = {
         id: reviewId,
-        accountId,
+        businessId,
         googleReviewName: "accounts/1/locations/2/reviews/3",
+      };
+      const mockBusiness = {
+        id: businessId,
+        accountId,
       };
       const mockAccount = {
         id: accountId,
@@ -149,6 +153,7 @@ describe("ReviewsController", () => {
 
       mockReviewsRepo.get.mockResolvedValue(mockReview);
       mockResponsesRepo.getLatestDraft.mockResolvedValue(null);
+      mockBusinessesRepo.get.mockResolvedValue(mockBusiness);
       mockAccountsRepo.get.mockResolvedValue(mockAccount);
       (decryptToken as Mock).mockResolvedValue(mockDecryptedToken);
       (postReplyToGoogle as Mock).mockResolvedValue({ comment: customReply });
@@ -159,6 +164,7 @@ describe("ReviewsController", () => {
       const result = await controller.postReply(reviewId, customReply, userId);
 
       expect(mockReviewsRepo.get).toHaveBeenCalledWith(reviewId);
+      expect(mockBusinessesRepo.get).toHaveBeenCalledWith(businessId);
       expect(mockAccountsRepo.get).toHaveBeenCalledWith(accountId);
       expect(decryptToken).toHaveBeenCalledWith("encrypted-token");
       expect(postReplyToGoogle).toHaveBeenCalledWith(
@@ -185,13 +191,18 @@ describe("ReviewsController", () => {
       const mockDraft = { text: "Draft reply" };
       const mockReview = {
         id: reviewId,
-        accountId,
+        businessId,
         googleReviewName: "name",
+      };
+      const mockBusiness = {
+        id: businessId,
+        accountId,
       };
       const mockAccount = { googleRefreshToken: "token" };
 
       mockReviewsRepo.get.mockResolvedValue(mockReview);
       mockResponsesRepo.getLatestDraft.mockResolvedValue(mockDraft);
+      mockBusinessesRepo.get.mockResolvedValue(mockBusiness);
       mockAccountsRepo.get.mockResolvedValue(mockAccount);
       (decryptToken as Mock).mockResolvedValue("decrypted");
 
