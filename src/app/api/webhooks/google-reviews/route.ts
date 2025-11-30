@@ -282,7 +282,12 @@ export async function POST(request: NextRequest) {
         { status: 200 }
       );
     } catch (error) {
-      if (error instanceof Error && (error as any).code === "23505") {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code: string }).code === "23505"
+      ) {
         console.log("Review already exists (race condition), skipping:", googleReview.reviewId);
         return NextResponse.json({ message: "Review already exists" }, { status: 200 });
       }
