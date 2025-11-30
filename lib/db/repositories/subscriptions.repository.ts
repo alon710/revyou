@@ -4,6 +4,7 @@ import {
   subscriptions,
   userAccounts,
   accounts,
+  businesses,
   reviews,
   type Subscription,
   type SubscriptionInsert,
@@ -110,7 +111,8 @@ export class SubscriptionsRepository {
       const result = await db
         .select({ count: countDistinct(reviews.id) })
         .from(reviews)
-        .innerJoin(accounts, eq(reviews.accountId, accounts.id))
+        .innerJoin(businesses, eq(reviews.businessId, businesses.id))
+        .innerJoin(accounts, eq(businesses.accountId, accounts.id))
         .innerJoin(userAccounts, eq(accounts.id, userAccounts.accountId))
         .where(
           and(eq(userAccounts.userId, userId), gte(reviews.receivedAt, startDate), eq(reviews.consumesQuota, true))

@@ -1,5 +1,4 @@
 import { Body, Button, Container, Head, Heading, Hr, Html, Section, Text } from "@react-email/components";
-import * as React from "react";
 
 export interface ReviewNotificationEmailProps {
   title: string;

@@ -100,7 +100,6 @@ export const createReview = createSafeAction(
   async ({ accountId, businessId, data }, { userId }) => {
     const controller = new ReviewsController(userId, accountId, businessId);
     const reviewData: ReviewCreate = {
-      accountId,
       businessId,
       ...data,
     };

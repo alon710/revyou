@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       reviewId,
     });
 
-    const reviewsRepo = new ReviewsRepository(userId, accountId, businessId);
+    const reviewsRepo = new ReviewsRepository(userId, businessId);
     const businessesRepo = new BusinessesRepository(userId, accountId);
     const accountsRepo = new AccountsRepository(userId);
     const reviewsController = new ReviewsController(userId, accountId, businessId);

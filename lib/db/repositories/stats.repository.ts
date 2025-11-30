@@ -26,7 +26,8 @@ export class StatsRepository {
       const result = await db
         .select({ count: countDistinct(reviews.id) })
         .from(reviews)
-        .innerJoin(userAccounts, eq(reviews.accountId, userAccounts.accountId))
+        .innerJoin(businesses, eq(reviews.businessId, businesses.id))
+        .innerJoin(userAccounts, eq(businesses.accountId, userAccounts.accountId))
         .where(
           and(eq(userAccounts.userId, userId), gte(reviews.receivedAt, startDate), eq(reviews.consumesQuota, true))
         );

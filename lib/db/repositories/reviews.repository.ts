@@ -1,6 +1,6 @@
 import { eq, and, inArray, gte, lte, exists, desc } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import { reviews, reviewResponses, userAccounts, type Review, type ReviewInsert } from "@/lib/db/schema";
+import { reviews, reviewResponses, userAccounts, businesses, type Review, type ReviewInsert } from "@/lib/db/schema";
 import type { ReviewFilters } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 import { NotFoundError, ForbiddenError } from "@/lib/api/errors";
@@ -17,15 +17,20 @@ export type ReviewWithLatestGeneration = Review & {
 export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Partial<Review>> {
   constructor(
     private userId: string,
-    private accountId: string,
     private businessId: string
   ) {
     super();
   }
 
   private async verifyAccess(): Promise<boolean> {
+    const business = await db.query.businesses.findFirst({
+      where: eq(businesses.id, this.businessId),
+    });
+
+    if (!business) return false;
+
     const access = await db.query.userAccounts.findFirst({
-      where: and(eq(userAccounts.userId, this.userId), eq(userAccounts.accountId, this.accountId)),
+      where: and(eq(userAccounts.userId, this.userId), eq(userAccounts.accountId, business.accountId)),
     });
     return !!access;
   }
@@ -34,19 +39,15 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     return exists(
       db
         .select()
-        .from(userAccounts)
-        .where(and(eq(userAccounts.userId, this.userId), eq(userAccounts.accountId, this.accountId)))
+        .from(businesses)
+        .innerJoin(userAccounts, eq(userAccounts.accountId, businesses.accountId))
+        .where(and(eq(businesses.id, this.businessId), eq(userAccounts.userId, this.userId)))
     );
   }
 
   async get(reviewId: string): Promise<ReviewWithLatestGeneration | null> {
     const review = await db.query.reviews.findFirst({
-      where: and(
-        eq(reviews.id, reviewId),
-        eq(reviews.accountId, this.accountId),
-        eq(reviews.businessId, this.businessId),
-        this.getAccessCondition()
-      ),
+      where: and(eq(reviews.id, reviewId), eq(reviews.businessId, this.businessId), this.getAccessCondition()),
     });
 
     if (!review) return null;
@@ -67,11 +68,7 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
   }
 
   async list(filters: ReviewFilters = {}): Promise<ReviewWithLatestGeneration[]> {
-    const conditions = [
-      eq(reviews.accountId, this.accountId),
-      eq(reviews.businessId, this.businessId),
-      this.getAccessCondition(),
-    ];
+    const conditions = [eq(reviews.businessId, this.businessId), this.getAccessCondition()];
 
     if (filters.replyStatus && filters.replyStatus.length > 0) {
       conditions.push(inArray(reviews.replyStatus, filters.replyStatus));
@@ -141,7 +138,6 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
 
     const reviewData: ReviewInsert = {
       ...data,
-      accountId: this.accountId,
       businessId: this.businessId,
       replyStatus: data.replyStatus || "pending",
     };
@@ -157,14 +153,7 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     const [updated] = await db
       .update(reviews)
       .set({ ...data, updateTime: new Date() })
-      .where(
-        and(
-          eq(reviews.id, reviewId),
-          eq(reviews.accountId, this.accountId),
-          eq(reviews.businessId, this.businessId),
-          this.getAccessCondition()
-        )
-      )
+      .where(and(eq(reviews.id, reviewId), eq(reviews.businessId, this.businessId), this.getAccessCondition()))
       .returning();
 
     if (!updated) {
@@ -177,14 +166,7 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
   async delete(reviewId: string): Promise<void> {
     const [deleted] = await db
       .delete(reviews)
-      .where(
-        and(
-          eq(reviews.id, reviewId),
-          eq(reviews.accountId, this.accountId),
-          eq(reviews.businessId, this.businessId),
-          this.getAccessCondition()
-        )
-      )
+      .where(and(eq(reviews.id, reviewId), eq(reviews.businessId, this.businessId), this.getAccessCondition()))
       .returning();
 
     if (!deleted) {
@@ -208,7 +190,6 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     const result = await db.query.reviews.findFirst({
       where: and(
         eq(reviews.googleReviewId, googleReviewId),
-        eq(reviews.accountId, this.accountId),
         eq(reviews.businessId, this.businessId),
         this.getAccessCondition()
       ),
@@ -220,7 +201,6 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
   async getRecentPosted(limit: number = 5): Promise<ReviewResponseWithReview[]> {
     return await db.query.reviewResponses.findMany({
       where: and(
-        eq(reviewResponses.accountId, this.accountId),
         eq(reviewResponses.businessId, this.businessId),
         eq(reviewResponses.status, "posted"),
         this.getAccessCondition()

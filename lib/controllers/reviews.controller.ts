@@ -20,7 +20,7 @@ export class ReviewsController {
 
   constructor(userId: string, accountId: string, businessId: string) {
     this.userId = userId;
-    this.repository = new ReviewsRepository(userId, accountId, businessId);
+    this.repository = new ReviewsRepository(userId, businessId);
     this.responsesRepo = new ReviewResponsesRepository(userId, accountId, businessId);
     this.accountsRepo = new AccountsRepository(userId);
     this.businessesRepo = new BusinessesRepository(userId, accountId);
@@ -142,7 +142,10 @@ export class ReviewsController {
       throw new Error("No reply to post. Generate AI reply first or provide custom reply.");
     }
 
-    const account = await this.accountsRepo.get(review.accountId);
+    const business = await this.businessesRepo.get(review.businessId);
+    if (!business) throw new Error("Business not found");
+
+    const account = await this.accountsRepo.get(business.accountId);
     if (!account) throw new Error("Account not found");
 
     const refreshToken = await decryptToken(account.googleRefreshToken);

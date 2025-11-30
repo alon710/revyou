@@ -36,7 +36,9 @@ describe("StatsRepository", () => {
       (db.select as Mock).mockReturnValue({
         from: vi.fn().mockReturnValue({
           innerJoin: vi.fn().mockReturnValue({
-            where: vi.fn().mockResolvedValue(mockResult),
+            innerJoin: vi.fn().mockReturnValue({
+              where: vi.fn().mockResolvedValue(mockResult),
+            }),
           }),
         }),
       });
@@ -51,7 +53,9 @@ describe("StatsRepository", () => {
       (db.select as Mock).mockReturnValue({
         from: vi.fn().mockReturnValue({
           innerJoin: vi.fn().mockReturnValue({
-            where: vi.fn().mockResolvedValue(mockResult),
+            innerJoin: vi.fn().mockReturnValue({
+              where: vi.fn().mockResolvedValue(mockResult),
+            }),
           }),
         }),
       });

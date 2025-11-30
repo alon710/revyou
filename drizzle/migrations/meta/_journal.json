@@ -8,6 +8,13 @@
       "when": 1764079203894,
       "tag": "0000_parched_ultimo",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1764496879019,
+      "tag": "0001_curly_titanium_man",
+      "breakpoints": true
     }
   ]
 }

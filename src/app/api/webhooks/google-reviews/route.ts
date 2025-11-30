@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
       reviewer: googleReview.reviewer.displayName,
     });
 
-    const reviewsRepo = new ReviewsRepository(userId, accountId, business.id);
+    const reviewsRepo = new ReviewsRepository(userId, business.id);
     const existingReview = await reviewsRepo.findByGoogleReviewId(googleReview.reviewId);
 
     if (existingReview) {
@@ -209,7 +209,6 @@ export async function POST(request: NextRequest) {
     }
 
     const reviewData: ReviewInsert = {
-      accountId,
       businessId: business.id,
       googleReviewId: googleReview.reviewId,
       googleReviewName: googleReview.name,
@@ -225,61 +224,74 @@ export async function POST(request: NextRequest) {
     };
 
     console.log("Creating new review in database");
-    const newReview = await reviewsRepo.create(reviewData);
-    console.log("Review created successfully:", newReview.id);
-
-    const processReviewUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/internal/process-review`;
-    console.log("Triggering review processing:", {
-      url: processReviewUrl,
-      reviewId: newReview.id,
-      userId,
-      accountId,
-      businessId: business.id,
-    });
-
     try {
-      const response = await fetch(processReviewUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Internal-Secret": process.env.INTERNAL_API_SECRET!,
-        },
-        body: JSON.stringify({
-          userId,
-          accountId,
-          businessId: business.id,
-          reviewId: newReview.id,
-        }),
-      });
+      const newReview = await reviewsRepo.create(reviewData);
+      console.log("Review created successfully:", newReview.id);
 
-      console.log("Process-review endpoint responded:", {
-        status: response.status,
-        statusText: response.statusText,
+      const processReviewUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/internal/process-review`;
+      console.log("Triggering review processing:", {
+        url: processReviewUrl,
         reviewId: newReview.id,
+        userId,
+        accountId,
+        businessId: business.id,
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Process-review returned error:", {
+      try {
+        const response = await fetch(processReviewUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Internal-Secret": process.env.INTERNAL_API_SECRET!,
+          },
+          body: JSON.stringify({
+            userId,
+            accountId,
+            businessId: business.id,
+            reviewId: newReview.id,
+          }),
+        });
+
+        console.log("Process-review endpoint responded:", {
           status: response.status,
-          body: errorText.substring(0, 200),
+          statusText: response.statusText,
+          reviewId: newReview.id,
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Process-review returned error:", {
+            status: response.status,
+            body: errorText.substring(0, 200),
+            reviewId: newReview.id,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to trigger review processing:", {
+          error: error instanceof Error ? error.message : String(error),
           reviewId: newReview.id,
         });
       }
-    } catch (error) {
-      console.error("Failed to trigger review processing:", {
-        error: error instanceof Error ? error.message : String(error),
-        reviewId: newReview.id,
-      });
-    }
 
-    return NextResponse.json(
-      {
-        message: "Review received successfully",
-        reviewId: newReview.id,
-      },
-      { status: 200 }
-    );
+      return NextResponse.json(
+        {
+          message: "Review received successfully",
+          reviewId: newReview.id,
+        },
+        { status: 200 }
+      );
+    } catch (error) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code: string }).code === "23505"
+      ) {
+        console.log("Review already exists (race condition), skipping:", googleReview.reviewId);
+        return NextResponse.json({ message: "Review already exists" }, { status: 200 });
+      }
+      throw error;
+    }
   } catch (error) {
     console.error("Error processing Google review notification:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
