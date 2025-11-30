@@ -7,6 +7,7 @@ import { decryptToken } from "@/lib/google/business-profile";
 import { ReviewsRepository } from "@/lib/db/repositories/reviews.repository";
 import { AccountsRepository } from "@/lib/db/repositories/accounts.repository";
 import { verifyPubSubToken, getPubSubWebhookAudience } from "@/lib/google/pubsub-auth";
+import { isDuplicateKeyError, getPostgresErrorCode, getPostgresErrorDetail } from "@/lib/db/error-handlers";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -281,15 +282,24 @@ export async function POST(request: NextRequest) {
         { status: 200 }
       );
     } catch (error) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "code" in error &&
-        (error as { code: string }).code === "23505"
-      ) {
-        console.log("Review already exists (race condition), skipping:", googleReview.reviewId);
+      if (isDuplicateKeyError(error)) {
+        const errorDetail = getPostgresErrorDetail(error);
+        console.warn("Race condition detected: Review already inserted by another process", {
+          googleReviewId: googleReview.reviewId,
+          businessId: business.id,
+          userId,
+          accountId,
+          detail: errorDetail,
+        });
         return NextResponse.json({ message: "Review already exists" }, { status: 200 });
       }
+
+      console.error("Unexpected database error when creating review:", {
+        googleReviewId: googleReview.reviewId,
+        businessId: business.id,
+        errorCode: getPostgresErrorCode(error),
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   } catch (error) {

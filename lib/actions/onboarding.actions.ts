@@ -8,6 +8,7 @@ import { BusinessesRepository } from "@/lib/db/repositories/businesses.repositor
 import { listReviews, starRatingToNumber, parseGoogleTimestamp, GoogleReview } from "@/lib/google/reviews";
 import { decryptToken } from "@/lib/google/business-profile";
 import { ReviewInsert, ReviewResponseInsert } from "@/lib/db/schema";
+import { isDuplicateKeyError } from "@/lib/db/error-handlers";
 
 export async function triggerReviewImport(accountId: string, businessId: string) {
   const { userId } = await getAuthenticatedUserId();
@@ -87,13 +88,7 @@ export async function triggerReviewImport(accountId: string, businessId: string)
               await reviewResponsesRepo.create(responseData);
             }
           } catch (error) {
-            if (
-              error instanceof Error &&
-              error.cause &&
-              typeof error.cause === "object" &&
-              "code" in error.cause &&
-              (error.cause as { code: unknown }).code === "23505"
-            ) {
+            if (isDuplicateKeyError(error)) {
               return;
             }
             throw error;

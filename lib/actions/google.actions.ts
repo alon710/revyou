@@ -8,6 +8,7 @@ import { AccountsRepository } from "@/lib/db/repositories/accounts.repository";
 import { BusinessesRepository } from "@/lib/db/repositories/businesses.repository";
 import { ReviewsRepository, ReviewWithLatestGeneration } from "@/lib/db/repositories/reviews.repository";
 import { ReviewResponsesRepository } from "@/lib/db/repositories/review-responses.repository";
+import { isDuplicateKeyError } from "@/lib/db/error-handlers";
 import type { GoogleBusinessProfileBusiness } from "@/lib/types";
 import type { ReviewInsert, ReviewResponseInsert } from "@/lib/db/schema";
 
@@ -180,13 +181,7 @@ export async function importRecentReviews(
               }
             }
           } catch (error) {
-            if (
-              error instanceof Error &&
-              error.cause &&
-              typeof error.cause === "object" &&
-              "code" in error.cause &&
-              (error.cause as { code: unknown }).code === "23505"
-            ) {
+            if (isDuplicateKeyError(error)) {
               return;
             }
             throw error;
