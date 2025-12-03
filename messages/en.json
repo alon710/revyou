@@ -61,17 +61,57 @@
       "home": "Home",
       "howItWorks": "How It Works",
       "pricing": "Pricing",
+      "testimonials": "Testimonials",
       "faq": "FAQ"
     }
   },
   "landing": {
     "hero": {
       "title": "Professional Responses to Reviews",
+      "titleHighlight": "Automatically",
       "subtitle": "Automatically",
       "description": "Save valuable time and respond to every review in a personal and professional manner with the power of artificial intelligence. Maintain your brand voice and improve business reputation.",
       "cta": "Start Now for Free",
       "badge1": "Completely Free",
-      "badge2": "No Commitment"
+      "badge2": "No Commitment",
+      "illustration": {
+        "averageRating": "Average Rating",
+        "reviewSample": "Amazing tool! Saved me hours.",
+        "responseRate": "Response Rate",
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      }
+    },
+    "stats": {
+      "businesses": "Businesses",
+      "responses": "Responses Generated",
+      "satisfaction": "Customer Satisfaction",
+      "hoursSaved": "Hours Saved"
+    },
+    "testimonials": {
+      "title": "Trusted by Business Owners",
+      "items": {
+        "0": {
+          "name": "Sarah Cohen",
+          "role": "Restaurant Owner",
+          "quote": "This tool has completely changed how we handle reviews. It saves us hours every week and the responses are professional and personal."
+        },
+        "1": {
+          "name": "David Levi",
+          "role": "Retail Manager",
+          "quote": "I was skeptical at first, but the AI understands our tone perfectly. Highly recommended for any business owner."
+        },
+        "2": {
+          "name": "Michael Chen",
+          "role": "Cafe Owner",
+          "quote": "Simple to set up and works like magic. The automatic responses for 5-star reviews are a game changer."
+        }
+      }
+    },
+    "finalCTA": {
+      "title": "Ready to Transform Your Reviews?",
+      "description": "Join hundreds of businesses using AI to improve their reputation and save time.",
+      "cta": "Get Started for Free",
+      "noCreditCard": "No credit card required • Cancel anytime"
     },
     "pricing": {
       "title": "Pricing Plans That Fit You",

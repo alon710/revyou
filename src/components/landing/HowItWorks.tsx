@@ -32,7 +32,7 @@ const STEPS = [
 export function HowItWorks() {
   const t = useTranslations("landing.howItWorks");
   return (
-    <div>
+    <div id="how-it-works">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">{t("title")}</h2>
@@ -46,7 +46,7 @@ export function HowItWorks() {
               return (
                 <motion.div
                   key={index}
-                  className="p-8 relative overflow-hidden border border-border/40 shadow-lg rounded-lg bg-card text-card-foreground cursor-pointer group"
+                  className="p-8 relative overflow-hidden border border-border/40 shadow-sm rounded-2xl bg-card text-card-foreground cursor-pointer group transition-all duration-300 hover:shadow-lg"
                   initial={{ opacity: 0, y: 20, scale: 0.9 }}
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   viewport={{ once: true, amount: 0.2 }}
@@ -93,7 +93,7 @@ export function HowItWorks() {
 
                   <div className="relative">
                     <motion.div
-                      className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300"
+                      className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-pastel-lavender/20 group-hover:bg-pastel-lavender/30 group-hover:scale-110 transition-all duration-300"
                       initial={{ opacity: 0, scale: 0 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}

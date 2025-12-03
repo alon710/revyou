@@ -67,7 +67,7 @@ export function PricingCards() {
   };
 
   return (
-    <div>
+    <div id="pricing">
       <div className="container mx-auto px-6 sm:px-8 lg:px-12">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">{t("title")}</h2>
@@ -116,8 +116,8 @@ export function PricingCards() {
                   key={plan.id}
                   className={`relative p-8 flex flex-col rounded-lg group text-card-foreground touch-manipulation ${
                     isRecommended
-                      ? "border-2 border-primary shadow-2xl bg-linear-to-br from-primary/15 via-primary/10 to-primary/5"
-                      : "border border-border/40 shadow-lg bg-card"
+                      ? "border-2 border-pastel-lavender shadow-xl bg-linear-to-br from-pastel-lavender/10 via-background to-background"
+                      : "border border-border/40 shadow-sm bg-card hover:shadow-lg transition-all duration-300"
                   }`}
                   initial={{ opacity: 0, y: 20, scale: 0.9 }}
                   animate={{
@@ -135,7 +135,7 @@ export function PricingCards() {
                   }}
                   whileHover={{
                     scale: isRecommended ? 1.03 : 1.02,
-                    y: -4,
+                    y: -8,
                     transition: {
                       duration: 0.3,
                       ease: [0.16, 1, 0.3, 1],

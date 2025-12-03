@@ -6,7 +6,7 @@ const DashboardCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
     <div
       ref={ref}
       className={cn(
-        "flex flex-col rounded-lg border border-border/40 bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow",
+        "flex flex-col rounded-lg border border-border/40 bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1",
         className
       )}
       {...props}

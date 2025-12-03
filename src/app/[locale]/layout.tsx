@@ -54,7 +54,7 @@ export default async function LocaleLayout({
   const dir = getLocaleDir(locale as Locale);
 
   return (
-    <html lang={locale} dir={dir} className={`${rubik.variable} ${nunito.variable}`}>
+    <html lang={locale} dir={dir} className={`${rubik.variable} ${nunito.variable}`} suppressHydrationWarning={true}>
       <body className="font-sans antialiased" suppressHydrationWarning={true}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <DirectionProvider>

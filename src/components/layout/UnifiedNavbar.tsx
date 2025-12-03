@@ -36,7 +36,7 @@ export function UnifiedNavbar({ variant }: { variant: "landing" | "dashboard" })
                 {isItemActive && (
                   <motion.div
                     layoutId="navbar-active-indicator"
-                    className="absolute bottom-1 left-0 right-0 h-[2px] bg-primary rounded-full mx-2"
+                    className="absolute bottom-1 inset-x-0 h-[2px] bg-primary rounded-full mx-2"
                     transition={{
                       type: "spring",
                       stiffness: 500,
@@ -60,7 +60,7 @@ export function UnifiedNavbar({ variant }: { variant: "landing" | "dashboard" })
               {isItemActive && (
                 <motion.div
                   layoutId="navbar-active-indicator"
-                  className="absolute bottom-1 left-0 right-0 h-[2px] bg-primary rounded-full mx-2"
+                  className="absolute bottom-1 inset-x-0 h-[2px] bg-primary rounded-full mx-2"
                   transition={{
                     type: "spring",
                     stiffness: 500,

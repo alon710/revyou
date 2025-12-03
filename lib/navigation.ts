@@ -1,4 +1,12 @@
-import { Home, PiggyBank, ShieldQuestionMarkIcon, Rocket, CreditCard, Settings } from "lucide-react";
+import {
+  Home,
+  PiggyBank,
+  ShieldQuestionMarkIcon,
+  Rocket,
+  CreditCard,
+  Settings,
+  MessageSquareQuote,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export interface NavItem {
@@ -17,6 +25,7 @@ export const landingNavItems: NavItem[] = [
   { href: "/#hero", label: "navigation.landing.home", icon: Home },
   { href: "/#how-it-works", label: "navigation.landing.howItWorks", icon: Rocket },
   { href: "/#pricing", label: "navigation.landing.pricing", icon: PiggyBank },
+  { href: "/#testimonials", label: "navigation.landing.testimonials", icon: MessageSquareQuote },
   { href: "/#faq", label: "navigation.landing.faq", icon: ShieldQuestionMarkIcon },
 ];
 
