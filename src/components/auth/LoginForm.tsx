@@ -43,7 +43,7 @@ export function LoginForm() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-b from-background to-muted p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Logo className="justify-center mb-4" href={"/"} size="xl" />
+          <Logo className="justify-center mb-4" href={"/"} size="xl" variant="full" />
           <p className="text-muted-foreground">{t("tagline")}</p>
         </div>
 
