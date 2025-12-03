@@ -6,7 +6,7 @@ const DashboardCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
     <div
       ref={ref}
       className={cn(
-        "flex flex-col rounded-lg border border-border/40 bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1",
+        "relative flex flex-col rounded-2xl border border-border/40 bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] group overflow-hidden",
         className
       )}
       {...props}
@@ -17,7 +17,7 @@ DashboardCard.displayName = "DashboardCard";
 
 const DashboardCardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex flex-col space-y-2 p-6 pb-4", className)} {...props} />
+    <div ref={ref} className={cn("flex flex-col space-y-3 p-8 pb-4", className)} {...props} />
   )
 );
 DashboardCardHeader.displayName = "DashboardCardHeader";
@@ -26,9 +26,9 @@ const DashboardCardTitle = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & { icon?: React.ReactNode }
 >(({ className, icon, children, ...props }, ref) => (
-  <div ref={ref} className={cn("flex items-center gap-2", className)} {...props}>
+  <div ref={ref} className={cn("flex items-center gap-3", className)} {...props}>
     {icon && <span className="text-muted-foreground">{icon}</span>}
-    <h3 className="text-lg font-semibold leading-none tracking-tight">{children}</h3>
+    <h3 className="text-xl font-semibold leading-none tracking-tight">{children}</h3>
   </div>
 ));
 DashboardCardTitle.displayName = "DashboardCardTitle";
@@ -41,7 +41,7 @@ const DashboardCardDescription = React.forwardRef<HTMLParagraphElement, React.HT
 DashboardCardDescription.displayName = "DashboardCardDescription";
 
 const DashboardCardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => <div ref={ref} className={cn("flex-1 p-6 pt-4", className)} {...props} />
+  ({ className, ...props }, ref) => <div ref={ref} className={cn("flex-1 p-8 pt-4", className)} {...props} />
 );
 DashboardCardContent.displayName = "DashboardCardContent";
 

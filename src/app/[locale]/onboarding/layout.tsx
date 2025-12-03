@@ -33,7 +33,11 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
 
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-background to-muted" dir={dir}>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: "var(--gradient-soft)" }}
+        dir={dir}
+      >
         <div className="container max-w-3xl mx-auto py-12 px-4 w-full">{children}</div>
       </div>
     </>
