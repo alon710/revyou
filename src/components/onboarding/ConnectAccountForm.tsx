@@ -33,20 +33,26 @@ export function ConnectAccountForm() {
         loading: connecting,
       }}
     >
-      <div className="bg-muted p-4 rounded-lg">
-        <h4 className="font-semibold mb-2">{t("permissionsTitle")}</h4>
-        <ul className="space-y-2 text-sm text-muted-foreground">
-          <li className="flex items-start gap-2">
-            <Building2 className="h-4 w-4 mt-0.5 shrink-0" />
-            <span>{t("permissions.businessList")}</span>
+      <div className="bg-pastel-lavender/20 p-6 rounded-2xl border border-border/40">
+        <h4 className="font-semibold mb-4 text-lg">{t("permissionsTitle")}</h4>
+        <ul className="space-y-3 text-sm text-muted-foreground">
+          <li className="flex items-start gap-3">
+            <div className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-pastel-lavender/30 shrink-0">
+              <Building2 className="h-4 w-4 text-primary" />
+            </div>
+            <span className="pt-1">{t("permissions.businessList")}</span>
           </li>
-          <li className="flex items-start gap-2">
-            <Building2 className="h-4 w-4 mt-0.5 shrink-0" />
-            <span>{t("permissions.readReviews")}</span>
+          <li className="flex items-start gap-3">
+            <div className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-pastel-lavender/30 shrink-0">
+              <Building2 className="h-4 w-4 text-primary" />
+            </div>
+            <span className="pt-1">{t("permissions.readReviews")}</span>
           </li>
-          <li className="flex items-start gap-2">
-            <Building2 className="h-4 w-4 mt-0.5 shrink-0" />
-            <span>{t("permissions.publishReplies")}</span>
+          <li className="flex items-start gap-3">
+            <div className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-pastel-lavender/30 shrink-0">
+              <Building2 className="h-4 w-4 text-primary" />
+            </div>
+            <span className="pt-1">{t("permissions.publishReplies")}</span>
           </li>
         </ul>
       </div>
