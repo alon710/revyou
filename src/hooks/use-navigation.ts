@@ -51,6 +51,7 @@ export function useNavigation(variant?: "landing" | "dashboard") {
 
     if (element) {
       window.history.pushState(null, "", hash);
+      window.dispatchEvent(new Event("hashchange"));
 
       element.scrollIntoView({ behavior: "smooth" });
 
