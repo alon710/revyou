@@ -3,7 +3,7 @@
 import * as React from "react";
 import { DirectionProvider as RadixDirectionProvider } from "@radix-ui/react-direction";
 
-type Direction = "ltr" | "rtl";
+export type Direction = "ltr" | "rtl";
 
 interface DirectionContextValue {
   dir: Direction;
@@ -22,10 +22,11 @@ export function useDirection() {
 
 interface DirectionProviderProps {
   children: React.ReactNode;
+  initialDir?: Direction;
 }
 
-export function DirectionProvider({ children }: DirectionProviderProps) {
-  const [dir, setDir] = React.useState<Direction>("ltr");
+export function DirectionProvider({ children, initialDir }: DirectionProviderProps) {
+  const [dir, setDir] = React.useState<Direction>(initialDir || "ltr");
 
   React.useEffect(() => {
     const getDocumentDir = (): Direction => {
@@ -33,7 +34,9 @@ export function DirectionProvider({ children }: DirectionProviderProps) {
       return raw === "rtl" ? "rtl" : "ltr";
     };
 
-    setDir(getDocumentDir());
+    if (!initialDir) {
+      setDir(getDocumentDir());
+    }
 
     const observer = new MutationObserver(() => {
       setDir(getDocumentDir());
@@ -45,7 +48,7 @@ export function DirectionProvider({ children }: DirectionProviderProps) {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [initialDir]);
 
   const value = React.useMemo(() => ({ dir, isRTL: dir === "rtl" }), [dir]);
 
