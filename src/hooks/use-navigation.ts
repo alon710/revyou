@@ -38,20 +38,25 @@ export function useNavigation(variant?: "landing" | "dashboard") {
   };
 
   const scrollToSection = (href: string) => {
-    const anchorHash = href.substring(1);
     const isOnLandingPage = pathname === "/";
 
     if (!isOnLandingPage) {
-      router.push(`/${href}`);
+      router.push(href);
       return;
     }
 
-    window.history.pushState(null, "", href);
-    window.dispatchEvent(new Event("hashchange"));
+    const hash = href.replace(/^\//, "");
+    const targetId = hash.replace(/^#/, "");
+    const element = document.getElementById(targetId);
 
-    const element = document.getElementById(anchorHash.replace("#", ""));
-    element?.scrollIntoView({ behavior: "smooth" });
-    element?.focus({ preventScroll: true });
+    if (element) {
+      window.history.pushState(null, "", hash);
+      window.dispatchEvent(new Event("hashchange"));
+
+      element.scrollIntoView({ behavior: "smooth" });
+
+      element.focus({ preventScroll: true });
+    }
   };
 
   const isActive = (href: string) => {

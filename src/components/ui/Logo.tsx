@@ -21,10 +21,10 @@ const sizePx = {
   xl: 52,
 };
 
-export function Logo({ href, className, size = "lg", variant = "full" }: SiteLogoProps) {
+export function Logo({ href, className, size = "xl", variant = "icon" }: SiteLogoProps) {
   const height = sizePx[size];
 
-  const imageSrc = variant === "icon" ? "/images/logo-icon.png" : "/images/logo-full.png";
+  const imageSrc = variant === "icon" ? "/images/logo-icon.png" : "/images/logo-full.svg";
 
   return (
     <Link href={href} className={cn("flex items-center", className)}>

@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Offset for sticky navbar */
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.25 0 0);
@@ -39,16 +44,34 @@
   --shadow-spread: 0px;
   --shadow-opacity: 0.05;
   --shadow-color: hsl(0 0% 0%);
-  --shadow-2xs: 2px 2px 4px 0px hsl(0 0% 0% / 0.1);
-  --shadow-xs: 2px 2px 4px 0px hsl(0 0% 0% / 0.1);
-  --shadow-sm: 2px 2px 4px 0px hsl(0 0% 0% / 0.2), 2px 1px 2px -1px hsl(0 0% 0% / 0.2);
-  --shadow: 2px 2px 4px 0px hsl(0 0% 0% / 0.2), 2px 1px 2px -1px hsl(0 0% 0% / 0.2);
-  --shadow-md: 2px 2px 4px 0px hsl(0 0% 0% / 0.2), 2px 2px 4px -1px hsl(0 0% 0% / 0.2);
-  --shadow-lg: 2px 2px 4px 0px hsl(0 0% 0% / 0.2), 2px 4px 6px -1px hsl(0 0% 0% / 0.2);
-  --shadow-xl: 2px 2px 4px 0px hsl(0 0% 0% / 0.2), 2px 8px 10px -1px hsl(0 0% 0% / 0.2);
-  --shadow-2xl: 2px 2px 4px 0px hsl(0 0% 0% / 0.1);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
+
+  /* ADD: Soft pastel palette for accents and backgrounds */
+  --pastel-pink: oklch(0.92 0.08 350); /* Soft pink */
+  --pastel-lavender: oklch(0.9 0.06 290); /* Soft lavender */
+  --pastel-mint: oklch(0.92 0.06 160); /* Soft mint green */
+  --pastel-peach: oklch(0.9 0.08 50); /* Soft peach */
+  --pastel-sky: oklch(0.92 0.06 230); /* Soft sky blue */
+
+  /* ADD: Subtle gradient overlays */
+  --gradient-soft: linear-gradient(180deg, var(--background) 0%, var(--secondary) 100%);
+  --gradient-mesh: radial-gradient(ellipse 80% 50% at 50% -20%, var(--accent) 0%, transparent 100%);
+
+  /* ADD: Better line heights for readability */
+  --leading-relaxed: 1.75; /* For hero text */
+  --leading-loose: 2; /* For descriptions */
+
+  /* Updated Shadows */
+  --shadow-xs: 0 1px 3px 0 oklch(0 0 0 / 0.03);
+  --shadow-sm: 0 2px 8px 0 oklch(0 0 0 / 0.04);
+  --shadow: 0 4px 12px 0 oklch(0 0 0 / 0.05);
+  --shadow-md: 0 8px 16px 0 oklch(0 0 0 / 0.06);
+  --shadow-lg: 0 12px 24px 0 oklch(0 0 0 / 0.08);
+  --shadow-xl: 0 16px 32px 0 oklch(0 0 0 / 0.1);
+
+  /* Colored shadow for primary CTA */
+  --shadow-primary: 0 8px 24px -4px oklch(0.55 0.15 250 / 0.3);
 }
 
 .dark {
@@ -98,6 +121,13 @@
   --shadow-lg: 2px 2px 4px 0px hsl(0 0% 0% / 0.2), 2px 4px 6px -1px hsl(0 0% 0% / 0.2);
   --shadow-xl: 2px 2px 4px 0px hsl(0 0% 0% / 0.2), 2px 8px 10px -1px hsl(0 0% 0% / 0.2);
   --shadow-2xl: 2px 2px 4px 0px hsl(0 0% 0% / 0.5);
+
+  /* ADD: Darker pastel variants */
+  --pastel-pink: oklch(0.35 0.08 350);
+  --pastel-lavender: oklch(0.35 0.06 290);
+  --pastel-mint: oklch(0.35 0.06 160);
+  --pastel-peach: oklch(0.35 0.08 50);
+  --pastel-sky: oklch(0.35 0.06 230);
 }
 
 @theme inline {
@@ -147,4 +177,15 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+
+  /* Expose new pastel colors */
+  --color-pastel-pink: var(--pastel-pink);
+  --color-pastel-lavender: var(--pastel-lavender);
+  --color-pastel-mint: var(--pastel-mint);
+  --color-pastel-peach: var(--pastel-peach);
+  --color-pastel-sky: var(--pastel-sky);
+
+  /* Expose gradients */
+  --image-gradient-soft: var(--gradient-soft);
+  --image-gradient-mesh: var(--gradient-mesh);
 }
