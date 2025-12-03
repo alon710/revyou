@@ -70,14 +70,13 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <Link href="/login">
-                <Button
-                  size="lg"
-                  className="text-lg px-8 py-6 shadow-primary hover:shadow-xl transition-all duration-300"
-                >
-                  {t("cta")}
-                </Button>
-              </Link>
+              <Button
+                asChild
+                size="lg"
+                className="text-lg px-8 py-6 shadow-primary hover:shadow-xl transition-all duration-300"
+              >
+                <Link href="/login">{t("cta")}</Link>
+              </Button>
             </motion.div>
 
             <motion.div
