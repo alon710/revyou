@@ -82,7 +82,7 @@ export function PricingCards() {
                 billingPeriod === "yearly" && "bg-background text-foreground shadow"
               )}
             >
-              <span className="ms-1 text-xs text-primary">{t("yearlyDiscount")}</span>
+              <span className="ms-1 text-xs text-primary px-1 ">{t("yearlyDiscount")}</span>
               {t("yearly")}
             </button>
             <button
