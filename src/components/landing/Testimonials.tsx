@@ -7,7 +7,7 @@ export function Testimonials() {
   const t = useTranslations("landing.testimonials");
 
   return (
-    <section id="testimonials" className="py-20 relative overflow-hidden">
+    <section id="testimonials" tabIndex={-1} className="py-20 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <h2 className="text-4xl font-bold text-center mb-16">{t("title")}</h2>
         <div className="grid md:grid-cols-3 gap-8">

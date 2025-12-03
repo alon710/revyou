@@ -67,7 +67,7 @@ export function PricingCards() {
   };
 
   return (
-    <div id="pricing">
+    <div id="pricing" tabIndex={-1}>
       <div className="container mx-auto px-6 sm:px-8 lg:px-12">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">{t("title")}</h2>
