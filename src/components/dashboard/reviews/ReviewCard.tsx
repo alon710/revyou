@@ -18,7 +18,8 @@ import { postReviewReply, generateReviewReply } from "@/lib/actions/reviews.acti
 import { useAuth } from "@/contexts/AuthContext";
 import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import { User, Bot, Info } from "lucide-react";
+import { User, Bot, Info, Sparkles } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useTranslations, useFormatter } from "next-intl";
 import { useRouter } from "@/i18n/routing";
@@ -200,7 +201,14 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
                 )}
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
-                <p className="text-sm leading-relaxed">{review.latestAiReply}</p>
+                {isLoading ? (
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </div>
+                ) : (
+                  <p className="text-sm leading-relaxed">{review.latestAiReply}</p>
+                )}
               </div>
             </DashboardCardSection>
           )}
@@ -210,6 +218,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
           {(review.replyStatus === "pending" || review.replyStatus === "failed") && (
             <>
               <Button type="button" onClick={handleRegenerate} disabled={isLoading} size="sm" variant="outline">
+                <Sparkles className="h-4 w-4 mr-2" />
                 {t("actions.regenerate")}
               </Button>
               <Button
