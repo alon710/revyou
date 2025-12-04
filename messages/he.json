@@ -520,7 +520,8 @@
         "apply": "החל",
         "filter": "סינון",
         "filters": "מסננים",
-        "clearAll": "נקה הכל"
+        "clearAll": "נקה הכל",
+        "removeFilter": "הסר מסנן"
       }
     },
     "subscription": {

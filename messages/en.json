@@ -596,7 +596,8 @@
         "apply": "Apply",
         "filter": "Filter",
         "filters": "Filters",
-        "clearAll": "Clear All"
+        "clearAll": "Clear All",
+        "removeFilter": "Remove filter"
       }
     },
     "reviewDetail": {
