@@ -74,7 +74,7 @@ export const useFiltersStore = create<FiltersState>()(
 
       clearFilters: (businessId: string) => {
         set((state) => {
-          const { [businessId]: removed, ...rest } = state.businessFilters;
+          const { [businessId]: _removed, ...rest } = state.businessFilters;
           return { businessFilters: rest };
         });
       },
