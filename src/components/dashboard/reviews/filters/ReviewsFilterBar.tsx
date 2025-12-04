@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname, useSearchParams, useParams } from "next/navigation";
 import { ReviewFilters } from "@/lib/types";
 import { parseFiltersFromSearchParams, buildSearchParams } from "@/lib/utils/filter-utils";
 import { useFiltersStore } from "@/lib/store/filters-store";
@@ -13,9 +13,10 @@ export function ReviewsFilterBar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const params = useParams();
   const [isOpen, setIsOpen] = useState(false);
 
-  const businessId = pathname.split("/")[6];
+  const businessId = params.businessId as string;
 
   const { getFilters, setFilters: storeSetFilters, clearFilters } = useFiltersStore();
 
