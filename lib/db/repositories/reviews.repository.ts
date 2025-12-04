@@ -99,6 +99,7 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
       where: and(...conditions),
       limit,
       offset,
+      orderBy: [desc(reviews.date)],
     });
 
     if (reviewsData.length === 0) {
