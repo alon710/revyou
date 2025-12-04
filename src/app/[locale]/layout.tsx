@@ -63,7 +63,16 @@ export default async function LocaleLayout({
               <Toaster dir={dir} richColors />
             </AuthProvider>
           </DirectionProvider>
-          <Script src="https://app.rybbit.io/api/script.js" data-site-id="91604d9cddac" strategy="afterInteractive" />
+
+          <Script src="https://www.googletagmanager.com/gtag/js?id=AW-17485891262" strategy="afterInteractive" />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-17485891262');
+            `}
+          </Script>
         </NextIntlClientProvider>
       </body>
     </html>
