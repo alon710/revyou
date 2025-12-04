@@ -12,7 +12,7 @@ const ReviewFiltersSchema = z
     offset: z.number().optional(),
     sort: z
       .object({
-        orderBy: z.string(),
+        orderBy: z.enum(["receivedAt", "rating", "date", "replyStatus"]),
         orderDirection: z.enum(["asc", "desc"]),
       })
       .optional(),

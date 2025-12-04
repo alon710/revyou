@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "@/i18n/routing";
+import { useSearchParams } from "next/navigation";
 import { ReviewCard } from "@/components/dashboard/reviews/ReviewCard";
 import { getReviews } from "@/lib/actions/reviews.actions";
 import { useInView } from "react-intersection-observer";
 import { Loading } from "@/components/ui/loading";
 import type { ReviewWithLatestGeneration } from "@/lib/db/repositories";
+import { parseFiltersFromSearchParams } from "@/lib/utils/filter-utils";
 
 interface ReviewsListProps {
   reviews: ReviewWithLatestGeneration[];
@@ -17,6 +19,7 @@ interface ReviewsListProps {
 
 export function ReviewsList({ reviews: initialReviews, accountId, businessId, userId }: ReviewsListProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [reviews, setReviews] = useState<ReviewWithLatestGeneration[]>(initialReviews);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +39,7 @@ export function ReviewsList({ reviews: initialReviews, accountId, businessId, us
         accountId,
         businessId,
         filters: {
-          sort: { orderBy: "receivedAt", orderDirection: "desc" },
+          ...parseFiltersFromSearchParams(Object.fromEntries(searchParams.entries())),
           limit: 10,
           offset: reviews.length,
         },
@@ -52,7 +55,7 @@ export function ReviewsList({ reviews: initialReviews, accountId, businessId, us
     } finally {
       setIsLoading(false);
     }
-  }, [accountId, businessId, hasMore, isLoading, reviews.length]);
+  }, [accountId, businessId, hasMore, isLoading, reviews.length, searchParams]);
 
   useEffect(() => {
     if (inView) {

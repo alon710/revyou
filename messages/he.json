@@ -477,7 +477,12 @@
           "confirm": "פרסם לגוגל",
           "cancel": "ביטול",
           "loading": "מפרסם..."
-        }
+        },
+        "dateTooltip": "תאריך פרסום הביקורת בגוגל",
+        "replyDateTooltip": "תאריך פרסום התגובה בגוגל",
+        "reviewDateLabel": "תאריך הביקורת",
+        "replyDateLabel": "תאריך התגובה",
+        "reviewInfoLabel": "צפה בפרטי הביקורת"
       },
       "editor": {
         "title": "עריכת תגובה",
@@ -490,6 +495,33 @@
         "cancel": "ביטול",
         "save": "שמור",
         "saving": "שומר..."
+      },
+      "filters": {
+        "replyStatus": "סטטוס תגובה",
+        "status": {
+          "pending": "ממתין",
+          "posted": "פורסם",
+          "rejected": "נדחה",
+          "failed": "נכשל",
+          "quota_exceeded": "חריגה ממכסה"
+        },
+        "rating": "דירוג",
+        "dateRange": "טווח תאריכים",
+        "pickDate": "בחר תאריך",
+        "sortBy": "מיון לפי",
+        "sort": {
+          "receivedAt": "התקבל ב",
+          "rating": "דירוג",
+          "date": "תאריך",
+          "replyStatus": "סטטוס תגובה",
+          "direction": "כיוון"
+        },
+        "reset": "איפוס",
+        "apply": "החל",
+        "filter": "סינון",
+        "filters": "מסננים",
+        "clearAll": "נקה הכל",
+        "removeFilter": "הסר מסנן"
       }
     },
     "subscription": {
