@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { postReviewReply, generateReviewReply } from "@/lib/actions/reviews.actions";
 import { useAuth } from "@/contexts/AuthContext";
 import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
@@ -124,13 +125,22 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
               </Avatar>
               <div className="min-w-0">
                 <h3 className="font-semibold truncate">{review.name}</h3>
-                <p className="text-xs text-muted-foreground">
-                  {format.dateTime(new Date(review.date), {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <p className="text-xs text-muted-foreground cursor-help w-fit">
+                        {format.dateTime(new Date(review.date), {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </p>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{t("dateTooltip")}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
             <StarRating rating={review.rating} size={18} />
@@ -161,13 +171,22 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
                   </span>
                 </div>
                 {review.replyStatus === "posted" && review.latestAiReplyPostedAt && (
-                  <span className="text-xs text-muted-foreground">
-                    {format.dateTime(new Date(review.latestAiReplyPostedAt), {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </span>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="text-xs text-muted-foreground cursor-help">
+                          {format.dateTime(new Date(review.latestAiReplyPostedAt), {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{t("replyDateTooltip")}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">

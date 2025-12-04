@@ -553,7 +553,9 @@
           "confirm": "Publish to Google",
           "cancel": "Cancel",
           "loading": "Publishing..."
-        }
+        },
+        "dateTooltip": "Date the review was published on Google",
+        "replyDateTooltip": "Date the reply was posted to Google"
       },
       "editor": {
         "title": "Edit Reply",
