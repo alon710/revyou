@@ -1,5 +1,5 @@
 import { ReplyStatus } from "./review.types";
-import { SortOptions } from "./sort.types";
+import { SortOptions, ReviewSortOptions } from "./sort.types";
 
 export interface TFilters {
   ids?: string[];
@@ -12,6 +12,7 @@ export interface ReviewFilters extends TFilters {
   rating?: number[];
   dateFrom?: Date;
   dateTo?: Date;
+  sort?: ReviewSortOptions;
 }
 
 export interface BusinessFilters extends TFilters {

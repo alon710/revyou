@@ -13,12 +13,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipIcon } from "@/components/ui/tooltip";
 import { postReviewReply, generateReviewReply } from "@/lib/actions/reviews.actions";
 import { useAuth } from "@/contexts/AuthContext";
 import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import { User, Bot } from "lucide-react";
+import { User, Bot, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations, useFormatter } from "next-intl";
 import { useRouter } from "@/i18n/routing";
@@ -109,7 +109,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 
   return (
     <>
-      <DashboardCard className={cn("w-full", onClick && "cursor-pointer")} onClick={onClick}>
+      <DashboardCard className="w-full">
         <DashboardCardHeader className="pb-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -125,26 +125,36 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
               </Avatar>
               <div className="min-w-0">
                 <h3 className="font-semibold truncate">{review.name}</h3>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <p className="text-xs text-muted-foreground cursor-help w-fit">
-                        {format.dateTime(new Date(review.date), {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </p>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{t("dateTooltip")}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <TooltipIcon
+                  variant="children"
+                  text={t("dateTooltip")}
+                  additionalInfoLabel={t("reviewDateLabel")}
+                  closeLabel={t("close", { ns: "common" })}
+                  className="text-xs text-muted-foreground cursor-help w-fit"
+                >
+                  {format.dateTime(new Date(review.date), {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </TooltipIcon>
               </div>
             </div>
             <StarRating rating={review.rating} size={18} />
             {getStatusBadge(review)}
+            {onClick && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 shrink-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClick();
+                }}
+              >
+                <Info className="h-4 w-4 text-muted-foreground" />
+              </Button>
+            )}
           </div>
         </DashboardCardHeader>
 
@@ -171,22 +181,19 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
                   </span>
                 </div>
                 {review.replyStatus === "posted" && review.latestAiReplyPostedAt && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span className="text-xs text-muted-foreground cursor-help">
-                          {format.dateTime(new Date(review.latestAiReplyPostedAt), {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{t("replyDateTooltip")}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <TooltipIcon
+                    variant="children"
+                    text={t("replyDateTooltip")}
+                    additionalInfoLabel={t("replyDateLabel")}
+                    closeLabel={t("close", { ns: "common" })}
+                    className="text-xs text-muted-foreground cursor-help"
+                  >
+                    {format.dateTime(new Date(review.latestAiReplyPostedAt), {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </TooltipIcon>
                 )}
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">

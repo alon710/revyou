@@ -7,15 +7,20 @@ import { getBusiness } from "@/lib/actions/businesses.actions";
 import { getReviews } from "@/lib/actions/reviews.actions";
 import { getAuthenticatedUserId } from "@/lib/api/auth";
 import { ReviewsList } from "@/components/dashboard/reviews/ReviewsList";
+import { ReviewsFilterBar } from "@/components/dashboard/reviews/filters/ReviewsFilterBar";
+import { parseFiltersFromSearchParams } from "@/lib/utils/filter-utils";
 
 export const dynamic = "force-dynamic";
 
 interface BusinessReviewsPageProps {
   params: Promise<{ locale: string; accountId: string; businessId: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function BusinessReviewsPage({ params }: BusinessReviewsPageProps) {
+export default async function BusinessReviewsPage({ params, searchParams }: BusinessReviewsPageProps) {
   const { locale, accountId, businessId } = await params;
+  const resolvedSearchParams = await searchParams;
+  const filters = parseFiltersFromSearchParams(resolvedSearchParams);
   const { userId } = await getAuthenticatedUserId();
   const t = await getTranslations({ locale, namespace: "dashboard.reviews" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
@@ -25,7 +30,7 @@ export default async function BusinessReviewsPage({ params }: BusinessReviewsPag
       accountId,
       businessId,
       filters: {
-        sort: { orderBy: "receivedAt", orderDirection: "desc" },
+        ...filters,
         limit: 10,
       },
     }),
@@ -40,6 +45,7 @@ export default async function BusinessReviewsPage({ params }: BusinessReviewsPag
       <PageHeader title={t("reviewsFor", { businessName: business.name })} description={t("allReviews")} />
 
       <div className="space-y-4 mt-6">
+        <ReviewsFilterBar />
         {reviews.length === 0 ? (
           <EmptyState title={t("noReviews")} description={t("noReviewsDescription")} />
         ) : (

@@ -1,4 +1,4 @@
-import { eq, and, inArray, gte, lte, exists, desc } from "drizzle-orm";
+import { eq, and, inArray, gte, lte, exists, desc, asc } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { reviews, reviewResponses, userAccounts, businesses, type Review, type ReviewInsert } from "@/lib/db/schema";
 import type { ReviewFilters } from "@/lib/types";
@@ -95,11 +95,26 @@ export class ReviewsRepository extends BaseRepository<ReviewInsert, Review, Part
     const limit = filters.limit || undefined;
     const offset = filters.offset || undefined;
 
+    let orderBy;
+    if (filters.sort) {
+      const { orderBy: sortField, orderDirection } = filters.sort;
+      const columnMap = {
+        receivedAt: reviews.receivedAt,
+        rating: reviews.rating,
+        date: reviews.date,
+        replyStatus: reviews.replyStatus,
+      } as const;
+      const column = columnMap[sortField as keyof typeof columnMap];
+      orderBy = orderDirection === "asc" ? asc(column) : desc(column);
+    } else {
+      orderBy = desc(reviews.receivedAt);
+    }
+
     const reviewsData = await db.query.reviews.findMany({
       where: and(...conditions),
       limit,
       offset,
-      orderBy: [desc(reviews.date)],
+      orderBy: orderBy,
     });
 
     if (reviewsData.length === 0) {

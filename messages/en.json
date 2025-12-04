@@ -555,7 +555,9 @@
           "loading": "Publishing..."
         },
         "dateTooltip": "Date the review was published on Google",
-        "replyDateTooltip": "Date the reply was posted to Google"
+        "replyDateTooltip": "Date the reply was posted to Google",
+        "reviewDateLabel": "Review Date",
+        "replyDateLabel": "Reply Date"
       },
       "editor": {
         "title": "Edit Reply",
@@ -568,6 +570,32 @@
         "cancel": "Cancel",
         "save": "Save",
         "saving": "Saving..."
+      },
+      "filters": {
+        "replyStatus": "Reply Status",
+        "status": {
+          "pending": "Pending",
+          "posted": "Posted",
+          "rejected": "Rejected",
+          "failed": "Failed",
+          "quota_exceeded": "Quota Exceeded"
+        },
+        "rating": "Rating",
+        "dateRange": "Date Range",
+        "pickDate": "Pick a date",
+        "sortBy": "Sort By",
+        "sort": {
+          "receivedAt": "Received At",
+          "rating": "Rating",
+          "date": "Date",
+          "replyStatus": "Reply Status",
+          "direction": "Direction"
+        },
+        "reset": "Reset",
+        "apply": "Apply",
+        "filter": "Filter",
+        "filters": "Filters",
+        "clearAll": "Clear All"
       }
     },
     "reviewDetail": {

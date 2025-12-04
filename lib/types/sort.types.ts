@@ -3,7 +3,7 @@ export interface SortOptions<T extends string> {
   orderDirection: "asc" | "desc";
 }
 
-export type ReviewSortField = "receivedAt" | "rating" | "date";
+export type ReviewSortField = "receivedAt" | "rating" | "date" | "replyStatus";
 export type ReviewSortOptions = SortOptions<ReviewSortField>;
 
 export type BusinessSortField = "connectedAt" | "name";
