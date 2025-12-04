@@ -114,10 +114,11 @@ export function PricingCards() {
               return (
                 <motion.div
                   key={plan.id}
-                  className={`relative p-8 flex flex-col rounded-lg group text-card-foreground touch-manipulation ${isRecommended
-                    ? "border-2 border-pastel-lavender shadow-xl bg-linear-to-br from-pastel-lavender/10 via-background to-background"
-                    : "border border-border/40 shadow-sm bg-card hover:shadow-lg transition-all duration-300"
-                    }`}
+                  className={`relative p-8 flex flex-col rounded-lg group text-card-foreground touch-manipulation ${
+                    isRecommended
+                      ? "border-2 border-pastel-lavender shadow-xl bg-linear-to-br from-pastel-lavender/10 via-background to-background"
+                      : "border border-border/40 shadow-sm bg-card hover:shadow-lg transition-all duration-300"
+                  }`}
                   initial={{ opacity: 0, y: 20, scale: 0.9 }}
                   animate={{
                     opacity: 1,
@@ -142,18 +143,20 @@ export function PricingCards() {
                   }}
                 >
                   <motion.div
-                    className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${isRecommended
-                      ? "bg-linear-to-br from-primary/15 via-primary/8 to-primary/15"
-                      : "bg-linear-to-br from-primary/5 via-transparent to-primary/10"
-                      }`}
+                    className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
+                      isRecommended
+                        ? "bg-linear-to-br from-primary/15 via-primary/8 to-primary/15"
+                        : "bg-linear-to-br from-primary/5 via-transparent to-primary/10"
+                    }`}
                     initial={false}
                   />
 
                   <motion.div
-                    className={`absolute inset-0 border-2 rounded-lg transition-all duration-500 pointer-events-none ${isRecommended
-                      ? "border-primary/0 group-hover:border-primary/40"
-                      : "border-primary/0 group-hover:border-primary/20"
-                      }`}
+                    className={`absolute inset-0 border-2 rounded-lg transition-all duration-500 pointer-events-none ${
+                      isRecommended
+                        ? "border-primary/0 group-hover:border-primary/40"
+                        : "border-primary/0 group-hover:border-primary/20"
+                    }`}
                     initial={false}
                   />
 
