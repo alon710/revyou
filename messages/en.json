@@ -557,7 +557,8 @@
         "dateTooltip": "Date the review was published on Google",
         "replyDateTooltip": "Date the reply was posted to Google",
         "reviewDateLabel": "Review Date",
-        "replyDateLabel": "Reply Date"
+        "replyDateLabel": "Reply Date",
+        "reviewInfoLabel": "View review details"
       },
       "editor": {
         "title": "Edit Reply",

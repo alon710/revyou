@@ -481,7 +481,8 @@
         "dateTooltip": "תאריך פרסום הביקורת בגוגל",
         "replyDateTooltip": "תאריך פרסום התגובה בגוגל",
         "reviewDateLabel": "תאריך הביקורת",
-        "replyDateLabel": "תאריך התגובה"
+        "replyDateLabel": "תאריך התגובה",
+        "reviewInfoLabel": "צפה בפרטי הביקורת"
       },
       "editor": {
         "title": "עריכת תגובה",

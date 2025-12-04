@@ -150,6 +150,7 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 shrink-0"
+                aria-label={t("reviewInfoLabel")}
                 onClick={(e) => {
                   e.stopPropagation();
                   onClick();
