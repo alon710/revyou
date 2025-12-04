@@ -42,34 +42,18 @@ interface TooltipIconProps {
   text: string;
   additionalInfoLabel: string;
   closeLabel: string;
-  variant?: "icon" | "children";
-  children?: React.ReactNode;
-  className?: string;
 }
 
-const TooltipIcon = ({
-  text,
-  additionalInfoLabel,
-  closeLabel,
-  variant = "icon",
-  children,
-  className,
-}: TooltipIconProps) => {
+const TooltipIcon = ({ text, additionalInfoLabel, closeLabel }: TooltipIconProps) => {
   const isMobile = useIsMobile();
 
   if (isMobile) {
     return (
       <Drawer>
         <DrawerTrigger asChild>
-          {variant === "children" ? (
-            <button type="button" className={cn("inline-flex", className)}>
-              {children}
-            </button>
-          ) : (
-            <button type="button" className="inline-flex items-center justify-center">
-              <Info className="h-4 w-4 text-muted-foreground" />
-            </button>
-          )}
+          <button type="button" className="inline-flex items-center justify-center">
+            <Info className="h-4 w-4 text-muted-foreground" />
+          </button>
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader className="relative">
@@ -94,17 +78,13 @@ const TooltipIcon = ({
     <TooltipProvider delayDuration={300}>
       <Tooltip>
         <TooltipTrigger asChild>
-          {variant === "children" ? (
-            <span className={className}>{children}</span>
-          ) : (
-            <button
-              type="button"
-              className="inline-flex size-5 shrink-0 items-center justify-center rounded-md text-muted-foreground leading-none align-middle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              aria-label={additionalInfoLabel}
-            >
-              <Info className="h-[14px] w-[14px]" strokeWidth={1.75} />
-            </button>
-          )}
+          <button
+            type="button"
+            className="inline-flex size-5 shrink-0 items-center justify-center rounded-md text-muted-foreground leading-none align-middle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-label={additionalInfoLabel}
+          >
+            <Info className="h-[14px] w-[14px]" strokeWidth={1.75} />
+          </button>
         </TooltipTrigger>
         <TooltipContent>{text}</TooltipContent>
       </Tooltip>

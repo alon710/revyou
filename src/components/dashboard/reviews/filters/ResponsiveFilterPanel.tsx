@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
@@ -16,14 +16,16 @@ interface ResponsiveFilterPanelProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const subscribe = () => () => {};
+
 export function ResponsiveFilterPanel({ children, activeCount, open, onOpenChange }: ResponsiveFilterPanelProps) {
   const t = useTranslations("dashboard.reviews.filters");
-  const [hasMounted, setHasMounted] = useState(false);
+  const hasMounted = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false
+  );
   const isDesktop = useMediaQuery({ query: "(min-width: 768px)" });
-
-  if (typeof window !== "undefined" && !hasMounted) {
-    setHasMounted(true);
-  }
 
   const Trigger = (
     <Button variant="outline" className="gap-2">

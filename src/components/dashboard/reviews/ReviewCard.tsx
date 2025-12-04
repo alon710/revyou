@@ -35,6 +35,7 @@ interface ReviewCardProps {
 
 export function ReviewCard({ review, accountId, userId, businessId, onUpdate, onClick }: ReviewCardProps) {
   const t = useTranslations("dashboard.reviews.card");
+  const tCommon = useTranslations("common");
   const format = useFormatter();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -125,19 +126,20 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
               </Avatar>
               <div className="min-w-0">
                 <h3 className="font-semibold truncate">{review.name}</h3>
-                <TooltipIcon
-                  variant="children"
-                  text={t("dateTooltip")}
-                  additionalInfoLabel={t("reviewDateLabel")}
-                  closeLabel={t("close", { ns: "common" })}
-                  className="text-xs text-muted-foreground cursor-help w-fit"
-                >
-                  {format.dateTime(new Date(review.date), {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </TooltipIcon>
+                <div className="flex items-center gap-1">
+                  <p className="text-xs text-muted-foreground">
+                    {format.dateTime(new Date(review.date), {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </p>
+                  <TooltipIcon
+                    text={t("dateTooltip")}
+                    additionalInfoLabel={t("reviewDateLabel")}
+                    closeLabel={tCommon("close")}
+                  />
+                </div>
               </div>
             </div>
             <StarRating rating={review.rating} size={18} />
@@ -181,19 +183,20 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
                   </span>
                 </div>
                 {review.replyStatus === "posted" && review.latestAiReplyPostedAt && (
-                  <TooltipIcon
-                    variant="children"
-                    text={t("replyDateTooltip")}
-                    additionalInfoLabel={t("replyDateLabel")}
-                    closeLabel={t("close", { ns: "common" })}
-                    className="text-xs text-muted-foreground cursor-help"
-                  >
-                    {format.dateTime(new Date(review.latestAiReplyPostedAt), {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </TooltipIcon>
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-muted-foreground">
+                      {format.dateTime(new Date(review.latestAiReplyPostedAt), {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </span>
+                    <TooltipIcon
+                      text={t("replyDateTooltip")}
+                      additionalInfoLabel={t("replyDateLabel")}
+                      closeLabel={tCommon("close")}
+                    />
+                  </div>
                 )}
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">

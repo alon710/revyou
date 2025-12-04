@@ -27,7 +27,7 @@ export const useUIStore = create<UIState>()(
       },
     }),
     {
-      name: "RevUStore",
+      name: "BottieStore",
       storage: createJSONStorage(() => localStorage),
     }
   )
