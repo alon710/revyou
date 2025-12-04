@@ -27,7 +27,7 @@ export const useUIStore = create<UIState>()(
       },
     }),
     {
-      name: "BottieStore",
+      name: "bottie-ui-store",
       storage: createJSONStorage(() => localStorage),
     }
   )
