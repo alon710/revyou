@@ -4,33 +4,26 @@ import { ReviewFilters } from "@/lib/types";
 import type { ReplyStatus } from "@/lib/types/review.types";
 import type { ReviewSortOptions } from "@/lib/types/sort.types";
 
-// Serializable version of ReviewFilters (Date objects converted to strings)
 interface SerializableReviewFilters {
   replyStatus?: ReplyStatus[];
   rating?: number[];
-  dateFrom?: string; // ISO date string
-  dateTo?: string; // ISO date string
+  dateFrom?: string;
+  dateTo?: string;
   sort?: ReviewSortOptions;
 }
 
-// Store state structure - keyed by businessId
 interface FiltersState {
   businessFilters: Record<string, SerializableReviewFilters>;
 
-  // Set filters for a specific business
   setFilters: (businessId: string, filters: ReviewFilters) => void;
 
-  // Get filters for a specific business (returns ReviewFilters with Date objects)
   getFilters: (businessId: string) => ReviewFilters | null;
 
-  // Clear filters for a specific business
   clearFilters: (businessId: string) => void;
 
-  // Clear all stored filters (for cleanup/reset)
   clearAllFilters: () => void;
 }
 
-// Helper to convert ReviewFilters to serializable format
 function serializeFilters(filters: ReviewFilters): SerializableReviewFilters {
   return {
     replyStatus: filters.replyStatus,
@@ -41,7 +34,6 @@ function serializeFilters(filters: ReviewFilters): SerializableReviewFilters {
   };
 }
 
-// Helper to convert serializable format back to ReviewFilters
 function deserializeFilters(serialized: SerializableReviewFilters): ReviewFilters {
   return {
     replyStatus: serialized.replyStatus,
@@ -75,7 +67,6 @@ export const useFiltersStore = create<FiltersState>()(
           return deserializeFilters(serialized);
         } catch (error) {
           console.warn(`Failed to deserialize filters for business ${businessId}`, error);
-          // Clear corrupted data
           get().clearFilters(businessId);
           return null;
         }
