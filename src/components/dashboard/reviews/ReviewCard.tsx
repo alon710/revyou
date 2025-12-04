@@ -19,7 +19,7 @@ import { ReplyEditor } from "@/components/dashboard/reviews/ReplyEditor";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { User, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTranslations } from "next-intl";
+import { useTranslations, useFormatter } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import type { ReviewWithLatestGeneration } from "@/lib/db/repositories";
 
@@ -34,6 +34,7 @@ interface ReviewCardProps {
 
 export function ReviewCard({ review, accountId, userId, businessId, onUpdate, onClick }: ReviewCardProps) {
   const t = useTranslations("dashboard.reviews.card");
+  const format = useFormatter();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
@@ -123,6 +124,13 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
               </Avatar>
               <div className="min-w-0">
                 <h3 className="font-semibold truncate">{review.name}</h3>
+                <p className="text-xs text-muted-foreground">
+                  {format.dateTime(new Date(review.date), {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </p>
               </div>
             </div>
             <StarRating rating={review.rating} size={18} />
@@ -146,10 +154,21 @@ export function ReviewCard({ review, accountId, userId, businessId, onUpdate, on
 
           {review.latestAiReply && (
             <DashboardCardSection withBorder={!!review.text}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  {review.latestAiReplyType === "imported" ? t("externalReplyLabel") : t("aiReplyLabel")}
-                </span>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                    {review.latestAiReplyType === "imported" ? t("externalReplyLabel") : t("aiReplyLabel")}
+                  </span>
+                </div>
+                {review.replyStatus === "posted" && review.latestAiReplyPostedAt && (
+                  <span className="text-xs text-muted-foreground">
+                    {format.dateTime(new Date(review.latestAiReplyPostedAt), {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </span>
+                )}
               </div>
               <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
                 <p className="text-sm leading-relaxed">{review.latestAiReply}</p>

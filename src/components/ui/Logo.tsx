@@ -34,6 +34,7 @@ export function Logo({ href, className, size = "xl", variant = "icon" }: SiteLog
           alt="Bottie Logo"
           height={height}
           width={variant === "icon" ? height : height * 3}
+          style={{ width: "auto" }}
           className="h-full w-auto object-contain"
           priority
         />
