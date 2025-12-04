@@ -67,24 +67,13 @@ export function PricingCards() {
   };
 
   return (
-    <div id="pricing" tabIndex={-1}>
+    <div id="pricing">
       <div className="container mx-auto px-6 sm:px-8 lg:px-12">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">{t("title")}</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">{t("subtitle")}</p>
 
           <div className="inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground w-auto">
-            <button
-              type="button"
-              onClick={() => setBillingPeriod("yearly")}
-              className={cn(
-                "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
-                billingPeriod === "yearly" && "bg-background text-foreground shadow"
-              )}
-            >
-              <span className="ms-1 text-xs text-primary px-1 ">{t("yearlyDiscount")}</span>
-              {t("yearly")}
-            </button>
             <button
               type="button"
               onClick={() => setBillingPeriod("monthly")}
@@ -94,6 +83,17 @@ export function PricingCards() {
               )}
             >
               {t("monthly")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setBillingPeriod("yearly")}
+              className={cn(
+                "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+                billingPeriod === "yearly" && "bg-background text-foreground shadow"
+              )}
+            >
+              {t("yearly")}
+              <span className="ms-1 text-xs text-primary px-1 ">{t("yearlyDiscount")}</span>
             </button>
           </div>
         </div>
@@ -114,11 +114,10 @@ export function PricingCards() {
               return (
                 <motion.div
                   key={plan.id}
-                  className={`relative p-8 flex flex-col rounded-lg group text-card-foreground touch-manipulation ${
-                    isRecommended
-                      ? "border-2 border-pastel-lavender shadow-xl bg-linear-to-br from-pastel-lavender/10 via-background to-background"
-                      : "border border-border/40 shadow-sm bg-card hover:shadow-lg transition-all duration-300"
-                  }`}
+                  className={`relative p-8 flex flex-col rounded-lg group text-card-foreground touch-manipulation ${isRecommended
+                    ? "border-2 border-pastel-lavender shadow-xl bg-linear-to-br from-pastel-lavender/10 via-background to-background"
+                    : "border border-border/40 shadow-sm bg-card hover:shadow-lg transition-all duration-300"
+                    }`}
                   initial={{ opacity: 0, y: 20, scale: 0.9 }}
                   animate={{
                     opacity: 1,
@@ -143,20 +142,18 @@ export function PricingCards() {
                   }}
                 >
                   <motion.div
-                    className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
-                      isRecommended
-                        ? "bg-linear-to-br from-primary/15 via-primary/8 to-primary/15"
-                        : "bg-linear-to-br from-primary/5 via-transparent to-primary/10"
-                    }`}
+                    className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${isRecommended
+                      ? "bg-linear-to-br from-primary/15 via-primary/8 to-primary/15"
+                      : "bg-linear-to-br from-primary/5 via-transparent to-primary/10"
+                      }`}
                     initial={false}
                   />
 
                   <motion.div
-                    className={`absolute inset-0 border-2 rounded-lg transition-all duration-500 pointer-events-none ${
-                      isRecommended
-                        ? "border-primary/0 group-hover:border-primary/40"
-                        : "border-primary/0 group-hover:border-primary/20"
-                    }`}
+                    className={`absolute inset-0 border-2 rounded-lg transition-all duration-500 pointer-events-none ${isRecommended
+                      ? "border-primary/0 group-hover:border-primary/40"
+                      : "border-primary/0 group-hover:border-primary/20"
+                      }`}
                     initial={false}
                   />
 
